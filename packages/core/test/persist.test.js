@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
-import { createPersistentSignal, clearPersistentState, createEffect, flushSync } from '../src/index.js';
+import { describe, it, afterEach } from 'node:test';
+import { createPersistentSignal as createPersistent, clearPersistentState, createEffect, flushSync } from '../src/index.js';
 
 function fakeStorage(seed = {}) {
   const m = new Map(Object.entries(seed));
@@ -12,7 +12,33 @@ function fakeStorage(seed = {}) {
   };
 }
 const envelope = (d, v = 1, t = Date.now()) => JSON.stringify({ v, t, d });
-const tick = (ms = 20) => new Promise((r) => setTimeout(r, ms));
+const tick = (ms = 100) => new Promise((r) => setTimeout(r, ms));
+// An open BroadcastChannel keeps Node alive, so a test that throws before it
+// closes one would hang the whole run instead of failing. Everything a test
+// opens is registered here and released after it, pass or fail.
+const cleanups = [];
+afterEach(() => { while (cleanups.length) { try { cleanups.pop()(); } catch { /* already closed */ } } });
+
+function createPersistentSignal(...args) {
+  const result = createPersistent(...args);
+  cleanups.push(result[2].dispose);
+  return result;
+}
+function channel(name) {
+  const ch = new BroadcastChannel(name);
+  cleanups.push(() => ch.close());
+  return ch;
+}
+// Poll instead of sleeping a fixed time: a slow runner must not turn a
+// correct result into a failure.
+async function waitFor(predicate, timeoutMs = 3000) {
+  const deadline = Date.now() + timeoutMs;
+  while (!predicate()) {
+    if (Date.now() > deadline) throw new Error('waitFor: condition not met in ' + timeoutMs + 'ms');
+    await new Promise((r) => setTimeout(r, 5));
+  }
+}
+
 
 describe('createPersistentSignal', () => {
   it('hydrates synchronously from storage', () => {
@@ -103,9 +129,9 @@ describe('createPersistentSignal', () => {
 
   it('applies updates broadcast from another context', async () => {
     const [read, , c] = createPersistentSignal('bus-in', 'a', { storage: fakeStorage(), channel: 't-in' });
-    const other = new BroadcastChannel('t-in');
+    const other = channel('t-in');
     other.postMessage({ key: 'sola:bus-in', v: 1, d: 'from-elsewhere', origin: 'other' });
-    await tick();
+    await waitFor(() => read() === 'from-elsewhere');
     assert.strictEqual(read(), 'from-elsewhere');
     other.close();
     c.dispose();
@@ -115,7 +141,7 @@ describe('createPersistentSignal', () => {
     const [read, , c] = createPersistentSignal('bus-bad', 'a', {
       storage: fakeStorage(), channel: 't-bad', version: 2, validate: (v) => typeof v === 'string',
     });
-    const other = new BroadcastChannel('t-bad');
+    const other = channel('t-bad');
     other.postMessage({ key: 'sola:bus-bad', v: 1, d: 'old-shape', origin: 'other' });
     other.postMessage({ key: 'sola:bus-bad', v: 2, d: 42, origin: 'other' });
     await tick();
@@ -126,17 +152,17 @@ describe('createPersistentSignal', () => {
 
   it('broadcasts local writes to other contexts, and does not echo remote ones', async () => {
     const [read, write, c] = createPersistentSignal('bus-out', 'a', { storage: fakeStorage(), channel: 't-out' });
-    const other = new BroadcastChannel('t-out');
+    const other = channel('t-out');
     const got = [];
     other.onmessage = (e) => got.push(e.data);
     write('local');
-    await tick();
+    await waitFor(() => got.length >= 1);
     assert.strictEqual(got.length, 1);
     assert.strictEqual(got[0].d, 'local');
 
     other.postMessage({ key: 'sola:bus-out', v: 1, d: 'remote', origin: 'other' });
-    await tick();
-    assert.strictEqual(read(), 'remote');
+    await waitFor(() => read() === 'remote');
+    await tick(); // give a wrongful re-broadcast time to appear
     assert.strictEqual(got.length, 1, 'applying a remote value must not re-broadcast');
     other.close();
     c.dispose();
@@ -145,7 +171,7 @@ describe('createPersistentSignal', () => {
   it('stops listening after dispose()', async () => {
     const [read, , c] = createPersistentSignal('bus-disp', 'a', { storage: fakeStorage(), channel: 't-disp' });
     c.dispose();
-    const other = new BroadcastChannel('t-disp');
+    const other = channel('t-disp');
     other.postMessage({ key: 'sola:bus-disp', v: 1, d: 'late', origin: 'other' });
     await tick();
     assert.strictEqual(read(), 'a');
@@ -159,13 +185,12 @@ describe('createPersistentSignal', () => {
   it('clearPersistentState resets live signals here and in other contexts', async () => {
     const [read, write, c] = createPersistentSignal('wipe', 'a', { storage: fakeStorage(), channel: 't-wipe' });
     write('b');
-    const other = new BroadcastChannel('t-wipe');
+    const other = channel('t-wipe');
     const got = [];
     other.onmessage = (e) => got.push(e.data);
     clearPersistentState({ channel: 't-wipe' });
     assert.strictEqual(read(), 'a', 'local signal reset synchronously');
-    await tick();
-    assert.ok(got.some((m) => m.clearAll), 'other contexts are told to reset');
+    await waitFor(() => got.some((m) => m.clearAll));
     other.close();
     c.dispose();
   });
@@ -173,10 +198,9 @@ describe('createPersistentSignal', () => {
   it('a clearAll broadcast resets signals in this context', async () => {
     const [read, write, c] = createPersistentSignal('wipe-in', 'a', { storage: fakeStorage(), channel: 't-wipe-in' });
     write('b');
-    const other = new BroadcastChannel('t-wipe-in');
+    const other = channel('t-wipe-in');
     other.postMessage({ clearAll: true, origin: 'elsewhere' });
-    await tick();
-    assert.strictEqual(read(), 'a');
+    await waitFor(() => read() === 'a');
     other.close();
     c.dispose();
   });
