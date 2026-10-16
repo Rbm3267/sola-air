@@ -139,6 +139,31 @@ test.describe('Select', () => {
   });
 });
 
+test.describe('DataCard', () => {
+  test('shows the title, value and trend its parent gives it', async ({ page }) => {
+    await mount(page, 'DataCard.sola', { title: 'Cluster Volume', value: '1,420 RPS', trend: '+14%' });
+
+    // The published card ignored every prop and always read "METRIC $0.00 +0.0%".
+    const card = page.locator('.sola-data-card');
+    await expect(card).toContainText('Cluster Volume');
+    await expect(card).toContainText('1,420 RPS');
+    await expect(card).toContainText('+14%');
+    await expect(card).not.toContainText('METRIC');
+    await expect(card).not.toContainText('$0.00');
+  });
+
+  test('shows no trend footer when none is given, rather than a made-up one', async ({ page }) => {
+    await mount(page, 'DataCard.sola', { title: 'Open incidents', value: '42' });
+
+    const card = page.locator('.sola-data-card');
+    await expect(card).toContainText('Open incidents');
+    await expect(card).toContainText('42');
+    await expect(card.locator('.card-footer')).toHaveCount(0);
+    await expect(card).not.toContainText('+0.0%');
+    await expect(card).not.toContainText('vs last period');
+  });
+});
+
 test.describe('Modal', () => {
   test('announces itself as a dialog', async ({ page }) => {
     await mount(page, 'Modal.sola', { title: 'Confirm deploy', initialOpen: true });

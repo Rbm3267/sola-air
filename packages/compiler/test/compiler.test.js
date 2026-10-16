@@ -650,6 +650,71 @@ test('onXxx-named callback prop on a component passes the real function, not a s
   assert(!code.includes('"onChange": "handleChange"'), 'value not passed as a literal string');
 });
 
+// ── imports from packages ───────────────────────────────────────
+
+console.log('\nimports from packages');
+
+test('a component imported from a package subpath is mounted, not created as an HTML element', () => {
+  // The documented form. It used to compile to document.createElement('DataCard'),
+  // because only a path ending in .sola counted as a component.
+  const { code } = compile(
+    `<script>import DataCard from '@sola-air-ui/ui/data-card';</script><DataCard title="A" value="1" />`
+  );
+  assertValidJs(code.replace(/^import .*$/gm, ''));
+  assert(code.includes("import DataCard from '@sola-air-ui/ui/data-card';"), 'the import is kept');
+  assert(code.includes('DataCard(comp'), 'it is mounted as a component');
+  assert(!code.includes("createElement('DataCard')"), 'not an unknown HTML element');
+  assert(code.includes('"title": "A"') && code.includes('"value": "1"'), 'props are passed');
+});
+
+test('a named import from a package root is a component too', () => {
+  const { code } = compile(`<script>import { Table } from '@sola-air-ui/ui';</script><Table rows={[]} />`);
+  assert(code.includes("import { Table } from '@sola-air-ui/ui';"), 'import kept');
+  assert(code.includes('Table(comp'), 'mounted as a component');
+});
+
+test('a package import that is not a component is kept for the script to use', () => {
+  const { code } = compile(`<script>import { format } from 'some-lib'; let s = format(1);</script><p>{s}</p>`);
+  assert(code.includes("import { format } from 'some-lib';"), 'the import survives');
+  assert(code.includes('format(1)'), 'and the script still calls it');
+});
+
+test('an import from core of a name the compiler does not provide is kept', () => {
+  const { code } = compile(`<script>import { configureData } from '@sola-air-ui/core'; configureData({ relayEndpoint: '/x' });</script><p>x</p>`);
+  assert(/import \{ configureData \} from '@sola-air-ui\/core';/.test(code), 'extra core import emitted');
+});
+
+test('a core name the compiler already provides is not imported twice', () => {
+  const { code } = compile(
+    `<script>import { createEffect, configureData } from '@sola-air-ui/core'; createEffect(() => {}); configureData({});</script><p>x</p>`
+  );
+  const importLines = code.split('\n').filter(l => l.startsWith('import') && l.includes("'@sola-air-ui/core'"));
+  const bindings = importLines.join(',').match(/\bcreateEffect\b/g) || [];
+  assert.strictEqual(bindings.length, 1, 'createEffect is bound once, got: ' + importLines.join(' | '));
+  assert(code.includes('configureData'), 'configureData is still imported');
+  // Two bindings of one name is a SyntaxError in a module.
+  assertValidJs(code.replace(/^import .*$/gm, ''));
+});
+
+test('an aliased core import keeps its alias', () => {
+  const { code } = compile(`<script>import { createEffect as watch } from '@sola-air-ui/core'; watch(() => {});</script><p>x</p>`);
+  assert(code.includes('createEffect as watch'), 'alias preserved');
+});
+
+test('iife output pulls extra core names from window.SolaCore', () => {
+  const { code } = compile(
+    `<script>import { configureData } from '@sola-air-ui/core'; configureData({});</script><p>x</p>`,
+    { target: 'iife', exportName: 'X' }
+  );
+  assert(/const \{[^}]*configureData[^}]*\} = window\.SolaCore;/.test(code), 'destructured from the global');
+  assert(!/^import /m.test(code), 'no import statements in an IIFE');
+});
+
+test('a lowercase tag is never mistaken for an imported component', () => {
+  const { code } = compile(`<script>import card from 'x';</script><card></card>`);
+  assert(code.includes("createElement('card')"), 'still a plain element');
+});
+
 // ── IIFE target (no-bundler) ────────────────────────────────────
 
 console.log('\nIIFE target');

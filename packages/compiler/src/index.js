@@ -6,6 +6,14 @@ const { version: COMPILER_VERSION } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8')
 );
 
+// Names every compiled component imports from core under their own name. A
+// script that imports one of these again is not given a second binding.
+const CORE_PROVIDED = new Set([
+  'createSignal', 'createDerived', 'createEffect', 'createIntent', 'createData',
+  'createPersistentSignal', 'onMount', 'onDestroy', 'pushContext', 'popContext',
+  '__flush_mounts', '__flush_destroys', '__untrack'
+]);
+
 const VOID_ELEMENTS = new Set([
   'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
   'link', 'meta', 'param', 'source', 'track', 'wbr'
@@ -889,6 +897,12 @@ export function compile(source, options = {}) {
   const stateVars = new Set();
   const exportedProps = [];
   const componentImports = [];
+  // Every other import in the script. They used to be deleted, so a package
+  // import (`import DataCard from '@sola-air-ui/ui/data-card'`, or anything from
+  // '@sola-air-ui/core' that the compiler does not already provide) was gone from
+  // the output and left an undefined name behind.
+  const otherImports = [];
+  const coreImportExtras = [];
 
   let reactiveVars = NO_REACTIVE_VARS;
   if (strippedScript.trim()) {
@@ -913,6 +927,21 @@ export function compile(source, options = {}) {
           if (src.endsWith('.sola')) {
             node.specifiers.forEach(spec => {
               componentImports.push({ localName: spec.local.name, path: src });
+            });
+          } else if (src === '@sola-air-ui/core' || src === '@sola/core') {
+            // The compiler already imports these names under their own names.
+            // Importing one again would be a duplicate binding, so keep only the
+            // rest: names it does not provide, and aliased ones.
+            node.specifiers.forEach(spec => {
+              if (spec.type !== 'ImportSpecifier') return;
+              const imported = spec.imported.name ?? spec.imported.value;
+              if (spec.local.name === imported && CORE_PROVIDED.has(imported)) return;
+              coreImportExtras.push({ imported, local: spec.local.name });
+            });
+          } else {
+            otherImports.push({
+              code: strippedScript.slice(node.start, node.end).trim().replace(/;?$/, ';'),
+              locals: node.specifiers.map(spec => spec.local.name)
             });
           }
           edits.push({
@@ -1050,6 +1079,11 @@ export function compile(source, options = {}) {
   let uid = 0;
   let domCode = '';
   const importedComponentSet = new Set(componentImports.map(i => i.localName));
+  // A capitalised tag that matches a name imported from a package is a component
+  // too (`import DataCard from '@sola-air-ui/ui/data-card'`), not only a `.sola` path.
+  for (const imp of otherImports) {
+    for (const name of imp.locals) if (/^[A-Z]/.test(name)) importedComponentSet.add(name);
+  }
 
   const sourceFile = options.filename || '<component>';
 
@@ -1385,7 +1419,7 @@ export function compile(source, options = {}) {
   root.children.forEach(child => emitNode(child, '__target'));
 
   // Assemble final output module
-  const CORE_EXPORTS = 'createSignal, createDerived, createEffect, createIntent, createData, createPersistentSignal, onMount, onDestroy, pushContext, popContext, __flush_mounts, __flush_destroys, __untrack';
+  const CORE_EXPORTS = [...CORE_PROVIDED].join(', ');
   // The default bus is imported under an alias so a user variable named `bus`
   // cannot shadow what $on / $lastEvent compile to.
   const ESM_CORE_IMPORTS = CORE_EXPORTS + ', bus as __solaBus';
@@ -1396,16 +1430,27 @@ export function compile(source, options = {}) {
   if (target === 'iife') {
     // No-bundler mode: pull from window.SolaCore global
     output += `(function() {\n`;
-    output += `const { ${IIFE_CORE_PULL} } = window.SolaCore;\n`;
+    const iifeExtras = coreImportExtras.map(e => (e.local === e.imported ? e.imported : `${e.imported}: ${e.local}`));
+    output += `const { ${[IIFE_CORE_PULL, ...iifeExtras].join(', ')} } = window.SolaCore;\n`;
     for (const imp of componentImports) {
       output += `// Note: sub-component ${imp.localName} must be pre-loaded before this script\n`;
+    }
+    for (const imp of otherImports) {
+      output += `// Note: ${imp.locals.join(', ')} must be loaded before this script (no-bundler output cannot import)\n`;
     }
     output += `\n`;
     output += `window['${options.exportName || 'SolaComponent'}'] = function mount(__target, props = {}) {\n`;
   } else {
     output += `import { ${ESM_CORE_IMPORTS} } from '@sola-air-ui/core';\n`;
+    if (coreImportExtras.length) {
+      const names = coreImportExtras.map(e => (e.local === e.imported ? e.imported : `${e.imported} as ${e.local}`));
+      output += `import { ${names.join(', ')} } from '@sola-air-ui/core';\n`;
+    }
     for (const imp of componentImports) {
       output += `import ${imp.localName} from '${imp.path}';\n`;
+    }
+    for (const imp of otherImports) {
+      output += `${imp.code}\n`;
     }
     output += `\n`;
     output += `export default function mount(__target, props = {}) {\n`;
