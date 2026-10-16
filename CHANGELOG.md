@@ -2,7 +2,7 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
-## Unreleased (event bus)
+## 2026-10-16: core 1.3.0, compiler 1.2.0 (event bus)
 
 ### `@sola-air-ui/core`
 
@@ -20,7 +20,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   **`let x = $lastEvent(type)`** (latest payload as a reactive accessor). Both use the
   default bus, imported under an alias so a variable named `bus` cannot shadow it.
 
-## Unreleased (compiler fixes from production feedback)
+## 2026-10-16: compiler fixes from production feedback (in compiler 1.2.0)
 
 ### `@sola-air-ui/compiler`
 
@@ -42,7 +42,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   `export let` props typed from their defaults (`unknown` where a default cannot
   be read confidently).
 
-## Unreleased (persistent cross-page state)
+## 2026-10-16: core 1.2.0, compiler 1.1.0 (persistent cross-page state)
 
 ### `@sola-air-ui/core`
 
