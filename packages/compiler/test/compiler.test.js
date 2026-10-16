@@ -511,7 +511,21 @@ test('scoped style: button.hash:hover (pseudo after hash)', () => {
 
 test('style deduplication guard emitted', () => {
   const { code } = compile(`<style>.x { color: red; }</style><div class="x">Hi</div>`);
-  assert(code.includes('!window['), 'dedup guard');
+  assert(code.includes('__solaStyles'), 'dedup guard');
+});
+
+test('styles target the ShadowRoot when mounted inside one', () => {
+  const { code } = compile(`<style>.x { color: red; }</style><div class="x">Hi</div>`);
+  assert(code.includes('getRootNode()'), 'resolves the root the component lives in');
+  assert(code.includes('instanceof ShadowRoot'), 'detects a shadow root');
+  assert(code.includes('document.head'), 'still falls back to document.head');
+});
+
+test('$persist compiles to a persistent signal that reads and assigns like $state', () => {
+  const { code } = compile(`<script>let open = $persist('k', false);\nfunction t(){ open = !open; }</script><div>{open}</div>`);
+  assert(code.includes("const [open, set_open] = createPersistentSignal('k', false)"), 'factory');
+  assert(code.includes('set_open(!open())'), 'assignment rewritten');
+  assert(code.includes('createPersistentSignal,'), 'imported from core');
 });
 
 // ── Events and bindings ───────────────────────────────────────────────────────

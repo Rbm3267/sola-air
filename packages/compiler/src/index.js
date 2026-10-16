@@ -539,7 +539,7 @@ function collectReactiveVars(ast) {
         if (decl.init && decl.init.type === 'CallExpression' &&
             decl.init.callee.type === 'Identifier' && decl.id.type === 'Identifier') {
           const macro = decl.init.callee.name;
-          if (macro === '$state') vars.state.add(decl.id.name);
+          if (macro === '$state' || macro === '$persist') vars.state.add(decl.id.name);
           else if (macro === '$derived') vars.derived.add(decl.id.name);
           else if (macro === '$intent') vars.intent.add(decl.id.name);
           else if (macro === '$data') vars.data.add(decl.id.name);
@@ -883,10 +883,13 @@ export function compile(source, options = {}) {
             const macro = decl.init.callee.name;
             const arg = decl.init.arguments[0];
             const lastArg = decl.init.arguments[decl.init.arguments.length - 1];
-            if (macro === '$state') {
+            if (macro === '$state' || macro === '$persist') {
+              // $persist(key, initial, options) is $state backed by storage and
+              // synced across tabs/pages; it reads and assigns exactly like $state.
               const varName = decl.id.name;
+              const factory = macro === '$persist' ? 'createPersistentSignal' : 'createSignal';
               if (arg) {
-                edits.push({ start: node.start, end: arg.start, replacement: `const [${varName}, set_${varName}] = createSignal(` });
+                edits.push({ start: node.start, end: arg.start, replacement: `const [${varName}, set_${varName}] = ${factory}(` });
                 edits.push({ start: lastArg.end, end: node.end, replacement: `);` });
               } else {
                 edits.push({ start: node.start, end: node.end, replacement: `const [${varName}, set_${varName}] = createSignal(undefined);` });
@@ -1270,7 +1273,7 @@ export function compile(source, options = {}) {
   root.children.forEach(child => emitNode(child, '__target'));
 
   // Assemble final output module
-  const CORE_EXPORTS = 'createSignal, createDerived, createEffect, createIntent, createData, onMount, onDestroy, pushContext, popContext, __flush_mounts, __flush_destroys';
+  const CORE_EXPORTS = 'createSignal, createDerived, createEffect, createIntent, createData, createPersistentSignal, onMount, onDestroy, pushContext, popContext, __flush_mounts, __flush_destroys';
   let output = '';
   output += `// Compiled by @sola-air-ui/compiler v${COMPILER_VERSION}\n`;
 
@@ -1294,11 +1297,19 @@ export function compile(source, options = {}) {
   output += `  const __ctx = pushContext();\n\n`;
 
   if (hasStyles) {
-    output += `  if (typeof document !== 'undefined' && !window['__SOLA_STYLE_${scopeHash}']) {\n`;
-    output += `    window['__SOLA_STYLE_${scopeHash}'] = true;\n`;
-    output += `    const styleEl = document.createElement('style');\n`;
-    output += `    styleEl.textContent = \`${escapeTemplateLiteral(scopedCss)}\`;\n`;
-    output += `    document.head.appendChild(styleEl);\n`;
+    // Styles go into whichever root the component actually lives in: the
+    // ShadowRoot when mounted inside one (document.head styles can't cross a
+    // shadow boundary), otherwise document.head. De-duplicated per root.
+    output += `  if (typeof document !== 'undefined') {\n`;
+    output += `    const __rootNode = __target && __target.getRootNode ? __target.getRootNode() : document;\n`;
+    output += `    const __styleHost = (typeof ShadowRoot !== 'undefined' && __rootNode instanceof ShadowRoot) ? __rootNode : document.head;\n`;
+    output += `    const __seen = __styleHost.__solaStyles || (__styleHost.__solaStyles = new Set());\n`;
+    output += `    if (!__seen.has('${scopeHash}')) {\n`;
+    output += `      __seen.add('${scopeHash}');\n`;
+    output += `      const styleEl = document.createElement('style');\n`;
+    output += `      styleEl.textContent = \`${escapeTemplateLiteral(scopedCss)}\`;\n`;
+    output += `      __styleHost.appendChild(styleEl);\n`;
+    output += `    }\n`;
     output += `  }\n\n`;
   }
 
