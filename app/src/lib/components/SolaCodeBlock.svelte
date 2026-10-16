@@ -18,6 +18,9 @@
 
   const lines = $derived(code ? code.split('\n') : ['']);
 
+  // `.sola` sources get the Sola file icon beside their name, like an editor tab.
+  const isSola = $derived(language === 'sola' || title.endsWith('.sola'));
+
   function escapeHtml(str: string): string {
     return str
       .replace(/&/g, '&amp;')
@@ -92,6 +95,9 @@
   <!-- Header Bar -->
   <div class="flex items-center justify-between px-4 py-2.5 bg-slate-100/70 dark:bg-white/[0.03] border-b border-slate-200/80 dark:border-white/10 select-none">
     <div class="flex items-center gap-2.5">
+      {#if isSola}
+        <img src="/sola-file-icon.png" alt="" width="16" height="16" class="w-4 h-4 shrink-0" />
+      {/if}
       {#if title}
         <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">
           {title}

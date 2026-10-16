@@ -1,9 +1,32 @@
 {
   "name": "sola-vscode",
-  "displayName": "Sola",
-  "description": "Language support and file icons for the Sola Intent Framework",
+  "displayName": "Sola AIR",
+  "description": "Language support and file icons for Sola AIR (.sola) components",
   "version": "0.1.0",
-  "publisher": "SolaTeam",
+  "publisher": "SolaAIR",
+  "license": "MIT",
+  "homepage": "https://sola-air.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rbm3267/sola-air",
+    "directory": "packages/vscode-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/Rbm3267/sola-air/issues"
+  },
+  "keywords": [
+    "sola",
+    "sola-air",
+    ".sola",
+    "signals",
+    "intent",
+    "file icon"
+  ],
+  "icon": "icons/sola-128.png",
+  "galleryBanner": {
+    "color": "#0f172a",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -13,15 +36,24 @@
   "extensionDependencies": [
     "svelte.svelte-vscode"
   ],
+  "scripts": {
+    "package": "vsce package --no-dependencies",
+    "publish:vscode": "vsce publish --no-dependencies"
+  },
   "contributes": {
     "languages": [
       {
         "id": "sola",
-        "aliases": ["Sola", "sola"],
-        "extensions": [".sola"],
+        "aliases": [
+          "Sola",
+          "sola"
+        ],
+        "extensions": [
+          ".sola"
+        ],
         "icon": {
-          "light": "./icons/sola-icon.png",
-          "dark": "./icons/sola-icon.png"
+          "light": "./icons/sola-file.png",
+          "dark": "./icons/sola-file.png"
         }
       }
     ],

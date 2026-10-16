@@ -562,7 +562,9 @@ export function SolaWidget({ title, value }) {
           <!-- Code Window -->
           <div class="rounded-2xl bg-slate-950 border border-slate-800 shadow-xl overflow-hidden">
             <div class="px-4 py-2.5 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between">
-              <span class="text-xs font-mono text-slate-500 dark:text-slate-400">MetricCard.sola</span>
+              <span class="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400">
+                <img src="/sola-file-icon.png" alt="" width="16" height="16" class="w-4 h-4" />MetricCard.sola
+              </span>
               <span class="text-xs font-mono text-slate-500">Single-File Component</span>
             </div>
             <div class="p-5 relative font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
@@ -786,8 +788,15 @@ export function SolaWidget({ title, value }) {
             <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
               <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$persist(key, initial, options)</code> reads and assigns exactly like <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$state</code>. It hydrates synchronously, so the first paint is already correct, writes back on every change, and mirrors live to other same-origin tabs and frames.
             </p>
-            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
-              <pre><code>{persistDockExample}</code></pre>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 shadow-xl overflow-hidden">
+              <div class="px-4 py-2.5 bg-slate-900/80 border-b border-slate-800">
+                <span class="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400">
+                  <img src="/sola-file-icon.png" alt="" width="16" height="16" class="w-4 h-4" />Dock.sola
+                </span>
+              </div>
+              <div class="p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+                <pre><code>{persistDockExample}</code></pre>
+              </div>
             </div>
             <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10">
               <table class="w-full text-xs text-left">
