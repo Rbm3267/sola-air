@@ -34,7 +34,7 @@ npm install @sola-air-ui/core @sola-air-ui/compiler @sola-air-ui/vite-plugin-sol
 
 ## What is Sola AIR?
 
-Sola AIR is a compiler-first JavaScript framework where AI isn't bolted on — it's a first-class reactive primitive. Write `.sola` files with familiar syntax, and the custom AST compiler outputs hyper-optimized vanilla DOM instructions. No virtual DOM. No heavy runtime framework. Just raw performance.
+Sola AIR is a compiler-first JavaScript framework where AI isn't bolted on — it's a first-class reactive primitive. Write `.sola` files with familiar syntax, and the compiler turns them into plain DOM instructions. There is no virtual DOM and no framework runtime beyond the small core.
 
 ```html
 <script>

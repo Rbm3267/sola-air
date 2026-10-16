@@ -35,11 +35,11 @@
 <svelte:head>
 	<title>Sola AIR — Ambient Intent Runtime</title>
 	<meta name="google-site-verification" content="WcTmhJBtVJPU0tzzt4XiIY4AfSDAywCA6RTgfowxVcw" />
-	<meta name="description" content="A zero-VDOM reactive runtime and compiler for ambient, AI-driven interfaces: .sola components that compile to plain DOM calls." />
+	<meta name="description" content="A small reactive runtime and compiler. You write .sola components and they compile to plain DOM calls, with no virtual DOM." />
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="Sola AIR" />
 	<meta property="og:title" content="Sola AIR — Ambient Intent Runtime" />
-	<meta property="og:description" content="A zero-VDOM reactive runtime and compiler for ambient, AI-driven interfaces: .sola components that compile to plain DOM calls." />
+	<meta property="og:description" content="A small reactive runtime and compiler. You write .sola components and they compile to plain DOM calls, with no virtual DOM." />
 	<meta property="og:url" content={pageUrl} />
 	<meta property="og:image" content="{ORIGIN}/og-image.jpg" />
 	<meta name="twitter:card" content="summary_large_image" />

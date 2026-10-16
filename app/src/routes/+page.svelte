@@ -34,10 +34,10 @@
           <span>The Sola Ecosystem</span>
         </div>
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
-          From Concept to Live Sandbox in Seconds
+          From idea to a live preview
         </h2>
         <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-          Three interconnected pillars built to design, preview, and share zero-VDOM reactive components across personal projects and global platforms.
+          Three tools for designing, previewing and reading Sola components.
         </p>
       </div>
 
@@ -53,7 +53,7 @@
               Sola Design Studio
             </h3>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Drag-and-drop generative canvas with {CATALOG_COUNT} components and live signal simulators.
+              A drag-and-drop canvas with {CATALOG_COUNT} components and live signal simulators.
             </p>
           </div>
           <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all">
@@ -72,7 +72,7 @@
               "View in My UI" Extension
             </h3>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Manifest V3 Chrome extension that injects a closed Shadow DOM sandbox on any active web app with zero CSS collisions.
+              A Chrome extension that drops a Sola component into any page you have open, inside a closed Shadow DOM so its styles don't touch the page.
             </p>
           </div>
           <a href="/preview" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all">
@@ -110,14 +110,14 @@
     <!-- 4. Foundational 56-Primitive Design Studio Inspector -->
     <DesignEngineStudio />
 
-    <!-- 5. Handcrafted Architecture Showcase -->
+    <!-- 5. Component showcase -->
     <section class="w-full pb-32 pt-8 relative z-10 border-t border-slate-100 dark:border-white/[0.04]">
       <div id="architecture" class="flex flex-col justify-center px-2 md:px-4 mt-8">
         <div class="text-center mb-12">
           <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 dark:bg-white/[0.08] border border-slate-200/80 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 text-xs font-mono font-semibold mb-3">
-            <span>@sola-air-ui/ui • Native Component Primitives</span>
+            <span>@sola-air-ui/ui • Components</span>
           </div>
-          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">Handcrafted UI Architecture</h2>
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">Components, compiled</h2>
           <p class="text-base text-slate-600 dark:text-slate-400 font-normal max-w-2xl mx-auto leading-relaxed">
             Sola components compile directly into reactive vanilla DOM nodes with scoped styles and zero virtual DOM diffing. The cards below are Svelte previews of the layouts; browse the shipped .sola components on the Components page.
           </p>
