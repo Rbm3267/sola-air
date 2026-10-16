@@ -325,7 +325,7 @@ function preprocessTemplate(template, dynAttrs, handlers) {
           } else if (hasDyn) {
             // Build a string-concatenation expression instead of a runtime backtick
             // template literal. Confirmed by driving a real browser against a live
-            // ServiceNow Service Portal instance: its widget-script delivery pipeline
+            // enterprise portal instance: its widget-script delivery pipeline
             // silently mangles `${expr}` interpolation inside a template literal down
             // to bare, unevaluated expression text (e.g. `background: ${x}` becomes
             // the literal string "background: x" — the function reference itself,
@@ -1365,7 +1365,7 @@ export function compile(source, options = {}) {
   output += `// Compiled by @sola-air-ui/compiler v${COMPILER_VERSION}\n`;
 
   if (target === 'iife') {
-    // ServiceNow / no-bundler mode: pull from window.SolaCore global
+    // No-bundler mode: pull from window.SolaCore global
     output += `(function() {\n`;
     output += `const { ${IIFE_CORE_PULL} } = window.SolaCore;\n`;
     for (const imp of componentImports) {

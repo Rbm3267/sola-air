@@ -12,7 +12,7 @@ await build({
   minify: false,
   target: ['es2020'],
   banner: {
-    js: '/* @sola-air-ui/core — IIFE build for ServiceNow and no-bundler environments */'
+    js: '/* @sola-air-ui/core — IIFE build for no-bundler environments */'
   }
 });
 

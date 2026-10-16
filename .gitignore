@@ -44,7 +44,7 @@ start_aura.vbs
 
 .vercel
 .env*
-servicenow.local.json
+*.local.json
 *.credentials.json
 *.tgz
 scratch/

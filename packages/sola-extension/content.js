@@ -37,7 +37,7 @@
     }
 
     // Strategy 1: find heading + big-number sibling pairs within the element
-    // Covers plain HTML structures like ServiceNow task status cards
+    // Covers plain HTML structures like task status cards
     const allText = [];
     walkShadows(root, 0, (el) => {
       const tag = el.tagName || '';

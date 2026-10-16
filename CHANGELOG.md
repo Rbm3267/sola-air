@@ -225,7 +225,7 @@ function; template reads require an explicit `()` call) and corrected
 
 ## 2026-09-01
 
-Found while dogfooding again — this time a ServiceNow Service Portal widget
+Found while dogfooding again — this time an enterprise portal widget
 whose `onMount` callback never fired once the same page also mounted other
 nested `@sola-air-ui/ui` components (`Table`, `Modal`, etc.), even though the
 identical `onMount` pattern worked correctly on a page with no nested
@@ -270,7 +270,7 @@ consuming app.
 ## 2026-08-31
 
 Found and fixed while dogfooding the published `sola-air` npm package end-to-end
-in a real host application (a ServiceNow Service Portal widget) — building an
+in a real host application (an enterprise portal widget) — building an
 actual multi-page app surfaced a class of bug that isolated unit tests hadn't
 caught, since several of them only manifest when consuming the *published*
 package the way a real user would, not the local monorepo source.

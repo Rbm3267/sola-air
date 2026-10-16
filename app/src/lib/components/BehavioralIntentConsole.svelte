@@ -153,7 +153,7 @@
   <!-- Adaptive Surface Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     
-    <!-- Column 1: ServiceNow Major Incident Card with Adaptive Trigger -->
+    <!-- Column 1: Major Incident Card with Adaptive Trigger -->
     <div class="lg:col-span-6 flex flex-col gap-4">
       
       <!-- svelte-ignore a11y_no_static_element_interactions -->

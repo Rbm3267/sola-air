@@ -405,7 +405,7 @@ test('ternary in attribute: attr={cond ? a : b}', () => {
 
 test('quoted attr with embedded {expr} compiles to string concatenation, not a template literal', () => {
   // Deliberately not a backtick template literal: confirmed via a real browser against a
-  // live ServiceNow Service Portal instance that its widget-script delivery pipeline
+  // live enterprise portal instance that its widget-script delivery pipeline
   // mangles `${expr}` down to bare unevaluated expression text. Concatenation is immune.
   const { code } = compile(`<div class="item-{index}"></div>`);
   assert(code.includes('"item-" + (index)'), 'compiles to concatenation');
@@ -643,7 +643,7 @@ test('onXxx-named callback prop on a component passes the real function, not a s
   assert(!code.includes('"onChange": "handleChange"'), 'value not passed as a literal string');
 });
 
-// ── IIFE target (ServiceNow / no-bundler) ────────────────────────────────────
+// ── IIFE target (no-bundler) ────────────────────────────────────
 
 console.log('\nIIFE target');
 

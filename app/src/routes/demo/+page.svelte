@@ -214,7 +214,7 @@
     saveLayout();
   }
 
-  function loadPreset(type: 'finance' | 'cloud' | 'servicenow' | 'reset') {
+  function loadPreset(type: 'finance' | 'cloud' | 'enterprise-ops' | 'reset') {
     if (type === 'finance') {
       widgets = [
         { id: 'fn-1', component: 'DataCard', colSpan: 1, config: { title: 'Monthly Recurring Revenue', value: '$184,200', trend: '+$14,800 this month', icon: 'trending-up' } },
@@ -226,7 +226,7 @@
           { label: 'Stripe Merchant Payout Batch #904', description: '+$12,840 • Clearing to SVB Treasury', status: 'Active' }
         ]} }
       ];
-    } else if (type === 'servicenow') {
+    } else if (type === 'enterprise-ops') {
       widgets = [
         { id: 'sn-1', component: 'IncidentTriageMatrix', colSpan: 3, config: {
           incidentId: 'INC009481',
@@ -441,7 +441,7 @@
         <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 dark:border-white/[0.04]">
           <span class="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 uppercase mr-1">Presets:</span>
           <button 
-            onclick={() => loadPreset('servicenow')}
+            onclick={() => loadPreset('enterprise-ops')}
             class="text-xs font-mono font-medium px-3.5 py-1.5 rounded-full bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-white/[0.08] transition-all active:scale-[0.97] cursor-pointer flex items-center gap-2">
             <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
             <span>Enterprise Operations Platform</span>
