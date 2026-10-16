@@ -51,6 +51,24 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Publish @sola-air-ui/tokens
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
+        working-directory: packages/tokens
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @sola-air-ui/providers
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
+        working-directory: packages/providers
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @sola-air-ui/mcp
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
+        working-directory: packages/sola-mcp
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish @sola/compiler
         run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/compiler
@@ -72,5 +90,11 @@ jobs:
       - name: Publish create-sola
         run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/create-sola
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish sola-air (meta-package, last because it depends on the others)
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
+        working-directory: packages/sola-air
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

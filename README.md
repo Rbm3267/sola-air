@@ -63,7 +63,7 @@ The compiler transforms this into a self-contained ES module with:
 - **Signals-based reactivity** — Fine-grained DOM updates, zero diffing
 - **Scoped styles** — Auto-hashed CSS selectors per component
 - **Native AI resolution** — `$intent` resolves structured data from any LLM provider
-- **Zero-Knowledge Data Plane** — `$data` connects to local databases via Sola Relay without exposing private credentials to the cloud
+- **Local data relay** — `$data` reads from PostgreSQL, MySQL or a Google Sheet through the Sola Relay, which runs on your machine or network, so database credentials stay out of the browser
 
 ---
 
@@ -71,12 +71,13 @@ The compiler transforms this into a self-contained ES module with:
 
 | Feature | Sola AIR | React | Svelte | Vue |
 |---|---|---|---|---|
-| **Bundle size** (core, gzipped) | **~3.9 KB** | ~45 KB | ~4 KB | ~33 KB |
 | **Virtual DOM Overhead** | **None (Direct DOM)** | Yes | No | Yes |
 | **Built-in AI Intent Primitive** | **`$intent`** | ❌ | ❌ | ❌ |
 | **Secure On-Prem Data Signals** | **`$data` (Sola Relay)** | ❌ | ❌ | ❌ |
 | **Scoped Styles** | **Native AST** | CSS Modules | Native | Scoped |
 | **Compiler Architecture** | **Acorn AST Transformer** | Babel / SWC | Custom | Template |
+
+The core runtime is about 7.5 kB gzipped. `scripts/core-size.mjs` measures it, and a test checks that `AGENTS.md` states the same number.
 
 ---
 
@@ -85,8 +86,11 @@ The compiler transforms this into a self-contained ES module with:
 - **`$state(initial)`** — Fine-grained reactive signal
 - **`$derived(expr)`** — Computed values with automatic dependency tracking (a `() => expr` function also works)
 - **`$effect(() => fn)`** — Side effects with automatic cleanup
-- **`$intent(prompt, options)`** — AI-native signal that resolves structured UI & data from LLMs
-- **`$data(source, options)`** — Real-time reactive data pipeline connected through Sola Relay
+- **`$intent(prompt, options)`** — Signal that asks an LLM provider for structured UI and data
+- **`$data(source, options)`** — Signal of `{ loading, data, error }` fed by the Sola Relay
+- **`$persist(key, initial, options)`** — Like `$state`, but kept in storage and synced across tabs, so it survives page loads
+- **`$on(type, fn)`** — Run a function for every event of a type on the bus; unsubscribes when the component is destroyed
+- **`$lastEvent(type)`** — The latest payload of an event type, as a reactive value
 
 ---
 
@@ -127,7 +131,7 @@ Render the result with `<AmbientSuggestion suggestion={suggestion} />` (`@sola-a
 | `@sola-air-ui/compiler` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/compiler)](https://www.npmjs.com/package/@sola-air-ui/compiler) | Custom Acorn AST compiler (.sola → JS + CSS) |
 | `@sola-air-ui/vite-plugin-sola` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/vite-plugin-sola)](https://www.npmjs.com/package/@sola-air-ui/vite-plugin-sola) | Vite plugin for .sola single-file components |
 | `@sola-air-ui/ui` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/ui)](https://www.npmjs.com/package/@sola-air-ui/ui) | Standard component library |
-| `@sola-air-ui/relay` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/relay)](https://www.npmjs.com/package/@sola-air-ui/relay) | Zero-knowledge local data proxy (PostgreSQL, MySQL) |
+| `@sola-air-ui/relay` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/relay)](https://www.npmjs.com/package/@sola-air-ui/relay) | Local data proxy (PostgreSQL, MySQL, Google Sheets) |
 | `@sola-air-ui/mcp` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/mcp)](https://www.npmjs.com/package/@sola-air-ui/mcp) | MCP server for AI-driven component generation |
 
 ---
@@ -140,7 +144,7 @@ sola/
 │   ├── compiler/          # Custom Acorn AST compiler (.sola -> JS + CSS)
 │   ├── core/              # Reactive runtime engine (signals, effects, $intent, $data)
 │   ├── ui/                # Standard component library (.sola files)
-│   ├── relay/             # Zero-knowledge local data proxy (PostgreSQL, MySQL)
+│   ├── relay/             # Local data proxy (PostgreSQL, MySQL, Google Sheets)
 │   ├── sola-mcp/          # MCP server for AI-driven component generation
 │   ├── sola-air/          # Meta-package (installs the full Sola AIR stack)
 │   ├── vite-plugin-sola/  # Vite plugin for .sola SFC compilation
