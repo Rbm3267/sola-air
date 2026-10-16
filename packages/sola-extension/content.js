@@ -1,8 +1,17 @@
-// Sola UI — Content Script (Live Page Component Preview & DOM Insertion Engine)
+// Sola AIR — Content Script (Live Page Component Preview & DOM Insertion Engine)
 
 (function () {
   if (window.__SOLA_INITIALIZED__) return;
   window.__SOLA_INITIALIZED__ = true;
+
+  // Code generation and escaping live in codegen.js, which the side panel injects
+  // first. Keeping them there lets Node test that "Copy code" output works.
+  const { escapeHtml, generateCode, summarize } = globalThis.SolaCodegen || {};
+  const SolaCodegen = globalThis.SolaCodegen;
+  if (!generateCode) {
+    console.error('[Sola] codegen.js did not load; cannot build code snippets.');
+    return;
+  }
 
   let hostDiv = null;
   let isTargetMode = false;
@@ -74,7 +83,7 @@
       }
     }
 
-    // Strategy 3: NOW-CARD-HEADER style "Label123 description"
+    // Strategy 3: card-header elements that read "Label123 description"
     walkShadows(root, 0, (el) => {
       if (!(el.tagName || '').includes('CARD-HEADER')) return;
       const text = (el.shadowRoot?.textContent || el.textContent || '').replace(/\s+/g, ' ').trim();
@@ -84,7 +93,7 @@
       addMetric(m[1], m[2], numVal > 10000 ? 'warn' : 'ok');
     });
 
-    // Strategy 4: NOW-LABEL-VALUE-STACKED style "LabelValue" concatenated
+    // Strategy 4: label/value elements whose text runs together, "LabelValue"
     walkShadows(root, 0, (el) => {
       if (!(el.tagName || '').includes('LABEL') && !(el.tagName || '').includes('VALUE')) return;
       const text = (el.shadowRoot?.textContent || el.textContent || '').replace(/\s+/g, ' ').trim();
@@ -110,52 +119,15 @@
     };
   }
 
-  function generateCode(componentId, metrics, contextLabel) {
-    const page = getPageSummary();
-    const title = contextLabel || page.title;
-    const imp = `import { ${COMPONENTS[componentId]?.name || 'DataCard'} } from '@sola-air-ui/ui';`;
-
-    if (metrics.length === 0) return imp;
-
-    if (metrics.length === 1) {
-      const m = metrics[0];
-      const val = /^[\d,]+$/.test(m.value) ? m.value.replace(/,/g, '') : `"${m.value}"`;
-      return [
-        imp,
-        '',
-        `<DataCard`,
-        `  title="${m.label}"`,
-        `  value={${val}}`,
-        `  variant="${m.variant}"`,
-        `/>`
-      ].join('\n');
-    }
-
-    const metricsLines = metrics.map(m => {
-      const val = /^[\d,]+$/.test(m.value) ? m.value.replace(/,/g, '') : `"${m.value}"`;
-      return `    { label: "${m.label}", value: ${val}, variant: "${m.variant}" },`;
-    }).join('\n');
-
-    return [
-      imp,
-      '',
-      `<DataCard`,
-      `  title="${title}"`,
-      `  metrics={[`,
-      metricsLines,
-      `  ]}`,
-      `/>`
-    ].join('\n');
-  }
-
   function buildCardHTML(metrics, contextLabel) {
     const page = getPageSummary();
-    const heading = contextLabel || page.title;
+    const heading = escapeHtml(contextLabel || page.title);
+    const host = escapeHtml(page.host);
 
     if (metrics.length === 0) {
       return `
         <div style="background:#0c1222;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;width:290px;">
-          <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">${page.host}</div>
+          <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">${host}</div>
           <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;">${heading}</div>
           <div style="font-size:11px;color:#475569;">No structured metrics detected in this element.</div>
         </div>`;
@@ -166,23 +138,23 @@
       const color = m.variant === 'warn' ? '#f59e0b' : m.variant === 'ok' ? '#10b981' : '#94a3b8';
       return `
         <div style="background:#0c1222;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;width:200px;text-align:center;">
-          <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">${m.label}</div>
-          <div style="font-size:40px;font-weight:800;font-family:monospace;color:${color};line-height:1;">${m.value}</div>
-          <div style="font-size:10px;color:#475569;margin-top:6px;">${page.host}</div>
+          <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">${escapeHtml(m.label)}</div>
+          <div style="font-size:40px;font-weight:800;font-family:monospace;color:${color};line-height:1;">${escapeHtml(m.value)}</div>
+          <div style="font-size:10px;color:#475569;margin-top:6px;">${host}</div>
         </div>`;
     }
 
     const rows = metrics.map(m => {
       const color = m.variant === 'warn' ? '#f59e0b' : m.variant === 'ok' ? '#10b981' : '#94a3b8';
       return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid rgba(255,255,255,0.05);">
-        <span style="font-size:11px;color:#94a3b8;max-width:185px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.label}</span>
-        <span style="font-size:12px;font-weight:700;font-family:monospace;color:${color};">${m.value}</span>
+        <span style="font-size:11px;color:#94a3b8;max-width:185px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(m.label)}</span>
+        <span style="font-size:12px;font-weight:700;font-family:monospace;color:${color};">${escapeHtml(m.value)}</span>
       </div>`;
     }).join('');
 
     return `
       <div style="background:#0c1222;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:18px;width:290px;">
-        <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">${page.host}</div>
+        <div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">${host}</div>
         <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:10px;">${heading}</div>
         ${rows}
       </div>`;
@@ -258,6 +230,9 @@
   const DATA_COMPONENTS = new Set(['datacard','gauge','waterfall','dial']);
 
   function showComponent(componentId, targetEl) {
+    // Ids come from the side panel or from a page message. Only known ones count,
+    // so a made-up id (or an object property name) cannot reach the lookup tables.
+    if (!Object.prototype.hasOwnProperty.call(SolaCodegen.COMPONENTS, componentId)) return;
     const isStatic = !DATA_COMPONENTS.has(componentId) && !!STATIC_RENDERS[componentId];
 
     let metrics = [], contextLabel = null, cardHTML;
@@ -285,7 +260,7 @@
 
     createHost(x, y);
 
-    const shadow = hostDiv.attachShadow({ mode: 'open' });
+    const shadow = hostDiv.attachShadow({ mode: 'closed' });
 
     const style = document.createElement('style');
     style.textContent = `
@@ -312,11 +287,8 @@
     `;
     shadow.appendChild(style);
 
-    const fullCode = generateCode(componentId, metrics, contextLabel);
-    const escape = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const codeSummary = metrics.length <= 1
-      ? escape(fullCode.split('\n')[0])
-      : escape(`<DataCard title="${contextLabel || getPageSummary().title}" metrics={[…]} />`);
+    const fullCode = generateCode(componentId, metrics);
+    const codeSummary = escapeHtml(summarize(componentId, metrics));
 
     const wrapper = document.createElement('div');
     wrapper.className = 'wrap';
@@ -520,20 +492,7 @@
       </div>`, 'SentinelCapsule · Health HUD'),
   };
 
-  const COMPONENTS = {
-    datacard:  { name: 'DataCard',        code: `import { DataCard } from '@sola-air-ui/ui';` },
-    gauge:     { name: 'GaugeCard',       code: `import { GaugeCard } from '@sola-air-ui/ui';` },
-    waterfall: { name: 'FlowWaterfall',   code: `import { FlowWaterfall } from '@sola-air-ui/ui';` },
-    dial:      { name: 'TactileDialCard', code: `import { TactileDialCard } from '@sola-air-ui/ui';` },
-    toggle:    { name: 'Toggle',          code: `import { Toggle } from '@sola-air-ui/ui';` },
-    slider:    { name: 'RangeSlider',     code: `import { RangeSlider } from '@sola-air-ui/ui';` },
-    button:    { name: 'Button',          code: `import { Button } from '@sola-air-ui/ui';` },
-    tabs:      { name: 'Tabs',            code: `import { Tabs } from '@sola-air-ui/ui';` },
-    avatar:    { name: 'Avatar',          code: `import { Avatar } from '@sola-air-ui/ui';` },
-    listblock: { name: 'ListBlock',       code: `import { ListBlock } from '@sola-air-ui/ui';` },
-    stream:    { name: 'StreamView',      code: `import { StreamView } from '@sola-air-ui/ui';` },
-    sentinel:  { name: 'SentinelCapsule',code: `import { SentinelCapsule } from '@sola-air-ui/ui';` },
-  };
+
 
   function startTargetPicker(componentId) {
     if (isTargetMode) return;
@@ -704,12 +663,9 @@
     });
     createHost(pos.x, pos.y);
 
-    const shadow = hostDiv.attachShadow({ mode: 'open' });
-    const fullCode = generateCode(componentId, metrics, null);
-    const escape = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const codeSummary = metrics.length <= 1
-      ? escape(fullCode.split('\n')[0])
-      : escape(`<DataCard metrics={[…${metrics.length}]} />`);
+    const shadow = hostDiv.attachShadow({ mode: 'closed' });
+    const fullCode = generateCode(componentId, metrics);
+    const codeSummary = escapeHtml(summarize(componentId, metrics));
 
     const style = document.createElement('style');
     style.textContent = `

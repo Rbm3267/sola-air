@@ -4,8 +4,8 @@
 </script>
 
 <svelte:head>
-  <title>Privacy Policy — Sola & Sola Chrome Extension</title>
-  <meta name="description" content="Official Privacy Policy for Sola and the Sola Chrome Extension (View in My UI)." />
+  <title>Privacy Policy — Sola & Sola AIR Chrome Extension</title>
+  <meta name="description" content="Privacy Policy for Sola and the Sola AIR Chrome extension." />
 </svelte:head>
 
 <div class="flex flex-col w-full bg-white dark:bg-[#090d19] text-slate-900 dark:text-white transition-colors duration-300 min-h-screen">
@@ -25,7 +25,7 @@
         Privacy Policy
       </h1>
       <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-mono mt-2 max-w-[68ch]">
-        Last updated: August 30, 2026 • Applicable to Sola Platform and Sola Chrome Extension ("View in My UI")
+        Last updated: October 16, 2026 • Applicable to Sola Platform and the Sola AIR Chrome extension
       </p>
     </div>
 
@@ -47,11 +47,12 @@
       <section class="space-y-3">
         <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">1. Information We Collect</h2>
         <p>
-          The Sola platform and the Sola Chrome Extension are built to collect as little as possible:
+          The Sola platform and the Sola AIR Chrome extension are built to collect as little as possible:
         </p>
         <ul class="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 text-sm">
           <li>We do not collect names, email addresses, phone numbers, or account profiles.</li>
-          <li>We do not record keystrokes, form inputs, or host page DOM data from visited websites.</li>
+          <li>We do not record keystrokes or form inputs, and we do not collect or store the contents of pages you visit.</li>
+          <li>When you press Target in the extension and drag a box over part of a page, the extension reads the text inside that box in your browser to fill a preview card. That text stays on your device. It is shown on screen and copied to your clipboard only when you press Copy. It is not sent anywhere.</li>
           <li>We do not track authentication tokens, session cookies, or financial credentials.</li>
         </ul>
       </section>
@@ -86,7 +87,7 @@
       <section class="space-y-4">
         <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">4. Chrome Extension Permissions</h2>
         <p>
-          The Sola Chrome Extension declares minimal permissions in its <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs text-slate-800 dark:text-slate-200">manifest.json</code> strictly necessary for sandbox rendering:
+          The Sola AIR Chrome extension declares minimal permissions in its <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs text-slate-800 dark:text-slate-200">manifest.json</code> strictly necessary for sandbox rendering:
         </p>
 
         <div class="divide-y divide-slate-200 dark:divide-white/5 border border-slate-200/80 dark:border-white/10 rounded-2xl overflow-hidden bg-white dark:bg-[#0c1222]">

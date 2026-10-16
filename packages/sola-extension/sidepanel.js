@@ -1,4 +1,4 @@
-// Sola UI — Sidepanel Script
+// Sola AIR — Sidepanel Script
 
 // Dismiss guide
 const dismissBtn = document.getElementById('dismiss-guide');
@@ -44,7 +44,7 @@ document.querySelectorAll('.dock-btn').forEach((btn) => {
       }
       chrome.scripting.executeScript({
         target: { tabId: solaTabId },
-        files: ['content.js']
+        files: ['codegen.js', 'content.js']
       }, () => {
         if (chrome.runtime.lastError) {
           console.error('[Sola] inject failed:', chrome.runtime.lastError.message);

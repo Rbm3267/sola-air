@@ -13,8 +13,6 @@
   let selectedComponent = $state('Telemetry Stream');
   let isTargetHovered = $state(false);
 
-  // Real Extension State
-  let isExtensionDetected = $state(false);
   let copied = $state(false);
 
   // Auto-play animation cycle
@@ -26,16 +24,8 @@
       }
     }, 3200);
 
-    function handleMessage(event: MessageEvent) {
-      if (event.data && (event.data.type === 'SOLA_EXTENSION_CONNECTED' || event.data.type === 'SOLA_EXTENSION_READY')) {
-        isExtensionDetected = true;
-      }
-    }
-    window.addEventListener('message', handleMessage);
-
     return () => {
       clearInterval(interval);
-      window.removeEventListener('message', handleMessage);
     };
   });
 
@@ -67,7 +57,7 @@
 </script>
 
 <svelte:head>
-  <title>Sola UI Extension • Live Browser Overlay</title>
+  <title>Sola AIR Chrome Extension • Live Browser Overlay</title>
 </svelte:head>
 
 <div class="min-h-screen bg-white dark:bg-[#090d19] text-slate-900 dark:text-white flex flex-col font-sans transition-colors duration-300">
@@ -96,7 +86,7 @@
       <!-- Action CTAs -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
         <a
-          href="https://chromewebstore.google.com/detail/sola-ui/cahdakefpjocaapggijdbbgidcjdaehc"
+          href="https://chromewebstore.google.com/detail/sola-air/cahdakefpjocaapggijdbbgidcjdaehc"
           target="_blank"
           rel="noopener noreferrer"
           class="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md shadow-blue-600/20 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto">
@@ -138,9 +128,9 @@
           </div>
           <span class="text-xs font-mono uppercase tracking-wider font-semibold text-sky-600 dark:text-sky-400">Mode 2</span>
         </div>
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Target Element Selector (Click to Anchor)</h3>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Pull numbers off the page (Drag to Select)</h3>
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-          Click <strong>🎯 Target Element</strong>. The extension highlights any container on your webpage with an emerald outline. Click any section (e.g. your app's header, sidebar, or metric container) to anchor the card directly next to it.
+          Press <strong>🎯 Target</strong>, then drag a box over a widget on the page. The extension reads the labels and numbers inside it, including inside Shadow DOM, and puts them in a card next to the box, with the <code class="font-mono">DataCard</code> code to copy. A box over one number gives one card; over several gives a <code class="font-mono">StatGrid</code> of cards.
         </p>
       </div>
 
@@ -172,7 +162,7 @@
           <button
             onclick={() => setStep(3)}
             class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer {activeAnimationStep === 3 ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-slate-950 font-semibold shadow-xs' : 'text-slate-600 dark:text-slate-400'}">
-            3. Anchor on Target Element
+            3. Drag to Select
           </button>
           <button
             onclick={() => setStep(4)}
@@ -213,7 +203,7 @@
                 <circle cx="12" cy="12" r="9" stroke-dasharray="3 3"/>
                 <circle cx="12" cy="12" r="3" fill="currentColor"/>
               </svg>
-              <span class="text-xs font-semibold">Sola UI</span>
+              <span class="text-xs font-semibold">Sola AIR</span>
             </button>
           </div>
         </div>
@@ -300,7 +290,7 @@
               </div>
             {:else}
               <div class="my-6 p-8 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-3xl text-center space-y-2 bg-slate-50/50 dark:bg-white/[0.01]">
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-[68ch]">Click "View in My UI" in the Side Panel on the right to anchor a component overlay right here.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-[68ch]">Pick a component in the Side Panel on the right to place a preview card right here.</p>
                 <button
                   onclick={() => { isSidePanelOpen = true; isCardInjected = true; activeAnimationStep = 3; isTargetHovered = true; }}
                   class="px-4 py-2 rounded-xl bg-blue-500 text-slate-950 font-semibold text-xs hover:bg-blue-400 cursor-pointer shadow-xs">
@@ -327,7 +317,7 @@
                     <div class="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-semibold text-xs">
                       S
                     </div>
-                    <span class="font-semibold text-xs text-slate-900 dark:text-white">Sola UI Side Panel</span>
+                    <span class="font-semibold text-xs text-slate-900 dark:text-white">Sola AIR Side Panel</span>
                   </div>
                   <span class="text-xs font-mono px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-600 font-semibold">12 Cards</span>
                 </div>
@@ -414,9 +404,9 @@
         <div class="w-10 h-10 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 text-violet-600 dark:text-violet-400 flex items-center justify-center font-semibold text-sm">
           3
         </div>
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Drag or Anchor to Element</h3>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Drag, or Select a Region</h3>
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-          Drag the card with your mouse, or click "Target Element" to anchor it to a container on your page.
+          Drag the card with your mouse, or press Target and drag a box over the numbers you want to pull into a card.
         </p>
       </div>
 
