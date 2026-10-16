@@ -75,7 +75,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - A message from a page can only show components the extension knows.
 - `sola-extension.zip` is rebuilt (it was stale and used Windows path separators), by
   `node scripts/extension-zip.mjs`. A test fails if the committed zip differs from the
-  source. The version stays 1.1.0; bump `manifest.json` before uploading to the store.
+  source. Version 1.1.1 (the store only accepts a higher number than what is live).
 
 ## 2026-10-16: core 1.3.0, compiler 1.2.0 (event bus)
 
