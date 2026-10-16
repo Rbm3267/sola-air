@@ -25,7 +25,7 @@
   "homepage": "https://sola-air.dev",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rbm3267/sola-air.git"
+    "url": "git+https://github.com/Rbm3267/sola-air.git"
   },
   "dependencies": {
     "acorn": "^8.10.0",

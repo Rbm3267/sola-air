@@ -18,7 +18,7 @@
   "homepage": "https://sola-air.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rbm3267/sola-air"
+    "url": "https://github.com/Rbm3267/sola-air"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
