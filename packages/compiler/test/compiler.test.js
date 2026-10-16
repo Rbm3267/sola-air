@@ -528,6 +528,67 @@ test('$persist compiles to a persistent signal that reads and assigns like $stat
   assert(code.includes('createPersistentSignal,'), 'imported from core');
 });
 
+
+// ── Production-feedback regressions ───────────────────────────────────────────
+
+console.log('\nScoped styles: :global()');
+
+test(':global(x) after a scoped selector leaves x unscoped', () => {
+  const { css } = compile(`<div class="a">x</div><style>.a :global(table) { color: red; }</style>`);
+  assert(/\.a\.sola-[a-z0-9]+ table\s*\{/.test(css), 'hash on .a, none on table: ' + css);
+  assert(!css.includes(':global'), ':global wrapper removed');
+});
+
+test(':global(body) alone is not scoped at all', () => {
+  const { css } = compile(`<p>x</p><style>:global(body) { margin: 0; }</style>`);
+  assert(/^body\s*\{/.test(css.trim()), css);
+});
+
+test(':global first, scoped last: the hash goes on the last scoped compound', () => {
+  const { css } = compile(`<p class="y">x</p><style>:global(.theme-dark) .y { color: white; }</style>`);
+  assert(/\.theme-dark \.y\.sola-[a-z0-9]+\s*\{/.test(css), css);
+});
+
+test('a comma inside :is() / :global() does not split the selector', () => {
+  const { css } = compile(`<p class="a">x</p><style>.a :is(b, i) { color: red; } .a :global(.x, .y) { color: blue; }</style>`);
+  assert(/\.a :is\(b, i\)\.sola-[a-z0-9]+\s*\{/.test(css), 'list stays grouped: ' + css);
+  assert(/\.a\.sola-[a-z0-9]+ :is\(\.x, \.y\)\s*\{/.test(css), 'grouped, still under .a: ' + css);
+});
+
+console.log('\nScript rewrite: object shorthand');
+
+test('{ open, n } shorthand reads each signal exactly once', () => {
+  const { code } = compile(`<script>let open = $state(false); let n = $state(0);\nfunction b(){ return { open, n }; }</script><p>{n}</p>`);
+  assert(code.includes('{ open: open(), n: n() }'), 'single call each');
+  assert(!/\(\)\(\)/.test(code), 'no double call');
+});
+
+console.log('\nModule outputs');
+
+test('ESM output adds no extra exports unless asked', () => {
+  const { code, dts } = compile(`<p class="a">x</p><style>.a { color: red; }</style>`);
+  assert(!/export const (css|scopeHash)/.test(code), 'default output is unchanged');
+  assert(!dts.includes('scopeHash'), 'dts matches the module');
+});
+
+test('exportStyles: true exports css and scopeHash for Shadow DOM hosts', () => {
+  const { code, css, scopeHash, dts } = compile(`<p class="a">x</p><style>.a { color: red; }</style>`, { exportStyles: true });
+  assert(dts.includes('export declare const css: string;'), 'dts declares them');
+  assert(code.includes(`export const scopeHash = ${JSON.stringify(scopeHash)}`), 'scopeHash exported');
+  assert(code.includes('export const css = `') && code.includes(css), 'css exported');
+});
+
+test('IIFE output stays free of ES exports', () => {
+  const { code } = compile(`<p class="a">x</p><style>.a { color: red; }</style>`, { target: 'iife', exportStyles: true });
+  assert(!/\nexport /.test(code), 'no export statements in an IIFE');
+});
+
+test('compile() returns a .d.ts with typed props', () => {
+  const { dts } = compile(`<script>export let title = 'x'; export let n = 0; export let on = false; export let xs = [];</script><p>{title}</p>`);
+  assert(dts.includes('title?: string;') && dts.includes('n?: number;') && dts.includes('on?: boolean;') && dts.includes('xs?: unknown[];'), dts);
+  assert(dts.includes('export default mount;'), 'default export declared');
+});
+
 // ── Events and bindings ───────────────────────────────────────────────────────
 
 console.log('\nEvents and bindings');

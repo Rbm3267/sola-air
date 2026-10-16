@@ -2,6 +2,28 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## Unreleased (compiler fixes from production feedback)
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: object shorthand of a reactive variable in `<script>` (`{ open, n }`)
+  compiled to `{ open: open()(), n: n()() }` and threw at runtime. Each signal
+  is now read once.
+- **Added `:global(...)` in `<style>`**: opts part of a selector out of scoping, so
+  a scoped component can style markup it did not create, such as `{@html}`
+  output. `.msg :global(table)` becomes `.msg.sola-x table`; `:global(body)` is
+  left alone; `:global(.x, .y)` stays grouped as `:is(.x, .y)`. Previously the
+  scope class was appended after the `:global(...)` text, producing invalid CSS.
+- **Fixed**: commas inside `:is()`, `:not()`, `:where()` or `:global()` no longer
+  split a selector into separate rules during scoping.
+- **Added `exportStyles: true`** (opt-in): the ESM module also exports `css` and
+  `scopeHash`, for hosts that mount into a Shadow Root and adopt the stylesheet
+  themselves. Off by default because it would collide with build scripts that
+  append those exports already.
+- **Added `dts` to the `compile()` result**: a `.d.ts` for the component with its
+  `export let` props typed from their defaults (`unknown` where a default cannot
+  be read confidently).
+
 ## Unreleased (persistent cross-page state)
 
 ### `@sola-air-ui/core`
