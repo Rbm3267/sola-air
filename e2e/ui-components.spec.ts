@@ -6,8 +6,7 @@
 // tests that keep those fixed.
 
 import { test, expect, type Page } from '@playwright/test';
-import { readFileSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -245,10 +244,8 @@ test('the library is overwhelmingly token-driven', async () => {
   // ramp would change the design rather than make it themeable. What must hold
   // is that the great majority of colours are theme-swappable, and that this
   // does not regress.
-  const files = execSync('find . -name "*.sola"', {
-    cwd: join(REPO_ROOT, 'packages/ui/src'),
-    shell: 'C:/Program Files/Git/bin/bash.exe'
-  }).toString().trim().split('\n');
+  const files = (readdirSync(join(REPO_ROOT, 'packages/ui/src'), { recursive: true }) as string[])
+    .filter((rel) => rel.endsWith('.sola'));
 
   let tokenised = 0;
   let bare = 0;
