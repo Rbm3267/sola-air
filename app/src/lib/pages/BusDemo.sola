@@ -1,0 +1,21 @@
+<script>
+  // $persist is a $state that is kept in sessionStorage and synced across tabs.
+  let asks = $persist('home.demo.asks', 0);
+
+  // The latest payload of an event, as a reactive value.
+  let last = $lastEvent('sola:ask');
+
+  // Runs on every 'sola:ask', including repeats of the same question.
+  $on('sola:ask', () => { asks = asks + 1; });
+</script>
+
+<div class="demo">
+  <p class="row"><span>Questions asked</span> <strong id="demo-count">{asks}</strong></p>
+  <p class="row"><span>Latest question</span> <strong id="demo-last">{last?.text ?? 'nothing yet'}</strong></p>
+</div>
+
+<style>
+  .demo { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; display: grid; gap: 10px; }
+  .row { margin: 0; display: flex; justify-content: space-between; gap: 16px; color: #475569; }
+  .row strong { color: #0f172a; }
+</style>
