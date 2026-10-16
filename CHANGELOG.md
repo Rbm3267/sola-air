@@ -2,6 +2,38 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## Unreleased
+
+### `@sola-air-ui/core`
+
+- **Fixed**: effects were never stopped. An effect now belongs to the component, or
+  `{#if}` / `{#each}` branch, that was being built when it was created, and is
+  disposed when that owner is destroyed. Before, a removed branch or an unmounted
+  child kept its effects subscribed. `createEffect` now returns a function that
+  stops the effect for good, and a disposed effect that was already queued no
+  longer runs.
+- **Added `__untrack(fn)`** (used by compiled output): runs `fn` without the
+  surrounding effect tracking what it reads.
+- `esbuild` moved to `devDependencies`; `core` and `sentinel` declare
+  `"sideEffects": false`.
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: props passed to a child component. `<Chip title={ctx.title} />`
+  evaluated `ctx.title` on the signal accessor and passed `undefined`. A prop
+  expression that reads a signal is now evaluated with the read rewritten, and
+  the child is re-mounted when the value changes (so a child's own state resets
+  when such a prop changes). A bare name (`value={rps}`) is still passed as-is, so
+  the live accessor reaches the child unchanged.
+- **Fixed**: a child component's teardown was never called. Children now mount
+  untracked and their teardown is registered with the scope that created them,
+  so `onDestroy` in a child runs when its `{#if}` branch closes, its keyed
+  `{#each}` item is removed, or its parent is destroyed.
+- **Fixed**: a `{#if}` or `{#each}` that is switched or rebuilt now destroys what it
+  built before, instead of leaving it running.
+- A prop with a `null` or `undefined` default is typed `any` in the generated
+  `.d.ts` (it was `unknown`).
+
 ## 2026-10-16: core 1.3.0, compiler 1.2.0 (event bus)
 
 ### `@sola-air-ui/core`

@@ -10,7 +10,8 @@ import {
   pushContext,
   popContext,
   __flush_mounts,
-  __flush_destroys
+  __flush_destroys,
+  __untrack
 } from '../src/index.js';
 
 describe('@sola/core reactivity engine', () => {
@@ -127,5 +128,90 @@ describe('@sola/core reactivity engine', () => {
 
     popContext(childCtx);
     popContext(parentCtx);
+  });
+});
+
+describe('effect ownership', () => {
+  it('stops an effect when the context that created it is destroyed', () => {
+    const [n, setN] = createSignal(0);
+    let runs = 0;
+    const ctx = pushContext();
+    createEffect(() => { n(); runs += 1; });
+    popContext(ctx);
+    assert.strictEqual(runs, 1);
+
+    setN(1);
+    flushSync();
+    assert.strictEqual(runs, 2, 'still reacting while the owner is alive');
+
+    __flush_destroys(ctx);
+    setN(2);
+    flushSync();
+    assert.strictEqual(runs, 2, 'no longer reacting after the owner is destroyed');
+  });
+
+  it('does not run an effect that was queued and then disposed before the flush', () => {
+    const [n, setN] = createSignal(0);
+    let runs = 0;
+    const ctx = pushContext();
+    createEffect(() => { n(); runs += 1; });
+    popContext(ctx);
+
+    setN(1);            // queues the effect
+    __flush_destroys(ctx); // disposes it before the microtask flush
+    flushSync();
+    assert.strictEqual(runs, 1, 'the queued run was dropped');
+  });
+
+  it('createEffect returns a function that stops the effect', () => {
+    const [n, setN] = createSignal(0);
+    let runs = 0;
+    const stop = createEffect(() => { n(); runs += 1; });
+    stop();
+    setN(1);
+    flushSync();
+    assert.strictEqual(runs, 1);
+  });
+
+  it('an effect created with no active context is not owned by anything', () => {
+    const [n, setN] = createSignal(0);
+    let runs = 0;
+    createEffect(() => { n(); runs += 1; });
+    setN(1);
+    flushSync();
+    assert.strictEqual(runs, 2);
+  });
+});
+
+describe('__untrack', () => {
+  it('reads inside untrack do not subscribe the surrounding effect', () => {
+    const [a, setA] = createSignal(1);
+    const [b, setB] = createSignal(1);
+    let runs = 0;
+    createEffect(() => {
+      a();
+      __untrack(() => b());
+      runs += 1;
+    });
+    setB(2);
+    flushSync();
+    assert.strictEqual(runs, 1, 'a change to b alone did not re-run it');
+    setA(2);
+    flushSync();
+    assert.strictEqual(runs, 2, 'a change to a still did');
+  });
+
+  it('returns the value and restores tracking even if fn throws', () => {
+    assert.strictEqual(__untrack(() => 42), 42);
+    const [a, setA] = createSignal(0);
+    let runs = 0;
+    createEffect(() => {
+      try { __untrack(() => { throw new Error('x'); }); } catch {}
+      a();
+      runs += 1;
+    });
+    setA(1);
+    flushSync();
+    assert.strictEqual(runs, 2, 'tracking works after a throw inside untrack');
   });
 });

@@ -1130,25 +1130,43 @@ export function compile(source, options = {}) {
       domCode += `  ${parentVar}.appendChild(${cid}_target);\n`;
 
       // Dynamically-bound props (rows={items}) arrive here as __soladyn_N__ placeholders —
-      // resolve them back to the real expression from dynAttrs and pass it as a raw
-      // (unquoted) property so the child receives live data, not the placeholder text.
+      // resolve them back to the real expression from dynAttrs.
       //
       // `onXxx`-named props (e.g. onChange={handler}) arrive as a
       // __solahandler_N__ marker, because preprocessTemplate cannot tell a
       // component apart from a native element and lifts both the same way.
       // Either way the expression is passed through as a live function.
+      //
+      // Three kinds of dynamic prop:
+      //  - a bare name (rows={items}) is passed as-is. For a $state that is the
+      //    signal accessor, which is how a child receives live data (the shipped
+      //    components accept either an accessor or a plain value);
+      //  - an expression that reads a signal (title={ctx.title}) is evaluated
+      //    with the signal reads rewritten, and the child is re-mounted when
+      //    the value changes;
+      //  - an expression that reads no signal (text={msg.text} in an {#each})
+      //    is evaluated once, when the child is mounted.
       const propEntries = [];
+      let reactiveProps = false;
       for (const [key, val] of Object.entries(node.attribs || {})) {
         const dynMatch = /^__soladyn_(\d+)__$/.exec(val);
         const handlerMatch = /^__solahandler_(\d+)__$/.exec(val);
-        // Dynamic (non-event) component props are deliberately NOT auto-called:
-        // passing the getter is how a child receives live data today, and
-        // README-syntax components rely on it.
-        const propValue = dynMatch
-          ? `(${dynAttrs[parseInt(dynMatch[1], 10)]})`
-          : handlerMatch
-            ? `(${rewrite(handlers[parseInt(handlerMatch[1], 10)])})`
-            : JSON.stringify(val);
+        let propValue;
+        if (dynMatch) {
+          const raw = dynAttrs[parseInt(dynMatch[1], 10)];
+          if (/^\s*[A-Za-z_$][\w$]*\s*$/.test(raw)) {
+            propValue = `(${raw})`;
+          } else {
+            checkExpression(raw, 'component prop');
+            const rewritten = rewrite(raw);
+            if (rewritten !== raw) reactiveProps = true;
+            propValue = `(${rewritten})`;
+          }
+        } else if (handlerMatch) {
+          propValue = `(${rewrite(handlers[parseInt(handlerMatch[1], 10)])})`;
+        } else {
+          propValue = JSON.stringify(val);
+        }
         propEntries.push(`${JSON.stringify(key)}: ${propValue}`);
       }
 
@@ -1162,7 +1180,21 @@ export function compile(source, options = {}) {
         propEntries.push(`children: ${slotVar}`);
       }
 
-      domCode += `  ${node.name}(${cid}_target, { ${propEntries.join(', ')} });\n`;
+      // The child mounts untracked, so nothing it reads while building itself
+      // can re-run the parent's effect. Its teardown is kept and registered with
+      // whatever scope is being built, so it runs when that scope is destroyed.
+      domCode += `  let ${cid}_unmount = null;\n`;
+      domCode += `  onDestroy(() => { if (typeof ${cid}_unmount === 'function') ${cid}_unmount(); ${cid}_unmount = null; });\n`;
+      if (reactiveProps) {
+        domCode += `  createEffect(() => {\n`;
+        domCode += `    const ${cid}_props = { ${propEntries.join(', ')} };\n`;
+        domCode += `    if (typeof ${cid}_unmount === 'function') __untrack(${cid}_unmount);\n`;
+        domCode += `    ${cid}_target.textContent = '';\n`;
+        domCode += `    ${cid}_unmount = __untrack(() => ${node.name}(${cid}_target, ${cid}_props));\n`;
+        domCode += `  });\n`;
+      } else {
+        domCode += `  ${cid}_unmount = __untrack(() => ${node.name}(${cid}_target, { ${propEntries.join(', ')} }));\n`;
+      }
       return;
     }
 
@@ -1173,37 +1205,50 @@ export function compile(source, options = {}) {
     }
 
     // {#if ...} {:else} ... {/if}
+    //
+    // Each time a branch is built it gets its own scope (pushContext). Effects,
+    // onDestroy callbacks and child components created inside register with that
+    // scope, and switching or removing the branch destroys it, so nothing built
+    // for a branch that is no longer on the page keeps running.
     if (node.name === 'sola-if') {
       const cid = `c${uid++}`;
       domCode += `  const ${cid}_a = document.createComment('if');\n`;
       domCode += `  ${parentVar}.appendChild(${cid}_a);\n`;
       domCode += `  let ${cid}_els = [];\n`;
-      
+      domCode += `  let ${cid}_ctx = null;\n`;
+      domCode += `  onDestroy(() => { if (${cid}_ctx) { __flush_destroys(${cid}_ctx); ${cid}_ctx = null; } });\n`;
+
       const thenChild = node.children.find(c => c.name === 'sola-then');
       const elseChild = node.children.find(c => c.name === 'sola-else');
 
+      const emitBranch = (branch) => {
+        if (!branch) return;
+        domCode += `      ${cid}_ctx = pushContext();\n`;
+        domCode += `      try {\n`;
+        domCode += `      const f = document.createDocumentFragment();\n`;
+        branch.children.forEach(child => emitNode(child, 'f', locals));
+        domCode += `      Array.from(f.childNodes).forEach(n => ${cid}_els.push(n));\n`;
+        domCode += `      ${cid}_a.parentNode.insertBefore(f, ${cid}_a.nextSibling);\n`;
+        domCode += `      } finally { popContext(${cid}_ctx); }\n`;
+      };
+
       domCode += `  createEffect(() => {\n`;
+      domCode += `    if (${cid}_ctx) { __flush_destroys(${cid}_ctx); ${cid}_ctx = null; }\n`;
       domCode += `    ${cid}_els.forEach(e => e.remove()); ${cid}_els = [];\n`;
       domCode += `    if (${rewrite(node.attribs.condition)}) {\n`;
-      if (thenChild) {
-        domCode += `      const f = document.createDocumentFragment();\n`;
-        thenChild.children.forEach(child => emitNode(child, 'f', locals));
-        domCode += `      Array.from(f.childNodes).forEach(n => ${cid}_els.push(n));\n`;
-        domCode += `      ${cid}_a.parentNode.insertBefore(f, ${cid}_a.nextSibling);\n`;
-      }
+      emitBranch(thenChild);
       domCode += `    } else {\n`;
-      if (elseChild) {
-        domCode += `      const f = document.createDocumentFragment();\n`;
-        elseChild.children.forEach(child => emitNode(child, 'f', locals));
-        domCode += `      Array.from(f.childNodes).forEach(n => ${cid}_els.push(n));\n`;
-        domCode += `      ${cid}_a.parentNode.insertBefore(f, ${cid}_a.nextSibling);\n`;
-      }
+      emitBranch(elseChild);
       domCode += `    }\n`;
       domCode += `  });\n`;
       return;
     }
 
     // {#each} with optional keyed diffing: {#each items as item (item.id)}
+    //
+    // Like {#if}, what is built for the list gets its own scope so it can be
+    // destroyed: the whole list for an unkeyed each, one scope per key for a
+    // keyed one (so removing an item stops that item's effects and children).
     if (node.name === 'sola-each') {
       const eid = `e${uid++}`;
       // Item/index names shadow signals inside the loop body and key expression
@@ -1217,70 +1262,53 @@ export function compile(source, options = {}) {
       domCode += `  const ${eid}_a = document.createComment('each');\n`;
       domCode += `  ${parentVar}.appendChild(${eid}_a);\n`;
       if (keyExpr) {
-        // Keyed: maintain a Map<key, Node[]> and reconcile on each run
+        // Keyed: maintain a Map<key, { nodes, ctx }> and reconcile on each run
         // Reconcile by walking the new order and moving each key's nodes into
         // place against a cursor. The previous version only ever inserted, and
         // against an anchor it never advanced — so reordering a keyed list (a
         // sort, a drag, a reverse) left the DOM in its original order, silently.
-        domCode += `  let ${eid}_keyMap = new Map();
-`;
-        domCode += `  createEffect(() => {
-`;
-        domCode += `    const _items = ${arrayExpr} || [];
-`;
-        domCode += `    const _parent = ${eid}_a.parentNode;
-`;
-        domCode += `    const _seen = new Set();
-`;
-        domCode += `    let _cursor = ${eid}_a.nextSibling;
-`;
-        domCode += `    for (let _i = 0; _i < _items.length; _i++) {
-`;
-        domCode += `      const ${node.attribs.item} = _items[_i];
-`;
-        if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;
-`;
-        domCode += `      const _key = String(${keyExpr});
-`;
-        domCode += `      _seen.add(_key);
-`;
-        domCode += `      let _nodes = ${eid}_keyMap.get(_key);
-`;
-        domCode += `      if (!_nodes) {
-`;
-        domCode += `        const f = document.createDocumentFragment();
-`;
+        domCode += `  let ${eid}_keyMap = new Map();\n`;
+        domCode += `  onDestroy(() => { for (const _e of ${eid}_keyMap.values()) __flush_destroys(_e.ctx); ${eid}_keyMap.clear(); });\n`;
+        domCode += `  createEffect(() => {\n`;
+        domCode += `    const _items = ${arrayExpr} || [];\n`;
+        domCode += `    const _parent = ${eid}_a.parentNode;\n`;
+        domCode += `    const _seen = new Set();\n`;
+        domCode += `    let _cursor = ${eid}_a.nextSibling;\n`;
+        domCode += `    for (let _i = 0; _i < _items.length; _i++) {\n`;
+        domCode += `      const ${node.attribs.item} = _items[_i];\n`;
+        if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;\n`;
+        domCode += `      const _key = String(${keyExpr});\n`;
+        domCode += `      _seen.add(_key);\n`;
+        domCode += `      let _entry = ${eid}_keyMap.get(_key);\n`;
+        domCode += `      if (!_entry) {\n`;
+        domCode += `        const _kctx = pushContext();\n`;
+        domCode += `        try {\n`;
+        domCode += `        const f = document.createDocumentFragment();\n`;
         node.children.forEach(child => emitNode(child, 'f', eachLocals));
-        domCode += `        _nodes = Array.from(f.childNodes);
-`;
-        domCode += `        ${eid}_keyMap.set(_key, _nodes);
-`;
-        domCode += `      }
-`;
-        domCode += `      for (const _n of _nodes) {
-`;
-        domCode += `        if (_n === _cursor) { _cursor = _cursor.nextSibling; }
-`;
-        domCode += `        else { _parent.insertBefore(_n, _cursor); }
-`;
-        domCode += `      }
-`;
-        domCode += `    }
-`;
-        domCode += `    for (const [_k, _stale] of ${eid}_keyMap) {
-`;
-        domCode += `      if (!_seen.has(_k)) { _stale.forEach(n => n.remove()); ${eid}_keyMap.delete(_k); }
-`;
-        domCode += `    }
-`;
-        domCode += `  });
-`;
+        domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx };\n`;
+        domCode += `        } finally { popContext(_kctx); }\n`;
+        domCode += `        ${eid}_keyMap.set(_key, _entry);\n`;
+        domCode += `      }\n`;
+        domCode += `      for (const _n of _entry.nodes) {\n`;
+        domCode += `        if (_n === _cursor) { _cursor = _cursor.nextSibling; }\n`;
+        domCode += `        else { _parent.insertBefore(_n, _cursor); }\n`;
+        domCode += `      }\n`;
+        domCode += `    }\n`;
+        domCode += `    for (const [_k, _stale] of ${eid}_keyMap) {\n`;
+        domCode += `      if (!_seen.has(_k)) { __flush_destroys(_stale.ctx); _stale.nodes.forEach(n => n.remove()); ${eid}_keyMap.delete(_k); }\n`;
+        domCode += `    }\n`;
+        domCode += `  });\n`;
       } else {
         // Unkeyed: full teardown + rebuild
         domCode += `  let ${eid}_els = [];\n`;
+        domCode += `  let ${eid}_ctx = null;\n`;
+        domCode += `  onDestroy(() => { if (${eid}_ctx) { __flush_destroys(${eid}_ctx); ${eid}_ctx = null; } });\n`;
         domCode += `  createEffect(() => {\n`;
+        domCode += `    if (${eid}_ctx) { __flush_destroys(${eid}_ctx); ${eid}_ctx = null; }\n`;
         domCode += `    ${eid}_els.forEach(e => e.remove()); ${eid}_els = [];\n`;
         domCode += `    const _items = ${arrayExpr} || [];\n`;
+        domCode += `    ${eid}_ctx = pushContext();\n`;
+        domCode += `    try {\n`;
         domCode += `    const f = document.createDocumentFragment();\n`;
         domCode += `    for (let _i = 0; _i < _items.length; _i++) {\n`;
         domCode += `      const ${node.attribs.item} = _items[_i];\n`;
@@ -1289,6 +1317,7 @@ export function compile(source, options = {}) {
         domCode += `    }\n`;
         domCode += `    Array.from(f.childNodes).forEach(n => ${eid}_els.push(n));\n`;
         domCode += `    ${eid}_a.parentNode.insertBefore(f, ${eid}_a.nextSibling);\n`;
+        domCode += `    } finally { popContext(${eid}_ctx); }\n`;
         domCode += `  });\n`;
       }
       return;
@@ -1356,7 +1385,7 @@ export function compile(source, options = {}) {
   root.children.forEach(child => emitNode(child, '__target'));
 
   // Assemble final output module
-  const CORE_EXPORTS = 'createSignal, createDerived, createEffect, createIntent, createData, createPersistentSignal, onMount, onDestroy, pushContext, popContext, __flush_mounts, __flush_destroys';
+  const CORE_EXPORTS = 'createSignal, createDerived, createEffect, createIntent, createData, createPersistentSignal, onMount, onDestroy, pushContext, popContext, __flush_mounts, __flush_destroys, __untrack';
   // The default bus is imported under an alias so a user variable named `bus`
   // cannot shadow what $on / $lastEvent compile to.
   const ESM_CORE_IMPORTS = CORE_EXPORTS + ', bus as __solaBus';

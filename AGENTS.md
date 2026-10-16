@@ -106,6 +106,15 @@ Only a single `{:else}` is supported — there is no `{:else if}` chaining in th
 </div>
 ```
 
+How props reach a child:
+
+- A literal (`title="Cluster Volume"`) is passed as a string.
+- A bare name (`value={rps}`) is passed as-is. For a `$state` that is the signal accessor, so the child can read it live; the shipped components accept either an accessor or a plain value.
+- An expression that reads a signal (`title={ctx.title}`) is evaluated with the signal read rewritten. When its value changes the child is re-mounted with the new value, so the child's own state resets. If a child needs to keep state across changes, pass the accessor (`ctx={ctx}`) and read it inside the child.
+- A callback (`onChange={handler}`) is passed as the function.
+
+A child's `onDestroy` runs when its `{#if}` branch closes, its keyed `{#each}` item is removed, or its parent is destroyed.
+
 ---
 
 ## 4. Signal Reactivity Primitives (`@sola-air-ui/core`)
