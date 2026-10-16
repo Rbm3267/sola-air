@@ -2,6 +2,25 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## Unreleased (persistent cross-page state)
+
+### `@sola-air-ui/core`
+
+- **Added `createPersistentSignal` / `$persist`**: a signal hydrated
+  synchronously from storage, written back on change, and mirrored live to other
+  same-origin tabs and frames over `BroadcastChannel`.
+- **Added `mountShell`**: mounts a compiled component into an idempotent host on
+  `document.body`, inside a closed Shadow DOM by default.
+- **Added `clearPersistentState`**: wipes persisted values and resets live
+  signals everywhere; intended for sign-out.
+
+### `@sola-air-ui/compiler`
+
+- **Added the `$persist` macro.**
+- **Fixed**: component `<style>` blocks were always injected into
+  `document.head`, so they never applied inside a Shadow DOM. They now go into
+  the root the component is mounted in, de-duplicated per root.
+
 ## 2026-09-01 (new primitives)
 
 Scoped down from a larger proposed "engine architecture" spec (Shadow DOM

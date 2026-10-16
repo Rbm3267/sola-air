@@ -500,5 +500,5 @@ export { SolaSentinel, createSentinel } from './sentinel.js';
 // ─── Persistent / cross-page state ───
 // Signals that hydrate from storage and mirror live across tabs, plus a
 // Shadow-DOM shell mounter for UI that should survive full page navigations.
-export { createPersistentSignal } from './persist.js';
+export { createPersistentSignal, clearPersistentState } from './persist.js';
 export { mountShell } from './shell.js';

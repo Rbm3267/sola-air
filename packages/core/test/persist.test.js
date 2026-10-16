@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { createPersistentSignal, createEffect, flushSync } from '../src/index.js';
+import { createPersistentSignal, clearPersistentState, createEffect, flushSync } from '../src/index.js';
 
 function fakeStorage(seed = {}) {
   const m = new Map(Object.entries(seed));
@@ -154,5 +154,30 @@ describe('createPersistentSignal', () => {
 
   it('rejects an empty key', () => {
     assert.throws(() => createPersistentSignal('', 1), TypeError);
+  });
+
+  it('clearPersistentState resets live signals here and in other contexts', async () => {
+    const [read, write, c] = createPersistentSignal('wipe', 'a', { storage: fakeStorage(), channel: 't-wipe' });
+    write('b');
+    const other = new BroadcastChannel('t-wipe');
+    const got = [];
+    other.onmessage = (e) => got.push(e.data);
+    clearPersistentState({ channel: 't-wipe' });
+    assert.strictEqual(read(), 'a', 'local signal reset synchronously');
+    await tick();
+    assert.ok(got.some((m) => m.clearAll), 'other contexts are told to reset');
+    other.close();
+    c.dispose();
+  });
+
+  it('a clearAll broadcast resets signals in this context', async () => {
+    const [read, write, c] = createPersistentSignal('wipe-in', 'a', { storage: fakeStorage(), channel: 't-wipe-in' });
+    write('b');
+    const other = new BroadcastChannel('t-wipe-in');
+    other.postMessage({ clearAll: true, origin: 'elsewhere' });
+    await tick();
+    assert.strictEqual(read(), 'a');
+    other.close();
+    c.dispose();
   });
 });

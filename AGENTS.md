@@ -137,6 +137,8 @@ Full page loads destroy the DOM, so UI that should feel continuous across pages 
 </script>
 ```
 
+Call **`clearPersistentState()`** on sign-out: it removes every persisted Sola value and resets the live signals in this page and every other open tab.
+
 `sessionStorage` is per-tab: a new tab starts from defaults but then live-syncs with other tabs. Use `storage: 'local'` if new tabs should inherit state. Only store JSON-serializable, non-sensitive values.
 
 ---

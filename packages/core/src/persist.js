@@ -70,6 +70,12 @@ function getBus(name) {
   if (channel) {
     channel.onmessage = (e) => {
       const msg = e.data;
+      if (msg && msg.clearAll) {
+        for (const set of handlers.values()) {
+          for (const h of [...set]) h({ cleared: true, origin: msg.origin });
+        }
+        return;
+      }
       if (!msg || typeof msg.key !== 'string') return;
       const set = handlers.get(msg.key);
       if (set) for (const h of [...set]) h(msg);
@@ -212,4 +218,47 @@ export function createPersistentSignal(key, initialValue, options = {}) {
   };
 
   return [read, write, { clear, dispose }];
+}
+
+// ─── clearPersistentState ───
+
+/**
+ * Wipe every persisted Sola value and reset the live signals in this page and in
+ * every other open tab/frame. Call it on sign-out so one user's drawer, thread
+ * or persona never leaks to the next person on a shared machine.
+ *
+ * @param {object} [options]
+ * @param {Array<'session'|'local'>|'session'|'local'} [options.storage=['session','local']]
+ * @param {string} [options.channel='sola-bus']  Must match the channel the signals use.
+ */
+export function clearPersistentState(options = {}) {
+  const { storage = ['session', 'local'], channel: channelName = DEFAULT_CHANNEL } = options;
+  const kinds = Array.isArray(storage) ? storage : [storage];
+
+  for (const kind of kinds) {
+    const s = webStorage(kind === 'local' ? 'localStorage' : 'sessionStorage');
+    if (!s) continue;
+    try {
+      const doomed = [];
+      for (let i = 0; i < s.length; i++) {
+        const k = s.key(i);
+        if (k && k.startsWith(KEY_PREFIX)) doomed.push(k);
+      }
+      doomed.forEach((k) => s.removeItem(k));
+    } catch { /* blocked storage — nothing to clear */ }
+  }
+
+  // Reset signals living in this page (a channel never delivers to itself)...
+  const local = buses.get(channelName);
+  if (local) {
+    for (const set of local.handlers.values()) {
+      for (const h of [...set]) h({ cleared: true, origin: 'clear-all' });
+    }
+  }
+  // ...and in every other context.
+  if (typeof BroadcastChannel !== 'undefined') {
+    const ch = new BroadcastChannel(channelName);
+    ch.postMessage({ clearAll: true, origin: 'clear-all' });
+    ch.close();
+  }
 }

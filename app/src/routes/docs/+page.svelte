@@ -10,7 +10,9 @@
     effectExample,
     mountExample,
     intentMacroExample,
-    dataMacroExample
+    dataMacroExample,
+    persistDockExample,
+    shellBootstrapExample
   } from '$lib/data/docsSnippets';
   import { VERSIONS } from '$lib/data/site';
 
@@ -57,6 +59,7 @@
       name: 'Deployment & Adapters',
       items: [
         { id: 'host-embedding', title: 'React & Portal Embeds' },
+        { id: 'persistent-shell', title: 'Persistent Shell' },
         { id: 'relay-saas', title: 'Sola Relay SaaS' },
         { id: 'mcp', title: 'MCP Server' },
         { id: 'llm-spec', title: 'AI Prompting Spec' }
@@ -755,6 +758,76 @@ export function SolaWidget({ title, value }) {
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{noBundlerEmbedCode}</code></pre>
             </div>
+          </section>
+        </article>
+
+      <!-- ================= 6b. PERSISTENT SHELL ================= -->
+      {:else if activeSection === 'persistent-shell'}
+        <article class="space-y-8">
+          <header class="space-y-2 pb-6 border-b border-slate-900/[0.04] dark:border-white/[0.05]">
+            <p class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 max-w-[68ch]">Deployment & Adapters</p>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Persistent Shell
+            </h1>
+            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-[68ch]">
+              Keep an assistant, drawer or conversation alive across full page navigations in multi-page portals — same open state, same thread, same theme on every page.
+            </p>
+          </header>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">The problem</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              When every page is its own server-rendered endpoint, navigating destroys the DOM. Nothing in memory survives, so a UI that should feel continuous has to be rebuilt from stored state on each load. Two pieces make that cheap: <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$persist</code> for the state, and <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">mountShell</code> for the container.
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">1. State that outlives the page</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$persist(key, initial, options)</code> reads and assigns exactly like <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$state</code>. It hydrates synchronously, so the first paint is already correct, writes back on every change, and mirrors live to other same-origin tabs and frames.
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{persistDockExample}</code></pre>
+            </div>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400">
+                  <tr><th class="px-4 py-2 font-semibold">Option</th><th class="px-4 py-2 font-semibold">Default</th><th class="px-4 py-2 font-semibold">What it does</th></tr>
+                </thead>
+                <tbody class="text-slate-700 dark:text-slate-300 divide-y divide-slate-100 dark:divide-white/5">
+                  <tr><td class="px-4 py-2 font-mono">storage</td><td class="px-4 py-2 font-mono">'session'</td><td class="px-4 py-2">'session' survives navigation in one tab. 'local' also survives new tabs and restarts. 'memory' never persists.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">sync</td><td class="px-4 py-2 font-mono">true</td><td class="px-4 py-2">Mirror changes to other open tabs and frames.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">version</td><td class="px-4 py-2 font-mono">1</td><td class="px-4 py-2">Bump when the stored shape changes; older values are discarded.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">validate</td><td class="px-4 py-2 font-mono">—</td><td class="px-4 py-2">Reject stored or received values that don't match the expected shape.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">ttlMs</td><td class="px-4 py-2 font-mono">—</td><td class="px-4 py-2">Discard stored values older than this.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">sessionStorage</code> is per tab: a new tab starts from defaults, then live-syncs with the others. Choose <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">'local'</code> if new tabs should inherit state. If storage is blocked, the value still works in memory for that page.
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">2. A container that survives with it</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              Load one bootstrap file on every page. <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">mountShell</code> attaches a host to <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">document.body</code> inside a Shadow DOM, so the portal's CSS can't leak in and yours can't leak out. Component styles are injected into the shadow root for you.
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{shellBootstrapExample}</code></pre>
+            </div>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Before you ship</h3>
+            <ul class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch] list-disc pl-5 space-y-2">
+              <li><strong class="text-slate-900 dark:text-white">Clear on sign-out.</strong> Persisted state outlives the session. Call <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">clearPersistentState()</code> when someone signs out so the next person on a shared machine starts clean. It also resets every other open tab.</li>
+              <li><strong class="text-slate-900 dark:text-white">Store little, and nothing sensitive.</strong> Keep to small, JSON-serializable UI state. No tokens, personal data or record contents; fetch those fresh on each page.</li>
+              <li><strong class="text-slate-900 dark:text-white">Pass design tokens in.</strong> CSS custom properties from the portal don't cross the shadow boundary unless defined on the shadow host, so hand your token CSS to <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">css</code>.</li>
+              <li><strong class="text-slate-900 dark:text-white">Debug with an open root.</strong> A closed shadow root is invisible to page scripts and to devtools queries. Use <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">shadow: 'open'</code> in development.</li>
+              <li><strong class="text-slate-900 dark:text-white">No bundler?</strong> Use the IIFE builds: <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.mountShell</code> and <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.clearPersistentState</code> are on the global, and a component compiled with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">target: 'iife'</code> is available as a global mount function.</li>
+              <li><strong class="text-slate-900 dark:text-white">Keep script policy in mind.</strong> If the portal's content-security policy blocks third-party or inline scripts, serve the bootstrap from the portal's own origin.</li>
+            </ul>
           </section>
         </article>
 

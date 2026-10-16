@@ -148,6 +148,47 @@ ${CLOSE}
   <h2>{mrr.data}</h2>
 </div>`;
 
+export const persistDockExample = `${OPEN}
+  // $persist reads like $state, but survives page loads and syncs across tabs.
+  let open = $persist('dock.open', false);
+  let note = $persist('dock.note', '');
+
+  function toggle() {
+    open = !open;
+  }
+${CLOSE}
+
+<div class="dock">
+  <button onclick={toggle}>Toggle assistant</button>
+  {#if open}
+    <aside>Assistant is open</aside>
+  {/if}
+  <input bind:value={note} placeholder="Notes follow you between pages" />
+</div>
+
+${STYLE_OPEN}
+  .dock { font-family: system-ui, sans-serif; display: grid; gap: 8px; max-width: 280px; }
+${STYLE_CLOSE}`;
+
+/** Shown in the docs, not executed as a snippet: it needs a real multi-page site. */
+export const shellBootstrapExample = `// portal-shell.js — load this file on EVERY page of the portal.
+import Dock from './Dock.sola';
+import tokensCss from '@sola-air-ui/tokens/css?raw';
+import { mountShell, clearPersistentState } from '@sola-air-ui/core';
+
+const shell = mountShell(Dock, {}, {
+  id: 'portal-dock',                       // same id on every page; mounting twice is a no-op
+  shadow: import.meta.env?.DEV ? 'open' : 'closed',
+  css: tokensCss,                          // design tokens don't cross the shadow boundary on their own
+  hostStyle: { position: 'fixed', right: '16px', bottom: '16px', zIndex: '900' }
+});
+
+// Persisted state outlives the page, so wipe it when the person signs out.
+export function onSignOut() {
+  clearPersistentState();                  // storage + every open tab
+  shell.teardown();
+}`;
+
 /** Every `.sola` snippet the docs publish, with what it must render. */
 export const solaSnippets: SolaSnippet[] = [
   {
@@ -170,6 +211,13 @@ export const solaSnippets: SolaSnippet[] = [
     expectText: ['All systems nominal'],
     click: 'button',
     expectAfterClick: ['Degraded']
+  },
+  {
+    id: 'persist-dock',
+    code: persistDockExample,
+    expectText: ['Toggle assistant'],
+    click: 'button',
+    expectAfterClick: ['Assistant is open']
   }
 ];
 

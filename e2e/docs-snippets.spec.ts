@@ -106,3 +106,75 @@ test.describe('published docs snippets', () => {
     });
   }
 });
+
+// The Persistent Shell guide promises state that survives a full page load, a
+// style-isolated closed shadow root, and live sync between tabs. about:blank has
+// no storage, so these run on a routed same-origin URL.
+test.describe('persistent shell guide', () => {
+  const ORIGIN = 'http://sola.test';
+
+  async function servePortal(context: import('@playwright/test').BrowserContext) {
+    await context.route(`${ORIGIN}/**`, (route) =>
+      route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>portal</title><h1>Portal page</h1>' })
+    );
+  }
+
+  async function mountDock(page: import('@playwright/test').Page, code: string) {
+    await page.addScriptTag({ content: CORE_IIFE });
+    await page.addScriptTag({ content: code });
+    await page.evaluate(() => {
+      (window as any).shell = (window as any).SolaCore.mountShell((window as any).Dock, {}, { id: 'portal-dock' });
+    });
+  }
+
+  const inShell = (page: import('@playwright/test').Page, fn: string) =>
+    page.evaluate((src) => new Function('root', `return (${src})`)((window as any).shell.root), fn);
+
+  test('open state and typed notes survive navigation; tabs sync; sign-out clears', async ({ context }) => {
+    const compile = await getCompiler();
+    const snippet = solaSnippets.find((s) => s.id === 'persist-dock')!;
+    const { code } = compile(snippet.code, { target: 'iife', exportName: 'Dock', filename: 'docs:persist-dock' });
+
+    await servePortal(context);
+    const page = await context.newPage();
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+
+    await page.goto(`${ORIGIN}/a`);
+    await mountDock(page, code);
+
+    // Shadow root is closed: the page cannot reach into it.
+    expect(await page.evaluate(() => document.getElementById('portal-dock')!.shadowRoot)).toBeNull();
+    // Component styles landed inside the shadow root, not document.head.
+    expect(await inShell(page, `root.querySelectorAll('style').length`)).toBeGreaterThan(0);
+
+    await inShell(page, `root.querySelector('button').click()`);
+    await inShell(page, `(() => { const i = root.querySelector('input'); i.value = 'carry me'; i.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    expect(await inShell(page, `!!root.querySelector('aside')`)).toBe(true);
+
+    // Full navigation: a new document, same origin.
+    await page.goto(`${ORIGIN}/b`);
+    await mountDock(page, code);
+    expect(await inShell(page, `!!root.querySelector('aside')`)).toBe(true);
+    expect(await inShell(page, `root.querySelector('input').value`)).toBe('carry me');
+
+    // A second tab starts from defaults (sessionStorage is per tab) but then syncs live.
+    const other = await context.newPage();
+    await other.goto(`${ORIGIN}/a`);
+    await mountDock(other, code);
+    expect(await inShell(other, `!!root.querySelector('aside')`)).toBe(false);
+    await inShell(other, `root.querySelector('button').click()`);
+    await inShell(other, `root.querySelector('button').click()`); // open, then closed
+    await expect.poll(() => inShell(page, `!!root.querySelector('aside')`)).toBe(false);
+
+    // Sign-out wipes this tab's state and resets the live signals.
+    await inShell(page, `root.querySelector('button').click()`);
+    await expect.poll(() => inShell(page, `!!root.querySelector('aside')`)).toBe(true);
+    await page.evaluate(() => (window as any).SolaCore.clearPersistentState());
+    await expect.poll(() => inShell(page, `!!root.querySelector('aside')`)).toBe(false);
+    await expect.poll(() => inShell(page, `root.querySelector('input').value`)).toBe('');
+    expect(await page.evaluate(() => Object.keys(sessionStorage).filter((k) => k.startsWith('sola:')))).toEqual([]);
+
+    expect(errors).toEqual([]);
+  });
+});

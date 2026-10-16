@@ -219,6 +219,15 @@ export function createPersistentSignal<T>(
   options?: PersistentSignalOptions<T>
 ): [Accessor<T>, Setter<T>, PersistentSignalControls];
 
+/**
+ * Wipe all persisted Sola values and reset live signals in this page and every
+ * other open tab. Call on sign-out.
+ */
+export function clearPersistentState(options?: {
+  storage?: 'session' | 'local' | Array<'session' | 'local'>;
+  channel?: string;
+}): void;
+
 export interface ShellOptions {
   /** Host element id; mounting twice with the same id returns the existing shell. Default 'sola-shell'. */
   id?: string;
