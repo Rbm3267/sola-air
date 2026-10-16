@@ -502,3 +502,4 @@ export { SolaSentinel, createSentinel } from './sentinel.js';
 // Shadow-DOM shell mounter for UI that should survive full page navigations.
 export { createPersistentSignal, clearPersistentState } from './persist.js';
 export { mountShell } from './shell.js';
+export { createBus, configureBus, bus } from './bus.js';

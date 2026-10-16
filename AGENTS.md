@@ -143,6 +143,37 @@ Call **`clearPersistentState()`** on sign-out: it removes every persisted Sola v
 
 ---
 
+## 4c. Events: `createBus`, `$on`, `$lastEvent`
+
+Events are not state. Signals drop a write equal to the current value; an event repeated with the same payload must still be delivered. The bus is a separate primitive (design: `docs/rfcs/0001-bus.md`), and `$intent` is unrelated to it.
+
+```html
+<script>
+  let toast = $state('');
+  let ctx = $lastEvent('sola:context');            // latest payload as a reactive accessor
+  $on('sola:toast', (t) => { toast = t.text; });   // runs on every emission, unsubscribes on destroy
+</script>
+<p>{ctx?.title}</p><p>{toast}</p>
+```
+
+Configure the default bus once, before any component subscribes:
+
+```js
+import { configureBus, bus } from '@sola-air-ui/core';
+configureBus({
+  dom: { target: window, in: ['sola:context'], out: ['sola:navigate'] }, // explicit, disjoint allowlists
+  broadcast: ['sola:toast'],                                             // only these reach other tabs
+  validate: { 'sola:context': (p) => typeof p?.title === 'string', 'sola:toast': (p) => typeof p?.text === 'string' },
+  sticky: { 'sola:context': { store: 'session', ttlMs: 30000, consume: true } },
+  guard: { 'sola:context': ({ from }) => from !== 'remote' },            // per-type; app policy lives here
+  onReject: (info) => {},                                                // in-page only; carries no payload
+});
+```
+
+Rules that `createBus()` enforces by throwing: a type in `dom.in` or `broadcast` needs `validate[type]` or a per-type guard (write `() => true` to accept unchecked on purpose); a type cannot be in both `dom.in` and `dom.out`; `sticky` needs a positive `ttlMs`; a `session` sticky needs an explicit `consume`. Events are local by default; do not make consequential actions sticky (a replay can repeat work; handlers see `meta.replayed`). Never put sensitive data in a `dom.out` payload: any script on the page can read it.
+
+---
+
 ## 5. Compiler Macro Primitives
 
 ### A. Dynamic Intent Generation (`$intent`)

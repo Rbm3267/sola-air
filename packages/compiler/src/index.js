@@ -603,7 +603,7 @@ function collectReactiveVars(ast) {
             decl.init.callee.type === 'Identifier' && decl.id.type === 'Identifier') {
           const macro = decl.init.callee.name;
           if (macro === '$state' || macro === '$persist') vars.state.add(decl.id.name);
-          else if (macro === '$derived') vars.derived.add(decl.id.name);
+          else if (macro === '$derived' || macro === '$lastEvent') vars.derived.add(decl.id.name);
           else if (macro === '$intent') vars.intent.add(decl.id.name);
           else if (macro === '$data') vars.data.add(decl.id.name);
         }
@@ -937,6 +937,16 @@ export function compile(source, options = {}) {
           removedRanges.push([node.start, node.end]);
         }
 
+        // $on('type', handler): subscribe to a bus event for the life of the
+        // component. Compiles to onDestroy(__solaBus.on(type, handler)). The handler
+        // stays in place so signals read inside it are rewritten like any other.
+        if (node.type === 'ExpressionStatement' && node.expression.type === 'CallExpression' &&
+            node.expression.callee.type === 'Identifier' && node.expression.callee.name === '$on') {
+          const call = node.expression;
+          edits.push({ start: call.callee.start, end: call.callee.end, replacement: 'onDestroy(__solaBus.on' });
+          edits.push({ start: call.end, end: call.end, replacement: ')' });
+        }
+
         // $state()/$derived()/$effect()/$intent()/$data() macro declarations.
         // Bracket edits (head + tail) leave the argument expression in place so
         // the reactive rewrite pass below can still auto-call signals inside it.
@@ -969,6 +979,16 @@ export function compile(source, options = {}) {
                 edits.push({ start: arg.end, end: node.end, replacement: `);` });
               } else {
                 edits.push({ start: node.start, end: node.end, replacement: `const ${varName} = createDerived(() => undefined);` });
+              }
+            } else if (macro === '$lastEvent') {
+              // let ctx = $lastEvent('type'): the latest payload of a bus event as a
+              // reactive accessor, released when the component is destroyed.
+              const varName = decl.id.name;
+              if (arg) {
+                edits.push({ start: node.start, end: arg.start, replacement: `const ${varName} = __solaBus.signal(` });
+                edits.push({ start: lastArg.end, end: node.end, replacement: `); onDestroy(${varName}.dispose);` });
+              } else {
+                edits.push({ start: node.start, end: node.end, replacement: `const ${varName} = () => undefined;` });
               }
             } else if (macro === '$effect') {
               if (arg) {
@@ -1337,20 +1357,24 @@ export function compile(source, options = {}) {
 
   // Assemble final output module
   const CORE_EXPORTS = 'createSignal, createDerived, createEffect, createIntent, createData, createPersistentSignal, onMount, onDestroy, pushContext, popContext, __flush_mounts, __flush_destroys';
+  // The default bus is imported under an alias so a user variable named `bus`
+  // cannot shadow what $on / $lastEvent compile to.
+  const ESM_CORE_IMPORTS = CORE_EXPORTS + ', bus as __solaBus';
+  const IIFE_CORE_PULL = CORE_EXPORTS + ', bus: __solaBus';
   let output = '';
   output += `// Compiled by @sola-air-ui/compiler v${COMPILER_VERSION}\n`;
 
   if (target === 'iife') {
     // ServiceNow / no-bundler mode: pull from window.SolaCore global
     output += `(function() {\n`;
-    output += `const { ${CORE_EXPORTS} } = window.SolaCore;\n`;
+    output += `const { ${IIFE_CORE_PULL} } = window.SolaCore;\n`;
     for (const imp of componentImports) {
       output += `// Note: sub-component ${imp.localName} must be pre-loaded before this script\n`;
     }
     output += `\n`;
     output += `window['${options.exportName || 'SolaComponent'}'] = function mount(__target, props = {}) {\n`;
   } else {
-    output += `import { ${CORE_EXPORTS} } from '@sola-air-ui/core';\n`;
+    output += `import { ${ESM_CORE_IMPORTS} } from '@sola-air-ui/core';\n`;
     for (const imp of componentImports) {
       output += `import ${imp.localName} from '${imp.path}';\n`;
     }
