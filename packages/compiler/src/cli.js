@@ -18,7 +18,7 @@ if (args.length === 0 || args.includes('-h') || args.includes('--help')) {
     --target <esm|iife>       Output format (default: esm)
                                 esm  — ES module with import/export (default, for bundlers)
                                 iife — Self-contained IIFE for no-bundler environments
-                                       (ServiceNow Service Portal, plain <script> tags)
+                                       (enterprise portal widgets, plain <script> tags)
     --export-name <Name>      Global name for IIFE target (default: SolaComponent)
                               The compiled component mounts as window['Name'](el, props)
     -v, --version             Print compiler version

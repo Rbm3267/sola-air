@@ -1,5 +1,5 @@
 // Compiles the real @sola-air-ui/ui AmbientSuggestion.sola component to an
-// IIFE bundle for this plain-HTML demo — same target/convention ServiceNow
+// IIFE bundle for this plain-HTML demo — same target/convention portal
 // widgets use (window['AmbientSuggestion'] = mount).
 
 import { compile } from '@sola-air-ui/compiler';

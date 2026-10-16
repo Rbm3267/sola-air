@@ -1,6 +1,6 @@
 // Persistent, cross-context signals.
 //
-// A multi-page app (server-rendered pages, separate .html/.do endpoints, a
+// A multi-page app (server-rendered pages, separate endpoints per page, a
 // portal that does full navigations) throws away the DOM on every page change,
 // so any UI that should *feel* continuous — an open drawer, a chat thread, a
 // theme, a persona — has to be rebuilt from stored state. createPersistentSignal

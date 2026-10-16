@@ -151,7 +151,7 @@
   .modal-backdrop {
     position: absolute;
     inset: 0;
-    /* Some hosts (observed: ServiceNow's Bootstrap-based Service Portal chrome) ship
+    /* Some hosts (observed: a Bootstrap-based enterprise portal chrome) ship
        their own global `.modal-backdrop` class at z-index: 1040. Without an explicit
        z-index here, that leaks in ahead of .modal-card's z-index: 10 and silently
        blocks every click on the modal's own contents, including its close button. */

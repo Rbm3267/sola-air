@@ -64,7 +64,7 @@ const { disconnect } = observe(document.querySelector('#incident-form'), {
 });
 ```
 
-Useful where a framework cannot go — a ServiceNow Service Portal widget, a
+Useful where a framework cannot go — an enterprise portal widget, a
 browser extension, an embedded surface in a page you do not control.
 
 ## Privacy

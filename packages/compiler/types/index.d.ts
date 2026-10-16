@@ -4,7 +4,7 @@ export interface CompileOptions {
   /**
    * 'esm' (default) emits a module importing from @sola-air-ui/core.
    * 'iife' emits a self-contained bundle reading from window.SolaCore, for
-   * ServiceNow and other no-bundler hosts.
+   * enterprise portals and other no-bundler hosts.
    */
   target?: 'esm' | 'iife';
   /** Global name the IIFE build registers itself under. Default 'SolaComponent'. */
