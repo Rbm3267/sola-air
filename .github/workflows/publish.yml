@@ -28,49 +28,49 @@ jobs:
         run: npm run build
 
       - name: Publish @sola-air-ui/sentinel
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/sentinel
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @sola/core
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/core
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @sola/behavior
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/behavior
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @sola/relay
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/relay
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @sola/compiler
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/compiler
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @sola/ui
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @sola/vite-plugin-sola
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/vite-plugin-sola
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish create-sola
-        run: npm publish --provenance
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/create-sola
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
