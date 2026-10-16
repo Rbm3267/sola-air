@@ -32,18 +32,81 @@ function hashString(str) {
   return 'sola-' + Math.abs(hash).toString(36);
 }
 
+// Split on `sep` characters that are not inside (), [] or a string, so
+// `:is(a, b)` and `:global(.x, .y)` are not torn apart at their commas.
+function splitTopLevel(text, isSep) {
+  const parts = [];
+  let depth = 0, quote = null, start = 0;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quote) { if (c === '\\') i++; else if (c === quote) quote = null; continue; }
+    if (c === '"' || c === "'") { quote = c; continue; }
+    if (c === '(' || c === '[') depth++;
+    else if (c === ')' || c === ']') depth--;
+    else if (depth === 0 && isSep(c)) { parts.push(text.slice(start, i)); start = i + 1; }
+  }
+  parts.push(text.slice(start));
+  return parts;
+}
+
+// Put the scope class on one compound selector, before any pseudo-class or
+// pseudo-element (button:hover → button.hash:hover).
+function addScopeToCompound(compound, scopeHash) {
+  const pseudoIdx = compound.search(/::?[\w-]/);
+  if (pseudoIdx > 0) {
+    return `${compound.slice(0, pseudoIdx)}.${scopeHash}${compound.slice(pseudoIdx)}`;
+  }
+  return `${compound}.${scopeHash}`;
+}
+
+// `:global(sel)` opts a piece of a selector out of scoping, so a scoped
+// component can style markup it did not create (e.g. the output of {@html}):
+//   .msg :global(table)  →  .msg.hash table
+//   :global(body)        →  body
+// The scope class always goes on the last compound that is not global.
+function scopeSelector(selector, scopeHash) {
+  const tokens = [];       // alternating compounds and combinators
+  let depth = 0, cur = '', comb = '';
+  const flushCompound = () => { if (cur) { tokens.push({ compound: cur }); cur = ''; } };
+  for (let i = 0; i < selector.length; i++) {
+    const c = selector[i];
+    if (c === '(' || c === '[') depth++;
+    else if (c === ')' || c === ']') depth--;
+    if (depth === 0 && /[\s>+~]/.test(c)) {
+      flushCompound();
+      comb += c;
+      continue;
+    }
+    if (comb) { tokens.push({ comb }); comb = ''; }
+    cur += c;
+  }
+  flushCompound();
+  if (comb) tokens.push({ comb });
+
+  let last = -1;
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (t.compound === undefined) continue;
+    const m = t.compound.match(/^:global\(([\s\S]*)\)$/);
+    // A comma list must stay grouped, or `.a :global(.x, .y)` would turn into
+    // two selectors and leave `.y` outside `.a`.
+    const group = (inner) => (splitTopLevel(inner, c => c === ',').length > 1 ? `:is(${inner})` : inner);
+    if (m) { t.compound = group(m[1]); t.global = true; }
+    else if (t.compound.includes(':global(')) {
+      t.compound = t.compound.replace(/:global\(([\s\S]*?)\)/g, (_, inner) => group(inner));
+      t.global = true;
+    } else { last = i; }
+  }
+  if (last >= 0) tokens[last].compound = addScopeToCompound(tokens[last].compound, scopeHash);
+  return tokens.map(t => t.compound ?? t.comb).join('');
+}
+
 function scopeSelectorList(selector, scopeHash) {
-  return selector
-    .split(',')
+  return splitTopLevel(selector, c => c === ',')
     .map(part => {
       const trimmed = part.trim();
       if (!trimmed) return part;
-      // Insert scope hash before pseudo-class/element (e.g. button:hover → button.hash:hover)
-      const pseudoIdx = trimmed.search(/::?[\w-]/);
-      if (pseudoIdx > 0) {
-        return `${trimmed.slice(0, pseudoIdx)}.${scopeHash}${trimmed.slice(pseudoIdx)}`;
-      }
-      return `${trimmed}.${scopeHash}`;
+      return scopeSelector(trimmed, scopeHash);
     })
     .join(', ');
 }
@@ -638,7 +701,7 @@ function emitReactiveEdits(rootNode, src, vars, edits, initialShadows) {
         const isMemberProp = p.type === 'MemberExpression' && p.property === node && !p.computed;
         const isCallee = (p.type === 'CallExpression' || p.type === 'NewExpression') && p.callee === node;
         const isAssignTarget = (p.type === 'AssignmentExpression' && p.left === node) || p.type === 'UpdateExpression';
-        const isPropertyKey = p.type === 'Property' && p.key === node && !p.computed && !p.shorthand;
+        const isPropertyKey = p.type === 'Property' && p.key === node && !p.computed;
         const isShorthand = p.type === 'Property' && p.shorthand && p.value === node;
         const isMemberObject = p.type === 'MemberExpression' && p.object === node;
 
@@ -1336,6 +1399,13 @@ export function compile(source, options = {}) {
   output += `};\n`;
   if (target === 'iife') {
     output += `})();\n`;
+  } else if (options.exportStyles) {
+    // Opt-in: the stylesheet and its scope class as module exports, for hosts
+    // that mount into a Shadow Root and adopt the CSS themselves (e.g. via
+    // adoptedStyleSheets). Off by default so existing build scripts that append
+    // their own `css` / `scopeHash` exports, or strip exports, keep working.
+    output += `\nexport const scopeHash = ${JSON.stringify(scopeHash)};\n`;
+    output += `export const css = \`${escapeTemplateLiteral(scopedCss || '')}\`;\n`;
   }
 
   // The reactive rewrite can add or remove characters within a line but never
@@ -1355,6 +1425,38 @@ export function compile(source, options = {}) {
     code: output,
     scopeHash,
     css: scopedCss,
-    map
+    map,
+    dts: buildDeclarations(exportedProps, !!options.exportStyles)
   };
+}
+
+// Best-effort TypeScript type for a prop, from the literal its default is
+// declared with. Anything it cannot read confidently is `unknown`, which stays
+// safe for callers rather than claiming a precision it does not have.
+function inferPropType(defaultSrc) {
+  const d = String(defaultSrc ?? '').trim();
+  if (/^(['"`])[\s\S]*\1$/.test(d)) return 'string';
+  if (/^-?\d[\d_]*(\.\d+)?([eE][+-]?\d+)?$/.test(d)) return 'number';
+  if (d === 'true' || d === 'false') return 'boolean';
+  if (d.startsWith('[')) return 'unknown[]';
+  if (d.startsWith('{')) return 'Record<string, unknown>';
+  if (/^(\(.*\)|\w+)\s*=>|^function\b/.test(d)) return '(...args: any[]) => any';
+  return 'unknown';
+}
+
+// A `.d.ts` for a compiled component, so a TypeScript host can import the
+// compiled module with its props checked. Every prop is optional because each
+// has a default.
+function buildDeclarations(props, exportStyles) {
+  const fields = props
+    .map(p => `  ${/^[A-Za-z_$][\w$]*$/.test(p.name) ? p.name : JSON.stringify(p.name)}?: ${inferPropType(p.default)};`)
+    .join('\n');
+  return [
+    `export interface Props {${fields ? '\n' + fields + '\n' : ''}}`,
+    `/** Mounts the component into \`target\` and returns a teardown function. */`,
+    `declare function mount(target: Element | ShadowRoot, props?: Props): () => void;`,
+    `export default mount;`,
+    ...(exportStyles ? [`export declare const scopeHash: string;`, `export declare const css: string;`] : []),
+    ``
+  ].join('\n');
 }
