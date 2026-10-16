@@ -1,6 +1,7 @@
 <script lang="ts">
   import DataCard from './DataCard.svelte';
   import GaugeCard from './GaugeCard.svelte';
+  import { dataMacroExample, dataPostgresExample } from '$lib/data/docsSnippets';
 
   let activeMode = $state<'sheets' | 'postgres'>('sheets');
   let isSimulatingUpdate = $state(false);
@@ -48,10 +49,10 @@
           <span>$data • Live data</span>
         </div>
         <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-[-0.03em]">
-          Bind a Google Sheet or a database in one line.
+          Read live data as a signal.
         </h2>
         <p class="text-slate-600 dark:text-slate-400 text-base max-w-xl mt-2 leading-relaxed">
-          Whether you're building a <strong>financial operations dashboard from Google Sheets</strong> or an <strong>infrastructure monitor from PostgreSQL</strong>, the data arrives as a signal your markup can read. Sources go through the Sola Relay, which also supports MySQL.
+          <code class="font-mono text-[0.9em]">$data</code> asks the Sola Relay for rows from PostgreSQL, MySQL or a Google Sheet and gives your markup a signal with <code class="font-mono text-[0.9em]">loading</code>, <code class="font-mono text-[0.9em]">data</code> and <code class="font-mono text-[0.9em]">error</code>. The relay runs on your machine or network, so database credentials stay out of the browser.
         </p>
       </div>
 
@@ -61,13 +62,13 @@
           onclick={() => activeMode = 'sheets'}
           class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-mono font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 {activeMode === 'sheets' ? 'bg-white dark:bg-white/10 text-slate-900 dark:text-white border border-slate-200 dark:border-white/15 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
           <svg class="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-          <span>Google Sheets Relay</span>
+          <span>Google Sheet</span>
         </button>
         <button
           onclick={() => activeMode = 'postgres'}
           class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-mono font-semibold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 {activeMode === 'postgres' ? 'bg-white dark:bg-white/10 text-slate-900 dark:text-white border border-slate-200 dark:border-white/15 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
           <svg class="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
-          <span>PostgreSQL Cluster</span>
+          <span>PostgreSQL</span>
         </button>
       </div>
     </div>
@@ -82,41 +83,20 @@
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse"></span>
               <span class="text-xs font-mono font-semibold text-slate-300">
-                {activeMode === 'sheets' ? 'App.sola (Financial Ops Sheet)' : 'App.sola (PostgreSQL Cluster)'}
+                {activeMode === 'sheets' ? 'Metrics.sola' : 'Nodes.sola'}
               </span>
             </div>
             <span class="text-xs font-mono bg-slate-800 border border-slate-700 px-2 py-0.5 rounded text-amber-300">
-              zero-vdom
+              .sola
             </span>
           </div>
 
-          <pre class="font-mono text-xs sm:text-[13px] leading-relaxed text-slate-300 overflow-x-auto whitespace-pre"><code>{#if activeMode === 'sheets'}&lt;script&gt;
-  // 1 line Google Sheets reactive binding
-  const finance = $data("sheet://1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms");
-&lt;/script&gt;
-
-&lt;!-- Sola auto-mounts reactive UI --&gt;
-&lt;DataCard 
-  title="Monthly Recurring Revenue" 
-  value="&#123;finance.mrr&#125;" 
-  trend="&#123;finance.delta&#125;" 
-/&gt;
-&lt;GaugeCard 
-  title="Gross Margin" 
-  value="&#123;finance.margin&#125;%" 
-  percentage=&#123;finance.margin&#125; 
-/&gt;{:else}&lt;script&gt;
-  // Database connector (credentials stay in your local relay)
-  const cluster = $data("postgres://internal/nodes");
-&lt;/script&gt;
-
-&lt;DataCard title="Active Pods" value="&#123;cluster.pods&#125;" trend="&#123;cluster.health&#125;" /&gt;
-&lt;GaugeCard title="Cluster CPU" value="&#123;cluster.cpu&#125;%" /&gt;{/if}</code></pre>
+          <pre class="font-mono text-xs sm:text-[13px] leading-relaxed text-slate-300 overflow-x-auto whitespace-pre"><code>{activeMode === 'sheets' ? dataMacroExample : dataPostgresExample}</code></pre>
         </div>
 
         <div class="mt-8 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
-          <span>Polling interval: 15s</span>
-          <span class="text-blue-400 font-bold">Auto-Synchronized</span>
+          <span>refresh: 15s</span>
+          <span class="text-slate-400">Rows come from the relay</span>
         </div>
       </div>
 
@@ -127,7 +107,7 @@
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-2">
               <span class="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                {activeMode === 'sheets' ? 'Google Sheet Stream: Finance Operations' : 'PostgreSQL Stream: Cloud Nodes'}
+                Example output (illustrative numbers, no live connection)
               </span>
             </div>
             {#if activeMode === 'sheets'}
@@ -140,7 +120,7 @@
                   <span>Syncing...</span>
                 {:else}
                   <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  <span>Simulate Sheet Row Insert</span>
+                  <span>Simulate a new row</span>
                 {/if}
               </button>
             {/if}
@@ -166,7 +146,7 @@
                   title: "Gross Margin Rate",
                   value: `${financeData.grossMargin}%`,
                   percentage: financeData.grossMargin,
-                  subtext: `LTV/CAC Ratio: ${financeData.ltvCac}x (Healthy SaaS Unit Economics)`,
+                  subtext: `LTV/CAC ratio: ${financeData.ltvCac}x `,
                   color: "amber"
                 }} />
               </div>
@@ -188,7 +168,7 @@
                   title: "Global CPU Utilization",
                   value: `${clusterData.cpuLoad}%`,
                   percentage: clusterData.cpuLoad,
-                  subtext: "Distributed across 3 AWS Availability Zones",
+                  subtext: "Across all nodes",
                   color: "sky"
                 }} />
               </div>
@@ -197,8 +177,8 @@
         </div>
 
         <div class="mt-8 pt-4 border-t border-slate-100 dark:border-white/[0.04] flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
-          <span>Zero VDOM • Direct DOM Mutator</span>
-          <span class="text-slate-600 dark:text-slate-400 font-bold">Latency: 0.2ms</span>
+          <span>Svelte preview of the cards</span>
+          <span class="text-slate-600 dark:text-slate-400">Not a live relay</span>
         </div>
 
       </div>

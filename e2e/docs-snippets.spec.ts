@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { solaSnippets, jsSnippets } from '../app/src/lib/data/docsSnippets';
+import { solaSnippets, jsSnippets, dataSnippets } from '../app/src/lib/data/docsSnippets';
 
 const REPO_ROOT = join(__dirname, '..');
 
@@ -266,4 +266,68 @@ test.describe('event bus', () => {
 
     expect(errors).toEqual([]);
   });
+});
+
+
+// $data snippets call the Sola Relay, so they cannot run like the snippets above.
+// The relay request is answered here with fixed rows, which still proves the
+// published code compiles, reads the { loading, data, error } signal correctly
+// and renders what the relay sends back.
+test.describe('published $data snippets', () => {
+  for (const snippet of dataSnippets) {
+    test(`$data snippet "${snippet.id}" renders rows from the relay`, async ({ page }) => {
+      const compile = await getCompiler();
+      const { code } = compile(snippet.code, {
+        target: 'iife',
+        exportName: 'DocsSnippet',
+        filename: `docs:${snippet.id}`
+      });
+
+      const pageErrors: string[] = [];
+      page.on('pageerror', (err) => pageErrors.push(err.message));
+
+      let relayBody: Record<string, unknown> | undefined;
+      const cors = {
+        'access-control-allow-origin': '*',
+        'access-control-allow-headers': 'content-type',
+        'access-control-allow-methods': 'POST, OPTIONS'
+      };
+      await page.route('**/api/query', async (route) => {
+        const request = route.request();
+        if (request.method() === 'OPTIONS') {
+          await route.fulfill({ status: 204, headers: cors });
+          return;
+        }
+        relayBody = request.postDataJSON();
+        // Hold the answer back briefly so the loading state is observable.
+        await new Promise((r) => setTimeout(r, 300));
+        await route.fulfill({
+          status: 200,
+          headers: { ...cors, 'content-type': 'application/json' },
+          body: JSON.stringify({ rows: snippet.rows, rowCount: snippet.rows.length })
+        });
+      });
+
+      await page.goto('about:blank');
+      await page.addScriptTag({ content: CORE_IIFE });
+      await page.addScriptTag({ content: code });
+      await page.evaluate(() => {
+        const host = document.createElement('div');
+        host.id = 'host';
+        document.body.appendChild(host);
+        (window as any).DocsSnippet(host, {});
+      });
+
+      const host = page.locator('#host');
+      for (const expected of snippet.expectText) {
+        await expect(host).toContainText(expected);
+      }
+
+      const text = (await host.innerText()).trim();
+      expect(text, 'snippet must not render undefined').not.toContain('undefined');
+      expect(text, 'snippet must not render function source').not.toMatch(/=>\s*\{|function\s*\(/);
+      expect(relayBody?.source, 'the relay is asked for the source the snippet names').toBeTruthy();
+      expect(pageErrors, 'snippet must not throw').toEqual([]);
+    });
+  }
 });

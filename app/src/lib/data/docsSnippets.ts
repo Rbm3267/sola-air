@@ -139,14 +139,66 @@ ${CLOSE}
 </div>`;
 
 export const dataMacroExample = `${OPEN}
-  // Live connection through the Sola Relay, refreshed on an interval
-  let mrr = $data("sheet://finance/q3_metrics?field=mrr", { refresh: "30s" });
+  // Rows from a Google Sheet through the Sola Relay, re-fetched every 15 seconds.
+  // Each row is an object keyed by the sheet's header row.
+  let rows = $data("sheet://YOUR_SHEET_ID", { refresh: "15s" });
 ${CLOSE}
 
-<div class="metric-tile">
-  <span>Monthly Revenue</span>
-  <h2>{mrr.data}</h2>
-</div>`;
+{#if rows().loading}
+  <p>Loading…</p>
+{/if}
+{#if rows().error}
+  <p>{rows().error}</p>
+{/if}
+{#if rows().data}
+  <ul>
+    {#each rows().data as row (row.month)}
+      <li>{row.month}: {row.mrr}</li>
+    {/each}
+  </ul>
+{/if}`;
+
+export const dataPostgresExample = `${OPEN}
+  // Same shape from a PostgreSQL table. The connection string lives in the
+  // relay, so database credentials never reach the browser.
+  let nodes = $data("postgres-primary:nodes", { refresh: "15s" });
+${CLOSE}
+
+{#if nodes().loading}
+  <p>Loading…</p>
+{/if}
+{#if nodes().error}
+  <p>{nodes().error}</p>
+{/if}
+{#if nodes().data}
+  <ul>
+    {#each nodes().data as node (node.name)}
+      <li>{node.name}: {node.status}</li>
+    {/each}
+  </ul>
+{/if}`;
+
+/** Snippets that talk to the relay. The e2e suite answers the relay request itself. */
+export const dataSnippets = [
+  {
+    id: 'data-sheet',
+    code: dataMacroExample,
+    rows: [
+      { month: 'Aug', mrr: 169400 },
+      { month: 'Sep', mrr: 184200 }
+    ],
+    expectText: ['Loading…', 'Aug: 169400', 'Sep: 184200']
+  },
+  {
+    id: 'data-postgres',
+    code: dataPostgresExample,
+    rows: [
+      { name: 'node-a', status: 'ready' },
+      { name: 'node-b', status: 'draining' }
+    ],
+    expectText: ['node-a: ready', 'node-b: draining']
+  }
+];
 
 export const persistDockExample = `${OPEN}
   // $persist reads like $state, but survives page loads and syncs across tabs.
