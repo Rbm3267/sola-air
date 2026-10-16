@@ -1,7 +1,11 @@
 <script>
-  let title = "METRIC";
-  let value = "$0.00";
-  let trend = "+0.0%";
+  // Props a parent sets. These used to be plain `let`s, which the compiler keeps
+  // private to the component, so every DataCard rendered the defaults no matter
+  // what it was given.
+  export let title = "METRIC";
+  export let value = "$0.00";
+  // Leave trend empty to hide the footer rather than show a made-up one.
+  export let trend = "";
 </script>
 
 <div class="sola-data-card">
@@ -13,10 +17,12 @@
     </div>
   </div>
   <div class="card-value">{value}</div>
-  <div class="card-footer">
-    <span class="trend-badge">{trend}</span>
-    <span class="period-label">vs last period</span>
-  </div>
+  {#if trend}
+    <div class="card-footer">
+      <span class="trend-badge">{trend}</span>
+      <span class="period-label">vs last period</span>
+    </div>
+  {/if}
 </div>
 
 <style>

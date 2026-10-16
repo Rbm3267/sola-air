@@ -36,6 +36,22 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   built before, instead of leaving it running.
 - A prop with a `null` or `undefined` default is typed `any` in the generated
   `.d.ts` (it was `unknown`).
+- **Fixed**: imports in a `.sola` script were deleted, except `.sola` files. Now:
+  - A component imported from a package (`import DataCard from
+    '@sola-air-ui/ui/data-card'`, or `import { Table } from '@sola-air-ui/ui'`) is
+    mounted as a component. Before, `<DataCard />` compiled to
+    `document.createElement('DataCard')`, an unknown HTML element, so the import form
+    the docs show did nothing.
+  - Any other import is kept, so a script can call what it imports.
+  - A name imported from `@sola-air-ui/core` that the compiler does not already
+    provide (such as `configureData`) is imported; one it does provide is not bound
+    twice. For the no-bundler target these names come from `window.SolaCore`.
+
+### `@sola-air-ui/ui`
+
+- **Fixed `DataCard`**: it declared `title`, `value` and `trend` with plain `let`, so
+  it ignored every prop and always showed "METRIC $0.00 +0.0%". They are now props.
+  With no `trend` the footer is hidden, not filled with a made-up one.
 
 ## 2026-10-16: core 1.3.0, compiler 1.2.0 (event bus)
 
