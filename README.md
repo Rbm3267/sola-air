@@ -11,7 +11,6 @@
 
 <p align="center">
   <a href="https://sola-air.dev"><b>sola-air.dev →</b></a> • 
-  <a href="https://sola-air.vercel.app"><b>sola-air.vercel.app →</b></a> • 
   <a href="./CHANGELOG.md"><b>Changelog →</b></a>
 </p>
 
@@ -94,6 +93,21 @@ The core runtime is about 7.5 kB gzipped. `scripts/core-size.mjs` measures it, a
 
 ---
 
+## Shells and Events
+
+`mountShell(component, props, { id, shadow, css })` mounts a compiled component into a host element on `document.body`, inside a closed Shadow DOM by default, so host-page CSS cannot leak in or out. Pair it with `$persist` and the same bootstrap on every page rebuilds the shell in the state the user left it.
+
+`createBus` / `configureBus` carry events between components, the page and other tabs. Events are not state: a repeated payload is still delivered. Types that cross the page boundary need an explicit allowlist and a validator. See the [docs](https://sola-air.dev/docs) for the full configuration.
+
+---
+
+## Editor and browser tools
+
+- **VS Code**: `SolaAIR.sola-vscode` adds `.sola` syntax highlighting (source in [`packages/vscode-extension`](./packages/vscode-extension)).
+- **Chrome extension**: pick elements on any page and get matching Sola component code in a side panel (source in [`packages/sola-extension`](./packages/sola-extension)).
+
+---
+
 ## Ambient Behavior Observation (Sola Sentinel)
 
 `SolaSentinel` observes real user behavior — clicks, field focus, revisits, typed content — and turns it into two things: a real computed friction score (`flowIndex`), and, paired with `$intent`, proactive next-step suggestions.
@@ -148,7 +162,9 @@ sola/
 │   ├── sola-mcp/          # MCP server for AI-driven component generation
 │   ├── sola-air/          # Meta-package (installs the full Sola AIR stack)
 │   ├── vite-plugin-sola/  # Vite plugin for .sola SFC compilation
-│   └── create-sola/       # Project scaffolding CLI
+│   ├── create-sola/       # Project scaffolding CLI
+│   ├── vscode-extension/  # VS Code language support for .sola
+│   └── sola-extension/    # Chrome extension (side panel code generator)
 ├── examples/
 │   └── ambient-poc/       # Standalone Sola Sentinel + $intent ambient-suggestion demo
 ├── brand/                 # Official brand kit, logos, and favicons
