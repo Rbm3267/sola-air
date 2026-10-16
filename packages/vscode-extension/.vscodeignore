@@ -1,0 +1,7 @@
+# Only the manifest, README, LICENSE, icons and grammar belong in the .vsix.
+**
+!package.json
+!README.md
+!LICENSE
+!icons/**
+!syntaxes/**
