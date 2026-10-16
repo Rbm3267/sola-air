@@ -1,0 +1,38 @@
+name: Check npm token
+
+# Confirms the NPM_TOKEN secret can authenticate to npm, without publishing
+# anything. Runs when this file changes (so a token swap can be tested in a PR)
+# and on demand from the Actions tab.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/npm-token-check.yml'
+
+jobs:
+  whoami:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Confirm the secret is set
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN is empty or not available to this run (secrets are not passed to pull requests from forks)."
+            exit 1
+          fi
+
+      - name: Authenticate to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          user=$(npm whoami) || { echo "::error::npm rejected NPM_TOKEN. It is revoked, expired, or mistyped."; exit 1; }
+          echo "NPM_TOKEN authenticates as: $user"
