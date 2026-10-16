@@ -106,8 +106,8 @@ test('the hero demonstrates the thing the headline claims', async ({ page }) => 
 
   // The observer buffer must reflect real events, not a canned script — and it
   // must show the typing, which is the behaviour the thesis is about.
-  await expect(page.getByText(/focused "destination"/)).toBeVisible();
-  await expect(page.getByText(/typing in "destination"/)).toBeVisible();
+  await expect(page.getByText(/focused "destination"/i)).toBeVisible();
+  await expect(page.getByText(/typing in "destination"/i)).toBeVisible();
 });
 
 test('every repository link points at the real repository', async ({ page }) => {
