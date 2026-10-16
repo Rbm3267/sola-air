@@ -252,3 +252,72 @@ export function mountShell(
   props?: Record<string, unknown>,
   options?: ShellOptions
 ): Shell;
+
+// ─── Event bus ───
+
+export type BusEvents = Record<string, unknown>;
+
+export interface BusMeta<T extends string = string> {
+  type: T;
+  from: 'local' | 'dom' | 'remote';
+  /** Unique per delivery. */
+  id: string;
+  time: number;
+  /** True when this delivery is a sticky replay to a late handler. */
+  replayed: boolean;
+}
+
+export interface BusRejection {
+  type: string;
+  reason: 'invalid' | 'guard' | 'unlisted';
+  from: 'local' | 'dom' | 'remote';
+  direction: 'in' | 'out';
+  // Deliberately no payload: rejected data is not passed on.
+}
+
+export interface BusGuardContext<E extends BusEvents = BusEvents> {
+  type: keyof E & string;
+  payload: unknown;
+  from: 'local' | 'dom' | 'remote';
+  direction: 'in' | 'out';
+}
+
+export type StickyOptions =
+  | { store: 'memory'; ttlMs: number }
+  | { store: 'session'; ttlMs: number; /** Required: true = one-shot handoff, false = shared context. */ consume: boolean };
+
+export interface BusOptions<E extends BusEvents = BusEvents> {
+  /** BroadcastChannel name. Default 'sola-bus'. */
+  channel?: string;
+  /** Types mirrored to other tabs. Each needs a validator or per-type guard. */
+  broadcast?: Array<keyof E & string>;
+  dom?: {
+    target?: EventTarget;
+    /** Host CustomEvents forwarded into the bus. Each needs a validator or per-type guard. */
+    in?: Array<keyof E & string>;
+    /** Bus events re-dispatched as CustomEvents. Must not overlap `in`. */
+    out?: Array<keyof E & string>;
+  };
+  sticky?: { [K in keyof E & string]?: StickyOptions };
+  validate?: { [K in keyof E & string]?: (payload: unknown) => boolean };
+  /** A function applies to every type; a map applies per type (and satisfies the boundary invariant). */
+  guard?: ((ctx: BusGuardContext<E>) => boolean) | { [K in keyof E & string]?: (ctx: BusGuardContext<E>) => boolean };
+  /** In-page only; never forwarded to the DOM or the bus. */
+  onReject?: (info: BusRejection) => void;
+  storage?: { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void };
+}
+
+export interface Bus<E extends BusEvents = BusEvents> {
+  /** Returns false if the event was rejected. */
+  emit<K extends keyof E & string>(type: K, payload: E[K]): boolean;
+  on<K extends keyof E & string>(type: K, handler: (payload: E[K], meta: BusMeta<K>) => void): () => void;
+  /** Latest payload as a reactive accessor. An identical repeat still updates it. */
+  signal<K extends keyof E & string>(type: K): Accessor<E[K] | undefined> & { dispose(): void };
+  dispose(): void;
+}
+
+export function createBus<E extends BusEvents = BusEvents>(options?: BusOptions<E>): Bus<E>;
+/** Configure the default bus. Must run before any component subscribes. */
+export function configureBus<E extends BusEvents = BusEvents>(options: BusOptions<E>): Bus<E>;
+/** The default bus used by the $on and $lastEvent macros. */
+export const bus: Bus;

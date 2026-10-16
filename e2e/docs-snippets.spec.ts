@@ -178,3 +178,92 @@ test.describe('persistent shell guide', () => {
     expect(errors).toEqual([]);
   });
 });
+
+// The event bus: a host page talks to a shell inside a closed shadow root without
+// importing anything, rejected input is dropped, and only `broadcast` types reach
+// other tabs. Runs on a routed same-origin URL because about:blank has no storage.
+test.describe('event bus', () => {
+  const ORIGIN = 'http://sola.test';
+  const COMPONENT = `<script>
+    let toast = $state('');
+    let ctx = $lastEvent('sola:context');
+    $on('sola:toast', (t) => { toast = t.text; });
+  </script>
+  <div><p id="ctx">{ctx?.title}</p><p id="toast">{toast}</p></div>`;
+
+  type PageT = import('@playwright/test').Page;
+  const read = (page: PageT, sel: string) =>
+    page.evaluate((s) => (window as any).shell.root.querySelector(s)?.textContent ?? null, sel);
+
+  async function boot(page: PageT, code: string) {
+    await page.addScriptTag({ content: CORE_IIFE });
+    await page.addScriptTag({ content: code });
+    await page.evaluate(() => {
+      const core = (window as any).SolaCore;
+      core.configureBus({
+        dom: { target: window, in: ['sola:context'], out: ['sola:navigate'] },
+        broadcast: ['sola:toast'],
+        validate: {
+          'sola:context': (p: any) => typeof p?.title === 'string',
+          'sola:toast': (p: any) => typeof p?.text === 'string',
+        },
+        onReject: (i: any) => ((window as any).rejections ||= []).push(i),
+      });
+      (window as any).shell = core.mountShell((window as any).Comp, {}, { id: 'bus-shell' });
+    });
+  }
+
+  test('host CustomEvents reach a closed shadow root; bad input is dropped; only broadcast types cross tabs', async ({ context }) => {
+    const compile = await getCompiler();
+    const { code } = compile(COMPONENT, { target: 'iife', exportName: 'Comp', filename: 'docs:bus' });
+    await context.route(`${ORIGIN}/**`, (r) => r.fulfill({ contentType: 'text/html', body: '<!doctype html><title>portal</title><h1>page</h1>' }));
+
+    const a = await context.newPage();
+    const errors: string[] = [];
+    a.on('pageerror', (e) => errors.push(e.message));
+    await a.goto(`${ORIGIN}/a`);
+    await boot(a, code);
+
+    // A host script with no Sola import dispatches a plain CustomEvent.
+    await a.evaluate(() => window.dispatchEvent(new CustomEvent('sola:context', { detail: { title: 'INC0012' } })));
+    await expect.poll(() => read(a, '#ctx')).toBe('INC0012');
+
+    // The shell sits in a closed root: the page cannot read it.
+    expect(await a.evaluate(() => document.getElementById('bus-shell')!.shadowRoot)).toBeNull();
+
+    // Malformed input and unlisted types are dropped, and reported without the payload.
+    await a.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('sola:context', { detail: { title: 99, secret: 'hunter2' } }));
+      window.dispatchEvent(new CustomEvent('sola:toast', { detail: { text: 'from-the-dom' } })); // not in dom.in
+    });
+    await a.waitForTimeout(100);
+    expect(await read(a, '#ctx')).toBe('INC0012');
+    expect(await read(a, '#toast')).toBe('');
+    const rejections = await a.evaluate(() => (window as any).rejections);
+    expect(rejections).toEqual([{ type: 'sola:context', reason: 'invalid', from: 'dom', direction: 'in' }]);
+    expect(JSON.stringify(rejections)).not.toContain('hunter2');
+
+    // A second tab: a broadcast type arrives, a local-only type does not.
+    const b = await context.newPage();
+    await b.goto(`${ORIGIN}/b`);
+    await boot(b, code);
+    await b.evaluate(() => {
+      const bus = (window as any).SolaCore.bus;
+      bus.emit('sola:toast', { text: 'saved in tab B' });
+      bus.emit('sola:context', { title: 'only-in-B' });
+    });
+    await expect.poll(() => read(a, '#toast')).toBe('saved in tab B');
+    await a.waitForTimeout(150);
+    expect(await read(a, '#ctx')).toBe('INC0012');
+
+    // dom.out: bus -> host CustomEvent, readable by the host without importing Sola.
+    await a.evaluate(() => {
+      (window as any).navs = [];
+      window.addEventListener('sola:navigate', (e: any) => (window as any).navs.push(e.detail));
+      (window as any).SolaCore.bus.emit('sola:navigate', { view: 'triage' });
+    });
+    expect(await a.evaluate(() => (window as any).navs)).toEqual([{ view: 'triage' }]);
+
+    expect(errors).toEqual([]);
+  });
+});

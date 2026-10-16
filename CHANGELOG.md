@@ -2,6 +2,24 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## Unreleased (event bus)
+
+### `@sola-air-ui/core`
+
+- **Added `createBus`, `configureBus` and the default `bus`**: typed events across
+  components, pages and tabs. Local by default; `broadcast` types reach other tabs;
+  `dom.in` / `dom.out` are explicit, disjoint allowlists for host `CustomEvent`s;
+  `sticky` replays the last payload to a late-mounting handler. A type that crosses a
+  boundary must have a validator or per-type guard, enforced when the bus is created.
+  Rejections are reported to an in-page `onReject` without the payload.
+  `clearPersistentState()` also clears sticky events. Design: `docs/rfcs/0001-bus.md`.
+
+### `@sola-air-ui/compiler`
+
+- **Added `$on(type, handler)`** (subscribes for the life of the component) and
+  **`let x = $lastEvent(type)`** (latest payload as a reactive accessor). Both use the
+  default bus, imported under an alias so a variable named `bus` cannot shadow it.
+
 ## Unreleased (compiler fixes from production feedback)
 
 ### `@sola-air-ui/compiler`

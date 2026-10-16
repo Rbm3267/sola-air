@@ -222,6 +222,14 @@ export function createPersistentSignal(key, initialValue, options = {}) {
 
 // ─── clearPersistentState ───
 
+// Other modules that keep persisted state of their own (the event bus's sticky
+// events) register here, so one sign-out call clears everything.
+const clearHooks = new Set();
+export function onClearPersistentState(fn) {
+  clearHooks.add(fn);
+  return () => clearHooks.delete(fn);
+}
+
 /**
  * Wipe every persisted Sola value and reset the live signals in this page and in
  * every other open tab/frame. Call it on sign-out so one user's drawer, thread
@@ -246,6 +254,10 @@ export function clearPersistentState(options = {}) {
       }
       doomed.forEach((k) => s.removeItem(k));
     } catch { /* blocked storage — nothing to clear */ }
+  }
+
+  for (const hook of [...clearHooks]) {
+    try { hook(); } catch (e) { console.error(e); }
   }
 
   // Reset signals living in this page (a channel never delivers to itself)...

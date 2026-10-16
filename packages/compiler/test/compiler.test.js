@@ -589,6 +589,31 @@ test('compile() returns a .d.ts with typed props', () => {
   assert(dts.includes('export default mount;'), 'default export declared');
 });
 
+
+console.log('\nBus macros');
+
+test('$on subscribes through the aliased default bus and unsubscribes on destroy', () => {
+  const { code } = compile(`<script>let title = $state('');\n$on('sola:toast', (t) => { title = t.text; });</script><p>{title}</p>`);
+  assert(code.includes("onDestroy(__solaBus.on('sola:toast', (t) => { set_title(t.text); }))"), 'wired + handler state rewritten');
+  assert(code.includes('bus as __solaBus'), 'bus imported under an alias');
+});
+
+test('$lastEvent is a read-only reactive accessor released on destroy', () => {
+  const { code } = compile(`<script>let ctx = $lastEvent('sola:context');</script><p>{ctx?.title}</p>`);
+  assert(code.includes("const ctx = __solaBus.signal('sola:context'); onDestroy(ctx.dispose);"), code);
+  assert(/ctx\(\)\?\.title/.test(code), 'reads call the accessor');
+});
+
+test('a user variable named bus does not collide with the macros', () => {
+  const { code } = compile(`<script>let bus = $state(1);\n$on('x', () => { bus = 2; });</script><p>{bus}</p>`);
+  assert(code.includes('__solaBus.on') && code.includes('set_bus(2)'), code);
+});
+
+test('the IIFE target pulls the bus off the SolaCore global', () => {
+  const { code } = compile(`<script>$on('x', () => {});</script><p>x</p>`, { target: 'iife' });
+  assert(code.includes('bus: __solaBus } = window.SolaCore'), code.split('\n').find(l => l.includes('SolaCore')));
+});
+
 // ── Events and bindings ───────────────────────────────────────────────────────
 
 console.log('\nEvents and bindings');
