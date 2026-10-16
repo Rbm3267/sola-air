@@ -141,7 +141,7 @@
           <span>Sentinel Friction &amp; Self-Healing Simulator</span>
         </h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 max-w-[68ch]">
-          Simulate real-world user rage-clicks or backend stalls to test autonomous fallback containment.
+          Simulate rapid repeated clicks or a stalled backend to see how the fallback behaves.
         </p>
       </div>
 

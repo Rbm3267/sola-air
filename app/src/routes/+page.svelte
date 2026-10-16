@@ -31,13 +31,13 @@
     <section class="w-full py-16 sm:py-20 border-t border-slate-100 dark:border-white/[0.04] relative">
       <div class="text-center max-w-3xl mx-auto mb-14">
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 text-blue-800 dark:text-blue-300 text-xs font-mono font-semibold mb-3">
-          <span>The Sola Ecosystem</span>
+          <span>What's here</span>
         </div>
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
-          From Concept to Live Sandbox in Seconds
+          From idea to a live preview
         </h2>
         <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-          Three interconnected pillars built to design, preview, and share zero-VDOM reactive components across personal projects and global platforms.
+          Three tools for designing, previewing and reading Sola components.
         </p>
       </div>
 
@@ -53,7 +53,7 @@
               Sola Design Studio
             </h3>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Drag-and-drop generative canvas with {CATALOG_COUNT} components and live signal simulators.
+              A drag-and-drop canvas with {CATALOG_COUNT} components and live signal simulators.
             </p>
           </div>
           <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all">
@@ -72,7 +72,7 @@
               "View in My UI" Extension
             </h3>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Manifest V3 Chrome extension that injects a closed Shadow DOM sandbox on any active web app with zero CSS collisions.
+              A Chrome extension that drops a Sola component into any page you have open, inside a closed Shadow DOM so its styles don't touch the page.
             </p>
           </div>
           <a href="/preview" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all">
@@ -110,16 +110,16 @@
     <!-- 4. Foundational 56-Primitive Design Studio Inspector -->
     <DesignEngineStudio />
 
-    <!-- 5. Handcrafted Architecture Showcase -->
+    <!-- 5. Component showcase -->
     <section class="w-full pb-32 pt-8 relative z-10 border-t border-slate-100 dark:border-white/[0.04]">
       <div id="architecture" class="flex flex-col justify-center px-2 md:px-4 mt-8">
         <div class="text-center mb-12">
           <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 dark:bg-white/[0.08] border border-slate-200/80 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 text-xs font-mono font-semibold mb-3">
-            <span>@sola-air-ui/ui • Native Component Primitives</span>
+            <span>@sola-air-ui/ui • Components</span>
           </div>
-          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">Handcrafted UI Architecture</h2>
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">Components, compiled</h2>
           <p class="text-base text-slate-600 dark:text-slate-400 font-normal max-w-2xl mx-auto leading-relaxed">
-            Sola primitives compile directly into reactive vanilla DOM nodes with scoped styles and zero virtual DOM diffing.
+            Sola components compile directly into reactive vanilla DOM nodes with scoped styles and zero virtual DOM diffing. The cards below are Svelte previews of the layouts; browse the shipped .sola components on the Components page.
           </p>
         </div>
 
@@ -128,8 +128,8 @@
           <!-- Data Card Demo -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-2">
-              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DataCard.sola</span>
-              <span class="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded font-semibold border border-blue-100 dark:border-blue-500/20">Compiled DOM</span>
+              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DataCard</span>
+              <span class="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded font-semibold border border-blue-100 dark:border-blue-500/20">Svelte preview</span>
             </div>
             <div class="flex flex-col gap-3">
               <DataCard config={{ title: "Realized MRR", value: "$184,200", trend: "+14.2%", icon: "activity" }} />
@@ -140,8 +140,8 @@
           <!-- Dynamic Form Demo -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-2">
-              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DynamicForm.sola</span>
-              <span class="text-xs font-mono text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10 px-2 py-0.5 rounded font-semibold border border-violet-100 dark:border-violet-500/20">Live Schema</span>
+              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DynamicForm</span>
+              <span class="text-xs font-mono text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10 px-2 py-0.5 rounded font-semibold border border-violet-100 dark:border-violet-500/20">Svelte preview</span>
             </div>
             <div>
               <DynamicForm config={{ 
@@ -158,8 +158,8 @@
           <!-- List Block Demo -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-2">
-              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">ListBlock.sola</span>
-              <span class="text-xs font-mono text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded font-semibold border border-sky-100 dark:border-sky-500/20">Signal List</span>
+              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">ListBlock</span>
+              <span class="text-xs font-mono text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded font-semibold border border-sky-100 dark:border-sky-500/20">Svelte preview</span>
             </div>
             <div>
               <ListBlock config={{ 

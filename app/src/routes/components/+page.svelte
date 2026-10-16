@@ -137,7 +137,7 @@
             Foundational UI Building Blocks
           </h1>
           <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl mt-1 leading-relaxed">
-            Domain-agnostic reactive primitives designed to present, monitor, and manipulate data across personal projects and enterprise SaaS.
+            Components for showing, monitoring and editing data. Use them in a side project or a company dashboard.
           </p>
         </div>
 

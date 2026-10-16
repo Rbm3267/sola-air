@@ -31,7 +31,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     name: 'Metric Card',
     category: 'Metrics & KPIs',
     description: 'Primary KPI metric tile with configurable numerical value, delta trend percentage, and clean vector icon.',
-    tagline: 'High-density statistics and key performance indicators',
+    tagline: 'Statistics and key performance indicators',
     badge: 'Foundational',
     componentName: 'DataCard',
     defaultConfig: {
@@ -133,7 +133,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
         { name: 'Gross Revenue Ingress', value: 840000, type: 'positive' },
         { name: 'Cloud Infrastructure & Egress', value: -140000, type: 'negative' },
         { name: 'Zero-VDOM Compute Efficiency', value: 24000, type: 'positive' },
-        { name: 'Net Realized Sovereign Margin', value: 724000, type: 'total' }
+        { name: 'Net Realized Margin', value: 724000, type: 'total' }
       ]
     },
     props: [
@@ -153,7 +153,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     id: 'list-feed',
     name: 'Signal Feed & Activity List',
     category: 'Lists & Feeds',
-    description: 'High-density activity feed and key-value list with real-time status pills and clean metadata layout.',
+    description: 'Activity feed and key-value list with live status pills and metadata.',
     tagline: 'Event streams, transaction feeds, and status lists',
     badge: 'Reactive Feed',
     componentName: 'ListBlock',
@@ -577,7 +577,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     id: 'range-slider',
     name: 'Dual-Thumb Range Slider',
     category: 'Controllers & Sliders',
-    description: 'Precision range input with dual thumbs for min/max selection, live value labels, and configurable step increments.',
+    description: 'Range input with two thumbs for min and max, live value labels and a configurable step.',
     tagline: 'Price ranges, date spans, and bounded numeric filters',
     badge: 'New',
     componentName: 'RangeSlider',
@@ -1574,7 +1574,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     name: 'Signal Telemetry Chart',
     category: 'Metrics & KPIs',
     description: 'Zero-VDOM pure SVG Area, Line, and Bar charts with interactive hover crosshairs, smooth gradient fills, and direct signal tick handling.',
-    tagline: 'High-frequency telemetry, performance metrics, and financial charts',
+    tagline: 'Telemetry, performance metrics and financial charts',
     badge: 'Zero-VDOM',
     componentName: 'SolaChart',
     defaultConfig: {

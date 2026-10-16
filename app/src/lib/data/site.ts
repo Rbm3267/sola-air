@@ -51,6 +51,9 @@ export const CATEGORY_COUNT = new Set(COMPONENT_CATALOG.map((c) => c.category)).
  * because nothing stood behind them.
  */
 export const FACTS = {
-  /** Minified + gzipped size of the core runtime bundle. */
-  coreSizeKb: '3.9 kB'
+  /**
+   * Minified + gzipped size of the whole core runtime bundle, measured at build
+   * time from the real bundle (scripts/core-size.mjs), so it cannot drift.
+   */
+  coreSizeKb: `${__SOLA_CORE_SIZE_KB__} kB gzipped`
 };

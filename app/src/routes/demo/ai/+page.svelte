@@ -173,8 +173,7 @@
     </h1>
     <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
       ConversationThread, ActionStrip, ConfidenceBadge, and IntentSheet —
-      primitives for building AI-native UIs that work in any JavaScript stack,
-      connected to any LLM provider, with no platform lock-in.
+      components for chat and suggestion UIs. They compile to plain DOM, so you can mount them in any JavaScript app, and they work with whichever LLM provider you configure.
     </p>
   </section>
 

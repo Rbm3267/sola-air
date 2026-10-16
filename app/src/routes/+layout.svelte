@@ -9,6 +9,7 @@
 	import '../../../packages/tokens/src/tokens.css';
 	import '../app.css';
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import { theme } from '$lib/stores/theme.svelte';
 	import SiteFooter from '$lib/components/SiteFooter.svelte';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
@@ -16,7 +17,15 @@
 
 	let { children } = $props();
 
+	// Canonical and og:url name the page being viewed. They used to be the
+	// homepage on every route, which told crawlers that /docs, /components and
+	// every other page was a duplicate of the home page.
+	const ORIGIN = 'https://sola-air.dev';
+	const pageUrl = $derived(ORIGIN + page.url.pathname);
+
 	onMount(() => {
+		// The static defaults in app.html were for crawlers that don't run this app.
+		document.querySelectorAll('[data-default-meta]').forEach((el) => el.remove());
 		theme.init();
 		injectAnalytics();
 		injectSpeedInsights();
@@ -24,14 +33,17 @@
 </script>
 
 <svelte:head>
-	<title>Sola</title>
+	<title>Sola AIR — Ambient Intent Runtime</title>
 	<meta name="google-site-verification" content="WcTmhJBtVJPU0tzzt4XiIY4AfSDAywCA6RTgfowxVcw" />
-	<meta name="description" content="A reactive runtime and compiler for dynamic, ambient AI-driven user interfaces." />
-	<meta property="og:title" content="Sola — The Ambient Intent Framework (AIR)" />
-	<meta property="og:description" content="A reactive runtime and compiler for dynamic, ambient AI-driven user interfaces." />
-	<meta property="og:url" content="https://sola-air.dev" />
-	<meta property="og:image" content="/og-image.jpg" />
-	<link rel="canonical" href="https://sola-air.dev" />
+	<meta name="description" content="A small reactive runtime and compiler. You write .sola components and they compile to plain DOM calls, with no virtual DOM." />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="Sola AIR" />
+	<meta property="og:title" content="Sola AIR — Ambient Intent Runtime" />
+	<meta property="og:description" content="A small reactive runtime and compiler. You write .sola components and they compile to plain DOM calls, with no virtual DOM." />
+	<meta property="og:url" content={pageUrl} />
+	<meta property="og:image" content="{ORIGIN}/og-image.jpg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<link rel="canonical" href={pageUrl} />
 </svelte:head>
 
 <a

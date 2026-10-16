@@ -29,13 +29,13 @@
     <!-- Section Header -->
     <div class="text-center max-w-3xl mx-auto mb-12">
       <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-800 dark:text-blue-300 text-xs font-mono font-semibold mb-3">
-        <span>@sola-air-ui/ui • Foundational Design System</span>
+        <span>@sola-air-ui/ui • Component library</span>
       </div>
       <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-950 dark:text-white tracking-tight mb-4">
-        {PUBLISHED_COUNT} published primitives. Multi-framework portability.
+        {PUBLISHED_COUNT} components you can install today.
       </h2>
       <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg leading-relaxed font-normal max-w-[68ch]">
-        From foundation buttons and date pickers to high-frequency telemetry charts and resizable NOC splitters — handcrafted with eased motion and no virtual DOM diffing.
+        Buttons, date pickers, tables, charts and more. They compile to plain DOM updates, with no virtual DOM.
       </p>
     </div>
 
@@ -177,7 +177,7 @@
                 </div>
               </div>
               <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-                Pre-calculated WCAG AAA mathematical luminance curves ensure pixel-perfect legibility and optical contrast across all 28 components.
+                The color tokens these components share.
               </p>
             </div>
           {/if}

@@ -25,7 +25,7 @@
       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
       <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
     </span>
-    <span>Sola AIR v{version} • Zero-VDOM Intent Engine</span>
+    <span>Sola AIR v{version} • Ambient Intent Runtime</span>
     <span class="text-blue-400/80">/</span>
     <span class="text-slate-500 dark:text-slate-400 font-normal">{PUBLISHED_COUNT} Primitives</span>
   </div>
@@ -37,7 +37,7 @@
 
   <!-- Subheadline -->
   <p class="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mb-8 sm:mb-10 leading-relaxed font-normal">
-    Sola Sentinel observes real behavior — clicks, focus, what someone's typing — and <code class="font-mono text-[0.85em] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded-md">$intent</code> resolves a suggestion before they finish deciding what they need. Still zero-VDOM underneath: fine-grained signals, no diffing, no wasted re-renders.
+    Sola Sentinel watches what people do on the page (clicks, focus, what they're typing) and <code class="font-mono text-[0.85em] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded-md">$intent</code> can offer a suggestion before they ask. Underneath it's plain signals and direct DOM updates, with no virtual DOM.
   </p>
 
   <!-- Clean Action Bar (CTAs + CLI) -->

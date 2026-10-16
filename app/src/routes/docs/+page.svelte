@@ -12,9 +12,13 @@
     intentMacroExample,
     dataMacroExample,
     persistDockExample,
-    shellBootstrapExample
+    shellBootstrapExample,
+    busBasicsExample,
+    busComponentExample,
+    busConfigExample,
+    busHostExample
   } from '$lib/data/docsSnippets';
-  import { VERSIONS } from '$lib/data/site';
+  import { VERSIONS, FACTS } from '$lib/data/site';
 
   let activeSection = $state('quickstart');
   let askQuery = $state('');
@@ -60,6 +64,7 @@
       items: [
         { id: 'host-embedding', title: 'React & Portal Embeds' },
         { id: 'persistent-shell', title: 'Persistent Shell' },
+        { id: 'event-bus', title: 'Event Bus' },
         { id: 'relay-saas', title: 'Sola Relay SaaS' },
         { id: 'mcp', title: 'MCP Server' },
         { id: 'llm-spec', title: 'AI Prompting Spec' }
@@ -98,7 +103,7 @@
         aiAnswer = JSON.stringify(data, null, 2);
       }
     } catch {
-      aiAnswer = "Sola AIR components compile directly into native reactive DOM nodes via @sola-air-ui/compiler. Use createSignal() for local state, $intent for ambient generative resolution, and $data for live remote polling without virtual DOM overhead.";
+      aiAnswer = "Sola AIR components compile directly into native reactive DOM nodes via @sola-air-ui/compiler. Use createSignal() for local state, $intent to have a model generate UI, and $data to read from a database or Google Sheet through the Sola Relay.";
     } finally {
       askLoading = false;
     }
@@ -175,9 +180,11 @@ export default function mount(target, props) {
   const llmSystemPrompt = `You are a specialist in the Sola component format (.sola).
 Sola components compile single-file markup into pure zero-VDOM native DOM nodes.
 - Use <script> with $state(val) and $derived(expr)
-- Use HTML template with {expression} and standard HTML elements
-- Use <style> for scoped CSS
-- Use $intent("...") for ambient generative nodes
+- Use $persist(key, initial) instead of $state when a value must survive page loads and sync across tabs
+- Use $on('type', handler) to react to a bus event, and let x = $lastEvent('type') for its latest payload as a reactive value
+- Use HTML template with {expression} and standard HTML elements; attach handlers with lowercase attributes such as onclick
+- Use <style> for scoped CSS; :global(selector) opts a selector out of scoping, for markup the component does not own
+- Use $intent("...") when a model should generate the UI
 - Use $data("uri://...") for live signal bindings`;
 
   // With a bundler (ESM path)
@@ -383,7 +390,7 @@ export function SolaWidget({ title, value }) {
           <span>Sola AIR v{VERSIONS.solaAir}</span>
         </div>
         <p class="text-xs text-slate-600 dark:text-slate-400 leading-normal max-w-[68ch]">
-          Single-file zero-VDOM reactivity for the ambient web.
+          Single-file components that compile to plain DOM updates.
         </p>
       </div>
     </aside>
@@ -401,7 +408,7 @@ export function SolaWidget({ title, value }) {
           </button>
           <div class="flex items-center gap-2 mb-3 text-blue-800 dark:text-blue-400 font-semibold uppercase tracking-wider text-xs">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" stroke-dasharray="4 4"/><circle cx="12" cy="12" r="3"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
-            <span>Sola Arc Intelligence Response</span>
+            <span>Sola Arc response</span>
           </div>
           {aiAnswer}
         </div>
@@ -670,14 +677,14 @@ export function SolaWidget({ title, value }) {
               Compiler Macros
             </h1>
             <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-[68ch]">
-              Compile-time macros for ambient generative resolution and remote data signals.
+              Macros for model-generated UI, remote data, state that survives a page load, and events.
             </p>
           </header>
 
           <section class="space-y-3">
             <h3 class="text-base font-bold font-mono text-slate-900 dark:text-white">$intent(prompt, options)</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Translates natural language descriptions into live compiled UI trees at compile time.
+              Sends a natural-language prompt to the provider you configure with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">configureIntent</code> at runtime and returns a signal that holds the result, with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">.loading</code> and <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">.error</code>. Your server chooses the model; nothing is resolved at compile time.
             </p>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{intentMacroExample}</code></pre>
@@ -687,11 +694,25 @@ export function SolaWidget({ title, value }) {
           <section class="space-y-3">
             <h3 class="text-base font-bold font-mono text-slate-900 dark:text-white">$data(sourceUri, options)</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Binds component fields directly to WebSocket or HTTP/2 SSE signals from Google Sheets or PostgreSQL.
+              Reads from a Sola Relay source (PostgreSQL, MySQL or Google Sheets) and returns a signal of <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">{"{"} loading, data, error {"}"}</code>.
             </p>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{dataMacroExample}</code></pre>
             </div>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-base font-bold font-mono text-slate-900 dark:text-white">$persist(key, initial, options)</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              Reads and assigns like <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$state</code>, but the value survives a page load and syncs across tabs. See <button type="button" class="underline decoration-dotted cursor-pointer" onclick={() => activeSection = 'persistent-shell'}>Persistent Shell</button>.
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-base font-bold font-mono text-slate-900 dark:text-white">$on(type, handler) and $lastEvent(type)</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$on</code> runs a handler on every emission of a bus event, repeats included, and unsubscribes when the component is destroyed. <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">let x = $lastEvent(type)</code> is the latest payload as a reactive value. See <button type="button" class="underline decoration-dotted cursor-pointer" onclick={() => activeSection = 'event-bus'}>Event Bus</button>.
+            </p>
           </section>
         </article>
 
@@ -714,7 +735,7 @@ export function SolaWidget({ title, value }) {
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="p-5 border border-slate-200/80 dark:border-white/10 rounded-2xl bg-white dark:bg-white/5">
-              <h4 class="font-semibold text-slate-900 dark:text-white text-xs mb-1 font-mono">3.9 kB Bundle</h4>
+              <h4 class="font-semibold text-slate-900 dark:text-white text-xs mb-1 font-mono">{FACTS.coreSizeKb} bundle</h4>
               <p class="text-xs text-slate-600 dark:text-slate-400 leading-normal max-w-[68ch]">No third-party runtime dependencies.</p>
             </div>
             <div class="p-5 border border-slate-200/80 dark:border-white/10 rounded-2xl bg-white dark:bg-white/5">
@@ -836,6 +857,108 @@ export function SolaWidget({ title, value }) {
               <li><strong class="text-slate-900 dark:text-white">Debug with an open root.</strong> A closed shadow root is invisible to page scripts and to devtools queries. Use <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">shadow: 'open'</code> in development.</li>
               <li><strong class="text-slate-900 dark:text-white">No bundler?</strong> Use the IIFE builds: <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.mountShell</code> and <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.clearPersistentState</code> are on the global, and a component compiled with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">target: 'iife'</code> is available as a global mount function.</li>
               <li><strong class="text-slate-900 dark:text-white">Keep script policy in mind.</strong> If the portal's content-security policy blocks third-party or inline scripts, serve the bootstrap from the portal's own origin.</li>
+            </ul>
+          </section>
+        </article>
+
+      <!-- ================= 6c. EVENT BUS ================= -->
+      {:else if activeSection === 'event-bus'}
+        <article class="space-y-8">
+          <header class="space-y-2 pb-6 border-b border-slate-900/[0.04] dark:border-white/[0.05]">
+            <p class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 max-w-[68ch]">Deployment & Adapters</p>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Event Bus
+            </h1>
+            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-[68ch]">
+              Typed events between components, pages and tabs, with explicit rules about what is allowed to cross into or out of your app.
+            </p>
+          </header>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Events are not state</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              A signal drops a write that equals its current value, which is right for state. An event is different: "ask about this incident" fired twice with the same payload has to be delivered twice. That is why the bus is its own primitive, separate from <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$state</code>, <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$persist</code> and <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$intent</code>.
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{busBasicsExample}</code></pre>
+            </div>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">In a component</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$on</code> subscribes for the life of the component. <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$lastEvent</code> gives the latest payload as a reactive value for your markup.
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{busComponentExample}</code></pre>
+            </div>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Configure it once</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              Call <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">configureBus</code> at bootstrap, before any component subscribes. Everything is off until you list it.
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{busConfigExample}</code></pre>
+            </div>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400">
+                  <tr><th class="px-4 py-2 font-semibold">Option</th><th class="px-4 py-2 font-semibold">What it does</th></tr>
+                </thead>
+                <tbody class="text-slate-700 dark:text-slate-300 divide-y divide-slate-100 dark:divide-white/5">
+                  <tr><td class="px-4 py-2 font-mono">broadcast</td><td class="px-4 py-2">Types mirrored to other tabs. Everything else stays in this page.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">dom.in</td><td class="px-4 py-2">Host page <code class="font-mono">CustomEvent</code>s forwarded into the bus.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">dom.out</td><td class="px-4 py-2">Bus events re-dispatched as <code class="font-mono">CustomEvent</code>s on the target.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">validate / guard</td><td class="px-4 py-2">Check a payload's shape, and apply your policy. Core ships no role logic.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">sticky</td><td class="px-4 py-2">Replay the last payload to a handler that registers late (see below).</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">onReject</td><td class="px-4 py-2">Called in this page only when an event is dropped. It carries no payload.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Talking to the host page</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              With <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">dom.in</code> and <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">dom.out</code> the host app needs no Sola import. Both are allowlists: nothing crosses unless you name it, and a type cannot be in both lists, so a loop cannot form.
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{busHostExample}</code></pre>
+            </div>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">The rules <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">createBus()</code> enforces</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              Anything on a page can dispatch a <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">CustomEvent</code>, and any same-origin context can post to a <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">BroadcastChannel</code>. Events that cross those boundaries are untrusted, so these mistakes throw when the bus is created instead of failing quietly later:
+            </p>
+            <ul class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch] list-disc pl-5 space-y-2">
+              <li>A type in <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">dom.in</code> or <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">broadcast</code> needs a <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">validate</code> entry or a per-type <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">guard</code>. To accept one unchecked on purpose, write <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">validate: {"{"} type: () =&gt; true {"}"}</code> so the decision is visible in review.</li>
+              <li>A type cannot be in both <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">dom.in</code> and <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">dom.out</code>.</li>
+              <li><code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">sticky</code> needs a positive <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">ttlMs</code>, and a <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">session</code> sticky needs an explicit <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">consume</code>.</li>
+            </ul>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Sticky events</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              A shell often mounts a moment after the event it needs, or after a navigation. A <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">sticky</code> type replays its last payload once to each handler that registers late, with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">meta.replayed</code> set so a handler can tell. <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">store: 'memory'</code> lasts for the page; <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">store: 'session'</code> also survives a navigation in that tab. It expires after <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">ttlMs</code>.
+            </p>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">consume</code> decides what a reload does. With <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">consume: true</code> the stored copy is deleted the first time it is replayed, so a one-shot handoff such as "open this in the drawer" cannot repeat on F5. The copy in memory stays until <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">ttlMs</code>, so a second component that mounts a moment later in the same page still receives it. With <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">consume: false</code> it stays available, for context several components read.
+            </p>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Before you ship</h3>
+            <ul class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch] list-disc pl-5 space-y-2">
+              <li><strong class="text-slate-900 dark:text-white">Do not make consequential actions sticky.</strong> A replay could repeat work, such as another model call after a reload.</li>
+              <li><strong class="text-slate-900 dark:text-white">Keep <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">broadcast</code> short.</strong> Anything listed there fires in every open tab, which is rarely what you want for an action.</li>
+              <li><strong class="text-slate-900 dark:text-white">Treat <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">dom.out</code> payloads as public.</strong> Every script on the page can read them. Never put sensitive data in one.</li>
+              <li><strong class="text-slate-900 dark:text-white">Clear on sign-out.</strong> <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">clearPersistentState()</code> also wipes sticky events, in this page and in other tabs.</li>
+              <li><strong class="text-slate-900 dark:text-white">Rejections stay in the page.</strong> <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">onReject</code> is a plain callback that receives the type and the reason, never the payload, and is never forwarded to the DOM or the bus.</li>
             </ul>
           </section>
         </article>

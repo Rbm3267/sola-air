@@ -9,7 +9,7 @@
   let messages = $state<Array<{ role: 'user' | 'assistant'; text: string; timestamp?: string }>>([
     {
       role: 'assistant',
-      text: "I am **Sola AIR**, your ambient intent intelligence.\n\nAsk me how to embed Sola into your stack (**React 19, Next.js, Svelte 5, Vue 3, or Web Components**), wire live data signals (**Postgres, Stripe, WebSockets**), or ship zero-VDOM UIs with direct patch speeds.",
+      text: "I'm the **Sola AIR** assistant.\n\nAsk me how to mount a compiled Sola component inside your app (**React, Vue, Svelte or plain JS**), bind data through the Sola Relay (**PostgreSQL, MySQL or Google Sheets**), or how the compiler works.",
       timestamp: 'Just now'
     }
   ]);
@@ -185,7 +185,7 @@
                 Sola <span class="bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">AIR</span>
               </h2>
               <span class="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-700 dark:text-blue-300 font-mono text-xs font-semibold tracking-wide">
-                Intent Intelligence
+                Assistant
               </span>
             </div>
             <div class="flex items-center gap-1.5 mt-0.5">

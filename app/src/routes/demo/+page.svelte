@@ -305,13 +305,13 @@
     <!-- Title Area -->
     <div class="text-center max-w-2xl mx-auto">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/[0.08] border border-slate-200 dark:border-white/[0.04] text-slate-800 dark:text-slate-200 text-xs font-mono font-semibold mb-3">
-        <span>Sola Ambient Studio • Live Production Canvas</span>
+        <span>Sola Ambient Studio</span>
       </div>
       <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">
         Ambient Intent Playground
       </h1>
       <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed font-normal max-w-[68ch]">
-        Speak or type any intent. Generated cards live in a <strong>fully configurable production grid</strong> with real-time resizing, reordering, and live parameter editing.
+        Speak or type what you want. The generated cards go on a <strong>grid you can edit</strong>: resize, reorder and change their settings.
       </p>
     </div>
 
@@ -395,7 +395,7 @@
             onclick={() => viewMode = 'native'}
             class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'native' ? 'bg-blue-500 text-white font-semibold shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200'}">
             <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-            <span>Native .sola Zero-VDOM</span>
+            <span>Native .sola</span>
           </button>
           <button 
             onclick={() => viewMode = 'behavior'}
@@ -484,7 +484,7 @@
             <div class="w-5 h-5 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
             <span class="text-sm font-mono font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Building Reactive DOM Tree...</span>
           </div>
-          <span class="text-xs font-mono text-slate-500 dark:text-slate-400 mt-2">Zero-VDOM AST compilation via Gemini 3.6 Flash</span>
+          <span class="text-xs font-mono text-slate-500 dark:text-slate-400 mt-2">Generated with Gemini 3.6 Flash</span>
         </div>
       {/if}
 

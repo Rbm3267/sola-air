@@ -45,13 +45,13 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
       <div>
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/[0.08] border border-slate-200 dark:border-white/[0.04] text-slate-800 dark:text-slate-200 text-xs font-mono font-semibold mb-3">
-          <span>$data • Zero-Backend Data Surfacing</span>
+          <span>$data • Live data</span>
         </div>
         <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-[-0.03em]">
-          Connect any data source. In 1 line of code.
+          Bind a Google Sheet or a database in one line.
         </h2>
         <p class="text-slate-600 dark:text-slate-400 text-base max-w-xl mt-2 leading-relaxed">
-          Whether you're building a <strong>financial operations dashboard from Google Sheets</strong> or an <strong>infrastructure telemetry monitor from PostgreSQL</strong>, Sola turns raw data into reactive luxury UI.
+          Whether you're building a <strong>financial operations dashboard from Google Sheets</strong> or an <strong>infrastructure monitor from PostgreSQL</strong>, the data arrives as a signal your markup can read. Sources go through the Sola Relay, which also supports MySQL.
         </p>
       </div>
 
@@ -106,7 +106,7 @@
   value="&#123;finance.margin&#125;%" 
   percentage=&#123;finance.margin&#125; 
 /&gt;{:else}&lt;script&gt;
-  // Zero-knowledge DB connector (credentials stay local)
+  // Database connector (credentials stay in your local relay)
   const cluster = $data("postgres://internal/nodes");
 &lt;/script&gt;
 

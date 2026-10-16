@@ -144,10 +144,10 @@ export const SAAS_ECOSYSTEM: SaasIntegration[] = [
   // ── 4. Databases & Relay ──
   {
     id: 'postgres-relay',
-    name: 'PostgreSQL Zero-Knowledge Relay',
+    name: 'PostgreSQL via Sola Relay',
     category: 'Databases & Relay',
     badge: 'PostgreSQL',
-    description: 'Direct zero-VDOM queries against private database instances with zero cloud egress.',
+    description: 'Query your own PostgreSQL database through the Sola Relay, which runs on your machine or network.',
     protocolUri: 'postgres://production-db:5432/core',
     primaryComponent: 'SchemaInspector',
     sampleIntent: 'Inspect schema and connection pool for public.orders',

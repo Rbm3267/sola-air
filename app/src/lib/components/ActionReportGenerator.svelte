@@ -64,7 +64,7 @@
         {
           id: 'spend-table',
           heading: '2. Cost Center Breakdown',
-          content: 'Serverless compute and autonomous workflow deflection accounted for the highest operational margin improvements.',
+          content: 'Serverless compute and automated workflow handling accounted for most of the margin improvement.',
           table: {
             headers: ['Cost Center', 'Previous Run-Rate', 'Optimized Run-Rate', 'Net Savings'],
             rows: [
@@ -83,19 +83,19 @@
       sections: [
         {
           id: 'security-scope',
-          heading: '1. Zero-Knowledge Relay Compliance',
-          content: 'All database queries executed through Sola Relay maintain strict zero-knowledge encryption with client-side credential binding.',
+          heading: '1. Relay credentials',
+          content: 'Database queries go through the Sola Relay. Database credentials stay in the relay and are never sent to the browser.',
           alertType: 'note'
         },
         {
           id: 'rbac-table',
           heading: '2. RBAC & Access Matrix',
-          content: 'Role-based access controls strictly enforce least-privilege scoping across enterprise API endpoints.',
+          content: 'Each role is limited to the access it needs on the API endpoints.',
           table: {
             headers: ['Entity / Role', 'Access Scope', 'Write Privilege', 'Audit Logging'],
             rows: [
               ['ITSM Tier 1 Operator', 'Work Items (Read/Update)', 'Soft Mutation Only', 'Enforced (SysLog)'],
-              ['Autonomous AI Copilot', 'ActionContract Dispatch', 'Playbook Execution', 'Cryptographically Signed'],
+              ['AI assistant', 'ActionContract Dispatch', 'Playbook Execution', 'Signed'],
               ['Sola Client Runtime', 'DOM Node Operations', '0 kB Token Exposure', 'Enforced (No Storage)']
             ]
           }

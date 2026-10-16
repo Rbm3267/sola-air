@@ -1,7 +1,7 @@
 export interface StudioPreset {
   id: string;
   name: string;
-  category: 'Autonomous AI & Agents' | 'Edge & Neural Systems' | 'Robotics & Spatial' | 'SaaS & Analytics' | 'Commerce & Retail' | 'Productivity & Tasks' | 'Operations & Health';
+  category: 'AI & Agents' | 'Edge Systems' | 'Robotics & Spatial' | 'SaaS & Analytics' | 'Commerce & Retail' | 'Productivity & Tasks' | 'Operations & Health';
   tagline: string;
   description: string;
   badge: string;
@@ -22,20 +22,20 @@ export interface StudioPreset {
 
 export const STUDIO_PRESETS: StudioPreset[] = [
   // ==========================================
-  // --- Category: Autonomous AI & Agents ---
+  // --- Category: AI & Agents ---
   // ==========================================
   {
     id: 'ai-agent-swarm-mesh',
-    name: 'Autonomous Multi-Agent Swarm & Intent Mesh',
-    category: 'Autonomous AI & Agents',
-    tagline: 'Orchestrates multi-agent task handoffs, thought trace loops, and tool execution matrices',
-    description: 'Real-time agent swarm cockpit tracking active subagent delegations, tool calls, context window saturation, and consensus verification.',
-    badge: 'Bleeding Edge',
+    name: 'Multi-Agent Task Board',
+    category: 'AI & Agents',
+    tagline: 'Task handoffs between agents, reasoning traces and tool calls',
+    description: 'Tracks which agent has which task, tool calls, context window use and whether the agents agree.',
+    badge: 'Agents',
     signals: ['agent/swarm_active_nodes', 'agent/reasoning_depth', 'agent/tool_execution_ms'],
     cards: [
       { id: 'as1', type: 'node_graph', title: 'Agent Topology Mesh', subtitle: 'Dynamic task delegation graph', cols: 2, value: '8 Subagents', accentColor: 'emerald' },
-      { id: 'as2', type: 'stat', title: 'Swarm Consensus Rate', subtitle: 'Multi-model agreement index', cols: 1, value: '99.4%', delta: '+0.8%', accentColor: 'emerald' },
-      { id: 'as3', type: 'feed', title: 'Live Reasoning & Thought Stream', subtitle: 'Autonomous subagent reflection trace', cols: 2, value: 'Executing', accentColor: 'slate' },
+      { id: 'as2', type: 'stat', title: 'Agent Agreement Rate', subtitle: 'Multi-model agreement index', cols: 1, value: '99.4%', delta: '+0.8%', accentColor: 'emerald' },
+      { id: 'as3', type: 'feed', title: 'Live Reasoning & Thought Stream', subtitle: 'What each subagent is doing', cols: 2, value: 'Executing', accentColor: 'slate' },
       { id: 'as4', type: 'slider', title: 'Autonomy & Permission Dial', subtitle: 'Max allowable tool risk threshold', cols: 1, value: 85, accentColor: 'emerald' }
     ],
     solaCode: `<script>
@@ -52,11 +52,11 @@ export const STUDIO_PRESETS: StudioPreset[] = [
   },
   {
     id: 'llm-streaming-token-hud',
-    name: 'Real-Time Neural Token Streaming & TTFT HUD',
-    category: 'Autonomous AI & Agents',
+    name: 'LLM Token Streaming Monitor',
+    category: 'AI & Agents',
     tagline: 'LLM streaming monitor that patches text nodes directly as tokens arrive',
-    description: 'Tracks time-to-first-token (TTFT), token output velocity (tok/s), context buffer compaction, and live inference cost.',
-    badge: 'Next Gen',
+    description: 'Tracks time to first token, tokens per second, context buffer size and inference cost.',
+    badge: 'LLM',
     signals: ['neural/token_rate', 'neural/ttft_latency', 'neural/context_fill'],
     cards: [
       { id: 'nt1', type: 'stat', title: 'Token Throughput', subtitle: 'Streaming generation velocity', cols: 1, value: '4,280 tok/s', delta: '+340 tok/s', accentColor: 'violet' },
@@ -76,15 +76,15 @@ export const STUDIO_PRESETS: StudioPreset[] = [
   },
 
   // ==========================================
-  // --- Category: Edge & Neural Systems ---
+  // --- Category: Edge Systems ---
   // ==========================================
   {
     id: 'edge-wasm-sandbox',
-    name: 'Edge WASM Sandbox & Isolate Memory HUD',
-    category: 'Edge & Neural Systems',
-    tagline: 'Sub-0.1ms WebAssembly isolate lifecycle tracker with zero cold-start telemetry',
-    description: 'Monitors globally distributed edge micro-VMs, memory watermarks, cold-start latency percentiles, and instant routing failover.',
-    badge: 'High Perf',
+    name: 'Edge WASM Isolate Monitor',
+    category: 'Edge Systems',
+    tagline: 'WebAssembly isolate start times and memory use',
+    description: 'Watches edge isolates: memory high-water marks, cold-start latency percentiles and failover.',
+    badge: 'Edge',
     signals: ['wasm/isolate_boot_ms', 'wasm/memory_watermark', 'edge/global_pops'],
     cards: [
       { id: 'ew1', type: 'stat', title: 'Cold-Start Latency', subtitle: 'Isolate spawn time', cols: 1, value: '0.08ms', delta: '-0.02ms', accentColor: 'emerald' },
@@ -104,10 +104,10 @@ export const STUDIO_PRESETS: StudioPreset[] = [
   },
   {
     id: 'zkp-verification-pipeline',
-    name: 'Zero-Knowledge Proof & Circuit Validator',
-    category: 'Edge & Neural Systems',
-    tagline: 'Cryptographic proof generation pipeline with constraint validation gauges',
-    description: 'Tracks zero-knowledge SNARK/STARK proof synthesis, circuit constraint depth, gas verification fees, and state commitment roots.',
+    name: 'ZK Proof Pipeline',
+    category: 'Edge Systems',
+    tagline: 'Proof generation stages with constraint counts',
+    description: 'Tracks SNARK/STARK proof generation time, circuit constraints, verification fees and state roots.',
     badge: 'Crypto',
     signals: ['zkp/proof_gen_ms', 'zkp/circuit_constraints', 'zkp/verified_state'],
     cards: [
@@ -133,12 +133,12 @@ export const STUDIO_PRESETS: StudioPreset[] = [
     id: 'robotics-actuator-telemetry',
     name: 'Robotics Actuator Kinematics',
     category: 'Robotics & Spatial',
-    tagline: '6-DOF joint angle dials, torque sensor curves, and emergency e-stop sentinel',
-    description: 'Robotics telemetry dashboard that patches the DOM directly, with no virtual DOM in the path spikes.',
+    tagline: '6-axis joint angles, torque readings and an emergency stop indicator',
+    description: 'Robot telemetry dashboard. Readings update the DOM directly, with no virtual DOM.',
     badge: 'Hardware',
     signals: ['robot/joint_angles', 'robot/torque_nm', 'robot/estop_state'],
     cards: [
-      { id: 'rb1', type: 'radial_dial', title: 'End-Effector Joint Angle', subtitle: 'Haptic precision angle control', cols: 1, value: 45, accentColor: 'amber' },
+      { id: 'rb1', type: 'radial_dial', title: 'End-Effector Joint Angle', subtitle: 'Joint angle control', cols: 1, value: 45, accentColor: 'amber' },
       { id: 'rb2', type: 'stat', title: 'Actuator Torque Peak', subtitle: 'Load sensor feedback', cols: 1, value: '28.4 Nm', delta: 'Nominal', accentColor: 'amber' },
       { id: 'rb3', type: 'chart', title: 'Sensor Fusion Curve', subtitle: 'IMU & Torque continuous telemetry', cols: 2, value: '1.0 kHz', accentColor: 'amber' },
       { id: 'rb4', type: 'status', title: 'Hardware Sentinel Condition', subtitle: 'E-Stop closed-loop watchdog', cols: 1, value: 'Armed & Nominal', accentColor: 'emerald' }
@@ -157,8 +157,8 @@ export const STUDIO_PRESETS: StudioPreset[] = [
     id: 'spatial-audio-haptics',
     name: 'Spatial Coordinates & Soundfield Stage',
     category: 'Robotics & Spatial',
-    tagline: '360° tactile coordinate stage with eased, momentum-style motion',
-    description: 'Spatial UI controller allowing fluid dragging of audio sources and tactile anchor points in 3D coordinate space.',
+    tagline: '360° stage for placing audio sources, with drag and momentum',
+    description: 'Drag audio sources and anchor points around a 3D coordinate space.',
     badge: 'Spatial',
     signals: ['spatial/pan_azimuth', 'spatial/elevation', 'spatial/haptic_intensity'],
     cards: [
