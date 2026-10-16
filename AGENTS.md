@@ -207,7 +207,7 @@ Transpiles to `createData(source, options)`, which POSTs `{ source, query, filte
 
 ## 6. Component Library (`@sola-air-ui/ui`)
 
-27 real, shipped `.sola` components (verified against `packages/ui/src/` — not aspirational). Import by subpath, e.g. `import Table from '@sola-air-ui/ui/table'`; see that package's `package.json` `exports` map for every subpath.
+33 real, shipped `.sola` components (verified against `packages/ui/src/` and the `exports` map in its `package.json`). Every one is importable by subpath, e.g. `import Table from '@sola-air-ui/ui/table'`; 26 of them are also re-exported from the package root (`import { Table } from '@sola-air-ui/ui'`). The seven that are subpath-only are `AmbientSuggestion`, `Button`, `Chart`, `Dashboard`, `DatePicker`, `HtmlViewer` and `MarkdownViewer`.
 
 **Layout & display** — `Card`, `Stack`, `Dashboard`, `Table`, `DataCard`, `StatGrid`, `Canvas`
 
@@ -215,11 +215,13 @@ Transpiles to `createData(source, options)`, which POSTs `{ source, query, filte
 
 **Feedback** — `Alert`, `Toast`, `Spinner`, `Badge`, `Modal`
 
-**Content rendering** — `MarkdownViewer`, `HtmlViewer`, `Chart`, `StreamView`
+**Content rendering** — `MarkdownViewer`, `HtmlViewer`, `SolaSafeHTML`, `Chart`, `StreamView`
+
+**Gauges & dashboards** — `GaugeCard`, `TactileDialCard`, `FlowWaterfall`, `IncidentTriageMatrix`
 
 **AI / intent-driven** — `IntentCard`, `IntentList`, `AmbientSuggestion`, and under `ai/`: `ConversationThread`, `ActionStrip`, `ConfidenceBadge`, `IntentSheet`
 
-None of `GaugeCard`, `DynamicForm`, `ListBlock`, `FlowWaterfall`, `ReportDocViewer`, or `ActionReportGenerator` exist as `.sola` components — an earlier version of this document invented plausible-sounding props schemas for all six. If you need one of these, it doesn't exist yet; check `app/src/lib/components/` for a Svelte-only version before assuming it's missing entirely (the marketing site currently renders several dashboard widgets as Svelte components rather than dogfooding the `.sola` compiler — a known gap, not a spec you should follow).
+`DynamicForm`, `ListBlock`, `ReportDocViewer` and `ActionReportGenerator` do not exist as `.sola` components. The marketing site's `/components` catalog and the Studio also list many entries that are Svelte previews, not part of `@sola-air-ui/ui`; the catalog marks which is which. Do not treat a catalog entry as installable unless it is in the package's `exports` map.
 
 For exact props, read the component's own `.sola` source in `packages/ui/src/` — it's short (most are under 100 lines) and the props are declared right at the top via `export let`.
 

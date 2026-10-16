@@ -583,6 +583,13 @@ test('IIFE output stays free of ES exports', () => {
   assert(!/\nexport /.test(code), 'no export statements in an IIFE');
 });
 
+test('.d.ts types a prop with a null or undefined default as any', () => {
+  const { dts } = compile(`<script>export let onAction = null; export let context = undefined; export let label = 'x';</script><p>{label}</p>`);
+  assert(dts.includes('onAction?: any;'), dts);
+  assert(dts.includes('context?: any;'), dts);
+  assert(dts.includes('label?: string;'), 'other defaults keep their inferred type');
+});
+
 test('compile() returns a .d.ts with typed props', () => {
   const { dts } = compile(`<script>export let title = 'x'; export let n = 0; export let on = false; export let xs = [];</script><p>{title}</p>`);
   assert(dts.includes('title?: string;') && dts.includes('n?: number;') && dts.includes('on?: boolean;') && dts.includes('xs?: unknown[];'), dts);
