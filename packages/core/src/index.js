@@ -441,6 +441,10 @@ export function createData(source, options = {}) {
     if (refreshTimer) clearInterval(refreshTimer);
     if (abortController) abortController.abort();
   };
+  // Stop polling, and abandon any request still in flight, when the component
+  // that asked for the data is destroyed. Without this a `refresh` interval kept
+  // fetching for as long as the page stayed open.
+  onDestroy(accessor.stop);
 
   return accessor;
 }

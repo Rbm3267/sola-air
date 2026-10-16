@@ -18,9 +18,4 @@ declare const __SOLA_CORE_SIZE_KB__: string;
 declare const __SOLA_UI_EXPORTS__: string[];
 declare const __SOLA_EXTENSION_VERSION__: string;
 
-declare module '*.sola' {
-	const mount: (target: HTMLElement, props?: Record<string, any>) => (() => void) | void;
-	export default mount;
-}
-
 export {};

@@ -1,7 +1,7 @@
 <script lang="ts">
   import Navbar from '$lib/components/Navbar.svelte';
   import InteractiveHero from '$lib/components/InteractiveHero.svelte';
-  import SheetsDemo from '$lib/components/SheetsDemo.svelte';
+  import DataDemo from '$lib/components/DataDemo.svelte';
   import ShellBusDemo from '$lib/components/ShellBusDemo.svelte';
   import DesignEngineStudio from '$lib/components/DesignEngineStudio.svelte';
   import DataCard from '$lib/components/DataCard.svelte';
@@ -108,7 +108,7 @@
     <!-- 3. Google Sheets & Data Relay Interactive Section -->
     <ShellBusDemo />
 
-    <SheetsDemo />
+    <DataDemo />
 
     <!-- 4. Foundational 56-Primitive Design Studio Inspector -->
     <DesignEngineStudio />
