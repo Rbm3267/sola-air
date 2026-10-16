@@ -53,6 +53,30 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   it ignored every prop and always showed "METRIC $0.00 +0.0%". They are now props.
   With no `trend` the footer is hidden, not filled with a made-up one.
 
+### Chrome extension (`packages/sola-extension`)
+
+- **Fixed**: "Copy code" produced imports that fail when pasted. Five of the twelve
+  components it offers (`RangeSlider`, `Tabs`, `Avatar`, `ListBlock`,
+  `SentinelCapsule`) are not in `@sola-air-ui/ui`, and `Button` is not re-exported from
+  the package root. Code is now generated in `codegen.js` and imports each component by
+  its package subpath; an unreleased component gets a one-line comment, and the side
+  panel labels it "Studio preview". A test checks every generated import against the
+  real `@sola-air-ui/ui` exports.
+- **Fixed**: the region picker always drew a DataCard but wrote an import for whichever
+  component was selected. Scraped metrics now always produce DataCard code (a
+  `StatGrid` of them for several), matching what is drawn.
+- **Fixed**: text read from the page went into `innerHTML` and into the generated
+  code unescaped. It is escaped, and quotes or braces in a label can no longer break
+  the generated markup.
+- **Fixed**: the preview was an *open* Shadow DOM, although the manifest and the store
+  listing say closed. Both roots are now closed.
+- **Fixed**: the side panel showed the old `@sola/core @sola/ui` install line and a
+  wrong "click anywhere on the page" step.
+- A message from a page can only show components the extension knows.
+- `sola-extension.zip` is rebuilt (it was stale and used Windows path separators), by
+  `node scripts/extension-zip.mjs`. A test fails if the committed zip differs from the
+  source. The version stays 1.1.0; bump `manifest.json` before uploading to the store.
+
 ## 2026-10-16: core 1.3.0, compiler 1.2.0 (event bus)
 
 ### `@sola-air-ui/core`
