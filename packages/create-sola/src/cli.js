@@ -18,11 +18,11 @@ const { version: CLI_VERSION } = JSON.parse(
 // scaffold pointing at versions that were never published.
 export const SOLA_DEPS = {
   dependencies: {
-    '@sola-air-ui/core': '^1.1.1',
+    '@sola-air-ui/core': '^1.2.0',
     '@sola-air-ui/ui': '^1.3.0'
   },
   devDependencies: {
-    '@sola-air-ui/compiler': '^1.0.8',
+    '@sola-air-ui/compiler': '^1.1.0',
     '@sola-air-ui/vite-plugin-sola': '^1.0.3',
     'vite': '^6.0.0'
   }
