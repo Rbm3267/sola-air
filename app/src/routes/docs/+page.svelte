@@ -103,7 +103,7 @@
         aiAnswer = JSON.stringify(data, null, 2);
       }
     } catch {
-      aiAnswer = "Sola AIR components compile directly into native reactive DOM nodes via @sola-air-ui/compiler. Use createSignal() for local state, $intent for ambient generative resolution, and $data for live remote polling without virtual DOM overhead.";
+      aiAnswer = "Sola AIR components compile directly into native reactive DOM nodes via @sola-air-ui/compiler. Use createSignal() for local state, $intent to have a model generate UI, and $data to read from a database or Google Sheet through the Sola Relay.";
     } finally {
       askLoading = false;
     }
@@ -184,7 +184,7 @@ Sola components compile single-file markup into pure zero-VDOM native DOM nodes.
 - Use $on('type', handler) to react to a bus event, and let x = $lastEvent('type') for its latest payload as a reactive value
 - Use HTML template with {expression} and standard HTML elements; attach handlers with lowercase attributes such as onclick
 - Use <style> for scoped CSS; :global(selector) opts a selector out of scoping, for markup the component does not own
-- Use $intent("...") for ambient generative nodes
+- Use $intent("...") when a model should generate the UI
 - Use $data("uri://...") for live signal bindings`;
 
   // With a bundler (ESM path)
@@ -390,7 +390,7 @@ export function SolaWidget({ title, value }) {
           <span>Sola AIR v{VERSIONS.solaAir}</span>
         </div>
         <p class="text-xs text-slate-600 dark:text-slate-400 leading-normal max-w-[68ch]">
-          Single-file zero-VDOM reactivity for the ambient web.
+          Single-file components that compile to plain DOM updates.
         </p>
       </div>
     </aside>
@@ -408,7 +408,7 @@ export function SolaWidget({ title, value }) {
           </button>
           <div class="flex items-center gap-2 mb-3 text-blue-800 dark:text-blue-400 font-semibold uppercase tracking-wider text-xs">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" stroke-dasharray="4 4"/><circle cx="12" cy="12" r="3"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
-            <span>Sola Arc Intelligence Response</span>
+            <span>Sola Arc response</span>
           </div>
           {aiAnswer}
         </div>
@@ -677,7 +677,7 @@ export function SolaWidget({ title, value }) {
               Compiler Macros
             </h1>
             <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-[68ch]">
-              Macros for ambient generative resolution, remote data, state that outlives a page, and events.
+              Macros for model-generated UI, remote data, state that survives a page load, and events.
             </p>
           </header>
 

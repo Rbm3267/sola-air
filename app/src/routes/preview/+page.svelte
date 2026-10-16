@@ -86,11 +86,11 @@
       </div>
       
       <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-        Preview UI Components on <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-sky-600 bg-clip-text text-transparent">Any Live Web App</span>
+        Preview components on <span class="bg-gradient-to-r from-blue-600 via-cyan-600 to-sky-600 bg-clip-text text-transparent">any web page</span>
       </h1>
       
       <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 font-normal leading-relaxed max-w-[68ch]">
-        Inject isolated zero-VDOM Shadow DOM preview cards directly over any live web platform (production, staging, or localhost). Choose between a free-floating draggable HUD or 1-click DOM element anchoring.
+        Show a preview card on top of any page (production, staging or localhost). Drag it anywhere, or anchor it to an element on the page.
       </p>
 
       <!-- Action CTAs -->
@@ -281,7 +281,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                   <div>
                     <h4 class="text-base font-bold text-white">{selectedComponent}</h4>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-[68ch]">Zero-VDOM pure SVG reactive telemetry card rendered directly inside closed Shadow DOM.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-[68ch]">An SVG telemetry card rendered inside a closed Shadow DOM.</p>
                   </div>
                   <div class="p-3 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-between font-mono">
                     <span class="text-xs text-slate-300">Throughput:</span>
@@ -300,7 +300,7 @@
               </div>
             {:else}
               <div class="my-6 p-8 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-3xl text-center space-y-2 bg-slate-50/50 dark:bg-white/[0.01]">
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-[68ch]">Click "View in My UI" in the Side Panel on the right to anchor an isolated zero-VDOM component overlay right here.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-[68ch]">Click "View in My UI" in the Side Panel on the right to anchor a component overlay right here.</p>
                 <button
                   onclick={() => { isSidePanelOpen = true; isCardInjected = true; activeAnimationStep = 3; isTargetHovered = true; }}
                   class="px-4 py-2 rounded-xl bg-blue-500 text-slate-950 font-semibold text-xs hover:bg-blue-400 cursor-pointer shadow-xs">
@@ -344,7 +344,7 @@
                       <span class="text-xs">Telemetry Stream</span>
                       <span class="text-xs font-mono text-blue-600 font-semibold">Anchor →</span>
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-normal mt-0.5 max-w-[68ch]">Zero-VDOM pure SVG live chart</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-normal mt-0.5 max-w-[68ch]">SVG live chart</p>
                   </button>
 
                   <!-- Item 2 -->
@@ -416,7 +416,7 @@
         </div>
         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Drag or Anchor to Element</h3>
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-          Drag the card freely with your mouse or click "Target Element" to anchor the component directly to any container on your page!
+          Drag the card with your mouse, or click "Target Element" to anchor it to a container on your page.
         </p>
       </div>
 

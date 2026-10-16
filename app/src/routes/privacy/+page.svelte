@@ -36,10 +36,10 @@
       <div class="p-6 rounded-3xl bg-blue-50/50 dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 space-y-2">
         <h2 class="font-bold text-slate-950 dark:text-white text-base">Key Privacy Highlights</h2>
         <ul class="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-          <li><strong>Zero PII Tracking:</strong> Sola does not collect, record, or monetize personal identifiers, passwords, browsing history, or website content.</li>
-          <li><strong>Local Execution:</strong> Component simulation, signal reactivity, and Shadow DOM rendering occur locally on your machine.</li>
+          <li><strong>No personal data collected:</strong> Sola does not collect, record, or monetize personal identifiers, passwords, browsing history, or website content.</li>
+          <li><strong>Runs locally:</strong> Component simulation, signal reactivity, and Shadow DOM rendering occur locally on your machine.</li>
           <li><strong>AI Intent Transparency:</strong> When using optional AI features (Sola Arc / Intent Compiler), natural language queries are transmitted to Google Generative AI (Gemini API) solely to synthesize UI code and architectural responses.</li>
-          <li><strong>Zero Data Broker Sharing:</strong> We do not sell, rent, or transfer your information to third-party advertisers or data brokers.</li>
+          <li><strong>No selling of data:</strong> We do not sell, rent, or transfer your information to third-party advertisers or data brokers.</li>
         </ul>
       </div>
 
@@ -47,7 +47,7 @@
       <section class="space-y-3">
         <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">1. Information We Collect</h2>
         <p>
-          The Sola platform and the Sola Chrome Extension are built with a privacy-first approach:
+          The Sola platform and the Sola Chrome Extension are built to collect as little as possible:
         </p>
         <ul class="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 text-sm">
           <li>We do not collect names, email addresses, phone numbers, or account profiles.</li>

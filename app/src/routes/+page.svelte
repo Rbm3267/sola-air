@@ -31,7 +31,7 @@
     <section class="w-full py-16 sm:py-20 border-t border-slate-100 dark:border-white/[0.04] relative">
       <div class="text-center max-w-3xl mx-auto mb-14">
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 text-blue-800 dark:text-blue-300 text-xs font-mono font-semibold mb-3">
-          <span>The Sola Ecosystem</span>
+          <span>What's here</span>
         </div>
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
           From idea to a live preview
