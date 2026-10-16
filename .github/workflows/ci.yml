@@ -80,7 +80,7 @@ jobs:
       # builds the result. This is the check that would have caught the
       # scaffold pinning package versions that were never published.
       - name: Scaffold a project
-        run: node packages/create-sola/src/cli.js smoke-app
+        run: node "$GITHUB_WORKSPACE/packages/create-sola/src/cli.js" smoke-app
         working-directory: ${{ runner.temp }}
 
       - name: Install scaffolded dependencies
