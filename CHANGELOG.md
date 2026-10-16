@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-16: core 1.4.0, compiler 1.3.0, ui 1.4.0
+
 ### `@sola-air-ui/core`
 
 - **Fixed**: effects were never stopped. An effect now belongs to the component, or
