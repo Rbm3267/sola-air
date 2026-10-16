@@ -4,6 +4,12 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/compiler`
+
+- **Fixed**: a bare `$effect(() => { ... })` statement, the form the docs show, was left
+  as-is and threw `ReferenceError: $effect is not defined`. It now compiles to
+  `createEffect`. `const stop = $effect(...)` is unchanged.
+
 ## 2026-10-16: core 1.4.0, compiler 1.3.0, ui 1.4.0
 
 ### `@sola-air-ui/core`
