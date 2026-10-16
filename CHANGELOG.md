@@ -12,6 +12,9 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   child kept its effects subscribed. `createEffect` now returns a function that
   stops the effect for good, and a disposed effect that was already queued no
   longer runs.
+- **Fixed**: `createData` with a `refresh` interval kept polling after the component
+  that asked for the data was destroyed. It now stops the timer and abandons any
+  request in flight when its component is destroyed.
 - **Added `__untrack(fn)`** (used by compiled output): runs `fn` without the
   surrounding effect tracking what it reads.
 - `esbuild` moved to `devDependencies`; `core` and `sentinel` declare

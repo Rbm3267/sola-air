@@ -1,9 +1,10 @@
 import assert from 'node:assert';
-import { describe, it } from 'node:test';
+import { describe, it, mock } from 'node:test';
 import {
   createSignal,
   createDerived,
   createEffect,
+  createData,
   flushSync,
   onMount,
   onDestroy,
@@ -213,5 +214,33 @@ describe('__untrack', () => {
     setA(1);
     flushSync();
     assert.strictEqual(runs, 2, 'tracking works after a throw inside untrack');
+  });
+});
+
+describe('createData lifecycle', () => {
+  it('stops polling when the component that created it is destroyed', () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    const realFetch = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = () => {
+      calls += 1;
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ rows: [] }) });
+    };
+    try {
+      const ctx = pushContext();
+      createData('sheet://x', { refresh: '1s' });
+      popContext(ctx);
+      assert.strictEqual(calls, 1, 'fetches once on creation');
+
+      mock.timers.tick(3000);
+      assert.strictEqual(calls, 4, 'polls once a second while alive');
+
+      __flush_destroys(ctx);
+      mock.timers.tick(5000);
+      assert.strictEqual(calls, 4, 'no more requests after the component is destroyed');
+    } finally {
+      globalThis.fetch = realFetch;
+      mock.timers.reset();
+    }
   });
 });

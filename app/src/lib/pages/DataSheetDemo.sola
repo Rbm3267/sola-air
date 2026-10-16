@@ -1,0 +1,36 @@
+<script>
+  // Rows from a Google Sheet through the Sola Relay, fetched again every 15 seconds.
+  // Each row is an object keyed by the sheet's header row.
+  let rows = $data("sheet://demo-finance", { refresh: "15s" });
+</script>
+
+<div class="panel">
+  {#if rows().loading}
+    <p class="note">Loading…</p>
+  {/if}
+  {#if rows().error}
+    <p class="error">{rows().error}</p>
+  {/if}
+  {#if rows().data && rows().data.length}
+    <table>
+      <thead><tr><th>Month</th><th>MRR</th></tr></thead>
+      <tbody>
+        {#each rows().data as row}
+          <tr><td>{row.month}</td><td>${row.mrr}</td></tr>
+        {/each}
+      </tbody>
+    </table>
+    <p class="note">Fetched at {rows().data[0].updatedAt} UTC</p>
+  {/if}
+  <button id="data-refetch" onclick={() => rows.refetch()}>Fetch again</button>
+</div>
+
+<style>
+  .panel { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; display: grid; gap: 10px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+  th { font-weight: 600; opacity: 0.7; }
+  .note { margin: 0; font-size: 12px; opacity: 0.7; }
+  .error { margin: 0; color: #b91c1c; }
+  button { justify-self: start; font: inherit; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); background: transparent; color: inherit; cursor: pointer; }
+</style>

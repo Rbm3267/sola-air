@@ -1,0 +1,36 @@
+<script>
+  // The same shape from a PostgreSQL table. The connection string lives in the
+  // relay, so database credentials never reach the browser.
+  let nodes = $data("postgres-primary:nodes", { refresh: "15s" });
+</script>
+
+<div class="panel">
+  {#if nodes().loading}
+    <p class="note">Loading…</p>
+  {/if}
+  {#if nodes().error}
+    <p class="error">{nodes().error}</p>
+  {/if}
+  {#if nodes().data && nodes().data.length}
+    <table>
+      <thead><tr><th>Node</th><th>Status</th><th>CPU</th></tr></thead>
+      <tbody>
+        {#each nodes().data as node}
+          <tr><td>{node.name}</td><td>{node.status}</td><td>{node.cpu}%</td></tr>
+        {/each}
+      </tbody>
+    </table>
+    <p class="note">Fetched at {nodes().data[0].updatedAt} UTC</p>
+  {/if}
+  <button id="data-refetch" onclick={() => nodes.refetch()}>Fetch again</button>
+</div>
+
+<style>
+  .panel { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; display: grid; gap: 10px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+  th { font-weight: 600; opacity: 0.7; }
+  .note { margin: 0; font-size: 12px; opacity: 0.7; }
+  .error { margin: 0; color: #b91c1c; }
+  button { justify-self: start; font: inherit; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); background: transparent; color: inherit; cursor: pointer; }
+</style>

@@ -37,7 +37,7 @@
 
   <!-- Subheadline -->
   <p class="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mb-8 sm:mb-10 leading-relaxed font-normal">
-    Sola Sentinel watches what people do on the page (clicks, focus, what they're typing) and <code class="font-mono text-[0.85em] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded-md">$intent</code> can offer a suggestion before they ask. Underneath it's plain signals and direct DOM updates, with no virtual DOM.
+    Sola Sentinel watches what people do on the page and <code class="font-mono text-[0.85em] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded-md">$intent</code> can offer a suggestion before they ask. Compile <code class="font-mono text-[0.85em] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded-md">.sola</code> components to plain DOM calls, or mount a persistent Shadow DOM shell across any existing app or multi-page portal.
   </p>
 
   <!-- Clean Action Bar (CTAs + CLI) -->
@@ -81,9 +81,9 @@
   <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400 mb-12">
     <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> {FACTS.coreSizeKb} core runtime</span>
     <span>•</span>
-    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> No virtual DOM diffing</span>
+    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> Compiles to plain DOM calls</span>
     <span>•</span>
-    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Compiles to plain DOM calls</span>
+    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Drops into any page via Shadow DOM</span>
   </div>
 
   <!-- The thesis, demonstrated: Sentinel watching a real form and resolving a
