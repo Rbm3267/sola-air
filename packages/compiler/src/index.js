@@ -976,6 +976,14 @@ export function compile(source, options = {}) {
           edits.push({ start: call.end, end: call.end, replacement: ')' });
         }
 
+        // $effect(fn) as a bare statement: the form the docs show. It compiles to
+        // createEffect(fn); the declaration form (const stop = $effect(fn)) is below.
+        if (node.type === 'ExpressionStatement' && node.expression.type === 'CallExpression' &&
+            node.expression.callee.type === 'Identifier' && node.expression.callee.name === '$effect') {
+          const callee = node.expression.callee;
+          edits.push({ start: callee.start, end: callee.end, replacement: 'createEffect' });
+        }
+
         // $state()/$derived()/$effect()/$intent()/$data() macro declarations.
         // Bracket edits (head + tail) leave the argument expression in place so
         // the reactive rewrite pass below can still auto-call signals inside it.

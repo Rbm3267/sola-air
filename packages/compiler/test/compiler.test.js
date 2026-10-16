@@ -20,6 +20,18 @@ function test(name, fn) {
 
 console.log('\n$state / $derived / $effect');
 
+test('a bare $effect(fn) statement compiles to createEffect and reads signals', () => {
+  const { code } = compile(`<script>let n = $state(0);\n$effect(() => { document.title = 'n' + n; });</script><span>{n}</span>`);
+  assert(!code.includes('$effect'), 'macro name must not survive');
+  assert(/createEffect\(\(\) => \{ document\.title = 'n' \+ n\(\); \}\);/.test(code), code);
+  assert(!code.includes('createEffect;'), 'no stray reference');
+});
+
+test('const stop = $effect(fn) still returns the dispose function', () => {
+  const { code } = compile(`<script>let n = $state(0);\nconst stop = $effect(() => { n; });</script><span>{n}</span>`);
+  assert(/createEffect\(/.test(code) && !code.includes('$effect'), code);
+});
+
 test('$state compiles to createSignal', () => {
   const { code } = compile(`<script>let count = $state(0);</script><span>{count}</span>`);
   assert(code.includes('const [count, set_count] = createSignal(0)'), 'createSignal');
