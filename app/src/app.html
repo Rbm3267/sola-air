@@ -5,7 +5,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 		<meta name="google-site-verification" content="WcTmhJBtVJPU0tzzt4XiIY4AfSDAywCA6RTgfowxVcw" />
-		<title>Sola</title>
+		<title>Sola AIR — Ambient Intent Runtime</title>
+		<!--
+			Default link-preview tags. Every page renders in the browser only (ssr = false), so
+			Slack, LinkedIn, X and similar crawlers, which do not run JavaScript, see nothing but
+			this file. The root layout sets the same tags per route once the app loads and
+			removes these (data-default-meta) so a page never carries two of each.
+		-->
+		<meta data-default-meta name="description" content="A zero-VDOM reactive runtime and compiler for ambient, AI-driven interfaces: .sola components that compile to plain DOM calls." />
+		<meta data-default-meta property="og:type" content="website" />
+		<meta data-default-meta property="og:site_name" content="Sola AIR" />
+		<meta data-default-meta property="og:title" content="Sola AIR — Ambient Intent Runtime" />
+		<meta data-default-meta property="og:description" content="A zero-VDOM reactive runtime and compiler for ambient, AI-driven interfaces: .sola components that compile to plain DOM calls." />
+		<meta data-default-meta property="og:image" content="https://sola-air.dev/og-image.jpg" />
+		<meta data-default-meta name="twitter:card" content="summary_large_image" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		%sveltekit.head%
 	</head>

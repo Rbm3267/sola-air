@@ -189,6 +189,68 @@ export function onSignOut() {
   shell.teardown();
 }`;
 
+export const busBasicsExample = `import { createBus } from '@sola-air-ui/core';
+
+const bus = createBus();
+
+bus.on('ask', (payload) => console.log('asked about', payload.topic));
+
+const payload = { topic: 'latency' };
+bus.emit('ask', payload);
+bus.emit('ask', payload); // the same payload again: still delivered
+
+bus.dispose();`;
+
+export const busComponentExample = `${OPEN}
+  let toast = $state('');
+  // The latest payload of an event, as a reactive value.
+  let ctx = $lastEvent('sola:context');
+  // Runs on every emission, duplicates included. Unsubscribes when the component is destroyed.
+  $on('sola:toast', (t) => { toast = t.text; });
+${CLOSE}
+
+<div>
+  <p>{ctx?.title ?? 'No context yet'}</p>
+  <p>{toast}</p>
+</div>`;
+
+export const busConfigExample = `import { configureBus } from '@sola-air-ui/core';
+
+// Once, at bootstrap, before any component subscribes.
+configureBus({
+  dom: {
+    target: window,
+    in:  ['sola:context'],    // host page CustomEvents -> bus
+    out: ['sola:navigate'],   // bus -> host page CustomEvents
+  },
+  broadcast: ['sola:toast'],  // the only type that reaches other tabs
+  validate: {
+    'sola:context': (p) => typeof p?.title === 'string',
+    'sola:toast':   (p) => typeof p?.text === 'string',
+  },
+  sticky: {
+    // A one-shot handoff that survives a page navigation, once.
+    'sola:context': { store: 'session', ttlMs: 30000, consume: true },
+  },
+  guard: {
+    // Your policy lives here, not in the library.
+    'sola:context': ({ from }) => from !== 'remote',
+  },
+  onReject: (info) => console.warn('rejected', info.type, info.reason), // no payload
+});`;
+
+export const busHostExample = `// Host page code: no Sola import needed.
+
+// Tell the shell what the user is looking at.
+window.dispatchEvent(new CustomEvent('sola:context', {
+  detail: { title: 'Incident INC0012' }
+}));
+
+// Hear what the shell asks the host to do.
+window.addEventListener('sola:navigate', (e) => {
+  router.go(e.detail.view);
+});`;
+
 /** Every `.sola` snippet the docs publish, with what it must render. */
 export const solaSnippets: SolaSnippet[] = [
   {
@@ -218,6 +280,11 @@ export const solaSnippets: SolaSnippet[] = [
     expectText: ['Toggle assistant'],
     click: 'button',
     expectAfterClick: ['Assistant is open']
+  },
+  {
+    id: 'bus-component',
+    code: busComponentExample,
+    expectText: ['No context yet']
   }
 ];
 
@@ -225,5 +292,7 @@ export const solaSnippets: SolaSnippet[] = [
 export const jsSnippets: JsSnippet[] = [
   { id: 'signal', code: signalExample, expectLogs: ['0', '1'] },
   { id: 'derived', code: derivedExample, expectLogs: ['72000 req/min'] },
-  { id: 'effect', code: effectExample, expectLogs: [] }
+  { id: 'effect', code: effectExample, expectLogs: [] },
+  // The second emit repeats the first payload exactly: events are not state, so it still arrives.
+  { id: 'bus-basics', code: busBasicsExample, expectLogs: ['asked about latency', 'asked about latency'] }
 ];

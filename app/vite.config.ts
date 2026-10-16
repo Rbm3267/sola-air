@@ -8,6 +8,8 @@ import solaPlugin from '../packages/vite-plugin-sola/src/index.js';
 // from Vite's config temp directory, which resolves differently depending on
 // how the installer hoisted the workspace.
 import { compile } from '../packages/compiler/src/index.js';
+// The size the site states for the core runtime is measured from the real bundle.
+import { measureCore } from '../scripts/core-size.mjs';
 
 // Every version shown anywhere on the site comes from a package manifest, so
 // the site cannot advertise a version that was never released.
@@ -27,6 +29,7 @@ const solaVersion = manifestVersion('sola-air');
 const coreVersion = manifestVersion('core');
 const compilerVersion = manifestVersion('compiler');
 const uiVersion = manifestVersion('ui');
+const coreSizeKb = measureCore().gzipKb;
 
 // The names @sola-air-ui/ui actually exports, read from its entry point. The
 // site uses this to tell a published primitive apart from a preview built only
@@ -67,6 +70,7 @@ export default defineConfig({
 		__SOLA_CORE_VERSION__: JSON.stringify(coreVersion),
 		__SOLA_COMPILER_VERSION__: JSON.stringify(compilerVersion),
 		__SOLA_UI_VERSION__: JSON.stringify(uiVersion),
+		__SOLA_CORE_SIZE_KB__: JSON.stringify(coreSizeKb),
 		__SOLA_UI_EXPORTS__: JSON.stringify(uiExports),
 		__SOLA_EXTENSION_VERSION__: JSON.stringify(extensionVersion)
 	},

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { FACTS } from '$lib/data/site';
+
   let { 
     state = 'idle', // 'idle' | 'generating' | 'listening' | 'mounted'
     size = 200,
@@ -107,7 +109,7 @@
         </span>
       </div>
       <span class="text-xs font-mono text-slate-500 dark:text-slate-400">
-        3.9 kB Core • Zero-VDOM Native Signals
+        {FACTS.coreSizeKb} core • Zero-VDOM Native Signals
       </span>
     </div>
   {/if}

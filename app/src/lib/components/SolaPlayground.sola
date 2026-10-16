@@ -1,4 +1,6 @@
 <script>
+  // Pass the measured size in (see FACTS.coreSizeKb); this file states no number of its own.
+  export let runtimeSize = "—";
   let prompt = $state("Show Q3 enterprise revenue and churn rate");
   let status = $state("Idle");
   let count = $state(42);
@@ -40,7 +42,7 @@
 
       <div class="metric-card">
         <div class="metric-label">Runtime Engine</div>
-        <div class="metric-val">3.2 kB</div>
+        <div class="metric-val">{runtimeSize}</div>
         <div class="metric-footer">
           <span class="tag-success">Zero VDOM Overhead</span>
         </div>

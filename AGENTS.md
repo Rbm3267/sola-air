@@ -8,7 +8,7 @@ This document provides exact syntax rules, AST schemas, control-flow specificati
 
 ## 1. Core Framework Paradigm
 
-Sola is a **zero-VDOM, fine-grained ambient runtime** (`~3.2 kB`).
+Sola is a **zero-VDOM, fine-grained ambient runtime** (`~7.5 kB` gzipped for the whole core runtime; measured by `scripts/core-size.mjs`, and checked against this line by `packages/core/test/size.test.js`).
 - Components compile into **native JavaScript ES modules** that perform direct DOM node operations without virtual DOM diffing loops.
 - Reactivity relies on fine-grained getter/setter signals (`createSignal`, `createDerived`, `createEffect`).
 - A compiled component's default export **is** its mount function: `export default function mount(target, props) { ... }`. There is no separate `mount(el, Component, props)` helper exported from `@sola-air-ui/core` — you call the compiled component itself.
