@@ -42,6 +42,8 @@ export function onDestroy(fn: () => void): void;
 export function __flush_mounts(ctx?: ComponentContext): void;
 /** Called by compiled output; flushes the given context's destroy callbacks. */
 export function __flush_destroys(ctx?: ComponentContext): void;
+/** Called by compiled output; runs fn without the surrounding effect tracking its reads. */
+export function __untrack<T>(fn: () => T): T;
 
 // ─── Ambient intent ───
 

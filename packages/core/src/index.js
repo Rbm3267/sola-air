@@ -56,9 +56,17 @@ export function createSignal(initialValue) {
 }
 
 // ─── createEffect ───
+//
+// An effect belongs to whichever component (or {#if}/{#each} branch) was being
+// built when it was created. Tearing that owner down disposes the effect, so a
+// removed branch or an unmounted child stops reacting instead of leaking a live
+// subscription to nodes that are no longer on the page.
 export function createEffect(fn) {
+  let disposed = false;
   const effect = {
     execute() {
+      // An effect can be queued and then disposed before the flush reaches it.
+      if (disposed) return;
       cleanup();
       effectStack.push(effect);
       try {
@@ -78,6 +86,14 @@ export function createEffect(fn) {
     effect.dependencies.clear();
   }
 
+  function dispose() {
+    disposed = true;
+    pendingEffects.delete(effect);
+    cleanup();
+  }
+
+  if (activeContext) activeContext.destroys.push(dispose);
+
   // Run immediately (synchronous initial execution)
   effectStack.push(effect);
   try {
@@ -86,7 +102,19 @@ export function createEffect(fn) {
     effectStack.pop();
   }
 
-  return cleanup;
+  return dispose;
+}
+
+// Run fn without the surrounding effect tracking what it reads. Compiled
+// components mount children through this, so a child's own reads cannot make
+// the parent's effect re-run.
+export function __untrack(fn) {
+  effectStack.push(null);
+  try {
+    return fn();
+  } finally {
+    effectStack.pop();
+  }
 }
 
 // ─── createDerived ───
