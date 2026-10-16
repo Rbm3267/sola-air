@@ -119,7 +119,7 @@
           </div>
           <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">Handcrafted UI Architecture</h2>
           <p class="text-base text-slate-600 dark:text-slate-400 font-normal max-w-2xl mx-auto leading-relaxed">
-            Sola primitives compile directly into reactive vanilla DOM nodes with scoped styles and zero virtual DOM diffing.
+            Sola components compile directly into reactive vanilla DOM nodes with scoped styles and zero virtual DOM diffing. The cards below are Svelte previews of the layouts; browse the shipped .sola components on the Components page.
           </p>
         </div>
 
@@ -128,8 +128,8 @@
           <!-- Data Card Demo -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-2">
-              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DataCard.sola</span>
-              <span class="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded font-semibold border border-blue-100 dark:border-blue-500/20">Compiled DOM</span>
+              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DataCard</span>
+              <span class="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded font-semibold border border-blue-100 dark:border-blue-500/20">Svelte preview</span>
             </div>
             <div class="flex flex-col gap-3">
               <DataCard config={{ title: "Realized MRR", value: "$184,200", trend: "+14.2%", icon: "activity" }} />
@@ -140,8 +140,8 @@
           <!-- Dynamic Form Demo -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-2">
-              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DynamicForm.sola</span>
-              <span class="text-xs font-mono text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10 px-2 py-0.5 rounded font-semibold border border-violet-100 dark:border-violet-500/20">Live Schema</span>
+              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">DynamicForm</span>
+              <span class="text-xs font-mono text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10 px-2 py-0.5 rounded font-semibold border border-violet-100 dark:border-violet-500/20">Svelte preview</span>
             </div>
             <div>
               <DynamicForm config={{ 
@@ -158,8 +158,8 @@
           <!-- List Block Demo -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-2">
-              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">ListBlock.sola</span>
-              <span class="text-xs font-mono text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded font-semibold border border-sky-100 dark:border-sky-500/20">Signal List</span>
+              <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">ListBlock</span>
+              <span class="text-xs font-mono text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded font-semibold border border-sky-100 dark:border-sky-500/20">Svelte preview</span>
             </div>
             <div>
               <ListBlock config={{ 

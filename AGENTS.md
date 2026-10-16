@@ -26,10 +26,10 @@ A Sola component encapsulates logic (`<script>`), template markup (`HTML`), and 
   export let initialCount = 0;
 
   // Local reactive signals. $state() compiles to createSignal() under the
-  // hood; $derived() ALWAYS needs a function body (an expression like
-  // `count * 2` with no `() =>` will read `count` once, not track it).
+  // hood. $derived() takes a bare expression; the compiler wraps it so it
+  // is tracked. `$derived(() => count * 2)` works too.
   let count = $state(initialCount);
-  let doubled = $derived(() => count() * 2);
+  let doubled = $derived(count * 2);
 
   // Event handlers. Bare assignment to a $state variable (count += 1) is
   // rewritten by the compiler into a setter call automatically — you don't
@@ -41,8 +41,8 @@ A Sola component encapsulates logic (`<script>`), template markup (`HTML`), and 
 
 <div class="card">
   <h3>{title}</h3>
-  <!-- Reading a signal in a template always calls it: {count}, not {count()}, will NOT work -->
-  <p>Active Nodes: {count()} (Capacity: {doubled()})</p>
+  <!-- Write plain names in templates: {count}. The compiler turns reads into tracked calls. -->
+  <p>Active Nodes: {count} (Capacity: {doubled})</p>
   <button onclick={increment}>Scale Node +1</button>
 </div>
 
@@ -113,7 +113,7 @@ Only a single `{:else}` is supported — there is no `{:else if}` chaining in th
 | Primitive | Signature | Purpose |
 | :--- | :--- | :--- |
 | `createSignal(initialVal)` | `[getter: () => T, setter: (v: T) => void]` | Creates a reactive state signal. What `$state()` compiles to. |
-| `createDerived(fn)` | `getter: () => T` | Computes a derived value, auto-tracking dependencies. What `$derived(fn)` compiles to — `fn` must be a function, not a bare expression. |
+| `createDerived(fn)` | `getter: () => T` | Computes a derived value, auto-tracking dependencies. What `$derived(expr)` compiles to. A bare expression is wrapped by the compiler; an explicit `() => expr` also works. |
 | `createEffect(fn)` | `cleanupFn: () => void` | Runs a side-effect whenever dependent signals update. What `$effect(fn)` compiles to. |
 | `onMount(fn)` / `onDestroy(fn)` | `void` | Lifecycle hooks, scoped to the current component via an internal context stack (`pushContext`/`popContext`). |
 | `createData(source, options?)` | `getter: () => { loading, data, error }` | What `$data(source, options)` compiles to — see §5B. |
@@ -247,8 +247,8 @@ This works in any framework that gives you a real DOM node and a mount/unmount l
 <sola_rules>
 You are an expert Sola developer. Follow these rules when authoring .sola components:
 1. Always declare reactive signals with 'let x = $state(initialVal)'.
-2. Declare computed values with 'let y = $derived(() => expression)' — the arrow function is required, not optional.
-3. Read any signal in a template or script by calling it: {x()}, not {x}.
+2. Declare computed values with 'let y = $derived(expression)'. The compiler wraps it so it is tracked; 'let y = $derived(() => expression)' also works.
+3. Read a signal by its plain name in templates and script ({x}); the compiler turns reads into tracked calls. An explicit {x()} also compiles, but the plain form is what the docs use.
 4. Attach native DOM event handlers directly: '<button onclick={handleClick}>'.
 5. Control flow uses {#if condition}...{:else}...{/if} (single else only, no else-if chaining) and {#each items as item, index (key)}...{/each}. Avoid nesting {#if} blocks inside each other.
 6. Export props with 'export let propName = defaultValue;'.

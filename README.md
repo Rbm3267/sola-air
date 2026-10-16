@@ -39,17 +39,17 @@ Sola AIR is a compiler-first JavaScript framework where AI isn't bolted on — i
 ```html
 <script>
   let count = $state(0);
-  let doubled = $derived(() => count() * 2);
+  let doubled = $derived(count * 2);
   let dashboard = $intent("Show MRR trend for Q3");
   let customerData = $data("postgres-primary:customers", { sync: "realtime" });
 </script>
 
 <div>
-  <h1>Count: {count()}</h1>
-  <p>Doubled: {doubled()}</p>
-  <input bind:value="count" />
+  <h1>Count: {count}</h1>
+  <p>Doubled: {doubled}</p>
+  <input bind:value={count} />
 
-  {#if count() > 10}
+  {#if count > 10}
     <p>High engagement detected.</p>
   {/if}
 </div>
@@ -83,7 +83,7 @@ The compiler transforms this into a self-contained ES module with:
 ## Reactive Primitives
 
 - **`$state(initial)`** — Fine-grained reactive signal
-- **`$derived(() => fn)`** — Computed values with automatic dependency tracking
+- **`$derived(expr)`** — Computed values with automatic dependency tracking (a `() => expr` function also works)
 - **`$effect(() => fn)`** — Side effects with automatic cleanup
 - **`$intent(prompt, options)`** — AI-native signal that resolves structured UI & data from LLMs
 - **`$data(source, options)`** — Real-time reactive data pipeline connected through Sola Relay
