@@ -18,8 +18,8 @@ jobs:
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
       OVSX_PAT: ${{ secrets.OVSX_PAT }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
 
@@ -27,7 +27,7 @@ jobs:
         run: npx --yes @vscode/vsce package --no-dependencies --out sola-vscode.vsix
 
       - name: Keep the .vsix
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sola-vscode-vsix
           path: packages/vscode-extension/sola-vscode.vsix
