@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /api/
 
-Sitemap: https://www.sola-air.dev/sitemap.xml
+Sitemap: https://sola-air.dev/sitemap.xml
