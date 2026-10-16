@@ -1462,6 +1462,9 @@ function inferPropType(defaultSrc) {
   if (/^(['"`])[\s\S]*\1$/.test(d)) return 'string';
   if (/^-?\d[\d_]*(\.\d+)?([eE][+-]?\d+)?$/.test(d)) return 'number';
   if (d === 'true' || d === 'false') return 'boolean';
+  // A null or undefined default says nothing about the type. `unknown` would stop a
+  // TypeScript host from reading or calling the prop; `any` lets it.
+  if (d === 'null' || d === 'undefined') return 'any';
   if (d.startsWith('[')) return 'unknown[]';
   if (d.startsWith('{')) return 'Record<string, unknown>';
   if (/^(\(.*\)|\w+)\s*=>|^function\b/.test(d)) return '(...args: any[]) => any';
