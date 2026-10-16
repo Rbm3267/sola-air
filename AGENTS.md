@@ -123,6 +123,26 @@ There is **no** `mount(el, props)` export from core. Each compiled `.sola` file'
 
 ---
 
+## 4b. State That Survives Page Navigation
+
+Full page loads destroy the DOM, so UI that should feel continuous across pages (an open drawer, a conversation, a theme) must be rebuilt from stored state. Two pieces:
+
+- **`$persist(key, initial, options?)`** (compiles to `createPersistentSignal`) — behaves exactly like `$state`, but hydrates synchronously from storage, writes back on change, and mirrors live to other same-origin tabs/frames over `BroadcastChannel`. Options: `storage` (`'session'` default, `'local'`, `'memory'`, or a custom `{getItem,setItem,removeItem}`), `sync`, `channel`, `version` (bump to discard old shapes), `validate`, `ttlMs`. It degrades to a plain signal if storage is blocked.
+- **`mountShell(component, props, { id, shadow, css })`** (from `@sola-air-ui/core`) — mounts a compiled component into a host element on `document.body`, inside a closed Shadow DOM by default so host-page CSS can't leak in or out. Idempotent per `id`. Compiled component styles are injected into the shadow root automatically. Run the same bootstrap on every page and the shell reappears in the state the user left it.
+
+```html
+<script>
+  let open = $persist('dock.open', false);
+  let thread = $persist('dock.thread', [], { storage: 'local', version: 2 });
+</script>
+```
+
+Call **`clearPersistentState()`** on sign-out: it removes every persisted Sola value and resets the live signals in this page and every other open tab.
+
+`sessionStorage` is per-tab: a new tab starts from defaults but then live-syncs with other tabs. Use `storage: 'local'` if new tabs should inherit state. Only store JSON-serializable, non-sensitive values.
+
+---
+
 ## 5. Compiler Macro Primitives
 
 ### A. Dynamic Intent Generation (`$intent`)

@@ -177,3 +177,78 @@ export class SolaSentinel {
 }
 
 export function createSentinel(name?: string, options?: SentinelOptions): SolaSentinel;
+
+// ─── Persistent / cross-page state ───
+
+export interface WebStorageLike {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
+export interface PersistentSignalOptions<T> {
+  /** 'session' (default) survives navigation in a tab; 'local' also survives new tabs and restarts. */
+  storage?: 'session' | 'local' | 'memory' | WebStorageLike;
+  /** Mirror changes to other same-origin contexts over BroadcastChannel. Default true. */
+  sync?: boolean;
+  /** BroadcastChannel name. Default 'sola-bus'. */
+  channel?: string;
+  /** Bump to discard values stored by an older shape of this state. Default 1. */
+  version?: number;
+  /** Reject stored or received values that don't match the expected shape. */
+  validate?: (value: unknown) => boolean;
+  /** Discard stored values older than this many milliseconds. */
+  ttlMs?: number;
+}
+
+export interface PersistentSignalControls {
+  /** Remove the stored value everywhere and reset to the initial value. */
+  clear(): void;
+  /** Stop syncing and release the channel. */
+  dispose(): void;
+}
+
+/**
+ * A signal hydrated synchronously from storage, written back on change, and
+ * mirrored live to other tabs/frames. Degrades to a plain signal when storage
+ * or BroadcastChannel is unavailable.
+ */
+export function createPersistentSignal<T>(
+  key: string,
+  initialValue: T,
+  options?: PersistentSignalOptions<T>
+): [Accessor<T>, Setter<T>, PersistentSignalControls];
+
+/**
+ * Wipe all persisted Sola values and reset live signals in this page and every
+ * other open tab. Call on sign-out.
+ */
+export function clearPersistentState(options?: {
+  storage?: 'session' | 'local' | Array<'session' | 'local'>;
+  channel?: string;
+}): void;
+
+export interface ShellOptions {
+  /** Host element id; mounting twice with the same id returns the existing shell. Default 'sola-shell'. */
+  id?: string;
+  /** Shadow DOM mode, or false to mount directly into the host. Default 'closed'. */
+  shadow?: 'closed' | 'open' | false;
+  /** Where to attach the host. Default document.body. */
+  parent?: Element;
+  /** Extra CSS injected into the shadow root. */
+  css?: string;
+  hostStyle?: Partial<CSSStyleDeclaration>;
+}
+
+export interface Shell {
+  host: HTMLElement;
+  root: Element | ShadowRoot;
+  teardown(): void;
+}
+
+/** Mount a compiled component as a persistent, style-isolated overlay. */
+export function mountShell(
+  component: (target: Element, props?: Record<string, unknown>) => () => void,
+  props?: Record<string, unknown>,
+  options?: ShellOptions
+): Shell;
