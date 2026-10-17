@@ -54,7 +54,7 @@ jobs:
 
       # No dev server needed: these compile components and mount them directly.
       - name: Docs snippets and library components
-        run: npx playwright test e2e/docs-snippets.spec.ts e2e/ui-components.spec.ts
+        run: npx playwright test e2e/docs-snippets.spec.ts e2e/ui-components.spec.ts e2e/shell-primitives.spec.ts e2e/sola-export.spec.ts e2e/composition.spec.ts
 
       # These drive the real site, so they need it running.
       - name: Build the site
@@ -63,7 +63,7 @@ jobs:
         run: |
           npm run dev -w app -- --port 5174 --strictPort &
           npx wait-on http://localhost:5174 --timeout 60000
-          npx playwright test e2e/site-quality.spec.ts e2e/site-audit.spec.ts e2e/a11y.spec.ts
+          npx playwright test e2e/site-quality.spec.ts e2e/site-audit.spec.ts e2e/a11y.spec.ts e2e/home-bus.spec.ts e2e/home-data.spec.ts
 
   scaffold:
     name: Scaffold installs and builds

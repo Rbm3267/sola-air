@@ -21,5 +21,11 @@ describe('@sola-air-ui/vite-plugin-sola', () => {
 
     const resOther = await plugin.load('/some/file.js?import');
     assert.strictEqual(resOther, null);
+
+    // Asset queries ask for the file itself (e.g. `import src from './X.sola?raw'`
+    // to show a component's source); compiling them would hand back JS instead.
+    for (const q of ['raw', 'url', 'inline', 'worker']) {
+      assert.strictEqual(await plugin.load(`${file}?${q}`), null, `?${q} must be left to Vite`);
+    }
   });
 });

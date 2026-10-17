@@ -19,6 +19,9 @@ describe('isReadOnlySql', () => {
     assert.strictEqual(isReadOnlySql('INSERT INTO logs VALUES (1)'), false);
     assert.strictEqual(isReadOnlySql(''), false);
     assert.strictEqual(isReadOnlySql(null), false);
+    assert.strictEqual(isReadOnlySql('SELECT * INTO backup FROM users'), false);
+    assert.strictEqual(isReadOnlySql("SELECT * FROM users INTO OUTFILE '/tmp/u.csv'"), false);
+    assert.strictEqual(isReadOnlySql("SELECT 'into' AS word"), true);
   });
 
   it('rejects stacked semicolon queries', () => {

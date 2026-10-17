@@ -1,21 +1,17 @@
 <script>
   export let title = "METRIC";
   export let value = "$0.00";
+  // Leave trend empty to hide the footer rather than show a made-up one.
   export let trend = "";
-  export let icon = "";
-  export let accentColor = "";
 </script>
 
-<div class="sola-data-card" style={accentColor ? 'border-top: 3px solid ' + accentColor + ';' : ''}>
+<div class="sola-data-card">
   <div class="card-glow"></div>
   <div class="card-header">
     <div class="title-wrap">
       <span class="status-dot"></span>
       <span class="card-title">{title}</span>
     </div>
-    {#if icon}
-      <span class="card-icon" aria-hidden="true">{icon}</span>
-    {/if}
   </div>
   <div class="card-value">{value}</div>
   {#if trend}
@@ -84,11 +80,6 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
-  .card-icon {
-    font-size: 12px;
-    color: var(--sola-text-tertiary, #94a3b8);
-    font-family: ui-monospace, monospace;
-  }
 
   .card-value {
     font-size: 2.25rem;

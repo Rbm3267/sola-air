@@ -22,10 +22,23 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Fixed**: `ConversationThread` uses `.sola` assignment syntax (`input = ''`, `messages = [...]`) instead of calling `$state` getters as functions; `DatePicker` binds `{selectedDate}` with `value` and `onChange` props and light/dark tokens; `Dashboard` exposes `initialRps` / `initialErrorRate` / `initialNodes` props and binds its SVG gauge arc to `capacityPct()`; `StreamView` accepts structured `events` arrays; `SolaSafeHTML` uses `:global(...)` for descendant tags; `Table` wires `striped` and auto-derives `columns` from `rows[0]` when omitted; dark/light mode tokens and ARIA attributes updated across primitives.
 - **Added**: `packages/ui/test/ui.test.js` compiling and running `sola-check` across all 37 `.sola` components.
 
-### `@sola-air-ui/providers` & `@sola-air-ui/relay`
+### `@sola-air-ui/providers`
 
-- **Fixed**: `GeminiProvider` uses `?key=` vs `&key=` based on query string presence; `AzureOpenAIProvider` sends the `api-key` header.
+- **Fixed**: `GeminiProvider` uses `?key=` or `&key=` depending on whether the URL already has a query,
+  and URL-encodes the key.
+- **Fixed**: `AzureOpenAIProvider` sends the `api-key` header Azure requires. Other OpenAI-compatible
+  endpoints get only `Authorization`.
+
+### `@sola-air-ui/relay`
+
 - **Fixed**: `RelayServer` enforces single-statement read-only `SELECT` on both string and `{ text, params }` object queries and forwards `limit` options to `sheet` / `servicenow` connectors.
+- **Changed**: `SELECT ... INTO` is rejected too: it creates a table in PostgreSQL and can write a
+  file in MySQL (`INTO OUTFILE`). The check is defence in depth; give the relay a read-only database role.
+
+### `@sola-air-ui/vite-plugin-sola`
+
+- **Fixed**: `.sola` imports with a Vite query (`?import`, `?v=…`, `?t=…`) compile. Asset queries (`?raw`,
+  `?url`, `?inline`, `?worker`) are left to Vite, so `import src from './X.sola?raw'` still returns the source.
 
 ### Extensions & Website (`app/`)
 

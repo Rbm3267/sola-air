@@ -185,16 +185,9 @@ export const PACKAGE_EQUIVALENT: Readonly<Record<string, string>> = {
   ToastStack: 'ToastHost',
   Snackbar: 'Toast',
   SolaMarkdown: 'MarkdownViewer',
-  SolaHtmlPreview: 'HtmlViewer',
-  SparklineTile: 'DataCard',
-  CounterTicker: 'DataCard',
-  ComparisonCard: 'StatGrid',
-  KeyValueGrid: 'StatGrid',
-  ListBlock: 'IntentList',
-  SentinelCapsule: 'AmbientSuggestion',
-  SolaTabs: 'Stack',
-  SolaAccordion: 'Card',
-  SolaEmptyState: 'Card'
+  SolaHtmlPreview: 'HtmlViewer'
+  // Only components that do the same job. A tabs strip is not a Stack and an
+  // accordion is not a Card, so those previews get no pointer.
 };
 
 /** What to show instead of code for a component the package does not ship. */

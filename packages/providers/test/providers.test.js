@@ -90,7 +90,8 @@ describe('@sola-air-ui/providers', () => {
         json: async () => ({ messages: [{ role: 'user', content: 'ping' }], stream: false })
       });
       assert.strictEqual(captured.init.headers['Authorization'], 'Bearer sk-test');
-      assert.strictEqual(captured.init.headers['api-key'], 'sk-test');
+      // Only Azure needs the key in a second header; don't send it to anyone else.
+      assert.strictEqual(captured.init.headers['api-key'], undefined);
     } finally {
       globalThis.fetch = realFetch;
     }

@@ -41,7 +41,8 @@ test.describe('Sola AIR Site & Product Audit', () => {
     await expect(code).toContainText("DataCard(document.getElementById('app'),");
 
     // A site-only preview says so instead of offering code that cannot install.
-    await page.getByRole('button', { name: /Button/ }).filter({ hasText: 'Preview' }).first().click();
+    // Its list badge points at the package component that does the same job.
+    await page.getByRole('button', { name: /Button/ }).filter({ hasText: '→ Button' }).first().click();
     await expect(code).toContainText('is a preview built for this site');
     await expect(code).toContainText("import Button from '@sola-air-ui/ui/button';");
   });

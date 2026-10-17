@@ -70,7 +70,7 @@
     --ov-surface: #ffffff;
     --ov-surface-2: #f8fafc;
     --ov-line: rgba(15, 23, 42, 0.1);
-    --ov-accent: #2563eb;
+    --ov-accent: #1d4ed8; /* blue-700: 4.5:1 on --ov-accent-soft */
     --ov-accent-soft: rgba(59, 130, 246, 0.1);
     --ov-accent-line: rgba(59, 130, 246, 0.3);
     --ov-on-accent: #ffffff;
@@ -95,7 +95,7 @@
       --ov-surface: rgba(15, 23, 42, 0.8);
       --ov-surface-2: rgba(255, 255, 255, 0.04);
       --ov-line: rgba(255, 255, 255, 0.1);
-      --ov-accent: #3b82f6;
+      --ov-accent: #60a5fa; /* blue-400 on the dark page */
       --ov-accent-soft: rgba(59, 130, 246, 0.12);
       --ov-accent-line: rgba(59, 130, 246, 0.3);
       --ov-on-accent: #090d19;
@@ -108,7 +108,7 @@
       --ov-surface: rgba(15, 23, 42, 0.8);
       --ov-surface-2: rgba(255, 255, 255, 0.04);
       --ov-line: rgba(255, 255, 255, 0.1);
-      --ov-accent: #3b82f6;
+      --ov-accent: #60a5fa; /* blue-400 on the dark page */
       --ov-accent-soft: rgba(59, 130, 246, 0.12);
       --ov-accent-line: rgba(59, 130, 246, 0.3);
       --ov-on-accent: #090d19;

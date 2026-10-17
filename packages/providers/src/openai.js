@@ -39,7 +39,6 @@ export function OpenAIProvider({
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
-          'api-key': apiKey,
           ...extraHeaders
         },
         body: JSON.stringify(body)

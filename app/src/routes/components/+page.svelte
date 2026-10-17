@@ -663,7 +663,8 @@
 
           <!-- Code Snippet Output Window -->
           <div class="relative group">
-            <pre class="bg-slate-950 text-blue-300 p-5 rounded-2xl font-mono text-xs overflow-x-auto leading-relaxed shadow-inner border border-slate-800"><code>{activeCodeSnippet}</code></pre>
+            <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+            <pre class="bg-slate-950 text-blue-300 p-5 rounded-2xl font-mono text-xs overflow-x-auto leading-relaxed shadow-inner border border-slate-800" role="region" aria-label="Generated code" tabindex="0"><code>{activeCodeSnippet}</code></pre>
             <button 
               onclick={() => copyCode(activeCodeSnippet)}
               class="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-mono font-semibold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm">

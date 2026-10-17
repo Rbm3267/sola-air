@@ -23,7 +23,9 @@ export function isReadOnlySql(sql) {
     .trim();
   if (!/^SELECT\b/i.test(withoutComments)) return false;
   if (withoutComments.includes(';')) return false;
-  if (/\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|GRANT|REVOKE|COPY|CALL|EXEC|EXECUTE)\b/i.test(withoutComments)) {
+  // INTO covers SELECT ... INTO, which creates a table (PostgreSQL) or writes a file
+  // (MySQL INTO OUTFILE). This is defence in depth: give the relay a read-only role.
+  if (/\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|GRANT|REVOKE|COPY|CALL|EXEC|EXECUTE|INTO)\b/i.test(withoutComments)) {
     return false;
   }
   return true;
