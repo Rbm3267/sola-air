@@ -7,7 +7,7 @@
 //   node scripts/build-skill.mjs           write skills/sola
 //   node scripts/build-skill.mjs --check   fail if skills/sola is out of date
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync, mkdirSync, rmSync, readdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -35,7 +35,20 @@ const versions = {
 };
 
 // ── vendor: what scripts/preview.mjs needs to run with no install ───────────
+// acorn and htmlparser2 go in files of their own, readable and under the 256 KiB
+// a plugin directory reviewer will read; the compiler imports them by path.
+const VENDOR_LIBS = ['acorn', 'htmlparser2'];
+for (const lib of VENDOR_LIBS) {
+  const out = buildSync({
+    stdin: { contents: `export * from '${lib}';\n`, resolveDir: ROOT, sourcefile: `${lib}-entry.js` },
+    bundle: true, format: 'esm', platform: 'node', target: 'node18', write: false, legalComments: 'inline',
+    banner: { js: `// ${lib} ${JSON.parse(read(`node_modules/${lib}/package.json`)).version} (MIT), bundled for scripts/preview.mjs. Generated; do not edit.` }
+  }).outputFiles[0].text;
+  if (out.length > 250 * 1024) throw new Error(`build-skill: vendor/${lib}.mjs is ${Math.round(out.length / 1024)} KiB; keep each vendored file under 256 KiB.`);
+  emit(`vendor/${lib}.mjs`, out);
+}
 const compilerBundle = buildSync({
+  external: VENDOR_LIBS,
   stdin: {
     contents: "export { compile } from './packages/compiler/src/index.js';\nexport { checkSource } from './packages/compiler/src/check.js';\n",
     resolveDir: ROOT,
@@ -47,12 +60,17 @@ const compilerBundle = buildSync({
   target: 'node18',
   write: false,
   legalComments: 'none',
-  banner: { js: `// @sola-air-ui/compiler ${versions.compiler}, bundled with acorn and htmlparser2 for scripts/preview.mjs. Generated; do not edit.` }
+  banner: { js: `// @sola-air-ui/compiler ${versions.compiler}, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.` }
 });
 // The compiler reads its version from ../package.json at runtime; the skill has no
 // such file, so the bundle gets the version as a literal instead.
 const versionRead = /(\w+)\(new URL\("\.\.\/package\.json", import\.meta\.url\), "utf8"\)/;
-const bundled = compilerBundle.outputFiles[0].text;
+let bundled = compilerBundle.outputFiles[0].text;
+for (const lib of VENDOR_LIBS) {
+  const bare = `from "${lib}";`;
+  if (!bundled.includes(bare)) throw new Error(`build-skill: expected the compiler bundle to import ${lib}; update VENDOR_LIBS.`);
+  bundled = bundled.replaceAll(bare, `from "./${lib}.mjs";`);
+}
 if (!versionRead.test(bundled)) throw new Error('build-skill: the compiler no longer reads ../package.json the expected way; update the version replacement.');
 emit('vendor/sola-compiler.mjs', bundled.replace(versionRead, () => JSON.stringify(JSON.stringify({ version: versions.compiler }))));
 
@@ -218,9 +236,11 @@ if (repoDirArg) {
     owner: { name: 'Sola AIR', url: 'https://sola-air.dev' },
     plugins: [{ name: 'sola-ui', source: './', description }]
   }, null, 2) + '\n');
-  put('.mcp.json', JSON.stringify({
-    mcpServers: { 'sola-mcp': { command: 'npx', args: ['-y', `@sola-air-ui/mcp@${versions.mcp}`] } }
-  }, null, 2) + '\n');
+  // The Claude plugin is the skill alone: no .mcp.json, since the plugin directory
+  // holds an npx-launched server for review and it would not run on claude.ai.
+  // The Gemini extension still starts @sola-air-ui/mcp (gemini-extension.json).
+  // The directory picks the listing icon up from .claude-plugin/icon.png.
+  copyFileSync(path.join(ROOT, 'app/static/logo.png'), path.join(dir, '.claude-plugin/icon.png'));
   put('LICENSE', read('LICENSE'));
   put('README.md', `# Sola AIR UI skill
 
