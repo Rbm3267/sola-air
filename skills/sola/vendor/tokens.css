@@ -1,0 +1,243 @@
+/**
+ * @sola-air-ui/tokens — Sola AIR design token system
+ *
+ * An 8px-base spacing grid, a 5-step type scale, and a 7-role semantic
+ * alert palette. These are Sola AIR's own choices, grounded in the same
+ * principles common across modern design systems: pixel-grid alignment,
+ * typographic hierarchy, and purposeful semantic color.
+ *
+ *   --sola-space-*         spacing scale (2–40px, 8 steps)
+ *   --sola-radius-*        corner-radius scale (2–9999px)
+ *   --sola-font-size-*     type scale (12–32px, 5 steps)
+ *   --sola-font-weight-*   weight scale
+ *   --sola-leading-*       line-height scale
+ *   --sola-color-primary-* emerald primary palette (50–900)
+ *   --sola-color-neutral-* slate neutral palette (0–950)
+ *   --sola-text-*          semantic text roles (primary/secondary/tertiary)
+ *   --sola-surface-*       surface backgrounds
+ *   --sola-border-*        border roles
+ *   --sola-alert-*         semantic severity scale (low→critical, 7 roles)
+ */
+
+:root {
+  /* ─── Spacing ───────────────────────────────────────────────────────────────
+   * 8px-base grid with a 2px micro step for tight contexts.
+   * All components snap to these increments for visual rhythm.
+   */
+  --sola-space-xxs:  2px;
+  --sola-space-xs:   4px;
+  --sola-space-sm:   8px;
+  --sola-space-md:   12px;
+  --sola-space-lg:   16px;
+  --sola-space-xl:   24px;
+  --sola-space-2xl:  32px;
+  --sola-space-3xl:  40px;
+
+  /* ─── Corner radius ─────────────────────────────────────────────────────────
+   * sm: tight elements like status chips and badges
+   * md: interactive controls — buttons, inputs
+   * lg: dialog-level containers
+   * xl / 2xl: cards and panels with a softer feel
+   * full: pill shapes, avatars, tags
+   */
+  --sola-radius-sm:   2px;
+  --sola-radius-md:   6px;
+  --sola-radius-lg:   8px;
+  --sola-radius-xl:   12px;
+  --sola-radius-2xl:  16px;
+  --sola-radius-full: 9999px;
+
+  /* ─── Type scale ────────────────────────────────────────────────────────────
+   * 5-step modular scale. md (16px) is the component default.
+   * sm is for labels and metadata only — not primary reading content.
+   * 2xl is a page-title step; use at most once per view.
+   */
+  --sola-font-size-sm:  12px;
+  --sola-font-size-md:  16px;
+  --sola-font-size-lg:  20px;
+  --sola-font-size-xl:  24px;
+  --sola-font-size-2xl: 32px;
+
+  /* ─── Font weight ───────────────────────────────────────────────────────────
+   * Semibold for titles; bold sparingly — prefer color + size for hierarchy.
+   */
+  --sola-font-weight-normal:   400;
+  --sola-font-weight-medium:   500;
+  --sola-font-weight-semibold: 600;
+  --sola-font-weight-bold:     700;
+
+  /* ─── Line height ───────────────────────────────────────────────────────────*/
+  --sola-leading-tight:   1.25;
+  --sola-leading-normal:  1.5;
+  --sola-leading-relaxed: 1.75;
+
+  /* ─── Primary palette (Emerald) ─────────────────────────────────────────────
+   * The Sola AIR brand color. Use -500 as the base; -600/-700 for
+   * hover/active states; -50 through -200 for tinted backgrounds.
+   */
+  --sola-color-primary-50:  #ecfdf5;
+  --sola-color-primary-100: #d1fae5;
+  --sola-color-primary-200: #a7f3d0;
+  --sola-color-primary-300: #6ee7b7;
+  --sola-color-primary-400: #34d399;
+  --sola-color-primary-500: #10b981;
+  --sola-color-primary-600: #059669;
+  --sola-color-primary-700: #047857;
+  --sola-color-primary-800: #065f46;
+  --sola-color-primary-900: #064e3b;
+
+  /* ─── Neutral palette (Slate) ───────────────────────────────────────────────
+   * A full neutral range with a subtle blue-grey bias — chosen, not defaulted.
+   */
+  --sola-color-neutral-0:   #ffffff;
+  --sola-color-neutral-50:  #f8fafc;
+  --sola-color-neutral-100: #f1f5f9;
+  --sola-color-neutral-200: #e2e8f0;
+  --sola-color-neutral-300: #cbd5e1;
+  --sola-color-neutral-400: #94a3b8;
+  --sola-color-neutral-500: #64748b;
+  --sola-color-neutral-600: #475569;
+  --sola-color-neutral-700: #334155;
+  --sola-color-neutral-800: #1e293b;
+  --sola-color-neutral-900: #0f172a;
+  --sola-color-neutral-950: #020617;
+
+  /* ─── Semantic text roles ───────────────────────────────────────────────────
+   * Three levels of visual weight for reading hierarchy:
+   * primary: essential content — body copy, component labels
+   * secondary: supporting content — input labels, captions
+   * tertiary: metadata — timestamps, supplemental data
+   */
+  --sola-text-primary:   #0f172a;
+  --sola-text-secondary: #475569;
+  --sola-text-tertiary:  #94a3b8;
+
+  /* ─── Surface roles ─────────────────────────────────────────────────────────*/
+  --sola-surface-0:       #ffffff;
+  --sola-surface-1:       #f8fafc;
+  --sola-surface-2:       #f1f5f9;
+  --sola-surface-overlay: rgba(15, 23, 42, 0.6);
+
+  /* ─── Border roles ──────────────────────────────────────────────────────────*/
+  --sola-border-subtle:  #e2e8f0;
+  --sola-border-default: #cbd5e1;
+  --sola-border-strong:  #94a3b8;
+
+  /* ─── Semantic severity scale ───────────────────────────────────────────────
+   * 7 roles from informational to critical. Designed for AI interfaces where
+   * you need to communicate output certainty and action urgency clearly.
+   * Each role: foreground (text/icon) + tinted background for containing surfaces.
+   *
+   * low      — neutral informational, no urgency
+   * positive — success / confirmed / safe
+   * info     — informational, passive awareness
+   * moderate — soft caution, worth noting
+   * warning  — action recommended
+   * high     — action required soon
+   * critical — immediate action required
+   */
+  --sola-alert-low:          #64748b;
+  --sola-alert-low-bg:       #f8fafc;
+
+  --sola-alert-positive:     #059669;
+  --sola-alert-positive-bg:  #ecfdf5;
+  --sola-alert-positive-text: #047857;
+
+  --sola-alert-info:         #0284c7;
+  --sola-alert-info-bg:      #f0f9ff;
+
+  --sola-alert-moderate:     #ca8a04;
+  --sola-alert-moderate-bg:  #fefce8;
+
+  --sola-alert-warning:      #ea580c;
+  --sola-alert-warning-bg:   #fff7ed;
+
+  --sola-alert-high:         #dc2626;
+  --sola-alert-high-bg:      #fef2f2;
+
+  --sola-alert-critical:     #9333ea;
+  --sola-alert-critical-bg:  #faf5ff;
+
+  /* ─── Focus ring ────────────────────────────────────────────────────────────*/
+  --sola-focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.4);
+
+  /* ─── Z-index scale ─────────────────────────────────────────────────────────
+   * Every stacking-context component in the library should sit on one of
+   * these steps, never a bare magic number. nav < dropdown < overlay-scrim
+   * < modal/sheet (same tier — both are focused, blocking overlays that
+   * shouldn't appear at once) < toast (always topmost, so a confirmation
+   * or error stays visible even while a modal is open).
+   */
+  --sola-z-nav:      40;
+  --sola-z-dropdown: 100;
+  --sola-z-overlay:  800;
+  --sola-z-modal:    900;
+  --sola-z-sheet:    900;
+  --sola-z-toast:    1000;
+
+  /* ─── Motion ─────────────────────────────────────────────────────────────────
+   * One easing curve, two durations. `fast` for micro-interactions (hover,
+   * toggle); `base` for anything that opens/closes a surface (modal, sheet,
+   * dropdown). Components should reference these rather than hardcoding
+   * their own timing — three different curves across a handful of overlay
+   * components is what "inconsistent" looks like in practice.
+   */
+  --sola-ease-standard:  cubic-bezier(0.16, 1, 0.3, 1);
+  --sola-duration-fast:  160ms;
+  --sola-duration-base:  240ms;
+}
+
+/* ─── Dark mode — system default ─────────────────────────────────────────────
+ * Redefines only token values; component styles consume tokens only,
+ * never direct colors. Guard prevents overriding an explicit data-theme="light".
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sola-text-primary:   #f8fafc;
+    --sola-text-secondary: #94a3b8;
+    --sola-text-tertiary:  #64748b;
+
+    --sola-surface-0:       #0f172a;
+    --sola-surface-1:       #1e293b;
+    --sola-surface-2:       #334155;
+    --sola-surface-overlay: rgba(2, 6, 23, 0.75);
+
+    --sola-border-subtle:  #1e293b;
+    --sola-border-default: #334155;
+    --sola-border-strong:  #475569;
+
+    --sola-alert-low-bg:       #1e293b;
+    --sola-alert-positive-bg:  #022c22;
+    --sola-alert-positive-text: #34d399;
+    --sola-alert-info-bg:      #082f49;
+    --sola-alert-moderate-bg:  #1c1400;
+    --sola-alert-warning-bg:   #1c0c00;
+    --sola-alert-high-bg:      #1c0000;
+    --sola-alert-critical-bg:  #1a0030;
+  }
+}
+
+/* ─── Dark mode — explicit toggle ────────────────────────────────────────────*/
+:root[data-theme="dark"] {
+  --sola-text-primary:   #f8fafc;
+  --sola-text-secondary: #94a3b8;
+  --sola-text-tertiary:  #64748b;
+
+  --sola-surface-0:       #0f172a;
+  --sola-surface-1:       #1e293b;
+  --sola-surface-2:       #334155;
+  --sola-surface-overlay: rgba(2, 6, 23, 0.75);
+
+  --sola-border-subtle:  #1e293b;
+  --sola-border-default: #334155;
+  --sola-border-strong:  #475569;
+
+  --sola-alert-low-bg:       #1e293b;
+  --sola-alert-positive-bg:  #022c22;
+  --sola-alert-positive-text: #34d399;
+  --sola-alert-info-bg:      #082f49;
+  --sola-alert-moderate-bg:  #1c1400;
+  --sola-alert-warning-bg:   #1c0c00;
+  --sola-alert-high-bg:      #1c0000;
+  --sola-alert-critical-bg:  #1a0030;
+}

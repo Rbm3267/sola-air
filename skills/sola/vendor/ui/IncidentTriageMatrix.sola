@@ -1,0 +1,171 @@
+<script>
+  export let title = "Live Priority Radar";
+  export let description = "Active triage items staged for automated mitigation";
+  export let incidents = [
+    { id: "TICKET-492", service: "Authentication Token Gateway", severity: "P1", status: "Investigating", latency: "320ms" },
+    { id: "TICKET-495", service: "Database Connection Pool", severity: "P2", status: "Mitigating", latency: "48ms" },
+  ];
+  export let playbooks = [
+    { id: "pb-1", title: "Reroute Edge DNS to eu-west-1", action: "Route53 Failover" },
+    { id: "pb-2", title: "Page Tier 3 SRE On-Call", action: "PagerDuty Page" },
+  ];
+
+  let executedPlaybookId = $state(null);
+
+  function executeMitigation(id) {
+    executedPlaybookId = id;
+    setTimeout(() => {
+      executedPlaybookId = null;
+    }, 2500);
+  }
+
+  function severityClass(sev) {
+    var s = (sev || "").toUpperCase();
+    if (s === "P1") return "sev-p1";
+    if (s === "P2") return "sev-p2";
+    return "sev-p3";
+  }
+</script>
+
+<div class="sola-triage">
+  <div class="triage-header">
+    <div>
+      <h3 class="triage-title">{title}</h3>
+      <p class="triage-description">{description}</p>
+    </div>
+    <span class="triage-count">{incidents.length} active</span>
+  </div>
+
+  <div class="triage-rows">
+    {#each incidents as inc}
+      <div class="triage-row">
+        <div class="triage-row-left">
+          <span class="triage-sev-pill {severityClass(inc.severity)}">{inc.severity}</span>
+          <div class="triage-row-text">
+            <span class="triage-row-service">{inc.service}</span>
+            <span class="triage-row-id">{inc.id}</span>
+          </div>
+        </div>
+        <div class="triage-row-right">
+          <span class="triage-status">{inc.status}</span>
+          <span class="triage-latency">{inc.latency}</span>
+        </div>
+      </div>
+    {/each}
+  </div>
+
+  <div class="triage-playbooks">
+    <span class="triage-playbooks-label">1-Click Mitigation Playbooks</span>
+    {#each playbooks as pb}
+      <div class="triage-playbook-row">
+        <span class="triage-playbook-title">{pb.title}</span>
+        <button
+          onclick={() => executeMitigation(pb.id)}
+          disabled={executedPlaybookId() === pb.id}
+          class="triage-run-btn"
+        >
+          {#if executedPlaybookId() === pb.id}
+            <span>Executing…</span>
+          {:else}
+            <span>Run</span>
+          {/if}
+        </button>
+      </div>
+    {/each}
+  </div>
+</div>
+
+<style>
+  .sola-triage {
+    position: relative;
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #fecdd3);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    transition: box-shadow var(--sola-duration-base, 240ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+    overflow: hidden;
+  }
+  .sola-triage:hover { box-shadow: 0 8px 24px -8px rgba(37, 99, 235, 0.12); }
+
+  .triage-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--sola-surface-2, #f1f5f9); margin-bottom: 16px; }
+  .triage-title { font-size: 15px; font-weight: 800; color: var(--sola-text-primary, #020617); font-family: ui-monospace, monospace; letter-spacing: -0.01em; margin: 0 0 4px 0; }
+  .triage-description { font-size: 12px; color: var(--sola-text-secondary, #475569); margin: 0; }
+  .triage-count {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    font-weight: 600;
+    color: var(--sola-alert-high, #881337);
+    background: var(--sola-alert-high-bg, #fff1f2);
+    border: 1px solid var(--sola-border-subtle, #fecdd3);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .triage-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+  .triage-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: var(--sola-surface-1, #f8fafc);
+    border: 1px solid var(--sola-surface-2, #f1f5f9);
+    transition: border-color var(--sola-duration-fast, 160ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+  .triage-row:hover { border-color: var(--sola-border-subtle, #e2e8f0); }
+
+  .triage-row-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .triage-row-text { display: flex; flex-direction: column; min-width: 0; }
+  .triage-row-service { font-size: 12px; font-weight: 600; font-family: ui-monospace, monospace; color: var(--sola-text-primary, #0f172a); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .triage-row-id { font-size: 12px; font-family: ui-monospace, monospace; color: var(--sola-text-tertiary, #475569); }
+
+  .triage-sev-pill {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .sev-p1 { background: var(--sola-alert-high-bg, #fff1f2); color: var(--sola-alert-high, #be123c); border: 1px solid var(--sola-border-subtle, #fecdd3); }
+  .sev-p2 { background: var(--sola-alert-warning-bg, #fffbeb); color: var(--sola-alert-warning, #b45309); border: 1px solid var(--sola-border-subtle, #fde68a); }
+  .sev-p3 { background: var(--sola-alert-info-bg, #f0f9ff); color: var(--sola-alert-info, #0369a1); border: 1px solid var(--sola-border-subtle, #bae6fd); }
+
+  .triage-row-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .triage-status { font-size: 12px; font-family: ui-monospace, monospace; font-weight: 600; color: var(--sola-text-secondary, #475569); }
+  .triage-latency { font-size: 12px; font-family: ui-monospace, monospace; color: var(--sola-text-tertiary, #475569); }
+
+  .triage-playbooks { padding-top: 16px; border-top: 1px solid var(--sola-surface-2, #f1f5f9); display: flex; flex-direction: column; gap: 8px; }
+  .triage-playbooks-label { font-size: 12px; font-family: ui-monospace, monospace; font-weight: 600; color: var(--sola-text-secondary, #475569); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+
+  .triage-playbook-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--sola-surface-1, #f8fafc);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+  }
+  .triage-playbook-title { font-size: 12px; font-family: ui-monospace, monospace; font-weight: 600; color: var(--sola-text-primary, #0f172a); }
+
+  .triage-run-btn {
+    padding: 4px 12px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    font-weight: 600;
+    color: #ffffff;
+    background: #2563eb;
+    transition: background var(--sola-duration-fast, 160ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+  .triage-run-btn:hover { background: #1d4ed8; }
+  .triage-run-btn:disabled { opacity: 0.7; cursor: default; }
+</style>

@@ -1,0 +1,29 @@
+<script>
+  export let columns = 3;
+  export let gap = "16px";
+</script>
+
+<div class="sola-stat-grid" style="--grid-cols: {columns}; --grid-gap: {gap};">
+  <slot />
+</div>
+
+<style>
+  .sola-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols, 3), minmax(0, 1fr));
+    gap: var(--grid-gap, 16px);
+    width: 100%;
+  }
+
+  @media (max-width: 1024px) {
+    .sola-stat-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sola-stat-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

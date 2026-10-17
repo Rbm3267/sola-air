@@ -1,0 +1,145 @@
+<script>
+  export let actions = [];
+  export let onaction = null;
+  export let label = 'Suggested actions';
+  export let variant = 'default'; // 'default' | 'compact'
+
+  function handleAction(action) {
+    if (action.disabled) return;
+    if (onaction) onaction(action);
+    if (action.href) window.location.href = action.href;
+    if (action.onclick) action.onclick();
+  }
+</script>
+
+<div class="sola-action-strip variant-{variant}">
+  {#if label && variant !== 'compact'}
+    <div class="strip-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9" stroke-dasharray="4 3"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      {label}
+    </div>
+  {/if}
+
+  <div class="strip-actions">
+    {#each actions as action}
+      <button
+        class="action-chip {action.variant || 'default'} {action.disabled ? 'disabled' : ''}"
+        onclick={() => handleAction(action)}
+        disabled={action.disabled}
+        title={action.description || action.label}
+      >
+        {#if action.icon}
+          <span class="chip-icon">{action.icon}</span>
+        {/if}
+        <span>{action.label}</span>
+        {#if action.badge}
+          <span class="chip-badge">{action.badge}</span>
+        {/if}
+      </button>
+    {/each}
+  </div>
+</div>
+
+<style>
+  .sola-action-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .strip-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--sola-text-tertiary, #94a3b8);
+  }
+
+  .strip-label svg {
+    width: 12px;
+    height: 12px;
+    color: var(--sola-color-primary-500, #10b981);
+  }
+
+  .strip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .action-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+
+  .action-chip.default {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-primary, #334155);
+    border-color: var(--sola-border-subtle, #e2e8f0);
+  }
+  .action-chip.default:hover:not(.disabled) {
+    background: var(--sola-color-neutral-200, #e2e8f0);
+    border-color: var(--sola-border-default, #cbd5e1);
+  }
+
+  .action-chip.primary {
+    background: var(--sola-color-primary-500, #10b981);
+    color: var(--sola-color-neutral-0, #fff);
+    border-color: var(--sola-color-primary-500, #10b981);
+  }
+  .action-chip.primary:hover:not(.disabled) {
+    background: var(--sola-color-primary-600, #059669);
+  }
+
+  .action-chip.danger {
+    background: var(--sola-alert-high-bg, #fef2f2);
+    color: var(--sola-alert-high, #ef4444);
+    border-color: var(--sola-border-subtle, #fecaca);
+  }
+  .action-chip.danger:hover:not(.disabled) {
+    background: var(--sola-alert-high-bg, #fee2e2);
+  }
+
+  .action-chip.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .chip-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .chip-badge {
+    background: rgba(0,0,0,0.12);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 1px 6px;
+  }
+
+  .variant-compact .strip-actions {
+    gap: 4px;
+  }
+
+  .variant-compact .action-chip {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+</style>

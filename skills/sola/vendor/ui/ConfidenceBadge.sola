@@ -1,0 +1,93 @@
+<script>
+  export let score = null;   // 0–1 float, or null for unknown
+  export let label = null;   // override label text
+  export let size = 'md';    // 'sm' | 'md' | 'lg'
+
+  let tier = $derived(() => {
+    const s = typeof score === 'function' ? score() : score;
+    if (s === null || s === undefined) return 'unknown';
+    if (s >= 0.85) return 'high';
+    if (s >= 0.55) return 'medium';
+    return 'low';
+  });
+
+  let displayLabel = $derived(() => {
+    if (label) return typeof label === 'function' ? label() : label;
+    const t = tier();
+    if (t === 'high') return 'High confidence';
+    if (t === 'medium') return 'Moderate confidence';
+    if (t === 'low') return 'Low confidence';
+    return 'Confidence unknown';
+  });
+
+  let pct = $derived(() => {
+    const s = typeof score === 'function' ? score() : score;
+    return s !== null && s !== undefined ? Math.round(s * 100) : null;
+  });
+</script>
+
+<span class="sola-confidence tier-{tier()} size-{size}">
+  <span class="dot"></span>
+  <span class="text">{displayLabel()}</span>
+  {#if pct() !== null}
+    <span class="pct">{pct()}%</span>
+  {/if}
+</span>
+
+<style>
+  .sola-confidence {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    border: 1px solid transparent;
+  }
+
+  .size-sm { font-size: 12px; padding: 2px 8px; }
+  .size-md { font-size: 12px; padding: 4px 10px; }
+  .size-lg { font-size: 13px; padding: 6px 14px; }
+
+  .dot {
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .size-sm .dot { width: 5px; height: 5px; }
+  .size-md .dot { width: 6px; height: 6px; }
+  .size-lg .dot { width: 8px; height: 8px; }
+
+  .pct {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }
+
+  /* tier colors */
+  .tier-high {
+    background: var(--sola-alert-positive-bg, #f0fdf9);
+    color: var(--sola-alert-positive-text, #065f46);
+    border-color: var(--sola-border-subtle, #a7f3d0);
+  }
+  .tier-high .dot { background: var(--sola-color-primary-500, #10b981); box-shadow: 0 0 4px #10b981; }
+
+  .tier-medium {
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    color: var(--sola-alert-warning, #78350f);
+    border-color: var(--sola-border-subtle, #fde68a);
+  }
+  .tier-medium .dot { background: #f59e0b; }
+
+  .tier-low {
+    background: var(--sola-alert-high-bg, #fef2f2);
+    color: var(--sola-alert-high, #7f1d1d);
+    border-color: var(--sola-border-subtle, #fecaca);
+  }
+  .tier-low .dot { background: #ef4444; }
+
+  .tier-unknown {
+    background: var(--sola-surface-1, #f8fafc);
+    color: var(--sola-text-secondary, #64748b);
+    border-color: var(--sola-border-subtle, #e2e8f0);
+  }
+  .tier-unknown .dot { background: #94a3b8; }
+</style>

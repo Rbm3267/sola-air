@@ -1,0 +1,383 @@
+{
+  "ActionStrip": {
+    "importPath": "@sola-air-ui/ui/ai/action-strip",
+    "file": "ui/ActionStrip.sola",
+    "props": [
+      "actions",
+      "onaction",
+      "label",
+      "variant"
+    ]
+  },
+  "Alert": {
+    "importPath": "@sola-air-ui/ui/alert",
+    "file": "ui/Alert.sola",
+    "props": [
+      "message",
+      "variant"
+    ]
+  },
+  "AmbientSuggestion": {
+    "importPath": "@sola-air-ui/ui/ambient-suggestion",
+    "file": "ui/AmbientSuggestion.sola",
+    "props": [
+      "suggestion",
+      "onDismiss"
+    ]
+  },
+  "Badge": {
+    "importPath": "@sola-air-ui/ui/badge",
+    "file": "ui/Badge.sola",
+    "props": [
+      "label",
+      "variant"
+    ]
+  },
+  "Button": {
+    "importPath": "@sola-air-ui/ui/button",
+    "file": "ui/Button.sola",
+    "props": [
+      "label",
+      "variant",
+      "size",
+      "disabled",
+      "loading",
+      "onClick"
+    ]
+  },
+  "Canvas": {
+    "importPath": "@sola-air-ui/ui/canvas",
+    "file": "ui/Canvas.sola",
+    "props": [
+      "theme",
+      "padding",
+      "layout",
+      "maxWidth"
+    ]
+  },
+  "Card": {
+    "importPath": "@sola-air-ui/ui/card",
+    "file": "ui/Card.sola",
+    "props": [
+      "title",
+      "accentColor"
+    ]
+  },
+  "Chart": {
+    "importPath": "@sola-air-ui/ui/chart",
+    "file": "ui/Chart.sola",
+    "props": [
+      "title",
+      "value",
+      "delta",
+      "data"
+    ]
+  },
+  "CommandPalette": {
+    "importPath": "@sola-air-ui/ui/command-palette",
+    "file": "ui/CommandPalette.sola",
+    "props": [
+      "commands",
+      "isOpen",
+      "hotkey",
+      "placeholder",
+      "label",
+      "onSelect",
+      "onClose"
+    ]
+  },
+  "CompanionDrawer": {
+    "importPath": "@sola-air-ui/ui/companion-drawer",
+    "file": "ui/CompanionDrawer.sola",
+    "props": [
+      "title",
+      "initialOpen",
+      "isOpen",
+      "side",
+      "width",
+      "onClose"
+    ]
+  },
+  "ConfidenceBadge": {
+    "importPath": "@sola-air-ui/ui/ai/confidence-badge",
+    "file": "ui/ConfidenceBadge.sola",
+    "props": [
+      "score",
+      "label",
+      "size"
+    ]
+  },
+  "ConversationThread": {
+    "importPath": "@sola-air-ui/ui/ai/conversation-thread",
+    "file": "ui/ConversationThread.sola",
+    "props": [
+      "endpoint",
+      "model",
+      "provider",
+      "placeholder",
+      "systemLabel",
+      "userLabel",
+      "onmessage"
+    ]
+  },
+  "Dashboard": {
+    "importPath": "@sola-air-ui/ui/dashboard",
+    "file": "ui/Dashboard.sola",
+    "props": [
+      "title",
+      "initialRps",
+      "initialErrorRate",
+      "initialNodes"
+    ]
+  },
+  "DataCard": {
+    "importPath": "@sola-air-ui/ui/data-card",
+    "file": "ui/DataCard.sola",
+    "props": [
+      "title",
+      "value",
+      "trend"
+    ]
+  },
+  "DatePicker": {
+    "importPath": "@sola-air-ui/ui/date-picker",
+    "file": "ui/DatePicker.sola",
+    "props": [
+      "label",
+      "value",
+      "initialValue",
+      "placeholder",
+      "onChange"
+    ]
+  },
+  "FlowWaterfall": {
+    "importPath": "@sola-air-ui/ui/flow-waterfall",
+    "file": "ui/FlowWaterfall.sola",
+    "props": [
+      "title",
+      "steps"
+    ]
+  },
+  "GaugeCard": {
+    "importPath": "@sola-air-ui/ui/gauge-card",
+    "file": "ui/GaugeCard.sola",
+    "props": [
+      "title",
+      "value",
+      "percentage",
+      "subtext",
+      "color"
+    ]
+  },
+  "HtmlViewer": {
+    "importPath": "@sola-air-ui/ui/html-viewer",
+    "file": "ui/HtmlViewer.sola",
+    "props": [
+      "content",
+      "height",
+      "title",
+      "allowScripts"
+    ]
+  },
+  "IncidentTriageMatrix": {
+    "importPath": "@sola-air-ui/ui/incident-triage-matrix",
+    "file": "ui/IncidentTriageMatrix.sola",
+    "props": [
+      "title",
+      "description",
+      "incidents",
+      "playbooks"
+    ]
+  },
+  "IntentCard": {
+    "importPath": "@sola-air-ui/ui/intent-card",
+    "file": "ui/IntentCard.sola",
+    "props": [
+      "data",
+      "loading"
+    ]
+  },
+  "IntentList": {
+    "importPath": "@sola-air-ui/ui/intent-list",
+    "file": "ui/IntentList.sola",
+    "props": [
+      "data",
+      "title"
+    ]
+  },
+  "IntentSheet": {
+    "importPath": "@sola-air-ui/ui/ai/intent-sheet",
+    "file": "ui/IntentSheet.sola",
+    "props": [
+      "open",
+      "title",
+      "intent",
+      "actions",
+      "onclose",
+      "onaction",
+      "side"
+    ]
+  },
+  "LauncherDock": {
+    "importPath": "@sola-air-ui/ui/launcher-dock",
+    "file": "ui/LauncherDock.sola",
+    "props": [
+      "items",
+      "active",
+      "position",
+      "label",
+      "onSelect"
+    ]
+  },
+  "MarkdownViewer": {
+    "importPath": "@sola-air-ui/ui/markdown-viewer",
+    "file": "ui/MarkdownViewer.sola",
+    "props": [
+      "content"
+    ]
+  },
+  "Modal": {
+    "importPath": "@sola-air-ui/ui/modal",
+    "file": "ui/Modal.sola",
+    "props": [
+      "title",
+      "initialOpen",
+      "isOpen",
+      "onClose"
+    ]
+  },
+  "Select": {
+    "importPath": "@sola-air-ui/ui/select",
+    "file": "ui/Select.sola",
+    "props": [
+      "label",
+      "initialSelected",
+      "placeholder",
+      "name",
+      "disabled",
+      "required",
+      "options",
+      "onChange",
+      "id"
+    ]
+  },
+  "SolaSafeHTML": {
+    "importPath": "@sola-air-ui/ui/safe-html",
+    "file": "ui/SolaSafeHTML.sola",
+    "props": [
+      "content",
+      "maxHeight",
+      "title"
+    ]
+  },
+  "Spinner": {
+    "importPath": "@sola-air-ui/ui/spinner",
+    "file": "ui/Spinner.sola",
+    "props": [
+      "size",
+      "label"
+    ]
+  },
+  "Stack": {
+    "importPath": "@sola-air-ui/ui/stack",
+    "file": "ui/Stack.sola",
+    "props": [
+      "direction",
+      "gap",
+      "align"
+    ]
+  },
+  "StatGrid": {
+    "importPath": "@sola-air-ui/ui/stat-grid",
+    "file": "ui/StatGrid.sola",
+    "props": [
+      "columns",
+      "gap"
+    ]
+  },
+  "StreamView": {
+    "importPath": "@sola-air-ui/ui/stream-view",
+    "file": "ui/StreamView.sola",
+    "props": [
+      "title",
+      "content",
+      "events",
+      "streaming"
+    ]
+  },
+  "Table": {
+    "importPath": "@sola-air-ui/ui/table",
+    "file": "ui/Table.sola",
+    "props": [
+      "columns",
+      "rows",
+      "striped",
+      "onRowClick",
+      "dark"
+    ]
+  },
+  "TactileDialCard": {
+    "importPath": "@sola-air-ui/ui/tactile-dial-card",
+    "file": "ui/TactileDialCard.sola",
+    "props": [
+      "title",
+      "metric",
+      "unit",
+      "min",
+      "max",
+      "currentValue",
+      "color",
+      "onChange"
+    ]
+  },
+  "TextInput": {
+    "importPath": "@sola-air-ui/ui/text-input",
+    "file": "ui/TextInput.sola",
+    "props": [
+      "label",
+      "placeholder",
+      "initialValue",
+      "type",
+      "name",
+      "disabled",
+      "required",
+      "helpText",
+      "errorText",
+      "onInput",
+      "onChange",
+      "id"
+    ]
+  },
+  "Toast": {
+    "importPath": "@sola-air-ui/ui/toast",
+    "file": "ui/Toast.sola",
+    "props": [
+      "message",
+      "type",
+      "initialVisible",
+      "duration",
+      "onDismiss"
+    ]
+  },
+  "ToastHost": {
+    "importPath": "@sola-air-ui/ui/toast-host",
+    "file": "ui/ToastHost.sola",
+    "props": [
+      "listen",
+      "duration",
+      "max",
+      "onDismiss"
+    ]
+  },
+  "Toggle": {
+    "importPath": "@sola-air-ui/ui/toggle",
+    "file": "ui/Toggle.sola",
+    "props": [
+      "label",
+      "checked",
+      "initialChecked",
+      "disabled",
+      "onChange"
+    ]
+  }
+}

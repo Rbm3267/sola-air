@@ -1,0 +1,87 @@
+<script>
+  export let label = "";
+  export let checked = undefined;
+  export let initialChecked = false;
+  export let disabled = false;
+  export let onChange = null;
+
+  let isChecked = $state(checked !== undefined ? checked : initialChecked);
+
+  function toggle() {
+    if (disabled) return;
+    isChecked = !isChecked();
+    if (typeof onChange === 'function') {
+      onChange(isChecked());
+    }
+  }
+</script>
+
+<div class="sola-toggle-wrapper">
+  {#if label}
+    <span class="toggle-label">{label}</span>
+  {/if}
+  <button
+    type="button"
+    role="switch"
+    aria-checked="{isChecked()}"
+    aria-label={label || "Toggle"}
+    disabled={disabled}
+    on:click={toggle}
+    class="toggle-track {isChecked() ? 'checked' : ''} {disabled ? 'disabled' : ''}">
+    <span class="toggle-thumb"></span>
+  </button>
+</div>
+
+<style>
+  .sola-toggle-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toggle-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sola-text-primary, #334155);
+  }
+
+  .toggle-track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border-radius: 9999px;
+    background: var(--sola-border-default, #cbd5e1);
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+
+  .toggle-track:focus-visible {
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+  }
+
+  .toggle-track.checked {
+    background: #0ea5e9;
+  }
+
+  .toggle-track.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .toggle-thumb {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: var(--sola-surface-0, #ffffff);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .toggle-track.checked .toggle-thumb {
+    transform: translateX(20px);
+  }
+</style>

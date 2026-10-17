@@ -1,0 +1,15 @@
+{
+  "name": "sola-ui",
+  "version": "1.6.1",
+  "description": "Design with Sola AIR components (.sola) and preview them as HTML.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "sola-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sola-air-ui/mcp@1.0.5"
+      ]
+    }
+  }
+}

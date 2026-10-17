@@ -1,0 +1,42 @@
+<script>
+  // A companion shell for an existing app: a dock, a Ctrl+K palette, a side
+  // drawer and toasts sent over the event bus. Mount it with mountShell() to
+  // keep it in its own shadow root.
+  import LauncherDock from '@sola-air-ui/ui/launcher-dock';
+  import CommandPalette from '@sola-air-ui/ui/command-palette';
+  import CompanionDrawer from '@sola-air-ui/ui/companion-drawer';
+  import ToastHost from '@sola-air-ui/ui/toast-host';
+  import { bus } from '@sola-air-ui/core';
+
+  let drawerOpen = $state(false);
+
+  const items = [
+    { id: 'assistant', label: 'Assistant', icon: '✦' },
+    { id: 'save', label: 'Save', icon: '↓' }
+  ];
+  const commands = [
+    { id: 'assistant', label: 'Open assistant' },
+    { id: 'save', label: 'Save draft', hint: 'shows a toast' }
+  ];
+
+  function run(item) {
+    if (item.id === 'assistant') drawerOpen = true;
+    else bus.emit('sola:toast', { kind: 'success', text: 'Draft saved' });
+  }
+
+  function closeDrawer() {
+    drawerOpen = false;
+  }
+</script>
+
+<p class="note">Press Ctrl+K (Cmd+K on a Mac), or use the dock at the bottom.</p>
+<LauncherDock items={items} onSelect={run} />
+<CommandPalette commands={commands} onSelect={run} />
+<CompanionDrawer title="Assistant" isOpen={drawerOpen} onClose={closeDrawer}>
+  <p>Ask about the page you are on.</p>
+</CompanionDrawer>
+<ToastHost />
+
+<style>
+  .note { color: var(--sola-text-secondary, #475569); }
+</style>

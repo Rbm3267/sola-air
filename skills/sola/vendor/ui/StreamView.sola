@@ -1,0 +1,129 @@
+<script>
+  // Accepts either a plain string or a getter function (const content = () => signal()),
+  // mirroring IntentCard/IntentList's convention for live/reactive values — resolved fresh
+  // on every read so a parent can hand this a signal for genuine streaming content.
+  export let title = "AI Stream Engine";
+  export let content = "";
+  export let events = null;
+  export let streaming = true;
+
+  let resolvedContent = $derived(() => (typeof content === 'function' ? content() : content));
+  let resolvedEvents = $derived(() => {
+    const ev = typeof events === 'function' ? events() : events;
+    return Array.isArray(ev) ? ev : null;
+  });
+</script>
+
+<div class="sola-stream-view">
+  <div class="stream-header">
+    <div class="stream-badge">
+      <span class="pulse-dot"></span>
+      <span>{title}</span>
+    </div>
+  </div>
+  {#if resolvedEvents()}
+    <div class="stream-events">
+      {#each resolvedEvents() as evt}
+        <div class="stream-event stream-event-{evt.type || 'info'}">
+          {#if evt.timestamp}
+            <span class="event-time">[{evt.timestamp}]</span>
+          {/if}
+          <span class="event-msg">{evt.message || evt.text || ''}</span>
+        </div>
+      {/each}
+      {#if streaming}
+        <span class="stream-cursor"></span>
+      {/if}
+    </div>
+  {:else}
+    <div class="stream-content">
+      <span>{resolvedContent()}</span>
+      {#if streaming}
+        <span class="stream-cursor"></span>
+      {/if}
+    </div>
+  {/if}
+</div>
+
+<style>
+  .sola-stream-view {
+    background: var(--sola-color-neutral-900, #0f172a);
+    color: var(--sola-color-neutral-50, #f8fafc);
+    border-radius: 18px;
+    padding: 20px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .stream-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+  }
+
+  .stream-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 6px #38bdf8;
+  }
+
+  .stream-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .stream-events {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .stream-event {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .event-time {
+    color: var(--sola-color-neutral-400, #94a3b8);
+    flex-shrink: 0;
+  }
+
+  .stream-event-success .event-msg { color: #34d399; }
+  .stream-event-warning .event-msg { color: #fbbf24; }
+  .stream-event-error .event-msg { color: #f87171; }
+
+  .stream-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    background: #38bdf8;
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 0.8s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>

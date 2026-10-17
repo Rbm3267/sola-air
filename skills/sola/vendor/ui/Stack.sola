@@ -1,0 +1,15 @@
+<script>
+  export let direction = 'column';
+  export let gap = '12px';
+  export let align = 'stretch';
+</script>
+
+<div class="stack" style="flex-direction: {direction}; gap: {gap}; align-items: {align}">
+  <slot />
+</div>
+
+<style>
+  .stack {
+    display: flex;
+  }
+</style>

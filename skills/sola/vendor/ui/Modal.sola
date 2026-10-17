@@ -1,0 +1,235 @@
+<script>
+  // Accepts either a plain string or a getter function, same convention as isOpen below —
+  // needed since a controlled modal's title (e.g. "whichever article was clicked") changes
+  // after mount, and a plain captured prop value never updates once the component is mounted.
+  export let title = "Modal Dialog";
+  export let initialOpen = false;
+  // Accepts either a plain boolean or a getter function (const isOpen = () => signal()),
+  // matching StreamView/IntentCard's convention — pass this to let a parent control the
+  // modal externally (e.g. open it from a list-row click). Leave unset for a self-contained
+  // modal that only opens/closes via its own trigger markup.
+  export let isOpen = null;
+  export let onClose = null;
+
+  let open = $state(initialOpen);
+  let resolvedIsOpen = $derived(() => (typeof isOpen === 'function' ? isOpen() : isOpen));
+  let resolvedTitle = $derived(() => (typeof title === 'function' ? title() : title));
+
+  createEffect(() => {
+    const controlled = resolvedIsOpen();
+    if (controlled !== null && controlled !== undefined) {
+      open = controlled;
+    }
+  });
+
+  const uid = Math.random().toString(36).slice(2, 9);
+  const titleId = 'sola-modal-title-' + uid;
+  const cardId = 'sola-modal-card-' + uid;
+
+  // Element focus returns to when the dialog closes, so keyboard and screen
+  // reader users are not dumped back at the top of the document.
+  let returnFocusTo = null;
+
+  const FOCUSABLE = 'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+  // Looked up by id rather than held in a ref: the compiler has no bind:this,
+  // and the card is only in the document while the dialog is open anyway.
+  function cardElement() {
+    return typeof document === 'undefined' ? null : document.getElementById(cardId);
+  }
+
+  function focusableItems() {
+    const card = cardElement();
+    if (!card) return [];
+    return Array.from(card.querySelectorAll(FOCUSABLE)).filter(
+      (el) => el.offsetParent !== null || el === document.activeElement
+    );
+  }
+
+  // Tab must cycle inside an open dialog rather than escaping to the page behind it.
+  function handleKeydown(e) {
+    if (!open()) return;
+
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      close();
+      return;
+    }
+
+    if (e.key !== 'Tab') return;
+    const items = focusableItems();
+    if (items.length === 0) {
+      e.preventDefault();
+      return;
+    }
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  createEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    if (open()) {
+      returnFocusTo = document.activeElement;
+      document.addEventListener('keydown', handleKeydown, true);
+      // Move focus into the dialog once its contents exist.
+      queueMicrotask(() => {
+        const items = focusableItems();
+        (items[0] || cardElement())?.focus?.();
+      });
+    } else {
+      document.removeEventListener('keydown', handleKeydown, true);
+      if (returnFocusTo && typeof returnFocusTo.focus === 'function') {
+        returnFocusTo.focus();
+        returnFocusTo = null;
+      }
+    }
+  });
+
+  onDestroy(() => {
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('keydown', handleKeydown, true);
+    }
+  });
+
+  function close() {
+    open = false;
+    if (typeof onClose === 'function') {
+      onClose();
+    }
+  }
+</script>
+
+<div class="sola-modal-container {open() ? 'active' : ''}">
+  <div class="modal-backdrop" on:click={close}></div>
+  <div
+    class="modal-card"
+    id={cardId}
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby={titleId}
+    tabindex="-1"
+  >
+    <div class="modal-header">
+      <h3 class="modal-title" id={titleId}>{resolvedTitle()}</h3>
+      <button class="close-btn" type="button" on:click={close} aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .sola-modal-container {
+    position: fixed;
+    inset: 0;
+    /* var()'s fallback keeps this working standalone, without @sola-air-ui/tokens
+       loaded — but the real number always comes from the shared z-index scale
+       when it's present, instead of a magic value picked in isolation per
+       component (this and IntentSheet.sola both hardcoded 999 independently). */
+    z-index: var(--sola-z-modal, 900);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .sola-modal-container.active {
+    display: flex;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    /* Some hosts (observed: a Bootstrap-based enterprise portal chrome) ship
+       their own global `.modal-backdrop` class at z-index: 1040. Without an explicit
+       z-index here, that leaks in ahead of .modal-card's z-index: 10 and silently
+       blocks every click on the modal's own contents, including its close button. */
+    z-index: 1;
+    background: var(--sola-surface-overlay, rgba(15, 23, 42, 0.4));
+    backdrop-filter: blur(8px);
+    animation: fadeIn var(--sola-duration-fast, 160ms) ease-out;
+  }
+
+  .modal-card {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 540px;
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, rgba(226, 232, 240, 0.9));
+    border-radius: var(--sola-radius-2xl, 24px);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: scaleUp var(--sola-duration-base, 240ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--sola-border-subtle, #f1f5f9);
+  }
+
+  .modal-title {
+    font-size: var(--sola-font-size-xl, 18px);
+    font-weight: var(--sola-font-weight-bold, 800);
+    color: var(--sola-text-primary, #0f172a);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .close-btn {
+    border: none;
+    background: var(--sola-surface-1, #f1f5f9);
+    color: var(--sola-text-secondary, #64748b);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--sola-radius-md, 10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--sola-duration-fast, 160ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1)), color var(--sola-duration-fast, 160ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+
+  .close-btn:hover {
+    background: var(--sola-surface-2, #e2e8f0);
+    color: var(--sola-text-primary, #0f172a);
+  }
+
+  .close-btn:focus-visible,
+  .modal-card:focus-visible {
+    outline: none;
+    box-shadow: var(--sola-focus-ring, 0 0 0 3px rgba(16, 185, 129, 0.4));
+  }
+
+  .modal-body {
+    padding: 24px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modal-backdrop, .modal-card { animation: none; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scaleUp {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+</style>

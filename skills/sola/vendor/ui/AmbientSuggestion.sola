@@ -1,0 +1,95 @@
+<script>
+  export let suggestion = null;
+  export let onDismiss = null;
+
+  let dismissedLabel = $state(null);
+
+  let resolved = $derived(() => (typeof suggestion === 'function' ? suggestion() : suggestion));
+  let label = $derived(() => (resolved() ? resolved().label : ''));
+  let action = $derived(() => (resolved() ? resolved().action : ''));
+  let hasConfidence = $derived(() => Boolean(resolved() && typeof resolved().confidence === 'number'));
+  let confidenceText = $derived(() => (hasConfidence() ? 'confidence: ' + Math.round(resolved().confidence * 100) + '%' : ''));
+  let visible = $derived(() => Boolean(resolved() && resolved().label && resolved().label !== dismissedLabel()));
+
+  function dismiss() {
+    const s = resolved();
+    dismissedLabel = s ? s.label : null;
+    if (typeof onDismiss === 'function') {
+      onDismiss(s);
+    }
+  }
+</script>
+
+<div class="sola-ambient-suggestion {visible() ? 'visible' : ''}" role="status" aria-live="polite">
+  <div class="ambient-body">
+    <div class="ambient-label">{label()}</div>
+    <div class="ambient-action">{action()}</div>
+    {#if hasConfidence()}
+      <div class="ambient-confidence">{confidenceText()}</div>
+    {/if}
+  </div>
+  <button class="ambient-dismiss" on:click={dismiss} aria-label="Dismiss suggestion">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </button>
+</div>
+
+<style>
+  .sola-ambient-suggestion {
+    display: none;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--sola-alert-info-bg, #eef4ff);
+    border: 1px solid var(--sola-border-subtle, #bcd4ff);
+    border-radius: var(--sola-radius-lg, 10px);
+    padding: var(--sola-space-md, 12px) var(--sola-space-lg, 14px);
+    font-size: var(--sola-font-size-sm, 13px);
+    position: relative;
+    animation: ambientIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sola-ambient-suggestion.visible {
+    display: flex;
+  }
+
+  .ambient-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ambient-label {
+    font-weight: var(--sola-font-weight-bold, 700);
+    color: var(--sola-text-primary, #1a2540);
+    margin-bottom: 2px;
+  }
+
+  .ambient-action {
+    color: var(--sola-text-secondary, #33415c);
+    line-height: var(--sola-leading-normal, 1.5);
+  }
+
+  .ambient-confidence {
+    color: var(--sola-text-tertiary, #6b7a99);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .ambient-dismiss {
+    border: none;
+    background: transparent;
+    color: var(--sola-text-tertiary, #6b7a99);
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .ambient-dismiss:hover {
+    color: var(--sola-text-primary, #1a2540);
+  }
+
+  @keyframes ambientIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

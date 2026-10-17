@@ -1,0 +1,134 @@
+<script>
+  export let title = "Net Margin Realization";
+  // Array of { name, value: number, type: 'positive'|'negative'|'total' }
+  export let steps = [
+    { name: "Gross Revenue Ingress", value: 840000, type: "positive" },
+    { name: "Cloud Infrastructure & Egress", value: -140000, type: "negative" },
+    { name: "Zero-VDOM Compute Efficiency", value: 24000, type: "positive" },
+    { name: "Net Realized Sovereign Margin", value: 724000, type: "total" },
+  ];
+
+  let activeIndex = $state(null);
+
+  let maxVal = $derived(() => Math.max.apply(null, steps.map((s) => Math.abs(s.value)).concat([1])));
+  let finalValue = $derived(() => (steps.length ? formatValue(steps[steps.length - 1]) : "$0"));
+
+  function pctFor(step) {
+    var m = maxVal();
+    return Math.min(Math.max((Math.abs(step.value) / m) * 100, 12), 100);
+  }
+
+  function formatValue(step) {
+    var sign = step.value >= 0 ? "+$" : "-$";
+    if (step.type === "total") sign = "$";
+    return sign + Math.abs(step.value).toLocaleString();
+  }
+</script>
+
+<div class="sola-waterfall">
+  <div class="wf-header">
+    <div class="wf-title-row">
+      <span class="wf-dot"></span>
+      <h3 class="wf-title">{title}</h3>
+    </div>
+    <div class="wf-final">
+      <span class="wf-final-label">Net Realized</span>
+      <span class="wf-final-value">{finalValue()}</span>
+    </div>
+  </div>
+
+  <div class="wf-rows">
+    {#each steps as step, idx}
+      <button
+        type="button"
+        onmouseenter={() => activeIndex = idx}
+        onmouseleave={() => activeIndex = null}
+        class="wf-row {activeIndex() === idx ? 'active' : ''} {step.type}"
+      >
+        <div class="wf-row-label">
+          <span class="wf-row-dot"></span>
+          <span class="wf-row-name">{step.name}</span>
+        </div>
+        <div class="wf-row-bar-track">
+          <div class="wf-row-bar-fill" style="width: {pctFor(step)}%;"></div>
+        </div>
+        <div class="wf-row-value">{formatValue(step)}</div>
+      </button>
+    {/each}
+  </div>
+
+  <div class="wf-footer">
+    <span>Zero-VDOM Financial Split Stream</span>
+    <span>Auto-Reconciled</span>
+  </div>
+</div>
+
+<style>
+  .sola-waterfall {
+    position: relative;
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, rgba(226, 232, 240, 0.9));
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    transition: box-shadow var(--sola-duration-base, 240ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+  .sola-waterfall:hover { box-shadow: 0 8px 24px -8px rgba(0,0,0,0.08); }
+
+  .wf-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+  .wf-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .wf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sola-color-primary-500, #10b981); }
+  .wf-title { font-size: 15px; font-weight: 900; color: var(--sola-text-primary, #020617); letter-spacing: -0.01em; font-family: ui-monospace, monospace; margin: 0; }
+
+  .wf-final { text-align: right; flex-shrink: 0; }
+  .wf-final-label { font-size: 12px; font-family: ui-monospace, monospace; color: var(--sola-text-tertiary, #475569); text-transform: uppercase; display: block; }
+  .wf-final-value { font-size: 18px; font-weight: 800; font-family: ui-monospace, monospace; color: var(--sola-alert-positive-text, #047857); letter-spacing: -0.01em; }
+
+  .wf-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+  .wf-row {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    border-radius: 16px;
+    border: 1px solid var(--sola-surface-2, #f1f5f9);
+    background: var(--sola-surface-1, #f8fafc);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: background var(--sola-duration-fast, 160ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1)), border-color var(--sola-duration-fast, 160ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+  .wf-row.active { background: var(--sola-surface-2, #f1f5f9); border-color: var(--sola-border-default, #cbd5e1); }
+  .wf-row:hover { background: var(--sola-surface-2, #f1f5f9); }
+
+  .wf-row-label { display: flex; align-items: center; gap: 10px; min-width: 160px; }
+  .wf-row-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; }
+  .wf-row.positive .wf-row-dot { background: var(--sola-color-primary-500, #10b981); }
+  .wf-row.negative .wf-row-dot { background: #f43f5e; }
+  .wf-row.total .wf-row-dot { background: #6366f1; }
+  .wf-row-name { font-size: 12px; font-weight: 600; font-family: ui-monospace, monospace; color: var(--sola-text-primary, #334155); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .wf-row-bar-track { flex: 1; max-width: 220px; height: 14px; background: rgba(203, 213, 225, 0.5); border-radius: 999px; padding: 2px; }
+  .wf-row-bar-fill { height: 100%; border-radius: 999px; background: #94a3b8; transition: width 0.5s ease; }
+  .wf-row.positive .wf-row-bar-fill { background: var(--sola-color-primary-500, #10b981); }
+  .wf-row.negative .wf-row-bar-fill { background: #f43f5e; }
+  .wf-row.total .wf-row-bar-fill { background: #6366f1; }
+
+  .wf-row-value { min-width: 84px; text-align: right; font-size: 12px; font-weight: 600; font-family: ui-monospace, monospace; color: var(--sola-text-secondary, #475569); }
+  .wf-row.positive .wf-row-value { color: var(--sola-alert-positive-text, #047857); }
+  .wf-row.negative .wf-row-value { color: var(--sola-alert-high, #be123c); }
+  .wf-row.total .wf-row-value { color: var(--sola-alert-info, #0369a1); }
+
+  .wf-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    color: var(--sola-text-tertiary, #475569);
+    padding-top: 12px;
+    border-top: 1px solid var(--sola-surface-2, #f1f5f9);
+  }
+</style>

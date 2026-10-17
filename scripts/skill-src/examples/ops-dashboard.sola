@@ -1,0 +1,61 @@
+<script>
+  // An operations dashboard: KPI cards, a clickable incident table and a detail panel.
+  import StatGrid from '@sola-air-ui/ui/stat-grid';
+  import DataCard from '@sola-air-ui/ui/data-card';
+  import Table from '@sola-air-ui/ui/table';
+  import Badge from '@sola-air-ui/ui/badge';
+
+  const incidents = [
+    { id: 'INC-1042', service: 'Auth gateway', severity: 'High', age: '12m' },
+    { id: 'INC-1039', service: 'Search index', severity: 'Medium', age: '41m' },
+    { id: 'INC-1031', service: 'Billing export', severity: 'Low', age: '2h' }
+  ];
+
+  let selected = $state(incidents[0]);
+
+  function pick(row) {
+    selected = row;
+  }
+</script>
+
+<main class="dashboard">
+  <h1>Operations</h1>
+
+  <StatGrid columns={3}>
+    <DataCard title="Requests / min" value="42,800" trend="+12% vs last hour" />
+    <DataCard title="p99 latency" value="184 ms" trend="-8 ms" />
+    <DataCard title="Open incidents" value="3" trend="1 high" />
+  </StatGrid>
+
+  <section class="split">
+    <div class="table">
+      <Table
+        columns={['id', 'service', 'severity', 'age']}
+        rows={incidents}
+        striped={true}
+        onRowClick={pick}
+      />
+    </div>
+
+    <aside class="detail" aria-live="polite">
+      <h2>{selected.id}</h2>
+      <p>{selected.service}</p>
+      <Badge label="Open" variant="warning" />
+      <p class="age">Opened {selected.age} ago</p>
+    </aside>
+  </section>
+</main>
+
+<style>
+  .dashboard { display: grid; gap: var(--sola-space-lg, 16px); max-width: 960px; }
+  h1 { margin: 0; font-size: var(--sola-font-size-2xl, 24px); }
+  .split { display: grid; grid-template-columns: 2fr 1fr; gap: var(--sola-space-lg, 16px); align-items: start; }
+  .detail {
+    padding: var(--sola-space-lg, 16px);
+    border: 1px solid var(--sola-border-default, #e2e8f0);
+    border-radius: var(--sola-radius-lg, 16px);
+    background: var(--sola-surface-1, #ffffff);
+  }
+  .detail h2 { margin: 0 0 4px; font-size: var(--sola-font-size-lg, 16px); }
+  .age { color: var(--sola-text-secondary, #475569); font-size: var(--sola-font-size-sm, 12px); }
+</style>

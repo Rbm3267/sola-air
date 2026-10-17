@@ -54,7 +54,7 @@ jobs:
 
       # No dev server needed: these compile components and mount them directly.
       - name: Docs snippets and library components
-        run: npx playwright test e2e/docs-snippets.spec.ts e2e/ui-components.spec.ts e2e/shell-primitives.spec.ts e2e/sola-export.spec.ts e2e/composition.spec.ts
+        run: npx playwright test e2e/docs-snippets.spec.ts e2e/ui-components.spec.ts e2e/shell-primitives.spec.ts e2e/sola-export.spec.ts e2e/composition.spec.ts e2e/sola-skill.spec.ts
 
       # These drive the real site, so they need it running.
       - name: Build the site

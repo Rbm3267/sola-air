@@ -1,0 +1,274 @@
+<script>
+  // commands and isOpen take a plain value or a getter function, like Modal's isOpen.
+  export let commands = [];
+  export let isOpen = null;
+  export let hotkey = "mod+k";
+  export let placeholder = "Type a command…";
+  export let label = "Command palette";
+  export let onSelect = null;
+  export let onClose = null;
+
+  let open = $state(false);
+  let query = $state("");
+  let index = $state(0);
+
+  let resolvedIsOpen = $derived(() => (typeof isOpen === "function" ? isOpen() : isOpen));
+  let all = $derived(() => (typeof commands === "function" ? commands() : commands) || []);
+  let filtered = $derived(() => {
+    const q = query().trim().toLowerCase();
+    if (!q) return all();
+    return all().filter((c) => (c.label + " " + (c.hint || "")).toLowerCase().includes(q));
+  });
+
+  const uid = Math.random().toString(36).slice(2, 9);
+  const inputId = "sola-palette-input-" + uid;
+  const listId = "sola-palette-list-" + uid;
+  const optionId = (i) => "sola-palette-option-" + uid + "-" + i;
+
+  let returnFocusTo = null;
+
+  createEffect(() => {
+    const controlled = resolvedIsOpen();
+    if (controlled !== null && controlled !== undefined) {
+      open = controlled;
+    }
+  });
+
+  // The search text changed, so the old row position no longer means anything.
+  createEffect(() => {
+    query();
+    index = 0;
+  });
+
+  createEffect(() => {
+    if (typeof document === "undefined") return;
+    if (open()) {
+      returnFocusTo = document.activeElement;
+      query = "";
+      index = 0;
+      queueMicrotask(() => {
+        const input = document.getElementById(inputId);
+        if (input) input.focus();
+      });
+    } else if (returnFocusTo && typeof returnFocusTo.focus === "function") {
+      returnFocusTo.focus();
+      returnFocusTo = null;
+    }
+  });
+
+  // "mod" is Ctrl everywhere except macOS, where it is Cmd.
+  function matchesHotkey(e) {
+    if (!hotkey) return false;
+    const parts = hotkey.toLowerCase().split("+");
+    const key = parts[parts.length - 1];
+    const wantMod = parts.includes("mod");
+    const wantShift = parts.includes("shift");
+    const wantAlt = parts.includes("alt");
+    const isMac = typeof navigator !== "undefined" && /mac|iphone|ipad/i.test(navigator.platform || "");
+    const modDown = isMac ? e.metaKey : e.ctrlKey;
+    return (
+      e.key.toLowerCase() === key &&
+      modDown === wantMod &&
+      e.shiftKey === wantShift &&
+      e.altKey === wantAlt
+    );
+  }
+
+  function handleGlobalKey(e) {
+    if (matchesHotkey(e)) {
+      e.preventDefault();
+      if (open()) close();
+      else open = true;
+    }
+  }
+
+  onMount(() => {
+    document.addEventListener("keydown", handleGlobalKey);
+  });
+
+  onDestroy(() => {
+    if (typeof document !== "undefined") {
+      document.removeEventListener("keydown", handleGlobalKey);
+    }
+  });
+
+  function close() {
+    open = false;
+    if (typeof onClose === "function") onClose();
+  }
+
+  function choose(command) {
+    if (!command) return;
+    open = false;
+    if (typeof onSelect === "function") onSelect(command);
+    if (typeof onClose === "function") onClose();
+  }
+
+  function handleInputKey(e) {
+    const n = filtered().length;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (n) index = (index() + 1) % n;
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (n) index = (index() - 1 + n) % n;
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      choose(filtered()[index()]);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      close();
+    } else if (e.key === "Tab") {
+      // The search field is the only stop inside the dialog.
+      e.preventDefault();
+    }
+  }
+
+  function handleInput(e) {
+    query = e.target.value;
+  }
+</script>
+
+<div class="sola-palette {open() ? 'active' : ''}">
+  <div class="palette-backdrop" on:click={close}></div>
+  <div class="palette-card" role="dialog" aria-modal="true" aria-label={label}>
+    <input
+      id={inputId}
+      class="palette-input"
+      type="text"
+      role="combobox"
+      autocomplete="off"
+      aria-expanded="true"
+      aria-controls={listId}
+      aria-activedescendant={filtered().length ? optionId(index()) : ""}
+      aria-label={placeholder}
+      placeholder={placeholder}
+      value={query()}
+      on:input={handleInput}
+      on:keydown={handleInputKey}
+    />
+    <ul class="palette-list" id={listId} role="listbox" aria-label={label}>
+      {#each filtered() as command, i (command.id)}
+        <li
+          id={optionId(i)}
+          class="palette-option {i === index() ? 'selected' : ''}"
+          role="option"
+          aria-selected={i === index() ? "true" : "false"}
+          on:click={() => choose(command)}
+          on:mousemove={() => { index = i; }}
+        >
+          <span class="option-label">{command.label}</span>
+          {#if command.hint}
+            <span class="option-hint">{command.hint}</span>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+    {#if filtered().length === 0}
+      <div class="palette-empty">No matching commands</div>
+    {/if}
+    <div class="palette-status" role="status" aria-live="polite">{filtered().length} results</div>
+  </div>
+</div>
+
+<style>
+  .sola-palette {
+    position: fixed;
+    inset: 0;
+    z-index: var(--sola-z-modal, 900);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12vh;
+  }
+
+  .sola-palette.active {
+    display: flex;
+  }
+
+  .palette-backdrop {
+    position: absolute;
+    inset: 0;
+    background: var(--sola-surface-overlay, rgba(15, 23, 42, 0.5));
+  }
+
+  .palette-card {
+    position: relative;
+    width: min(560px, calc(100vw - 32px));
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--sola-surface-1, #ffffff);
+    color: var(--sola-text-primary, #0f172a);
+    border: 1px solid var(--sola-border-default, #e2e8f0);
+    border-radius: var(--sola-radius-xl, 20px);
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+  }
+
+  .palette-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--sola-space-lg, 16px);
+    border: 0;
+    border-bottom: 1px solid var(--sola-border-subtle, #eef2f6);
+    background: transparent;
+    color: inherit;
+    font-size: var(--sola-font-size-lg, 16px);
+    font-family: inherit;
+    outline: none;
+  }
+
+  .palette-input:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--sola-color-primary-600, #059669);
+  }
+
+  .palette-list {
+    margin: 0;
+    padding: var(--sola-space-xs, 6px);
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  .palette-option {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sola-space-md, 12px);
+    padding: var(--sola-space-sm, 8px) var(--sola-space-md, 12px);
+    border-radius: var(--sola-radius-md, 10px);
+    font-size: var(--sola-font-size-md, 14px);
+    cursor: pointer;
+  }
+
+  .palette-option.selected {
+    background: var(--sola-color-primary-600, #059669);
+    color: var(--sola-color-neutral-0, #ffffff);
+  }
+
+  .option-hint {
+    font-size: var(--sola-font-size-sm, 12px);
+    color: var(--sola-text-secondary, #475569);
+  }
+
+  .palette-option.selected .option-hint {
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  .palette-empty {
+    padding: var(--sola-space-lg, 16px);
+    color: var(--sola-text-secondary, #475569);
+    font-size: var(--sola-font-size-md, 14px);
+  }
+
+  /* Read by screen readers, not shown. */
+  .palette-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>

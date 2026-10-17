@@ -1,0 +1,114 @@
+<script>
+  // Both columns and rows accept either a plain array or a getter function
+  // (const rows = () => signal()), matching StreamView/IntentCard/Modal's convention.
+  export let columns = [];
+  export let rows = [];
+  export let striped = false;
+  export let onRowClick = null;
+  export let dark = false;
+
+  let resolvedRows = $derived(() => (typeof rows === 'function' ? rows() : rows) || []);
+  let resolvedColumns = $derived(() => {
+    const c = typeof columns === 'function' ? columns() : columns;
+    if (Array.isArray(c) && c.length > 0) return c;
+    const r = resolvedRows();
+    if (Array.isArray(r) && r.length > 0 && r[0] && typeof r[0] === 'object') {
+      return Object.keys(r[0]);
+    }
+    return [];
+  });
+
+  function handleRowClick(row, i) {
+    if (typeof onRowClick === 'function') {
+      onRowClick(row, i);
+    }
+  }
+</script>
+
+<div class="table-wrapper {dark ? 'dark' : ''} {striped ? 'striped' : ''}">
+  <table>
+    <thead>
+      <tr>
+        {#each resolvedColumns() as col}
+          <th>{col.label || col}</th>
+        {/each}
+      </tr>
+    </thead>
+    <tbody>
+      {#each resolvedRows() as row, i}
+        <tr class="{typeof onRowClick === 'function' ? 'clickable' : ''}" tabindex={typeof onRowClick === 'function' ? '0' : '-1'} onclick={() => handleRowClick(row, i)} onkeydown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && onRowClick) { e.preventDefault(); onRowClick(row); } }}>
+          {#each resolvedColumns() as col}
+            <td>{row[col.key || col]}</td>
+          {/each}
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: 12px;
+    transition: border-color 0.2s ease;
+  }
+
+  .table-wrapper.dark { border-color: rgba(255, 255, 255, 0.08); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sola-text-tertiary, #475569);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: var(--sola-surface-1, #f8fafc);
+    border-bottom: 1px solid var(--sola-border-subtle, #e2e8f0);
+  }
+
+  .table-wrapper.dark th {
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+
+  td {
+    padding: 12px 16px;
+    color: var(--sola-text-primary, #334155);
+    border-bottom: 1px solid var(--sola-surface-2, #f1f5f9);
+  }
+
+  .table-wrapper.striped tbody tr:nth-child(even) td {
+    background: var(--sola-surface-1, #f8fafc);
+  }
+
+  .table-wrapper.dark td {
+    color: #c3cbdc;
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+    background: transparent;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background: var(--sola-surface-1, #f8fafc);
+  }
+
+  .table-wrapper.dark tr:hover td {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  tr.clickable {
+    cursor: pointer;
+  }
+</style>
