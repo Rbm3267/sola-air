@@ -4,7 +4,7 @@
   "description": "MCP server for Sola — compile .sola components and query the API reference directly from Claude Code",
   "type": "module",
   "bin": {
-    "sola-mcp": "./src/index.js"
+    "sola-mcp": "src/index.js"
   },
   "keywords": [
     "sola",
