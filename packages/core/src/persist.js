@@ -16,7 +16,7 @@
 // frames) it behaves like a plain signal; without BroadcastChannel it falls back
 // to the `storage` event when the backend is localStorage.
 
-import { createSignal } from './index.js';
+import { createSignal } from './signal.js';
 
 const KEY_PREFIX = 'sola:';
 const DEFAULT_CHANNEL = 'sola-bus';
