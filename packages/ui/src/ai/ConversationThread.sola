@@ -13,19 +13,21 @@
   let streamBuffer = $state('');
   let abortController = null;
   let threadEl = null;
+  const threadId = 'sola-thread-msgs-' + Math.random().toString(36).slice(2, 9);
 
   function scrollToBottom() {
-    if (threadEl) threadEl.scrollTop = threadEl.scrollHeight;
+    const el = threadEl || (typeof document !== 'undefined' ? document.getElementById(threadId) : null);
+    if (el) el.scrollTop = el.scrollHeight;
   }
 
   async function send() {
     const text = input().trim();
     if (!text || streaming()) return;
 
-    input('');
-    messages(prev => [...prev, { role: 'user', content: text }]);
-    streaming(true);
-    streamBuffer('');
+    input = '';
+    messages = [...messages(), { role: 'user', content: text }];
+    streaming = true;
+    streamBuffer = '';
 
     if (abortController) abortController.abort();
     abortController = new AbortController();
@@ -68,20 +70,20 @@
             const evt = JSON.parse(payload);
             const token = evt.token ?? evt.delta ?? evt.content ?? '';
             accumulated += token;
-            streamBuffer(accumulated);
+            streamBuffer = accumulated;
             scrollToBottom();
           } catch { /* skip */ }
         }
       }
 
-      messages(prev => [...prev, { role: 'assistant', content: accumulated }]);
+      messages = [...messages(), { role: 'assistant', content: accumulated }];
     } catch (err) {
       if (err.name !== 'AbortError') {
-        messages(prev => [...prev, { role: 'assistant', content: '⚠️ ' + err.message, error: true }]);
+        messages = [...messages(), { role: 'assistant', content: '⚠️ ' + err.message, error: true }];
       }
     } finally {
-      streaming(false);
-      streamBuffer('');
+      streaming = false;
+      streamBuffer = '';
       scrollToBottom();
       if (onmessage) onmessage(messages());
     }
@@ -96,7 +98,7 @@
 </script>
 
 <div class="sola-thread">
-  <div class="thread-messages" bind:this={threadEl}>
+  <div class="thread-messages" id={threadId} bind:this={threadEl}>
     {#each messages() as msg}
       <div class="msg msg--{msg.role} {msg.error ? 'msg--error' : ''}">
         <div class="msg-label">{msg.role === 'user' ? userLabel : systemLabel}</div>
@@ -132,12 +134,13 @@
     <textarea
       class="thread-input"
       placeholder={placeholder}
+      aria-label={placeholder}
       bind:value={input}
       onkeydown={handleKey}
       rows="1"
       disabled={streaming()}
     ></textarea>
-    <button class="send-btn" onclick={send} disabled={streaming()}>
+    <button class="send-btn" aria-label="Send message" onclick={send} disabled={streaming()}>
       {#if streaming()}
         <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
@@ -157,7 +160,7 @@
     flex-direction: column;
     height: 100%;
     min-height: 320px;
-    background: var(--sola-thread-bg, #fff);
+    background: var(--sola-surface-0, #fff);
     border: 1px solid var(--sola-border, #e2e8f0);
     border-radius: 20px;
     overflow: hidden;
@@ -228,7 +231,7 @@
   }
 
   .msg--streaming .msg-content {
-    background: #f0fdf9;
+    background: var(--sola-alert-positive-bg, #f0fdf9);
     border-color: #a7f3d0;
   }
 
@@ -275,7 +278,7 @@
     gap: 8px;
     padding: 12px 16px;
     border-top: 1px solid var(--sola-surface-2, #f1f5f9);
-    background: #fafbfc;
+    background: var(--sola-surface-1, #fafbfc);
     align-items: flex-end;
   }
 

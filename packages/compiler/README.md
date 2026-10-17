@@ -12,9 +12,12 @@ npm install @sola-air-ui/compiler
 
 ```js
 import { compile } from '@sola-air-ui/compiler';
+import { checkSource, checkFiles } from '@sola-air-ui/compiler/check';
 import { readFileSync } from 'node:fs';
 
 const source = readFileSync('App.sola', 'utf-8');
+const diagnostics = checkSource(source, 'App.sola');
+
 const result = compile(source, {
   target: 'esm',           // or 'iife'
   exportName: 'App',       // used for iife builds
@@ -23,26 +26,30 @@ const result = compile(source, {
 
 console.log(result.code); // compiled JS
 console.log(result.css);  // scoped CSS
+console.log(result.dts);  // generated .d.ts
 ```
 
 ## CLI
 
 ```bash
 npx sola build App.sola
+npx sola-check src/
 ```
+
+`sola-check` validates `.sola` files on disk (pass `--json` for machine-readable output), reporting syntax errors (`SOLA000`) and unbalanced or malformed `{#if}` / `{#each}` / `{:else}` blocks (`SOLA001`).
 
 ## What a `.sola` file looks like
 
 ```html
 <script>
   let count = $state(0);
-  let doubled = $derived(() => count() * 2);
+  let doubled = $derived(count * 2);
 </script>
 
 <div>
-  <h1>Count: {count()}</h1>
-  <p>Doubled: {doubled()}</p>
-  <button onclick={() => count(count() + 1)}>+1</button>
+  <h1>Count: {count}</h1>
+  <p>Doubled: {doubled}</p>
+  <button onclick={() => count++}>+1</button>
 </div>
 
 <style>

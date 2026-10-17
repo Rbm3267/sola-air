@@ -22,6 +22,9 @@
       "include": "#block-close"
     },
     {
+      "include": "#special-html"
+    },
+    {
       "include": "#expression"
     },
     {
@@ -153,9 +156,9 @@
       ]
     },
     "block-else": {
-      "match": "(\\{)(:)(else)(\\})",
-      "name": "meta.block.else.sola",
-      "captures": {
+      "begin": "(\\{)(:)(else)(?:\\s+(if))?\\b",
+      "end": "(\\})",
+      "beginCaptures": {
         "1": {
           "name": "punctuation.definition.block.begin.sola"
         },
@@ -166,9 +169,47 @@
           "name": "keyword.control.block.sola"
         },
         "4": {
+          "name": "keyword.control.block.sola"
+        }
+      },
+      "endCaptures": {
+        "1": {
           "name": "punctuation.definition.block.end.sola"
         }
-      }
+      },
+      "name": "meta.block.else.sola",
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "special-html": {
+      "begin": "(\\{)(@)(html)\\b",
+      "end": "(\\})",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.begin.sola"
+        },
+        "2": {
+          "name": "keyword.control.special.sola"
+        },
+        "3": {
+          "name": "keyword.control.special.sola"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.end.sola"
+        }
+      },
+      "name": "meta.special.html.sola",
+      "contentName": "source.js",
+      "patterns": [
+        {
+          "include": "source.js#expression"
+        }
+      ]
     },
     "block-close": {
       "match": "(\\{)(/)(if|each)(\\})",

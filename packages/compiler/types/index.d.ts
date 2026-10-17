@@ -13,6 +13,8 @@ export interface CompileOptions {
   filename?: string;
   /** Emit a source map mapping generated JS back to the .sola file. Default true. */
   sourcemap?: boolean;
+  /** Also export `css` and `scopeHash` constants from ESM output for Shadow DOM hosts. */
+  exportStyles?: boolean;
 }
 
 export interface CompileResult {
@@ -24,6 +26,8 @@ export interface CompileResult {
   css: string;
   /** Source map for `code`, or null when `sourcemap` is false. */
   map: SourceMap | null;
+  /** Generated TypeScript declaration (.d.ts) for the compiled component. */
+  dts: string;
 }
 
 export interface SourceMap {
@@ -40,6 +44,6 @@ export function compile(source: string, options?: CompileOptions): CompileResult
 
 /** Mount function produced by compiling a .sola component. */
 export type SolaComponent<P = Record<string, unknown>> = (
-  target: HTMLElement,
+  target: Element | ShadowRoot,
   props?: P
 ) => () => void;

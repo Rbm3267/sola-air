@@ -18,6 +18,14 @@
   let targetOverlay = null;
   let elementHighlight = null;
   let currentPreview = null;
+  let dragCleanup = null;
+
+  function cleanupDragListeners() {
+    if (dragCleanup) {
+      dragCleanup();
+      dragCleanup = null;
+    }
+  }
 
   // Walk shadow roots recursively
   function walkShadows(root, depth, collect) {
@@ -161,6 +169,7 @@
   }
 
   function createHost(x, y) {
+    cleanupDragListeners();
     if (hostDiv) { hostDiv.remove(); hostDiv = null; }
     hostDiv = document.createElement('div');
     hostDiv.id = 'sola-preview-root';
@@ -318,12 +327,18 @@
       il = r.left; it = r.top;
       Object.assign(hostDiv.style, { bottom: 'auto', right: 'auto', left: il + 'px', top: it + 'px' });
     });
-    window.addEventListener('mousemove', e => {
-      if (!dragging) return;
+    const onMouseMove = e => {
+      if (!dragging || !hostDiv) return;
       hostDiv.style.left = (il + e.clientX - sx) + 'px';
       hostDiv.style.top = (it + e.clientY - sy) + 'px';
-    });
-    window.addEventListener('mouseup', () => dragging = false);
+    };
+    const onMouseUp = () => { dragging = false; };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    dragCleanup = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
 
     // Snap
     let snapIdx = 0;
@@ -616,11 +631,20 @@
       updateBox(startX, startY, e.clientX, e.clientY);
     });
 
+    function onEsc(e) {
+      if (e.key === 'Escape') {
+        isTargetMode = false;
+        screen.remove();
+        document.removeEventListener('keydown', onEsc);
+      }
+    }
+
     screen.addEventListener('mouseup', e => {
       if (!dragging) return;
       dragging = false;
       isTargetMode = false;
       screen.remove();
+      document.removeEventListener('keydown', onEsc);
 
       const endX = e.clientX, endY = e.clientY;
       // If it was just a click (tiny drag), expand to a reasonable hit area
@@ -634,13 +658,7 @@
       showComponentFromRegion(componentId, metrics, { x: x2, y: (y1 + y2) / 2 }, { x1, y1, x2, y2 });
     });
 
-    document.addEventListener('keydown', function onEsc(e) {
-      if (e.key === 'Escape') {
-        isTargetMode = false;
-        screen.remove();
-        document.removeEventListener('keydown', onEsc);
-      }
-    });
+    document.addEventListener('keydown', onEsc);
   }
 
   function showComponentFromRegion(componentId, metrics, anchor, region) {
@@ -714,8 +732,14 @@
       const r = hostDiv.getBoundingClientRect(); il = r.left; it = r.top;
       Object.assign(hostDiv.style, { bottom:'auto', right:'auto', left:il+'px', top:it+'px' });
     });
-    window.addEventListener('mousemove', e => { if (drag) { hostDiv.style.left=(il+e.clientX-sx)+'px'; hostDiv.style.top=(it+e.clientY-sy)+'px'; } });
-    window.addEventListener('mouseup', () => drag = false);
+    const onRegionMouseMove = e => { if (drag && hostDiv) { hostDiv.style.left=(il+e.clientX-sx)+'px'; hostDiv.style.top=(it+e.clientY-sy)+'px'; } };
+    const onRegionMouseUp = () => { drag = false; };
+    window.addEventListener('mousemove', onRegionMouseMove);
+    window.addEventListener('mouseup', onRegionMouseUp);
+    dragCleanup = () => {
+      window.removeEventListener('mousemove', onRegionMouseMove);
+      window.removeEventListener('mouseup', onRegionMouseUp);
+    };
 
     // Snap
     let snapIdx = 0;
@@ -745,6 +769,7 @@
   }
 
   function removePreview() {
+    cleanupDragListeners();
     if (hostDiv) { hostDiv.remove(); hostDiv = null; }
     clearHighlight();
     currentPreview = null;
@@ -767,6 +792,7 @@
   // postMessage from Sola web pages
   const SOLA_ALLOWED_ORIGINS = [
     'https://sola-air.dev',
+    'https://www.sola-air.dev',
     'http://localhost:5173',
     'http://localhost:4173',
     'http://127.0.0.1:5173'

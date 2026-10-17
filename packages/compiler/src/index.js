@@ -398,7 +398,7 @@ function desugarElseIf(template) {
       if (text.startsWith(OPEN, i)) { depth++; i += OPEN.length; continue; }
       if (text.startsWith(CLOSE, i)) { depth--; i += CLOSE.length; continue; }
       if (depth === 0 && text.startsWith('{:else', i)) {
-        const end = text.indexOf('}', i);
+        const end = matchBrace(text, i);
         if (end === -1) return null;
         const inner = text.slice(i + '{:else'.length, end);
         if (/^\s+if\s+/.test(inner)) {
@@ -481,7 +481,7 @@ function transformBlocks(template) {
     let i = 0;
     while (i < text.length) {
       if (text.startsWith('{#if', i)) {
-        const condEnd = text.indexOf('}', i);
+        const condEnd = matchBrace(text, i);
         if (condEnd === -1) { out += text[i++]; continue; }
         const condition = text.slice(i + 4, condEnd);
         const end = matchEnd(text, i, '{#if', '{/if}');
@@ -500,10 +500,10 @@ function transformBlocks(template) {
       }
 
       if (text.startsWith('{#each', i)) {
-        const headEnd = text.indexOf('}', i);
+        const headEnd = matchBrace(text, i);
         if (headEnd === -1) { out += text[i++]; continue; }
         const head = text.slice(i, headEnd + 1);
-        const parsed = /^{#each\s+([\s\S]*?)\s+as\s+([\w$]+)(?:\s*,\s*([\w$]+))?(?:\s*\(([^)]+)\))?}$/.exec(head);
+        const parsed = /^{#each\s+([\s\S]*?)\s+as\s+([\w$]+)(?:\s*,\s*([\w$]+))?(?:\s*\(([\s\S]+)\))?}$/.exec(head);
         const end = matchEnd(text, i, '{#each', '{/each}');
         if (!parsed || end === -1) { out += text[i++]; continue; }
 
@@ -555,14 +555,189 @@ function extractExpressions(text) {
 // script blocks written in TS. Covers the common patterns: type annotations,
 // interface/type declarations, angle-bracket generics, and `as` casts.
 function stripTypeScript(code) {
-  // Remove interface and type alias declarations
-  code = code.replace(/^\s*(export\s+)?(interface|type)\s+\w[\s\S]*?(?=\n(?:export|const|let|var|function|class|\/\/|$))/gm, '');
-  // Remove inline type annotations: `: Type` before = , ) , ; , , or end of line
-  code = code.replace(/:\s*[\w<>\[\]|&{},\s.?]+(?=[=,);{}\n])/g, '');
-  // Remove `as Type` casts
-  code = code.replace(/\s+as\s+[\w<>\[\]|&{}.?]+/g, '');
-  // Remove generic type parameters from function/class declarations
-  code = code.replace(/<[^>()=]+>(?=\s*\()/g, '');
+  const blankKeepNewlines = (str) => str.replace(/[^\n]/g, ' ');
+
+  // 1. Remove interface declarations using balanced brace matching so statements
+  // following an interface ($effect, onMount, etc.) are never swallowed.
+  const ifaceRe = /^\s*(?:export\s+)?interface\s+[A-Za-z_$][\w$]*(?:\s*<[^>]*>)?(?:\s+extends\s+[^{]+)?\s*\{/gm;
+  let m;
+  while ((m = ifaceRe.exec(code)) !== null) {
+    const braceStart = m.index + m[0].lastIndexOf('{');
+    const braceEnd = matchBrace(code, braceStart);
+    if (braceEnd === -1) break;
+    let end = braceEnd + 1;
+    if (code[end] === ';') end++;
+    code = code.slice(0, m.index) + blankKeepNewlines(code.slice(m.index, end)) + code.slice(end);
+    ifaceRe.lastIndex = end;
+  }
+
+  // 2. Remove type alias declarations (respecting balanced {}, (), [], <>)
+  const typeRe = /^\s*(?:export\s+)?type\s+[A-Za-z_$][\w$]*(?:\s*<[^>]*>)?\s*=\s*/gm;
+  while ((m = typeRe.exec(code)) !== null) {
+    let i = m.index + m[0].length;
+    let depth = 0;
+    let inStr = null;
+    while (i < code.length) {
+      const ch = code[i];
+      if (inStr) {
+        if (ch === '\\') { i += 2; continue; }
+        if (ch === inStr) inStr = null;
+        i++;
+        continue;
+      }
+      if (ch === '"' || ch === "'" || ch === '`') { inStr = ch; i++; continue; }
+      if (ch === '{' || ch === '(' || ch === '[') depth++;
+      else if (ch === '}' || ch === ')' || ch === ']') depth = Math.max(0, depth - 1);
+      else if (depth === 0 && ch === ';') { i++; break; }
+      else if (depth === 0 && ch === '\n') {
+        const rest = code.slice(i + 1).match(/^\s*([|&])/);
+        if (!rest) break;
+      }
+      i++;
+    }
+    code = code.slice(0, m.index) + blankKeepNewlines(code.slice(m.index, i)) + code.slice(i);
+    typeRe.lastIndex = i;
+  }
+
+  // Helper to scan a type expression until a top-level delimiter in stopChars
+  function scanTypeEnd(str, start, stopChars) {
+    let i = start;
+    let depth = 0;
+    let angleDepth = 0;
+    let inStr = null;
+    while (i < str.length) {
+      const ch = str[i];
+      if (inStr) {
+        if (ch === '\\') { i += 2; continue; }
+        if (ch === inStr) inStr = null;
+        i++;
+        continue;
+      }
+      if (ch === '"' || ch === "'" || ch === '`') { inStr = ch; i++; continue; }
+      if (ch === '=' && str[i + 1] === '>') { i += 2; continue; }
+      if (ch === '<') { angleDepth++; i++; continue; }
+      if (ch === '>' && angleDepth > 0) { angleDepth--; i++; continue; }
+      if (ch === '{' || ch === '(' || ch === '[') { depth++; i++; continue; }
+      if (ch === '}' || ch === ')' || ch === ']') {
+        if (depth === 0 && angleDepth === 0 && stopChars.has(ch)) return i;
+        depth = Math.max(0, depth - 1);
+        i++;
+        continue;
+      }
+      if (depth === 0 && angleDepth === 0 && stopChars.has(ch)) return i;
+      i++;
+    }
+    return i;
+  }
+
+  // 3. Remove variable declaration type annotations: (const|let|var) id: Type
+  // Never touches object literals or ternaries on the RHS of '='.
+  const varRe = /\b(const|let|var)(\s+[A-Za-z_$][\w$]*)(\??\s*:\s*)/g;
+  const varStops = new Set(['=', ';', '\n']);
+  while ((m = varRe.exec(code)) !== null) {
+    const colonStart = m.index + m[1].length + m[2].length;
+    const typeStart = colonStart + m[3].length;
+    const typeEnd = scanTypeEnd(code, typeStart, varStops);
+    code = code.slice(0, colonStart) + blankKeepNewlines(code.slice(colonStart, typeEnd)) + code.slice(typeEnd);
+    varRe.lastIndex = colonStart;
+  }
+
+  // 4. Remove function / arrow parameter & return type annotations.
+  // Walk delimiter stack so we only strip 'param?: Type' when the innermost
+  // enclosing delimiter is '(' (never inside '{ a: 1, b: true }' object literals).
+  let out = '';
+  const delimStack = [];
+  let i = 0;
+  let inStr = null;
+  let inLineComment = false;
+  let inBlockComment = false;
+  const paramStops = new Set([',', ')', '=']);
+
+  while (i < code.length) {
+    const ch = code[i];
+    const next = code[i + 1];
+
+    if (inLineComment) {
+      out += ch;
+      if (ch === '\n') inLineComment = false;
+      i++;
+      continue;
+    }
+    if (inBlockComment) {
+      out += ch;
+      if (ch === '*' && next === '/') { out += '/'; i += 2; inBlockComment = false; continue; }
+      i++;
+      continue;
+    }
+    if (inStr) {
+      out += ch;
+      if (ch === '\\' && next !== undefined) { out += next; i += 2; continue; }
+      if (ch === inStr) inStr = null;
+      i++;
+      continue;
+    }
+    if (ch === '/' && next === '/') { inLineComment = true; out += '//'; i += 2; continue; }
+    if (ch === '/' && next === '*') { inBlockComment = true; out += '/*'; i += 2; continue; }
+    if (ch === '"' || ch === "'" || ch === '`') { inStr = ch; out += ch; i++; continue; }
+
+    if (ch === '(' || ch === '{' || ch === '[') {
+      delimStack.push(ch);
+      out += ch;
+      i++;
+      continue;
+    }
+    if (ch === ')' || ch === '}' || ch === ']') {
+      delimStack.pop();
+      out += ch;
+      i++;
+      // Check for return type annotation after ')': '): ReturnType {' or '): ReturnType =>'
+      if (ch === ')') {
+        const retMatch = /^(\s*:\s*)/.exec(code.slice(i));
+        if (retMatch) {
+          const typeStart = i + retMatch[1].length;
+          const typeEnd = scanTypeEnd(code, typeStart, new Set(['{', '=', ';', '\n']));
+          const after = code.slice(typeEnd);
+          // Only strip if followed by function body '{' or arrow '=>' (not a ternary branch)
+          if (/^\s*(\{|=>)/.test(after) && code.slice(typeStart, typeEnd).trim().length > 0) {
+            out += blankKeepNewlines(code.slice(i, typeEnd));
+            i = typeEnd;
+          }
+        }
+      }
+      continue;
+    }
+
+    // Inside '(...)', check for parameter type annotation after '(' or ','
+    if (delimStack[delimStack.length - 1] === '(') {
+      const prevNonWs = out.trimEnd().slice(-1);
+      if (prevNonWs === '(' || prevNonWs === ',') {
+        const paramMatch = /^(\s*(?:\.\.\.)?[A-Za-z_$][\w$]*)(\??\s*:\s*)/.exec(code.slice(i));
+        if (paramMatch) {
+          out += paramMatch[1];
+          const colonStart = i + paramMatch[1].length;
+          const typeStart = colonStart + paramMatch[2].length;
+          const typeEnd = scanTypeEnd(code, typeStart, paramStops);
+          out += blankKeepNewlines(code.slice(colonStart, typeEnd));
+          i = typeEnd;
+          continue;
+        }
+      }
+    }
+
+    out += ch;
+    i++;
+  }
+  code = out;
+
+  // 5. Remove 'as Type' casts outside import/export specifiers
+  code = code.replace(
+    /(\b(?:import|export)\s*\{[^}]*\})|\s+as\s+(?:const\b|[A-Za-z_$][\w$.<>\[\]|&?]*(?:\s*[|&]\s*[A-Za-z_$][\w$.<>\[\]|&?]*)*)/g,
+    (full, impExp) => impExp ? impExp : blankKeepNewlines(full)
+  );
+
+  // 6. Remove generic type parameters from function/class/call expressions: foo<T>(
+  code = code.replace(/(?<=[\w$])<[^>()=;]+>(?=\s*\()/g, (m) => blankKeepNewlines(m));
+
   return code;
 }
 
@@ -709,7 +884,10 @@ function emitReactiveEdits(rootNode, src, vars, edits, initialShadows) {
         const isMemberProp = p.type === 'MemberExpression' && p.property === node && !p.computed;
         const isCallee = (p.type === 'CallExpression' || p.type === 'NewExpression') && p.callee === node;
         const isAssignTarget = (p.type === 'AssignmentExpression' && p.left === node) || p.type === 'UpdateExpression';
-        const isPropertyKey = p.type === 'Property' && p.key === node && !p.computed;
+        const isPropertyKey =
+          (p.type === 'Property' || p.type === 'MethodDefinition' || p.type === 'PropertyDefinition') &&
+          p.key === node &&
+          !p.computed;
         const isShorthand = p.type === 'Property' && p.shorthand && p.value === node;
         const isMemberObject = p.type === 'MemberExpression' && p.object === node;
 
@@ -836,9 +1014,13 @@ export function compile(source, options = {}) {
   const hasStyles = styleContent.trim().length > 0;
   const scopedCss = hasStyles ? scopeStyles(styleContent, scopeHash) : '';
 
+  // Strip HTML comments first so commented-out blocks or literal braces inside
+  // comments never trigger block transforms or expression errors.
+  let rawTemplate = rawTemplateSource.replace(/<!--[\s\S]*?-->/g, '');
+
   // Flatten else-if chains into nested if/else before anything else looks at
   // the template, so the block handling below only ever sees the simple form.
-  let rawTemplate = desugarElseIf(rawTemplateSource);
+  rawTemplate = desugarElseIf(rawTemplate);
 
   // Pre-process attribute-bound expressions BEFORE extractExpressions using
   // balanced-brace matching (handles nested object literals, ternaries, etc.)
@@ -1126,7 +1308,7 @@ export function compile(source, options = {}) {
     const rewrite = (expr) => transformTemplateExpression(expr, reactiveVars, locals);
 
     if (node.type === 'text') {
-      const text = node.data.replace(/\\/g, '\\\\').replace(/`/g, '\\`');
+      const text = escapeTemplateLiteral(node.data);
       if (text.trim().length > 0) {
         const id = `t${uid++}`;
         domCode += `  const ${id} = document.createTextNode(\`${text}\`);\n`;
@@ -1400,10 +1582,12 @@ export function compile(source, options = {}) {
       } else if (key.startsWith('bind:')) {
         const prop = key.slice(5);
         // bind:value={name} names a signal; the marker resolves back to it.
-        const bound = resolveHandler(val);
+        const bound = resolveHandler(val).replace(/^\{|\}$/g, '').trim();
         if (prop === 'value') {
           domCode += `  ${id}.addEventListener('input', (e) => { set_${bound}(e.target.value); });\n`;
           domCode += `  createEffect(() => { ${id}.value = ${bound}() ?? ''; });\n`;
+        } else if (prop === 'this') {
+          domCode += `  ${bound} = ${id};\n`;
         }
       } else if (key === 'class' || key === 'className') {
         // Static values: emit as a plain string literal. A template literal here

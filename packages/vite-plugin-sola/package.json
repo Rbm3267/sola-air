@@ -21,8 +21,11 @@
     "type": "git",
     "url": "git+https://github.com/Rbm3267/sola-air.git"
   },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
   "dependencies": {
-    "@sola-air-ui/compiler": "^1.0.2"
+    "@sola-air-ui/compiler": "^1.4.1"
   },
   "peerDependencies": {
     "vite": ">=4.0.0"

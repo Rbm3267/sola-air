@@ -1,13 +1,17 @@
 <script>
   export let label = "";
+  export let checked = undefined;
   export let initialChecked = false;
+  export let disabled = false;
   export let onChange = null;
-  let checked = $state(initialChecked);
+
+  let isChecked = $state(checked !== undefined ? checked : initialChecked);
 
   function toggle() {
-    checked = !checked();
+    if (disabled) return;
+    isChecked = !isChecked();
     if (typeof onChange === 'function') {
-      onChange(checked());
+      onChange(isChecked());
     }
   }
 </script>
@@ -19,9 +23,11 @@
   <button
     type="button"
     role="switch"
-    aria-checked="{checked()}"
+    aria-checked="{isChecked()}"
+    aria-label={label || "Toggle"}
+    disabled={disabled}
     on:click={toggle}
-    class="toggle-track {checked() ? 'checked' : ''}">
+    class="toggle-track {isChecked() ? 'checked' : ''} {disabled ? 'disabled' : ''}">
     <span class="toggle-thumb"></span>
   </button>
 </div>
@@ -44,7 +50,7 @@
     width: 44px;
     height: 24px;
     border-radius: 9999px;
-    background: #cbd5e1;
+    background: var(--sola-border-default, #cbd5e1);
     border: none;
     cursor: pointer;
     padding: 2px;
@@ -58,6 +64,11 @@
 
   .toggle-track.checked {
     background: #0ea5e9;
+  }
+
+  .toggle-track.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   .toggle-thumb {

@@ -8,14 +8,17 @@ let pendingEffects = new Set();
 let isFlushing = false;
 
 export function flushSync() {
-  while (pendingEffects.size > 0) {
-    const effects = [...pendingEffects];
-    pendingEffects.clear();
-    for (const effect of effects) {
-      effect.execute();
+  try {
+    while (pendingEffects.size > 0) {
+      const effects = [...pendingEffects];
+      pendingEffects.clear();
+      for (const effect of effects) {
+        effect.execute();
+      }
     }
+  } finally {
+    isFlushing = false;
   }
-  isFlushing = false;
 }
 
 // ─── Batched Updates ───

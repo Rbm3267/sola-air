@@ -22,16 +22,23 @@ export default function solaPlugin(options = {}) {
     return compileFn;
   }
 
+  const ASSET_QUERIES = ['raw', 'url', 'inline', 'worker', 'sharedworker'];
+
   return {
     name: 'vite-plugin-sola',
     enforce: 'pre',
 
     async load(id) {
-      if (!id.endsWith('.sola')) return null;
+      const [cleanId, query = ''] = id.split('?', 2);
+      if (!cleanId.endsWith('.sola')) return null;
+      // ?raw, ?url, ?inline and ?worker ask Vite for the file itself, not a
+      // component; leave those to Vite. (?import, ?v=, ?t= are still compiled.)
+      const params = new URLSearchParams(query);
+      if (ASSET_QUERIES.some((q) => params.has(q))) return null;
       try {
         const compile = await getCompile();
-        const source = readFileSync(id, 'utf-8');
-        const compiled = compile(source, { filename: id, sourcemap });
+        const source = readFileSync(cleanId, 'utf-8');
+        const compiled = compile(source, { filename: cleanId, sourcemap });
         return { code: compiled.code, map: compiled.map ?? null };
       } catch (err) {
         this.error(err.message);

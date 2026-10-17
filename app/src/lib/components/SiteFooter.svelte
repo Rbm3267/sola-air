@@ -6,7 +6,7 @@
   //
   // Kept short on purpose: four groups of at most three links, so no column
   // runs longer than the others and the footer stays one compact band.
-  import { GITHUB_URL, VSCODE_URL, VERSIONS } from '$lib/data/site';
+  import { GITHUB_URL, VSCODE_URL, OPEN_VSX_URL, VERSIONS } from '$lib/data/site';
 
   const versions = [
     ['sola-air', VERSIONS.solaAir],
@@ -36,7 +36,8 @@
       heading: 'Extensions',
       links: [
         { href: '/preview', label: 'Chrome' },
-        { href: VSCODE_URL, label: 'VS Code', external: true }
+        { href: VSCODE_URL, label: 'VS Code', external: true },
+        { href: OPEN_VSX_URL, label: 'Open VSX', external: true }
       ]
     },
     {

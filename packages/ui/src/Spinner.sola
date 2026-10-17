@@ -1,9 +1,10 @@
 <script>
   export let size = '24px';
+  export let label = 'Loading';
 </script>
 
-<div class="spinner" style="width: {size}; height: {size}">
-  <div class="ring"></div>
+<div class="spinner" style="width: {size}; height: {size}" role="status" aria-label={label}>
+  <div class="ring" aria-hidden="true"></div>
 </div>
 
 <style>

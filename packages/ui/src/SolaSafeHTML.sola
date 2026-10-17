@@ -1,25 +1,10 @@
 <script>
-  // Renders external rich-text HTML natively — real DOM, real inherited
-  // typography, no nested scrollbar — for content that's curated rather than
-  // fully untrusted (a CMS field, a KB article, a markdown-to-HTML pipeline
-  // you control). This is NOT the same trust boundary as HtmlViewer's iframe
-  // sandbox: {@html} injection runs in the host page's own document, so there
-  // is no real isolation possible here, only defense-in-depth stripping of
-  // the specific vectors that matter most (script execution, event-handler
-  // attributes, javascript: URLs, nested embeds). For genuinely untrusted
-  // HTML — arbitrary user submissions, anything you didn't author or curate
-  // — use HtmlViewer's real iframe sandbox instead, not this component.
   export let content = '';
   export let maxHeight = ''; // e.g. "130px" — caps height and adds a bottom mask-fade
   export let title = 'Rich text content';
 
   let resolvedContent = $derived(() => (typeof content === 'function' ? content() : content));
 
-  // Deliberately not a full sanitizer (no allowlist parsing, no DOM walk) —
-  // a fast, dependency-free strip of the concrete vectors that turn "render
-  // some HTML" into "execute arbitrary script": <script> tags, inline event
-  // handler attributes (onclick=, onerror=, etc.), javascript: URLs, and
-  // <iframe>/<object>/<embed>, which could otherwise load and run anything.
   function sanitize(html) {
     var out = String(html || '');
     out = out.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
@@ -46,14 +31,10 @@
 </div>
 
 <style>
-  /* {@html}-injected content never picks up this component's own hash-scoped
-     classes (same reasoning as MarkdownViewer's tip-surface pattern) — give
-     it an explicit surface and typography instead of trying to make it
-     theme-aware via the host's cascade. */
   .sola-safe-html {
     position: relative;
     background: var(--sola-surface-0, #ffffff);
-    color: #111827;
+    color: var(--sola-text-primary, #111827);
     font-size: 14px;
     line-height: 1.65;
     overflow: hidden;
@@ -70,26 +51,26 @@
     pointer-events: none;
   }
 
-  .sola-safe-html p { margin: 0 0 10px 0; }
-  .sola-safe-html p:last-child { margin-bottom: 0; }
-  .sola-safe-html strong, .sola-safe-html b { font-weight: 700; color: #111827; }
-  .sola-safe-html em, .sola-safe-html i { font-style: italic; }
-  .sola-safe-html a { color: #111827; text-decoration: underline; }
-  .sola-safe-html ul, .sola-safe-html ol { margin: 0 0 10px 0; padding-left: 20px; }
-  .sola-safe-html h1, .sola-safe-html h2, .sola-safe-html h3, .sola-safe-html h4 {
+  .sola-safe-html :global(p) { margin: 0 0 10px 0; }
+  .sola-safe-html :global(p:last-child) { margin-bottom: 0; }
+  .sola-safe-html :global(strong), .sola-safe-html :global(b) { font-weight: 700; color: var(--sola-text-primary, #111827); }
+  .sola-safe-html :global(em), .sola-safe-html :global(i) { font-style: italic; }
+  .sola-safe-html :global(a) { color: var(--sola-text-primary, #111827); text-decoration: underline; }
+  .sola-safe-html :global(ul), .sola-safe-html :global(ol) { margin: 0 0 10px 0; padding-left: 20px; }
+  .sola-safe-html :global(h1), .sola-safe-html :global(h2), .sola-safe-html :global(h3), .sola-safe-html :global(h4) {
     font-weight: 700;
-    color: #111827;
+    color: var(--sola-text-primary, #111827);
     margin: 0 0 8px 0;
     line-height: 1.3;
   }
-  .sola-safe-html code {
+  .sola-safe-html :global(code) {
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 0.9em;
-    background: #f4f4f5;
+    background: var(--sola-surface-2, #f4f4f5);
     padding: 1px 5px;
     border-radius: 4px;
   }
-  .sola-safe-html img { max-width: 100%; height: auto; }
-  .sola-safe-html table { border-collapse: collapse; width: 100%; margin-bottom: 10px; }
-  .sola-safe-html th, .sola-safe-html td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; }
+  .sola-safe-html :global(img) { max-width: 100%; height: auto; }
+  .sola-safe-html :global(table) { border-collapse: collapse; width: 100%; margin-bottom: 10px; }
+  .sola-safe-html :global(th), .sola-safe-html :global(td) { border: 1px solid var(--sola-border-subtle, #e5e7eb); padding: 6px 10px; text-align: left; }
 </style>

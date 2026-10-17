@@ -20,7 +20,7 @@
   <footer class="max-w-[1140px] w-full mx-auto px-6 pb-16 pt-4">
     <p class="text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
       This page is compiled from one <code class="font-mono text-xs bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 px-1.5 py-0.5 rounded">.sola</code> file.
-      <a href={SOURCE_URL} target="_blank" rel="noreferrer" class="font-semibold text-emerald-700 dark:text-emerald-400 hover:underline">Read its source</a>
+      <a href={SOURCE_URL} target="_blank" rel="noreferrer" class="font-semibold text-blue-700 dark:text-blue-400 hover:underline">Read its source</a>
       and compare it with what the browser is running.
     </p>
   </footer>

@@ -101,7 +101,8 @@ export function createIntent(promptFn, options = {}) {
     if (!prompt) return;
 
     if (abortController) abortController.abort();
-    abortController = new AbortController();
+    const ctrl = new AbortController();
+    abortController = ctrl;
 
     write(null);
     setError(null);
@@ -118,27 +119,30 @@ export function createIntent(promptFn, options = {}) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
-      signal: abortController.signal
+      signal: ctrl.signal
     })).then(res => {
+      if (ctrl.signal.aborted) return;
       if (!res.ok) throw new Error(`Intent failed: ${res.status}`);
 
       if (config.stream) {
         let accumulated = '';
         return _consumeSSE(
           res,
-          token => { accumulated += token; write(accumulated); },
-          () => setLoading(false),
-          err => { setError(err.message); setLoading(false); }
+          token => { if (ctrl.signal.aborted) return; accumulated += token; write(accumulated); },
+          () => { if (!ctrl.signal.aborted) setLoading(false); },
+          err => { if (!ctrl.signal.aborted) { setError(err.message); setLoading(false); } }
         );
       }
 
       return res.json().then(data => {
+        if (ctrl.signal.aborted) return;
         if (data?.components?.length > 0) write(data.components[0]);
         else if (data?.result != null) write(data.result);
         else write(data);
         setLoading(false);
       });
     }).catch(err => {
+      if (ctrl.signal.aborted) return;
       if (err.name !== 'AbortError') {
         console.error('[Sola Intent Error]', err);
         setError(err.message);
@@ -212,7 +216,8 @@ export function createData(source, options = {}) {
 
   function fetchData() {
     if (abortController) abortController.abort();
-    abortController = new AbortController();
+    const ctrl = new AbortController();
+    abortController = ctrl;
 
     write({ loading: true, data: read().data, error: null });
 
@@ -227,16 +232,19 @@ export function createData(source, options = {}) {
         limit: config.limit || null,
         offset: config.offset || null
       }),
-      signal: abortController.signal
+      signal: ctrl.signal
     })
     .then(res => {
+      if (ctrl.signal.aborted) return;
       if (!res.ok) throw new Error(`Data fetch failed: ${res.status}`);
       return res.json();
     })
     .then(data => {
+      if (ctrl.signal.aborted) return;
       write({ loading: false, data: data.rows || data, error: null });
     })
     .catch(err => {
+      if (ctrl.signal.aborted) return;
       if (err.name !== 'AbortError') {
         console.error('[Sola Data Error]', err);
         write({ loading: false, data: null, error: err.message });

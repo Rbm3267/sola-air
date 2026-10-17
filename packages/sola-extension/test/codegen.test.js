@@ -43,7 +43,7 @@ describe('component table', () => {
     assert.ok(line.includes('RangeSlider'));
   });
 
-  it('Button is imported from its subpath, since it is not re-exported from the root', () => {
+  it('Button is imported from its subpath like every other released component', () => {
     assert.strictEqual(importLine('button'), "import Button from '@sola-air-ui/ui/button';");
   });
 });

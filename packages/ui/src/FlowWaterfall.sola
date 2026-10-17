@@ -67,7 +67,7 @@
   .sola-waterfall {
     position: relative;
     background: var(--sola-surface-0, #ffffff);
-    border: 1px solid rgba(226, 232, 240, 0.9);
+    border: 1px solid var(--sola-border-subtle, rgba(226, 232, 240, 0.9));
     border-radius: 24px;
     padding: 24px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.04);
@@ -78,7 +78,7 @@
   .wf-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
   .wf-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
   .wf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sola-color-primary-500, #10b981); }
-  .wf-title { font-size: 15px; font-weight: 900; color: #020617; letter-spacing: -0.01em; font-family: ui-monospace, monospace; margin: 0; }
+  .wf-title { font-size: 15px; font-weight: 900; color: var(--sola-text-primary, #020617); letter-spacing: -0.01em; font-family: ui-monospace, monospace; margin: 0; }
 
   .wf-final { text-align: right; flex-shrink: 0; }
   .wf-final-label { font-size: 12px; font-family: ui-monospace, monospace; color: var(--sola-text-tertiary, #94a3b8); text-transform: uppercase; display: block; }

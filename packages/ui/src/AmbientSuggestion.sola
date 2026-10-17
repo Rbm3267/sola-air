@@ -1,7 +1,4 @@
 <script>
-  // Accepts either a plain object or a getter function (e.g. a createIntent
-  // accessor), mirroring StreamView/IntentCard's convention for live values —
-  // resolved fresh on every read so a parent can hand this a reactive signal.
   export let suggestion = null;
   export let onDismiss = null;
 
@@ -23,7 +20,7 @@
   }
 </script>
 
-<div class="sola-ambient-suggestion {visible() ? 'visible' : ''}">
+<div class="sola-ambient-suggestion {visible() ? 'visible' : ''}" role="status" aria-live="polite">
   <div class="ambient-body">
     <div class="ambient-label">{label()}</div>
     <div class="ambient-action">{action()}</div>

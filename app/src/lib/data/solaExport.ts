@@ -164,17 +164,30 @@ export function studioCardToItem(card: StudioCardLike): ExportItem {
  */
 export const PACKAGE_EQUIVALENT: Readonly<Record<string, string>> = {
   SolaButton: 'Button',
+  SolaBadge: 'Badge',
+  NotificationBadge: 'Badge',
+  SolaAlert: 'Alert',
+  AlertBanner: 'Alert',
+  InlineCallout: 'Alert',
+  SolaModal: 'Modal',
+  SolaDialog: 'Modal',
   SolaSelect: 'Select',
   SolaInput: 'TextInput',
-  SolaDataTable: 'Table',
-  SolaDialog: 'Modal',
-  SolaDrawer: 'CompanionDrawer',
-  SolaCommandPalette: 'CommandPalette',
-  SolaDatePicker: 'DatePicker',
-  SolaChart: 'Chart',
+  SolaSwitch: 'Toggle',
   ToggleSwitch: 'Toggle',
-  AlertBanner: 'Alert',
-  ToastStack: 'ToastHost'
+  SolaTable: 'Table',
+  SolaDataTable: 'Table',
+  SolaDatePicker: 'DatePicker',
+  SolaLineChart: 'Chart',
+  SolaChart: 'Chart',
+  SolaCommandPalette: 'CommandPalette',
+  SolaDrawer: 'CompanionDrawer',
+  ToastStack: 'ToastHost',
+  Snackbar: 'Toast',
+  SolaMarkdown: 'MarkdownViewer',
+  SolaHtmlPreview: 'HtmlViewer'
+  // Only components that do the same job. A tabs strip is not a Stack and an
+  // accordion is not a Card, so those previews get no pointer.
 };
 
 /** What to show instead of code for a component the package does not ship. */

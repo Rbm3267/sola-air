@@ -1,6 +1,6 @@
 # @sola-air-ui/core
 
-Zero-VDOM reactivity engine for [Sola AIR](https://sola-air.dev) — signals, derived values, effects, component lifecycle, and the `$intent` primitive. This is the runtime that compiled `.sola` components import; most apps won't call it directly (use `@sola-air-ui/compiler` or the `sola-air` meta-package instead), but it's published standalone for anyone embedding Sola-compiled output in a custom build pipeline.
+Zero-VDOM reactivity engine for [Sola AIR](https://sola-air.dev) — signals, derived values, effects, component lifecycle, persistent cross-tab state, Shadow DOM shell mounting, typed event bus, Sentinel telemetry, and the `$intent` / `$data` primitives. This is the runtime that compiled `.sola` components import; most apps won't call it directly (use `@sola-air-ui/compiler` or the `sola-air` meta-package instead), but it's published standalone for anyone embedding Sola-compiled output in a custom build pipeline.
 
 ## Install
 
@@ -12,21 +12,37 @@ npm install @sola-air-ui/core
 
 - **Signals** — `createSignal`, `createDerived`, `createEffect`, `flushSync`
 - **Lifecycle** — `onMount`, `onDestroy`, `pushContext`/`popContext` (component-scoped mount/destroy queues)
-- **Data & intent** — `createData`, `createIntent`, `configureIntent` (ambient AI state resolution, with SSE streaming support)
-- **IIFE build** — `@sola-air-ui/core/iife` exports a pre-bundled `dist/sola-core.iife.js` for no-bundler environments (e.g. embedding in a CMS widget or a `<script>` tag), guarded so multiple copies on one page share a single instance via `window.SolaCore`.
+- **Data & intent** — `createData`, `configureData`, `createIntent`, `configureIntent` (ambient AI state resolution, with SSE streaming support)
+- **Persistent state & Shell** — `createPersistentSignal`, `clearPersistentState`, `mountShell` (storage-hydrated signals synced across tabs via `BroadcastChannel`, plus a Shadow DOM overlay mounter)
+- **Event bus** — `createBus`, `configureBus`, `bus` (typed events across components, DOM CustomEvents, and tabs with boundary validation and sticky replay)
+- **Sentinel** — `createSentinel`, `SolaSentinel` (rage-click / friction detection and ambient field-behavior capture; re-exported from `@sola-air-ui/sentinel`)
+- **IIFE build** — `@sola-air-ui/core/iife` exports a pre-bundled `dist/sola-core.iife.js` for no-bundler environments (e.g. embedding in a CMS widget or a `<script>` tag), exposing `window.SolaCore`.
 
 ## Usage
 
 Compiled `.sola` output imports these directly:
 
 ```js
-import { createSignal, createDerived, onMount } from '@sola-air-ui/core';
+import {
+  createSignal,
+  createDerived,
+  createPersistentSignal,
+  clearPersistentState,
+  mountShell,
+  createBus,
+  configureBus,
+  bus,
+  configureData,
+  createSentinel,
+  onMount
+} from '@sola-air-ui/core';
 
 const [count, setCount] = createSignal(0);
 const doubled = createDerived(() => count() * 2);
+const [drawerOpen, setDrawerOpen] = createPersistentSignal('shell.drawer', false);
 
 onMount(() => {
-  console.log('mounted, doubled =', doubled());
+  console.log('mounted, doubled =', doubled(), 'drawer =', drawerOpen());
 });
 ```
 

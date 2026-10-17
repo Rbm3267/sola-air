@@ -47,7 +47,7 @@
   <script>
     const { createSignal, createEffect, createSentinel, createIntent, configureIntent } = SolaCore;
 
-    configureIntent({ endpoint: '/api/intent', provider: 'local', model: 'gemini-2.5-flash', stream: false });
+    configureIntent({ endpoint: '/api/intent', provider: 'local', model: 'gemini-3.6-flash', stream: false });
 
     const sentinel = createSentinel('ambient-poc-form');
     const [promptText, setPromptText] = createSignal(null);

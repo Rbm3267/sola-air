@@ -37,8 +37,8 @@
       .replace(/'/g, '&#39;');
   }
 
-  // One import line. Every published component is imported by its subpath, which
-  // works for all of them (not every one is re-exported from the package root).
+  // One import line. Every published component is imported by its subpath so
+  // bundlers only pull in the component that was actually pasted.
   function importLine(componentId) {
     const c = COMPONENTS[componentId];
     if (!c) return '';

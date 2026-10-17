@@ -38,6 +38,12 @@ describe('checkSource', () => {
     assert.deepStrictEqual(codes(`<script>let a=$state(1);</script>\n{#if a}<p>x</p>{/each}`), ['SOLA001']);
   });
 
+  it('flags malformed {#each} missing "as <ident>" and empty {#if}/{:else if} conditions as SOLA001', () => {
+    assert.deepStrictEqual(codes(`<script>let xs=$state([1]);</script>\n{#each xs}<p>x</p>{/each}`), ['SOLA001']);
+    assert.deepStrictEqual(codes(`<script>let a=$state(1);</script>\n{#if}<p>x</p>{/if}`), ['SOLA001']);
+    assert.deepStrictEqual(codes(`<script>let a=$state(1);</script>\n{#if a}<p>1</p>{:else if}<p>2</p>{/if}`), ['SOLA001']);
+  });
+
   it('ignores a commented-out block', () => {
     const src = `<script>let a=$state(1);</script>\n<!-- {#if a} old branch -->\n<p>{a}</p>\n<!--\n  {:else}\n-->`;
     assert.deepStrictEqual(codes(src), []);

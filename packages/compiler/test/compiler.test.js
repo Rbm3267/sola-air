@@ -761,6 +761,77 @@ test('parse error includes file path and line number', () => {
   }
 });
 
+// ── Audit regressions ─────────────────────────────────────────────────────────
+
+console.log('\nAudit regressions');
+
+test('${ in plain text nodes is escaped in emitted createTextNode template literals', () => {
+  const { code } = compile('<div>Literal: ${unclosed</div>');
+  assertValidJs(code);
+  assert(code.includes('\\${unclosed'), 'escaped in text node: ' + code);
+});
+
+test('stripTypeScript preserves object literals, ternaries, and statements after interface', () => {
+  const { code } = compile(`<script lang="ts">
+interface Config {
+  id: string;
+  nested: { flag: boolean };
+}
+let cfg: Config = $state({ id: 'a', nested: { flag: true } });
+let label: string = cfg.nested.flag ? 'on' : 'off';
+$effect(() => { console.log(label); });
+onMount(() => { console.log(cfg.id); });
+</script><div>{label}</div>`);
+  assertValidJs(code);
+  assert(code.includes("{ id: 'a', nested: { flag: true } }"), 'object literal intact: ' + code);
+  assert(code.includes("? 'on' : 'off'"), 'ternary intact: ' + code);
+  assert(code.includes('createEffect(() => { console.log(label); });'), '$effect after interface intact: ' + code);
+  assert(code.includes('onMount(() => { console.log(cfg().id); });'), 'onMount after interface intact: ' + code);
+});
+
+test('desugarElseIf and transformBlocks handle nested braces in conditions and parens in {#each} keys', () => {
+  const { code } = compile(`<script>
+  let items = $state([{ id: 1 }]);
+  function check(o) { return !!o.ok; }
+  function keyOf(it) { return it.id; }
+</script>
+{#if check({ ok: false })}
+  <p>first</p>
+{:else if check({ ok: true })}
+  {#each items.filter(x => { return !!x; }) as item (keyOf(item))}
+    <span>{item.id}</span>
+  {/each}
+{/if}`);
+  assertValidJs(code);
+  assert(code.includes('if (check({ ok: false }))'), 'if with braces: ' + code);
+  assert(code.includes('if (check({ ok: true }))'), 'else-if with braces: ' + code);
+  assert(code.includes('String(keyOf(item))'), 'each key with nested parens: ' + code);
+});
+
+test('bind:this={varName} assigns the created DOM element to varName', () => {
+  const { code } = compile('<script>let canvasEl = null;</script><canvas bind:this={canvasEl}></canvas>');
+  assertValidJs(code);
+  assert(code.includes('canvasEl = n0;'), 'bind:this emitted: ' + code);
+});
+
+test('HTML comments with braces or commented-out blocks are stripped before compilation', () => {
+  const { code } = compile('<!-- {#if broken} {not valid js! --><div>ok</div>');
+  assertValidJs(code);
+  assert(code.includes('ok'), 'renders markup after comment');
+});
+
+test('class method and property definitions sharing a signal name are not rewritten as calls', () => {
+  const { code } = compile(`<script>
+  let count = $state(0);
+  class Counter {
+    count = 1;
+    step() { return count; }
+  }
+</script><span>{count}</span>`);
+  assertValidJs(code);
+  assert(!code.includes('count() = 1'), 'PropertyDefinition key not called');
+});
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 
 console.log(`\n${passed + failed} tests: ${passed} passed, ${failed} failed\n`);

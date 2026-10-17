@@ -1,5 +1,7 @@
 import { build } from 'esbuild';
-import { mkdirSync } from 'fs';
+import { mkdirSync, readFileSync } from 'fs';
+
+const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
 mkdirSync('./dist', { recursive: true });
 
@@ -12,7 +14,7 @@ await build({
   minify: false,
   target: ['es2020'],
   banner: {
-    js: '/* @sola-air-ui/core — IIFE build for no-bundler environments */'
+    js: `/* @sola-air-ui/core v${version} — IIFE build for no-bundler environments */`
   }
 });
 
@@ -26,7 +28,7 @@ await build({
   minify: true,
   target: ['es2020'],
   banner: {
-    js: '/* @sola-air-ui/core v1.0.2 | MIT */'
+    js: `/* @sola-air-ui/core v${version} | MIT */`
   }
 });
 

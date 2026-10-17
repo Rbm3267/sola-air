@@ -7,7 +7,7 @@
   import SolaTabs from './SolaTabs.svelte';
 
   let activeTab = $state<'components' | 'telemetry' | 'tokens'>('components');
-  let selectedFramework = $state<'sola' | 'react' | 'svelte' | 'html'>('sola');
+  let selectedFramework = $state<'sola' | 'shell' | 'vite' | 'tokens'>('sola');
 
   // Interactive Live State
   let buttonCount = $state(12);
@@ -16,10 +16,10 @@
   let dateRange = $state({ start: '2026-08-01', end: '2026-08-30' });
 
   const frameworkSnippets = {
-    sola: `<script>\n  let count = $state(12);\n  let health = $derived(count > 10 ? "Optimal" : "Degraded");\n<\/script>\n\n<SolaButton variant="primary" onclick={() => count++}>\n  Trigger Signal ({count})\n</SolaButton>\n<SolaChart type="area" color="emerald" data={signalStream} />`,
-    react: `import { SolaButton, SolaChart } from '@sola-air-ui/react';\n\nexport function TelemetryHUD() {\n  const [count, setCount] = useState(12);\n  return (\n    <div className="flex flex-col gap-4">\n      <SolaButton variant="primary" onClick={() => setCount(c => c + 1)}>\n        Trigger Signal ({count})\n      </SolaButton>\n      <SolaChart type="area" color="emerald" data={stream} />\n    </div>\n  );\n}`,
-    svelte: `<script lang="ts">\n  import { SolaButton, SolaChart } from '@sola-air-ui/ui';\n  let count = $state(12);\n<\/script>\n\n<SolaButton variant="primary" onclick={() => count++}>\n  Trigger Signal ({count})\n</SolaButton>\n<SolaChart type="area" color="emerald" data={signalStream} />`,
-    html: `<!-- Web Component Mount (Zero-VDOM) -->\n<script type="module" src="https://cdn.sola-air.dev/sola-ui.js"><\/script>\n\n<sola-button variant="primary">Trigger Signal</sola-button>\n<sola-chart type="area" color="emerald"></sola-chart>`
+    sola: `<script>\n  import DataCard from '@sola-air-ui/ui/data-card';\n  import GaugeCard from '@sola-air-ui/ui/gauge-card';\n  import Button from '@sola-air-ui/ui/button';\n\n  let count = $state(12);\n  let load = $derived(Math.min(100, count * 6));\n<\/script>\n\n<DataCard title="Signals Emitted" value={String(count)} trend="+8.4%" />\n<GaugeCard title="Cluster Load" value={load + '%'} percentage={load} color="sky" />\n<Button label="Trigger Signal" variant="primary" onClick={() => count++} />`,
+    shell: `import TelemetryHud from './TelemetryHud.sola';\nimport tokensCss from '@sola-air-ui/tokens/css?raw';\nimport { mountShell } from '@sola-air-ui/core';\n\nconst shell = mountShell(TelemetryHud, {}, {\n  id: 'sola-telemetry-hud',\n  shadow: 'closed',\n  css: tokensCss\n});`,
+    vite: `import { defineConfig } from 'vite';\nimport sola from '@sola-air-ui/vite-plugin-sola';\n\nexport default defineConfig({\n  plugins: [sola()]\n});`,
+    tokens: `@import '@sola-air-ui/tokens/css';\n\n.hud-surface {\n  background: var(--sola-surface-elevated);\n  color: var(--sola-text-primary);\n  border: 1px solid var(--sola-border-subtle);\n  border-radius: var(--sola-radius-lg);\n}`
   };
 </script>
 
@@ -189,7 +189,7 @@
           <div>
             <!-- Framework Selector Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
-              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Multi-Target Output</span>
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Sola AIR Output</span>
               <div class="flex items-center gap-1">
                 <button
                   onclick={() => (selectedFramework = 'sola')}
@@ -197,19 +197,19 @@
                   .sola
                 </button>
                 <button
-                  onclick={() => (selectedFramework = 'react')}
-                  class="px-2 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors {selectedFramework === 'react' ? 'bg-blue-500 text-slate-950' : 'text-slate-400 hover:text-white'}">
-                  React 19
+                  onclick={() => (selectedFramework = 'shell')}
+                  class="px-2 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors {selectedFramework === 'shell' ? 'bg-blue-500 text-slate-950' : 'text-slate-400 hover:text-white'}">
+                  mountShell
                 </button>
                 <button
-                  onclick={() => (selectedFramework = 'svelte')}
-                  class="px-2 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors {selectedFramework === 'svelte' ? 'bg-blue-500 text-slate-950' : 'text-slate-400 hover:text-white'}">
-                  Svelte 5
+                  onclick={() => (selectedFramework = 'vite')}
+                  class="px-2 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors {selectedFramework === 'vite' ? 'bg-blue-500 text-slate-950' : 'text-slate-400 hover:text-white'}">
+                  Vite Config
                 </button>
                 <button
-                  onclick={() => (selectedFramework = 'html')}
-                  class="px-2 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors {selectedFramework === 'html' ? 'bg-blue-500 text-slate-950' : 'text-slate-400 hover:text-white'}">
-                  HTML
+                  onclick={() => (selectedFramework = 'tokens')}
+                  class="px-2 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors {selectedFramework === 'tokens' ? 'bg-blue-500 text-slate-950' : 'text-slate-400 hover:text-white'}">
+                  Tokens CSS
                 </button>
               </div>
             </div>

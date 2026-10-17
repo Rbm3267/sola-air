@@ -204,4 +204,29 @@ describe('createPersistentSignal', () => {
     other.close();
     c.dispose();
   });
+
+  it('clearPersistentState resets sync:false and custom/memory storage signals', () => {
+    const customStore = fakeStorage();
+    const [readNoSync, writeNoSync, c1] = createPersistentSignal('nosync', 'init-1', {
+      storage: customStore,
+      sync: false
+    });
+    const [readMem, writeMem, c2] = createPersistentSignal('mem', 'init-2', {
+      storage: 'memory',
+      sync: false
+    });
+    writeNoSync('updated-1');
+    writeMem('updated-2');
+    assert.strictEqual(readNoSync(), 'updated-1');
+    assert.strictEqual(readMem(), 'updated-2');
+    assert.strictEqual(customStore.raw.has('sola:nosync'), true);
+
+    clearPersistentState();
+    assert.strictEqual(readNoSync(), 'init-1');
+    assert.strictEqual(readMem(), 'init-2');
+    assert.strictEqual(customStore.raw.has('sola:nosync'), false);
+
+    c1.dispose();
+    c2.dispose();
+  });
 });
