@@ -4,6 +4,23 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/mcp`
+
+- **Fixed**: `compile_component` passed the filename as the compiler's options argument; it now
+  passes `{ filename }`.
+- **Added**: `compile_component` and `validate_component` run `sola-check`, so an unbalanced
+  `{#if}`, `{#each}` or `{:else}` is reported (SOLA001) instead of compiling to literal text.
+- **Changed**: `sola://docs` describes the current syntax: no `<template>` wrapper, bare reads,
+  `count++`, `$effect`, `$persist`, `$on`, `$lastEvent`, the bus, `mountShell`, the 37 components
+  and `checkSource`. Its example is compiled by a test.
+- **Changed**: the tools and docs live in `src/mcp-server.js`; `src/index.js` is the bin and always
+  starts the server. The server reports its package version.
+
+### `@sola-air-ui/ui`
+
+- **Added**: the package root re-exports all 37 components, adding `AmbientSuggestion`, `Button`,
+  `Chart`, `Dashboard`, `DatePicker`, `HtmlViewer` and `MarkdownViewer`, with type declarations.
+
 ## 2026-10-17: core 1.5.1, ui 1.5.2, create-sola 1.1.1
 
 ### `@sola-air-ui/core`

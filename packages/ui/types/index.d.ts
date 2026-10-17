@@ -11,20 +11,26 @@ export type { SolaComponent };
 export const Canvas: SolaComponent;
 export const Card: SolaComponent;
 export const Stack: SolaComponent;
+export const Dashboard: SolaComponent;
 
 // ─── Data display ───
 export const StatGrid: SolaComponent;
 export const DataCard: SolaComponent;
 export const Table: SolaComponent;
+export const Chart: SolaComponent;
 export const GaugeCard: SolaComponent;
 export const FlowWaterfall: SolaComponent;
 export const IncidentTriageMatrix: SolaComponent;
 export const StreamView: SolaComponent;
+export const MarkdownViewer: SolaComponent;
+export const HtmlViewer: SolaComponent;
 
 // ─── Inputs ───
+export const Button: SolaComponent;
 export const TextInput: SolaComponent;
 export const Select: SolaComponent;
 export const Toggle: SolaComponent;
+export const DatePicker: SolaComponent;
 export const TactileDialCard: SolaComponent;
 
 // ─── Feedback ───
@@ -46,6 +52,7 @@ export const SolaSafeHTML: SolaComponent;
 // ─── Ambient intent ───
 export const IntentCard: SolaComponent;
 export const IntentList: SolaComponent;
+export const AmbientSuggestion: SolaComponent;
 export const ConversationThread: SolaComponent;
 export const ActionStrip: SolaComponent;
 export const ConfidenceBadge: SolaComponent;
