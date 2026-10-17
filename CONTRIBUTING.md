@@ -42,7 +42,7 @@ CI runs both on every pull request. Add a test with each fix. For a bug fix, che
 
 ## Releases
 
-A release PR bumps the versions and moves the `Unreleased` notes under a dated heading. After it merges, run the **Publish to NPM** workflow. It skips any version that is already on npm.
+A release PR bumps the versions and moves the `Unreleased` notes under a dated heading. After it merges, run the **Publish to NPM** workflow. It skips any version that is already on npm. When it succeeds, the **GitHub Releases** workflow creates a release (tag like `core-v1.5.0`) for each package whose version has a CHANGELOG entry, using that entry as the notes. Write the CHANGELOG entry as `## date: core 1.5.0` with a ``### `@sola-air-ui/core` `` section under it so the workflow can find it.
 
 ## Reporting a security problem
 
