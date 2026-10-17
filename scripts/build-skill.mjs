@@ -240,11 +240,15 @@ if (repoDirArg) {
   put('gemini-extension.json', files.get('gemini-extension.json'));
   put('.claude-plugin/plugin.json', JSON.stringify({
     name: 'sola-ui',
+    displayName: 'Sola UI',
     version: versions.ui,
     description,
     author: { name: 'Sola AIR', url: 'https://sola-air.dev' },
     homepage: 'https://sola-air.dev',
     repository: REPO_URL,
+    documentationUrl: 'https://sola-air.dev/docs',
+    privacyPolicyUrl: 'https://sola-air.dev/privacy#sola-ui-skill',
+    supportUrl: 'https://github.com/Rbm3267/sola-air/issues',
     license: 'MIT',
     keywords: ['sola', 'ui', 'components', 'design', 'web-components', 'zero-vdom']
   }, null, 2) + '\n');
