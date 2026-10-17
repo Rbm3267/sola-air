@@ -2,7 +2,7 @@
   "name": "sola-vscode",
   "displayName": "Sola AIR",
   "description": "Language support and file icons for Sola AIR (.sola) components",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "SolaAIR",
   "license": "MIT",
   "homepage": "https://sola-air.dev",
@@ -33,9 +33,6 @@
   "categories": [
     "Programming Languages"
   ],
-  "extensionDependencies": [
-    "svelte.svelte-vscode"
-  ],
   "scripts": {
     "package": "vsce package --no-dependencies",
     "publish:vscode": "vsce publish --no-dependencies"
@@ -54,14 +51,26 @@
         "icon": {
           "light": "./icons/sola-file.png",
           "dark": "./icons/sola-file.png"
-        }
+        },
+        "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
         "language": "sola",
-        "scopeName": "source.sola",
-        "path": "./syntaxes/sola.tmLanguage.json"
+        "scopeName": "text.html.sola",
+        "path": "./syntaxes/sola.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.expression.sola": "javascript",
+          "source.js": "javascript",
+          "source.css": "css"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "sola",
+        "path": "./snippets/sola.code-snippets"
       }
     ]
   }
