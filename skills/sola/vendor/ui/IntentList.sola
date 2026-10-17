@@ -1,0 +1,120 @@
+<script>
+  export let data = null;
+  export let title = 'Results';
+
+  let resolved = $derived(() => {
+    const d = typeof data === 'function' ? data() : data;
+    if (!d || d === 'Resolving...') return null;
+    if (Array.isArray(d)) return d;
+    if (d.items) return d.items;
+    return null;
+  });
+</script>
+
+<div class="intent-list">
+  <span class="title">{title}</span>
+  {#if !resolved()}
+    <div class="loading">
+      <div class="shimmer-row"></div>
+      <div class="shimmer-row"></div>
+      <div class="shimmer-row"></div>
+    </div>
+  {:else}
+    <div class="rows">
+      {#each resolved() as item}
+        <div class="row">
+          <div class="row-content">
+            <span class="row-label">{item.label || item.name || item}</span>
+            {#if item.description}
+              <span class="row-desc">{item.description}</span>
+            {/if}
+          </div>
+          {#if item.status}
+            <span class="status">{item.status}</span>
+          {/if}
+        </div>
+      {/each}
+    </div>
+  {/if}
+</div>
+
+<style>
+  .intent-list {
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sola-text-tertiary, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .rows {
+    margin-top: 16px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--sola-surface-2, #f1f5f9);
+  }
+
+  .row:last-child {
+    border-bottom: none;
+  }
+
+  .row-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .row-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--sola-text-primary, #1e293b);
+  }
+
+  .row-desc {
+    font-size: 12px;
+    color: var(--sola-text-tertiary, #94a3b8);
+  }
+
+  .status {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--sola-alert-positive-bg, #ecfdf5);
+    color: var(--sola-alert-positive, #059669);
+  }
+
+  .loading {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .shimmer-row {
+    height: 44px;
+    background: linear-gradient(90deg, var(--sola-surface-2, #f1f5f9) 25%, var(--sola-color-neutral-200, #e2e8f0) 50%, var(--sola-surface-2, #f1f5f9) 75%);
+    background-size: 200% 100%;
+    border-radius: 10px;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>

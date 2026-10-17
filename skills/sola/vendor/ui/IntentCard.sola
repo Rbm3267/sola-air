@@ -1,0 +1,85 @@
+<script>
+  export let data = null;
+  export let loading = false;
+
+  let resolved = $derived(() => {
+    const d = typeof data === 'function' ? data() : data;
+    if (!d || d === 'Resolving...') return null;
+    return d;
+  });
+</script>
+
+<div class="intent-card">
+  {#if loading || !resolved()}
+    <div class="loading">
+      <div class="shimmer"></div>
+      <div class="shimmer short"></div>
+    </div>
+  {:else}
+    <div class="header">
+      <span class="title">{resolved().title || 'Intent Result'}</span>
+    </div>
+    <div class="value">{resolved().value || JSON.stringify(resolved())}</div>
+    {#if resolved().trend}
+      <div class="trend">{resolved().trend}</div>
+    {/if}
+  {/if}
+</div>
+
+<style>
+  .intent-card {
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .loading {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .shimmer {
+    height: 16px;
+    background: linear-gradient(90deg, var(--sola-surface-2, #f1f5f9) 25%, var(--sola-border-subtle, #e2e8f0) 50%, var(--sola-surface-2, #f1f5f9) 75%);
+    background-size: 200% 100%;
+    border-radius: 8px;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .shimmer.short {
+    width: 60%;
+    height: 32px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sola-text-tertiary, #475569);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--sola-text-primary, #0f172a);
+    margin-top: 8px;
+  }
+
+  .trend {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sola-alert-positive-text, #047857);
+    margin-top: 4px;
+  }
+</style>

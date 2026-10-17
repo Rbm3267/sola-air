@@ -1,0 +1,122 @@
+<script>
+  export let message = "Action completed successfully.";
+  export let type = "success";
+  export let initialVisible = true;
+  // Auto-dismiss after this many ms. 0 keeps the toast until it is dismissed.
+  export let duration = 0;
+  export let onDismiss = null;
+
+  let visible = $state(initialVisible);
+  let timer = null;
+
+  // An error needs to interrupt a screen reader; a success confirmation should
+  // wait for a pause, so it does not talk over what the user is doing.
+  let liveMode = $derived(() => (type === "error" ? "assertive" : "polite"));
+  let liveRole = $derived(() => (type === "error" ? "alert" : "status"));
+
+  createEffect(() => {
+    if (timer) { clearTimeout(timer); timer = null; }
+    if (visible() && duration > 0) {
+      timer = setTimeout(dismiss, duration);
+    }
+  });
+
+  onDestroy(() => {
+    if (timer) clearTimeout(timer);
+  });
+
+  function dismiss() {
+    visible = false;
+    if (typeof onDismiss === "function") onDismiss();
+  }
+</script>
+
+<div
+  class="sola-toast {type} {visible() ? 'visible' : ''}"
+  role={liveRole()}
+  aria-live={liveMode()}
+  aria-atomic="true"
+>
+  <div class="toast-indicator" aria-hidden="true"></div>
+  <div class="toast-message">{message}</div>
+  <button class="toast-close" type="button" on:click={dismiss} aria-label="Dismiss notification">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </button>
+</div>
+
+<style>
+  .sola-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: var(--sola-z-toast, 1000);
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: var(--sola-color-neutral-900, rgba(15, 23, 42, 0.95));
+    backdrop-filter: blur(16px);
+    color: var(--sola-color-neutral-0, #ffffff);
+    padding: 12px 18px;
+    border-radius: var(--sola-radius-lg, 16px);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+    font-size: var(--sola-font-size-md, 13px);
+    font-weight: var(--sola-font-weight-medium, 500);
+    animation: slideUp var(--sola-duration-base, 200ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+
+  .sola-toast.visible {
+    display: flex;
+  }
+
+  .toast-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--sola-radius-full, 50%);
+    background: var(--sola-alert-positive, #10b981);
+    box-shadow: 0 0 8px var(--sola-alert-positive, #10b981);
+  }
+
+  .sola-toast.error .toast-indicator {
+    background: var(--sola-alert-high, #f43f5e);
+    box-shadow: 0 0 8px var(--sola-alert-high, #f43f5e);
+  }
+
+  .sola-toast.warning .toast-indicator {
+    background: var(--sola-alert-warning, #ea580c);
+    box-shadow: 0 0 8px var(--sola-alert-warning, #ea580c);
+  }
+
+  .sola-toast.info .toast-indicator {
+    background: var(--sola-alert-info, #0ea5e9);
+    box-shadow: 0 0 8px var(--sola-alert-info, #0ea5e9);
+  }
+
+  .toast-close {
+    border: none;
+    background: transparent;
+    color: var(--sola-color-neutral-400, #94a3b8);
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    border-radius: var(--sola-radius-sm, 4px);
+  }
+
+  .toast-close:hover {
+    color: var(--sola-color-neutral-0, #ffffff);
+  }
+
+  .toast-close:focus-visible {
+    outline: none;
+    box-shadow: var(--sola-focus-ring, 0 0 0 3px rgba(16, 185, 129, 0.4));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sola-toast { animation: none; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+</style>

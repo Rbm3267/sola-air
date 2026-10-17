@@ -1,0 +1,119 @@
+<script>
+  export let label = "Label";
+  export let placeholder = "Enter value...";
+  export let initialValue = "";
+  export let type = "text";
+  export let name = "";
+  export let disabled = false;
+  export let required = false;
+  export let helpText = "";
+  export let errorText = "";
+  // Called with the current string on every input event.
+  export let onInput = null;
+  export let onChange = null;
+  // Explicit id, so the label points at this input and nothing else on the page.
+  export let id = "sola-input-" + Math.random().toString(36).slice(2, 9);
+
+  let value = $state(initialValue);
+
+  function handleInput(e) {
+    value = e.target.value;
+    if (typeof onInput === "function") onInput(value);
+  }
+
+  function handleChange(e) {
+    if (typeof onChange === "function") onChange(e.target.value);
+  }
+</script>
+
+<div class="sola-input-group">
+  <label class="input-label" for={id}>{label}</label>
+  <div class="input-wrap">
+    <input
+      id={id}
+      name={name}
+      type={type}
+      value={value}
+      placeholder={placeholder}
+      disabled={disabled}
+      required={required}
+      aria-invalid={errorText ? "true" : "false"}
+      aria-describedby={errorText ? id + "-error" : (helpText ? id + "-help" : null)}
+      oninput={handleInput}
+      onchange={handleChange}
+      class="input-field"
+    />
+  </div>
+  {#if errorText}
+    <span class="input-error" id={id + "-error"} role="alert">{errorText}</span>
+  {:else}
+    {#if helpText}
+      <span class="input-help" id={id + "-help"}>{helpText}</span>
+    {/if}
+  {/if}
+</div>
+
+<style>
+  .sola-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sola-space-2, 6px);
+    width: 100%;
+  }
+
+  .input-label {
+    font-size: var(--sola-font-size-sm, 12px);
+    font-weight: var(--sola-font-weight-semibold, 600);
+    color: var(--sola-text-secondary, #64748b);
+    letter-spacing: 0.02em;
+  }
+
+  .input-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .input-field {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-default, #cbd5e1);
+    border-radius: var(--sola-radius-lg, 12px);
+    padding: 12px 16px;
+    font-size: var(--sola-font-size-md, 14px);
+    font-weight: var(--sola-font-weight-medium, 500);
+    color: var(--sola-text-primary, #0f172a);
+    outline: none;
+    transition: border-color var(--sola-duration-fast, 160ms) var(--sola-ease-standard, ease),
+                box-shadow var(--sola-duration-fast, 160ms) var(--sola-ease-standard, ease);
+  }
+
+  .input-field:focus-visible {
+    border-color: var(--sola-color-primary-500, #10b981);
+    box-shadow: var(--sola-focus-ring, 0 0 0 3px rgba(16, 185, 129, 0.4));
+  }
+
+  .input-field:disabled {
+    background: var(--sola-surface-1, #f1f5f9);
+    color: var(--sola-text-tertiary, #94a3b8);
+    cursor: not-allowed;
+  }
+
+  .input-field[aria-invalid="true"] {
+    border-color: var(--sola-alert-high, #dc2626);
+  }
+
+  .input-field::placeholder {
+    color: var(--sola-text-tertiary, #94a3b8);
+  }
+
+  .input-help {
+    font-size: var(--sola-font-size-sm, 12px);
+    color: var(--sola-text-secondary, #64748b);
+  }
+
+  .input-error {
+    font-size: var(--sola-font-size-sm, 12px);
+    color: var(--sola-alert-high, #dc2626);
+  }
+</style>

@@ -1,0 +1,52 @@
+<script>
+  export let label = "DATE PICKER";
+  export let value = "";
+  export let initialValue = "";
+  export let placeholder = "Pick a date...";
+  export let onChange = null;
+
+  const inputId = "sola-datepicker-" + Math.random().toString(36).slice(2, 9);
+  let selectedDate = $state(value || initialValue);
+
+  function handleChange(e) {
+    selectedDate = e.target.value;
+    if (typeof onChange === "function") {
+      onChange(e.target.value);
+    }
+  }
+</script>
+
+<div class="sola-datepicker-root">
+  {#if label}
+    <label class="sola-label" for={inputId}>{label}</label>
+  {/if}
+  <div class="sola-picker-input">
+    <input
+      id={inputId}
+      type="date"
+      class="sola-input-native"
+      bind:value={selectedDate}
+      onchange={handleChange}
+      placeholder={placeholder}
+    />
+  </div>
+</div>
+
+<style>
+  .sola-datepicker-root { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+  .sola-label { font-size: 12px; font-weight: 700; color: var(--sola-text-secondary, #64748b); text-transform: uppercase; font-family: monospace; }
+  .sola-picker-input { position: relative; width: 100%; }
+  .sola-input-native {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-default, #cbd5e1);
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: var(--sola-text-primary, #0f172a);
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+  }
+  .sola-input-native:focus { border-color: var(--sola-color-primary-500, #10b981); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+</style>

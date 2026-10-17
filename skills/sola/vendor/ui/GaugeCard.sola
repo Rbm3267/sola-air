@@ -1,0 +1,140 @@
+<script>
+  export let title = "Utilization";
+  export let value = "75%";
+  export let percentage = 75;
+  export let subtext = "";
+  export let color = "emerald"; // emerald | sky | violet | amber | rose
+
+  // Circumference for r=36 is 2 * PI * 36 ≈ 226.2
+  const circumference = 226.2;
+  let strokeDashoffset = $derived(() => circumference - (percentage / 100) * circumference);
+  let resolvedSubtext = $derived(() => subtext || (percentage + "% Allocated Capacity"));
+
+  const colorMap = {
+    emerald: { stroke: "#10b981", ring: "rgba(16,185,129,0.16)" },
+    sky:     { stroke: "#0ea5e9", ring: "rgba(14,165,233,0.16)" },
+    violet:  { stroke: "#8b5cf6", ring: "rgba(139,92,246,0.16)" },
+    amber:   { stroke: "#f59e0b", ring: "rgba(245,158,11,0.16)" },
+    rose:    { stroke: "#f43f5e", ring: "rgba(244,63,94,0.16)" },
+  };
+  let activeColor = $derived(() => colorMap[color] || colorMap.emerald);
+</script>
+
+<div class="sola-gauge sola-gauge-{color}">
+  <div class="gauge-header">
+    <div class="gauge-title-wrap">
+      <span class="gauge-dot"></span>
+      <span class="gauge-title">{title}</span>
+    </div>
+    <span class="gauge-badge">Live Gauge</span>
+  </div>
+
+  <div class="gauge-body">
+    <div>
+      <div class="gauge-value">{value}</div>
+      <div class="gauge-subtext">{resolvedSubtext()}</div>
+    </div>
+
+    <div class="gauge-ring-wrap">
+      <svg class="gauge-ring" viewBox="0 0 88 88" preserveAspectRatio="xMidYMid meet">
+        <circle cx="44" cy="44" r="36" stroke="var(--sola-surface-2, #f1f5f9)" stroke-width="7" fill="none" />
+        <circle
+          class="gauge-arc"
+          cx="44" cy="44" r="36"
+          stroke={activeColor().stroke}
+          stroke-width="7"
+          stroke-linecap="round"
+          fill="none"
+          stroke-dasharray={circumference}
+          stroke-dashoffset={strokeDashoffset()}
+        />
+      </svg>
+      <div class="gauge-pct">{percentage}%</div>
+    </div>
+  </div>
+
+  <div class="gauge-footer">
+    <span class="gauge-footer-left">
+      <span class="gauge-footer-dot"></span>
+      <span>Telemetry Synchronized</span>
+    </span>
+    <span class="gauge-footer-right">zero-vdom</span>
+  </div>
+</div>
+
+<style>
+  .sola-gauge {
+    position: relative;
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, rgba(226, 232, 240, 0.9));
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.04);
+    transition: box-shadow var(--sola-duration-base, 240ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1)), border-color var(--sola-duration-base, 240ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+    overflow: hidden;
+  }
+
+  .sola-gauge:hover { box-shadow: 0 12px 36px -6px var(--gauge-ring-color, rgba(16,185,129,0.16)); }
+
+  .sola-gauge-emerald { --gauge-ring-color: rgba(16,185,129,0.16); }
+  .sola-gauge-emerald:hover { border-color: rgba(16,185,129,0.4); }
+  .sola-gauge-sky { --gauge-ring-color: rgba(14,165,233,0.16); }
+  .sola-gauge-sky:hover { border-color: rgba(14,165,233,0.4); }
+  .sola-gauge-violet { --gauge-ring-color: rgba(139,92,246,0.16); }
+  .sola-gauge-violet:hover { border-color: rgba(139,92,246,0.4); }
+  .sola-gauge-amber { --gauge-ring-color: rgba(245,158,11,0.16); }
+  .sola-gauge-amber:hover { border-color: rgba(245,158,11,0.4); }
+  .sola-gauge-rose { --gauge-ring-color: rgba(244,63,94,0.16); }
+  .sola-gauge-rose:hover { border-color: rgba(244,63,94,0.4); }
+
+  .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .gauge-title-wrap { display: flex; align-items: center; gap: 10px; }
+
+  .gauge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; color: var(--gauge-ring-color, #10b981); }
+
+  .gauge-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sola-text-secondary, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-family: ui-monospace, monospace;
+  }
+
+  .gauge-badge {
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--sola-surface-2, #f1f5f9);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    color: var(--sola-text-secondary, #64748b);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: ui-monospace, monospace;
+  }
+
+  .gauge-body { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+
+  .gauge-value { font-size: 34px; font-weight: 900; color: var(--sola-text-primary, #020617); letter-spacing: -0.03em; font-family: ui-monospace, monospace; margin-bottom: 4px; }
+  .gauge-subtext { font-size: 12px; color: var(--sola-text-secondary, #64748b); font-weight: 500; }
+
+  .gauge-ring-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .gauge-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .gauge-arc { transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1); }
+  .gauge-pct { position: absolute; font-size: 12px; font-weight: 900; font-family: ui-monospace, monospace; color: var(--gauge-ring-color, #10b981); filter: saturate(2) brightness(0.8); }
+
+  .gauge-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--sola-surface-2, #f1f5f9);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    color: var(--sola-text-tertiary, #94a3b8);
+  }
+
+  .gauge-footer-left { display: flex; align-items: center; gap: 6px; }
+  .gauge-footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sola-color-primary-500, #10b981); }
+  .gauge-footer-right { font-weight: 700; color: var(--sola-text-secondary, #64748b); }
+</style>

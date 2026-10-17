@@ -1,0 +1,43 @@
+<script>
+  // These four props previously did nothing — theme/padding/layout were
+  // declared and documented but never read anywhere in the component's own
+  // style or markup, so every Canvas rendered identically regardless of what
+  // was passed. Not referenced by any real consumer yet (verified before
+  // fixing rather than deleting), so safe to make functional.
+  export let theme = 'light'; // light | dark
+  export let padding = 'comfortable'; // none | compact | comfortable
+  export let layout = 'auto-grid'; // auto-grid | stack | none
+  export let maxWidth = '1200px';
+</script>
+
+<div class="sola-canvas sola-canvas-{theme} sola-canvas-pad-{padding} sola-canvas-layout-{layout}" style="max-width: {maxWidth}; margin: 0 auto;">
+  <slot />
+</div>
+
+<style>
+  .sola-canvas {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    border-radius: 16px;
+  }
+
+  .sola-canvas-light { background: var(--sola-surface-0, #ffffff); color: var(--sola-text-primary, #1e293b); }
+  .sola-canvas-dark  { background: #090d19; color: var(--sola-color-neutral-50, #f8fafc); }
+
+  .sola-canvas-pad-none       { padding: 0; }
+  .sola-canvas-pad-compact    { padding: 16px; }
+  .sola-canvas-pad-comfortable { padding: 32px; }
+
+  .sola-canvas-layout-auto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .sola-canvas-layout-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  /* layout="none": no display override, slot content controls its own flow */
+</style>

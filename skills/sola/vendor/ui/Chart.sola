@@ -1,0 +1,74 @@
+<script>
+  export let title = "SIGNAL TELEMETRY";
+  export let value = "94.2 req/s";
+  export let delta = "+14.8%";
+  export let data = [35, 55, 40, 80, 65, 95, 70, 88];
+</script>
+
+<div class="sola-chart-card">
+  <div class="sola-chart-header">
+    <div>
+      <div class="sola-chart-title">{title}</div>
+      <div class="sola-chart-val">{value}</div>
+    </div>
+    <span class="sola-delta-badge">{delta}</span>
+  </div>
+  <div class="sola-spark-bars">
+    {#each data as barHeight}
+      <div class="sola-bar" style="height: {barHeight}%;"></div>
+    {/each}
+  </div>
+</div>
+
+<style>
+  .sola-chart-card {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 18px;
+    width: 100%;
+  }
+  .sola-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .sola-chart-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sola-text-secondary, #64748b);
+    font-family: monospace;
+  }
+  .sola-chart-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--sola-color-neutral-0, #fff);
+    font-family: monospace;
+    margin-top: 4px;
+  }
+  .sola-delta-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--sola-color-primary-500, #10b981);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: monospace;
+  }
+  .sola-spark-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 60px;
+  }
+  .sola-bar {
+    flex: 1;
+    background: rgba(16, 185, 129, 0.3);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  .sola-bar:hover {
+    background: var(--sola-color-primary-500, #10b981);
+  }
+</style>

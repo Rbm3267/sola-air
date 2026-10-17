@@ -1,0 +1,76 @@
+<script>
+  export let content = '';
+  export let maxHeight = ''; // e.g. "130px" — caps height and adds a bottom mask-fade
+  export let title = 'Rich text content';
+
+  let resolvedContent = $derived(() => (typeof content === 'function' ? content() : content));
+
+  function sanitize(html) {
+    var out = String(html || '');
+    out = out.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+    out = out.replace(/<(iframe|object|embed)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
+    out = out.replace(/<(iframe|object|embed)\b[^>]*\/?>/gi, '');
+    out = out.replace(/\son\w+\s*=\s*"[^"]*"/gi, '');
+    out = out.replace(/\son\w+\s*=\s*'[^']*'/gi, '');
+    out = out.replace(/\son\w+\s*=\s*[^\s>]+/gi, '');
+    out = out.replace(/(href|src)\s*=\s*"\s*javascript:[^"]*"/gi, '$1="#"');
+    out = out.replace(/(href|src)\s*=\s*'\s*javascript:[^']*'/gi, "$1='#'");
+    return out;
+  }
+
+  let safeContent = $derived(() => sanitize(resolvedContent()));
+</script>
+
+<div
+  class="sola-safe-html {maxHeight ? 'capped' : ''}"
+  style={maxHeight ? ('max-height:' + maxHeight + ';') : ''}
+  role="region"
+  aria-label={title}
+>
+  {@html safeContent()}
+</div>
+
+<style>
+  .sola-safe-html {
+    position: relative;
+    background: var(--sola-surface-0, #ffffff);
+    color: var(--sola-text-primary, #111827);
+    font-size: 14px;
+    line-height: 1.65;
+    overflow: hidden;
+  }
+
+  .sola-safe-html.capped::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, var(--sola-surface-0, #ffffff));
+    pointer-events: none;
+  }
+
+  .sola-safe-html :global(p) { margin: 0 0 10px 0; }
+  .sola-safe-html :global(p:last-child) { margin-bottom: 0; }
+  .sola-safe-html :global(strong), .sola-safe-html :global(b) { font-weight: 700; color: var(--sola-text-primary, #111827); }
+  .sola-safe-html :global(em), .sola-safe-html :global(i) { font-style: italic; }
+  .sola-safe-html :global(a) { color: var(--sola-text-primary, #111827); text-decoration: underline; }
+  .sola-safe-html :global(ul), .sola-safe-html :global(ol) { margin: 0 0 10px 0; padding-left: 20px; }
+  .sola-safe-html :global(h1), .sola-safe-html :global(h2), .sola-safe-html :global(h3), .sola-safe-html :global(h4) {
+    font-weight: 700;
+    color: var(--sola-text-primary, #111827);
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+  }
+  .sola-safe-html :global(code) {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.9em;
+    background: var(--sola-surface-2, #f4f4f5);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .sola-safe-html :global(img) { max-width: 100%; height: auto; }
+  .sola-safe-html :global(table) { border-collapse: collapse; width: 100%; margin-bottom: 10px; }
+  .sola-safe-html :global(th), .sola-safe-html :global(td) { border: 1px solid var(--sola-border-subtle, #e5e7eb); padding: 6px 10px; text-align: left; }
+</style>

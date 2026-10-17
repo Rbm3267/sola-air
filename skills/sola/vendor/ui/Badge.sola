@@ -1,0 +1,38 @@
+<script>
+  export let label = '';
+  export let variant = 'default';
+</script>
+
+<span class="badge {variant}">{label}</span>
+
+<style>
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .default {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-secondary, #64748b);
+  }
+
+  .success {
+    background: var(--sola-alert-positive-bg, #ecfdf5);
+    color: var(--sola-alert-positive, #059669);
+  }
+
+  .warning {
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    color: var(--sola-alert-warning, #b45309);
+  }
+
+  .error {
+    background: var(--sola-alert-high-bg, #fef2f2);
+    color: var(--sola-alert-high, #dc2626);
+  }
+</style>

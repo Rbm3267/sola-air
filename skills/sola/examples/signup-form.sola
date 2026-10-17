@@ -1,0 +1,47 @@
+<script>
+  // A sign-up form with validation and a confirmation message.
+  import Card from '@sola-air-ui/ui/card';
+  import TextInput from '@sola-air-ui/ui/text-input';
+  import Select from '@sola-air-ui/ui/select';
+  import Toggle from '@sola-air-ui/ui/toggle';
+  import Button from '@sola-air-ui/ui/button';
+  import Alert from '@sola-air-ui/ui/alert';
+
+  let email = $state('');
+  let plan = $state('team');
+  let updates = $state(true);
+  let submitted = $state(false);
+
+  let valid = $derived(/^\S+@\S+\.\S+$/.test(email));
+
+  function submit() {
+    if (valid) submitted = true;
+  }
+</script>
+
+<Card title="Create your workspace">
+  <div class="form">
+    <TextInput label="Work email" type="email" placeholder="you@company.com" onInput={(v) => (email = v)} />
+    <Select
+      label="Plan"
+      initialSelected="team"
+      options={[{ value: 'solo', label: 'Solo' }, { value: 'team', label: 'Team' }, { value: 'enterprise', label: 'Enterprise' }]}
+      onChange={(v) => (plan = v)}
+    />
+    <Toggle label="Product updates by email" initialChecked={true} onChange={(v) => (updates = v)} />
+    <Button label="Create workspace" disabled={false} onClick={submit} />
+
+    {#if submitted}
+      <Alert variant="success" message="Workspace created. Check your inbox to confirm." />
+    {/if}
+    {#if !valid}
+      <p class="hint">Enter a work email to continue.</p>
+    {/if}
+    <p class="summary">Plan: {plan} · updates {updates ? 'on' : 'off'}</p>
+  </div>
+</Card>
+
+<style>
+  .form { display: grid; gap: var(--sola-space-md, 12px); max-width: 420px; }
+  .hint, .summary { margin: 0; font-size: var(--sola-font-size-sm, 12px); color: var(--sola-text-secondary, #475569); }
+</style>

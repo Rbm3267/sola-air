@@ -1,0 +1,46 @@
+<script>
+  // Renders arbitrary HTML — including its own <script>/<style> tags — in a sandboxed
+  // iframe via srcdoc, rather than injecting it into the host page (which is what
+  // MarkdownViewer does, appropriate for trusted formatted text but not for a full
+  // interactive document: injected <script> tags never execute via innerHTML, and
+  // nothing would isolate the page's own styles/globals from the injected content).
+  //
+  // Accepts either a plain HTML string or a getter function, same convention as
+  // MarkdownViewer/StreamView/IntentCard.
+  export let content = '';
+  export let height = '480px';
+  export let title = 'Embedded content';
+
+  // No scripts/same-origin by default — opt in explicitly for interactive content that
+  // needs to run JS, since that's a real trust decision the caller should make on purpose.
+  export let allowScripts = false;
+
+  let resolvedContent = $derived(() => (typeof content === 'function' ? content() : content));
+  let sandboxAttr = $derived(() => (allowScripts ? 'allow-scripts' : ''));
+</script>
+
+<div class="sola-html-viewer" style="height: {height};">
+  <iframe
+    class="sola-html-viewer-frame"
+    title={title}
+    srcdoc={resolvedContent()}
+    sandbox={sandboxAttr()}
+  ></iframe>
+</div>
+
+<style>
+  .sola-html-viewer {
+    width: 100%;
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--sola-surface-0, #ffffff);
+  }
+
+  .sola-html-viewer-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+</style>

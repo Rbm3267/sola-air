@@ -1,0 +1,42 @@
+<script>
+  export let message = '';
+  export let variant = 'info';
+</script>
+
+<div class="alert {variant}" role={variant === 'error' || variant === 'warning' ? 'alert' : 'status'}>
+  <span class="message">{message}</span>
+</div>
+
+<style>
+  .alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .info {
+    background: var(--sola-alert-info-bg, #eff6ff);
+    color: var(--sola-alert-info, #1d4ed8);
+    border-color: var(--sola-border-subtle, #bfdbfe);
+  }
+
+  .success {
+    background: var(--sola-alert-positive-bg, #ecfdf5);
+    color: var(--sola-alert-positive-text, #047857);
+    border-color: var(--sola-border-subtle, #a7f3d0);
+  }
+
+  .warning {
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    color: var(--sola-alert-warning, #b45309);
+    border-color: var(--sola-border-subtle, #fde68a);
+  }
+
+  .error {
+    background: var(--sola-alert-high-bg, #fef2f2);
+    color: var(--sola-alert-high, #b91c1c);
+    border-color: var(--sola-border-subtle, #fecaca);
+  }
+</style>

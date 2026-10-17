@@ -105,6 +105,18 @@ test.describe('TextInput', () => {
 });
 
 test.describe('Select', () => {
+  test('shows initialSelected, or the placeholder when there is none', async ({ page }) => {
+    await mount(page, 'Select.sola', {
+      label: 'Plan',
+      initialSelected: 'team',
+      options: [{ value: 'solo', label: 'Solo' }, { value: 'team', label: 'Team' }]
+    });
+    await expect(page.locator('select')).toHaveValue('team');
+
+    await mount(page, 'Select.sola', { label: 'Plan', options: ['a', 'b'] });
+    await expect(page.locator('select')).toHaveValue('');
+  });
+
   test('renders options handed to it and reports the choice', async ({ page }) => {
     // Previously the only way to supply options was slot content, which made
     // the component impractical to drive from data.

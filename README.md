@@ -108,6 +108,7 @@ The core runtime is about 7.5 kB gzipped. `scripts/core-size.mjs` measures it, a
 
 - **VS Code**: `SolaAIR.sola-vscode` adds `.sola` syntax highlighting, snippets and bracket pairing (source in [`packages/vscode-extension`](./packages/vscode-extension)).
 - **Chrome extension**: pick elements on any page and get matching Sola component code in a side panel (source in [`packages/sola-extension`](./packages/sola-extension)).
+- **Claude and Gemini skill**: [`skills/sola`](./skills/sola) teaches an assistant the syntax and the real component props, and includes a script that renders a `.sola` design to one self-contained HTML file. Copy it to `~/.claude/skills/sola-ui/` (Claude Code), upload it as a zip (Claude.ai, with code execution), or copy it to `~/.gemini/extensions/sola-ui/` (Gemini CLI). Regenerate with `node scripts/build-skill.mjs`.
 
 ---
 

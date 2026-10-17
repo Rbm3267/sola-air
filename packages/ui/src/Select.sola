@@ -42,9 +42,12 @@
       value={selected}
       onchange={handleChange}
     >
-      <option value="" disabled>{placeholder}</option>
+      <!-- Each option carries `selected`: the select's value is set before the
+           options below exist, so on its own it never matched one and the first
+           option showed instead of initialSelected. -->
+      <option value="" disabled selected={!selected}>{placeholder}</option>
       {#each items() as item}
-        <option value={item.value}>{item.label}</option>
+        <option value={item.value} selected={item.value === selected}>{item.label}</option>
       {/each}
       <slot />
     </select>

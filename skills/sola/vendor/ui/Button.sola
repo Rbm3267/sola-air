@@ -1,0 +1,91 @@
+<script>
+  export let label = "Button";
+  export let variant = "primary"; // primary | secondary | ghost | destructive | outline
+  export let size = "default"; // sm | default | lg | icon
+  export let disabled = false;
+  export let loading = false;
+  export let onClick = null;
+
+  function handleClick() {
+    if (disabled || loading) return;
+    if (typeof onClick === 'function') {
+      onClick();
+    }
+  }
+</script>
+
+<button class="sola-btn sola-btn-{variant} sola-btn-{size}" disabled={disabled || loading} onclick={handleClick}>
+  {#if loading}
+    <span class="sola-btn-spinner"></span>
+  {/if}
+  {#if label}
+    <span>{label}</span>
+  {/if}
+  <slot />
+</button>
+
+<style>
+  .sola-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-family: inherit;
+    user-select: none;
+  }
+  .sola-btn:active {
+    transform: scale(0.98);
+  }
+  .sola-btn-default { padding: 10px 18px; font-size: 13px; }
+  .sola-btn-sm { padding: 6px 12px; font-size: 12px; }
+  .sola-btn-lg { padding: 14px 24px; font-size: 15px; }
+  .sola-btn-icon { padding: 10px; width: 38px; height: 38px; }
+
+  .sola-btn-primary {
+    background: var(--sola-color-primary-500, #10b981);
+    color: #090d19;
+    font-weight: 700;
+  }
+  .sola-btn-primary:hover { background: var(--sola-color-primary-600, #059669); }
+
+  .sola-btn-secondary {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-primary, #0f172a);
+    border-color: var(--sola-border-subtle, #e2e8f0);
+  }
+  .sola-btn-secondary:hover { background: var(--sola-border-default, #cbd5e1); }
+
+  .sola-btn-ghost {
+    background: transparent;
+    color: var(--sola-text-primary, #334155);
+  }
+  .sola-btn-ghost:hover { color: var(--sola-text-primary, #0f172a); background: var(--sola-surface-2, #f1f5f9); }
+
+  .sola-btn-destructive {
+    background: #ef4444;
+    color: var(--sola-color-neutral-0, #fff);
+  }
+  .sola-btn-destructive:hover { background: #dc2626; }
+
+  .sola-btn-outline {
+    background: transparent;
+    color: var(--sola-color-primary-500, #10b981);
+    border-color: var(--sola-color-primary-500, #10b981);
+  }
+  .sola-btn-outline:hover { background: rgba(16, 185, 129, 0.1); }
+
+  .sola-btn-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>

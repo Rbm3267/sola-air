@@ -1,0 +1,450 @@
+<script>
+  // Sola Native Reactive Dashboard
+  export let title = "Cluster Telemetry Mesh";
+  export let initialRps = 1420;
+  export let initialErrorRate = 0.04;
+  export let initialNodes = [
+    { id: 'iad-1', name: 'US-East Edge Gateway', rps: 620, load: 62, status: 'Nominal' },
+    { id: 'sfo-1', name: 'US-West Ingress Hub', rps: 480, load: 48, status: 'Nominal' },
+    { id: 'fra-1', name: 'EU-Central Regional Proxy', rps: 320, load: 32, status: 'Nominal' }
+  ];
+
+  let rps = $state(initialRps);
+  let errorRate = $state(initialErrorRate);
+  let nodes = $state(initialNodes);
+
+  // Derived Zero-VDOM calculations
+  let capacityPct = $derived(Math.min(100, Math.round((rps() / 2000) * 100)));
+  let isThrottling = $derived(capacityPct() >= 85);
+  let formattedThroughput = $derived(rps().toLocaleString() + ' req/s');
+
+  function boostTraffic() {
+    rps += 150;
+  }
+
+  function throttleTraffic() {
+    rps = Math.max(200, rps() - 200);
+  }
+</script>
+
+<div class="sola-dashboard-container">
+  
+  <!-- Dashboard Header -->
+  <header class="dash-header">
+    <div class="header-info">
+      <div class="badge-row">
+        <span class="live-beacon"></span>
+        <span class="badge-text">Native Zero-VDOM Sola Runtime</span>
+      </div>
+      <h2 class="dash-title">{title}</h2>
+      <p class="dash-desc">Fine-grained signal subscriptions writing straight to the DOM, with no diff step.</p>
+    </div>
+    
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick={throttleTraffic}>Throttle (-200)</button>
+      <button class="btn btn-primary" onclick={boostTraffic}>Simulate Spike (+150)</button>
+    </div>
+  </header>
+
+  <!-- Conditional Alert Banner -->
+  {#if isThrottling}
+    <div class="alert-banner alert-warning" role="status">
+      <span class="alert-icon">⚠</span>
+      <div>
+        <strong>Cluster Capacity Warning:</strong> Ingress load reached {capacityPct}% capacity. Auto-scaling edge workers.
+      </div>
+    </div>
+  {:else}
+    <div class="alert-banner alert-nominal" role="status">
+      <span class="alert-icon">✓</span>
+      <div>
+        <strong>Cluster Status Nominal:</strong> Zero packet loss, all 3 regions healthy.
+      </div>
+    </div>
+  {/if}
+
+  <!-- KPI Grid -->
+  <div class="kpi-grid">
+    
+    <!-- Card 1: Live RPS Counter -->
+    <div class="dash-card">
+      <div class="card-label">TOTAL THROUGHPUT</div>
+      <div class="card-value value-blue">{formattedThroughput}</div>
+      <div class="card-subtext">Peak SLA: 2,000 req/s</div>
+    </div>
+
+    <!-- Card 2: Dynamic SVG Arc Capacity Gauge -->
+    <div class="dash-card gauge-card">
+      <div class="card-label">CAPACITY LOAD</div>
+      <div class="gauge-wrap">
+        <svg width="76" height="76" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(226, 232, 240, 0.2)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#3b82f6" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset={251.2 - (251.2 * capacityPct()) / 100} stroke-linecap="round" transform="rotate(-90 50 50)"/>
+        </svg>
+        <span class="gauge-center-text">{capacityPct}%</span>
+      </div>
+      <div class="card-subtext">Dynamic SVG arc</div>
+    </div>
+
+    <!-- Card 3: Error Budget -->
+    <div class="dash-card">
+      <div class="card-label">ERROR BUDGET</div>
+      <div class="card-value">{errorRate}%</div>
+      <div class="card-subtext">Target: &lt; 0.10%</div>
+    </div>
+
+  </div>
+
+  <!-- Interactive Tactile Controller -->
+  <div class="controller-card">
+    <div class="controller-header">
+      <div>
+        <h3 class="controller-title">Simulate Ingress Load Dial</h3>
+        <p class="controller-desc">Drag the slider to watch a signal propagate straight to the nodes that read it.</p>
+      </div>
+      <span class="rps-counter-pill">{rps} RPS</span>
+    </div>
+    <input 
+      type="range" 
+      min="200" 
+      max="2000" 
+      step="10" 
+      aria-label="Target requests per second"
+      bind:value={rps} 
+      class="sola-range-input" 
+    />
+  </div>
+
+  <!-- Node Matrix Table -->
+  <div class="table-card">
+    <div class="table-title">Active Edge Ingestion Shards ({nodes.length})</div>
+    <div class="nodes-list">
+      {#each nodes as node, i}
+        <div class="node-row">
+          <div class="node-id-group">
+            <span class="node-dot"></span>
+            <div>
+              <div class="node-name">{node.name}</div>
+              <div class="node-sub">Region ID: {node.id}</div>
+            </div>
+          </div>
+          <div class="node-metrics">
+            <span class="node-rps">{node.rps} req/s</span>
+            <span class="status-pill">{node.status}</span>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .sola-dashboard-container {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--sola-text-primary, #0f172a);
+  }
+
+  /* No dark override block here on purpose. Every rule below takes its
+     colours from semantic tokens (--sola-surface-*, --sola-text-*), which
+     flip with the theme on their own. */
+
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .badge-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    margin-bottom: 8px;
+  }
+
+  .live-beacon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3b82f6;
+  }
+
+  .badge-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sola-alert-positive-text, #047857);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .dash-title {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin: 0 0 4px 0;
+  }
+
+  .dash-desc {
+    font-size: 13px;
+    color: var(--sola-text-secondary, #64748b);
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: none;
+  }
+
+  .btn-primary {
+    background: #2563eb;
+    color: var(--sola-color-neutral-0, #ffffff);
+  }
+
+  .btn-primary:hover {
+    background: #60a5fa;
+  }
+
+  .btn-secondary {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-primary, #334155);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+  }
+
+  .btn-secondary:hover {
+    background: var(--sola-color-neutral-200, #e2e8f0);
+  }
+
+  .alert-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .alert-nominal {
+    background: var(--sola-alert-positive-bg, #f0fdf4);
+    border: 1px solid #bbf7d0;
+    color: var(--sola-alert-positive-text, #166534);
+  }
+
+  .alert-warning {
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    border: 1px solid #fde68a;
+    color: var(--sola-alert-warning, #92400e);
+  }
+
+  .alert-icon {
+    font-weight: 900;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .dash-card {
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.03);
+  }
+
+  .gauge-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .gauge-wrap {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    margin: 8px 0;
+  }
+
+  .gauge-center-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 900;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .card-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sola-text-secondary, #475569);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .card-value {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .value-blue {
+    color: #3b82f6;
+  }
+
+  .card-subtext {
+    font-size: 12px;
+    color: var(--sola-text-secondary, #64748b);
+  }
+
+  .controller-card {
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .controller-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .controller-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin: 0 0 2px 0;
+  }
+
+  .controller-desc {
+    font-size: 12px;
+    color: var(--sola-text-secondary, #64748b);
+    margin: 0;
+  }
+
+  .rps-counter-pill {
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: var(--sola-surface-1, #f8fafc);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    font-size: 12px;
+    font-weight: 800;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    color: var(--sola-text-primary, #0f172a);
+  }
+
+  .sola-range-input {
+    width: 100%;
+    accent-color: #3b82f6;
+    cursor: pointer;
+  }
+
+  .table-card {
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  .table-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--sola-text-secondary, #64748b);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .nodes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .node-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--sola-surface-1, #f8fafc);
+    border: 1px solid var(--sola-surface-2, #f1f5f9);
+  }
+
+  .node-id-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .node-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3b82f6;
+  }
+
+  .node-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sola-text-primary, #0f172a);
+  }
+
+  .node-sub {
+    font-size: 12px;
+    color: var(--sola-text-secondary, #475569);
+    font-family: ui-monospace, monospace;
+  }
+
+  .node-metrics {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .node-rps {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    color: var(--sola-text-primary, #334155);
+  }
+
+  .status-pill {
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    background: var(--sola-alert-positive-bg, #ecfdf5);
+    color: var(--sola-alert-positive-text, #047857);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+</style>
