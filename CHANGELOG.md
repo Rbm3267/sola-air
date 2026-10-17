@@ -4,6 +4,15 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### VS Code extension (`sola-vscode` 0.2.0)
+
+- **Changed**: `.sola` highlighting now uses a grammar of its own instead of borrowing
+  the Svelte one, so the Svelte extension is no longer installed alongside it. It
+  covers `<script>` and `<style>`, `{expressions}` (including attribute values),
+  `{#if}` / `{:else}` / `{#each}` blocks, and the `$` macros.
+- **Added**: snippets for the macros, blocks and a new component; bracket and quote
+  pairing, block comments and region folding.
+
 ## 2026-10-17: core 1.5.0
 
 ### `@sola-air-ui/core`

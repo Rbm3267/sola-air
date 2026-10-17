@@ -1,10 +1,303 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Sola",
-  "scopeName": "source.sola",
+  "scopeName": "text.html.sola",
   "patterns": [
     {
-      "include": "source.svelte"
+      "include": "#script"
+    },
+    {
+      "include": "#style"
+    },
+    {
+      "include": "#block-each"
+    },
+    {
+      "include": "#block-if"
+    },
+    {
+      "include": "#block-else"
+    },
+    {
+      "include": "#block-close"
+    },
+    {
+      "include": "#expression"
+    },
+    {
+      "include": "text.html.basic"
     }
-  ]
+  ],
+  "injections": {
+    "L:text.html.sola meta.tag - comment - string": {
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "L:text.html.sola meta.script.sola, L:text.html.sola meta.embedded.expression.sola, L:text.html.sola meta.block.open.sola": {
+      "patterns": [
+        {
+          "include": "#macros"
+        }
+      ]
+    }
+  },
+  "repository": {
+    "macros": {
+      "match": "\\$(state|derived|effect|persist|intent|data|on|lastEvent)(?=\\s*\\()",
+      "name": "support.function.macro.sola"
+    },
+    "script": {
+      "begin": "(<)(script)(?=[\\s>])",
+      "end": "(</)(script)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "2": {
+          "name": "entity.name.tag.script.html"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "2": {
+          "name": "entity.name.tag.script.html"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.html"
+        }
+      },
+      "name": "meta.script.sola",
+      "patterns": [
+        {
+          "begin": "\\G",
+          "end": "(>)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.end.html"
+            }
+          },
+          "patterns": [
+            {
+              "include": "text.html.basic#attribute"
+            }
+          ]
+        },
+        {
+          "begin": "(?<=>)",
+          "end": "(?=</script>)",
+          "contentName": "source.js",
+          "patterns": [
+            {
+              "include": "#macros"
+            },
+            {
+              "include": "source.js"
+            }
+          ]
+        }
+      ]
+    },
+    "style": {
+      "begin": "(<)(style)(?=[\\s>])",
+      "end": "(</)(style)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "2": {
+          "name": "entity.name.tag.style.html"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "2": {
+          "name": "entity.name.tag.style.html"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.html"
+        }
+      },
+      "name": "meta.style.sola",
+      "patterns": [
+        {
+          "begin": "\\G",
+          "end": "(>)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.end.html"
+            }
+          },
+          "patterns": [
+            {
+              "include": "text.html.basic#attribute"
+            }
+          ]
+        },
+        {
+          "begin": "(?<=>)",
+          "end": "(?=</style>)",
+          "contentName": "source.css",
+          "patterns": [
+            {
+              "include": "source.css"
+            }
+          ]
+        }
+      ]
+    },
+    "block-else": {
+      "match": "(\\{)(:)(else)(\\})",
+      "name": "meta.block.else.sola",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.block.begin.sola"
+        },
+        "2": {
+          "name": "keyword.control.block.sola"
+        },
+        "3": {
+          "name": "keyword.control.block.sola"
+        },
+        "4": {
+          "name": "punctuation.definition.block.end.sola"
+        }
+      }
+    },
+    "block-close": {
+      "match": "(\\{)(/)(if|each)(\\})",
+      "name": "meta.block.close.sola",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.block.begin.sola"
+        },
+        "2": {
+          "name": "keyword.control.block.sola"
+        },
+        "3": {
+          "name": "keyword.control.block.sola"
+        },
+        "4": {
+          "name": "punctuation.definition.block.end.sola"
+        }
+      }
+    },
+    "expression": {
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.sola"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.sola"
+        }
+      },
+      "name": "meta.embedded.expression.sola",
+      "contentName": "source.js",
+      "patterns": [
+        {
+          "include": "source.js#expression"
+        }
+      ]
+    },
+    "block-if": {
+      "begin": "(\\{)(#)(if)\\b",
+      "end": "(\\})",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.begin.sola"
+        },
+        "2": {
+          "name": "keyword.control.block.sola"
+        },
+        "3": {
+          "name": "keyword.control.block.sola"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.end.sola"
+        }
+      },
+      "name": "meta.block.open.sola",
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "block-each": {
+      "begin": "(\\{)(#)(each)\\b",
+      "end": "(\\})",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.begin.sola"
+        },
+        "2": {
+          "name": "keyword.control.block.sola"
+        },
+        "3": {
+          "name": "keyword.control.block.sola"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.block.end.sola"
+        }
+      },
+      "name": "meta.block.open.sola",
+      "patterns": [
+        {
+          "begin": "\\bas\\b",
+          "end": "(?=\\})",
+          "beginCaptures": {
+            "0": {
+              "name": "keyword.control.as.sola"
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\(",
+              "end": "\\)",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.definition.parameters.begin.sola"
+                }
+              },
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.parameters.end.sola"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "source.js"
+                }
+              ]
+            },
+            {
+              "match": "[A-Za-z_$][\\w$]*",
+              "name": "variable.other.readwrite.js"
+            },
+            {
+              "match": ",",
+              "name": "punctuation.separator.comma.js"
+            }
+          ]
+        },
+        {
+          "include": "source.js"
+        }
+      ]
+    }
+  }
 }
