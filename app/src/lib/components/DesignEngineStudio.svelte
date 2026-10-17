@@ -116,7 +116,7 @@
                 <div class="space-y-3">
                   <SolaMount
                     component={Toggle}
-                    props={{ label: 'Ambient Sentinel Observer', initialValue: true }}
+                    props={{ label: 'Ambient Sentinel Observer', initialChecked: true }}
                   />
                   <div class="flex flex-wrap gap-2 p-3 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-200/80 dark:border-white/10">
                     <div class="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -159,7 +159,7 @@
                       title: 'Cluster Capacity',
                       value: `${sliderVal}%`,
                       percentage: sliderVal,
-                      subtitle: 'Direct DOM arc binding',
+                      subtext: 'Direct DOM arc binding',
                       color: 'sky'
                     }}
                   />
@@ -170,7 +170,7 @@
                     title: 'Intent Confidence',
                     value: '94%',
                     percentage: 94,
-                    subtitle: 'Sentinel observer score',
+                    subtext: 'Sentinel observer score',
                     color: 'emerald'
                   }}
                 />
