@@ -4,8 +4,8 @@
 </script>
 
 <svelte:head>
-  <title>Privacy Policy — Sola & Sola AIR Chrome Extension</title>
-  <meta name="description" content="Privacy Policy for Sola and the Sola AIR Chrome extension." />
+  <title>Privacy Policy — Sola AIR</title>
+  <meta name="description" content="Privacy Policy for Sola, the Sola AIR Chrome extension and the sola-ui skill for Claude and Gemini." />
 </svelte:head>
 
 <div class="flex flex-col w-full bg-white dark:bg-[#090d19] text-slate-900 dark:text-white transition-colors duration-300 min-h-screen">
@@ -25,7 +25,7 @@
         Privacy Policy
       </h1>
       <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-mono mt-2 max-w-[68ch]">
-        Last updated: October 16, 2026 • Applicable to Sola Platform and the Sola AIR Chrome extension
+        Last updated: October 17, 2026 • Applicable to Sola Platform, the Sola AIR Chrome extension and the sola-ui Claude plugin and Gemini CLI extension
       </p>
     </div>
 
@@ -123,9 +123,24 @@
         </div>
       </section>
 
-      <!-- 5. Contact -->
+      <!-- 5. Claude and Gemini skill -->
+      <section id="sola-ui-skill" class="space-y-3 scroll-mt-24">
+        <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">5. Claude Plugin and Gemini CLI Extension (sola-ui)</h2>
+        <p>
+          The <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs text-slate-800 dark:text-slate-200">sola-ui</code> skill, published at <a href="https://github.com/Rbm3267/sola-ui-skill" class="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">Rbm3267/sola-ui-skill</a>, is instructions, reference files and a preview script. It has no server and no account.
+        </p>
+        <ul class="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 text-sm">
+          <li>It does not collect, store or send personal data, and it has no analytics or telemetry. We receive nothing when you use it.</li>
+          <li>The preview script runs on your machine or in the assistant's code sandbox. It reads the <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">.sola</code> file you give it and writes one HTML file next to it. It makes no network requests and does not read environment variables or credentials.</li>
+          <li>The generated HTML page makes network requests only if your design uses <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">$data</code> or <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">$intent</code>, and then only to the endpoint the design sets (a local relay at <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">localhost:4040</code> by default).</li>
+          <li>The Gemini CLI extension also starts the <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">@sola-air-ui/mcp</code> server on your machine. npx downloads it from the npm registry the first time it runs. The server compiles and checks components locally and makes no network requests.</li>
+          <li>What you type into Claude or Gemini is handled by Anthropic or Google under their own privacy policies, not this one.</li>
+        </ul>
+      </section>
+
+      <!-- 6. Contact -->
       <section class="space-y-3 pt-4 border-t border-slate-100 dark:border-white/5">
-        <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">5. Contact & Questions</h2>
+        <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">6. Contact & Questions</h2>
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
           For questions regarding this privacy policy or Sola security architecture, review the open-source repository at <a href="{GITHUB_URL}" class="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">{GITHUB_REPO}</a>.
         </p>
