@@ -4,7 +4,7 @@
   "description": "Scaffold a new zero-VDOM Sola application in seconds",
   "type": "module",
   "bin": {
-    "create-sola": "./src/cli.js"
+    "create-sola": "src/cli.js"
   },
   "files": [
     "src"
@@ -23,7 +23,7 @@
   "homepage": "https://sola-air.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rbm3267/sola-air"
+    "url": "git+https://github.com/Rbm3267/sola-air.git"
   },
   "author": "Sola Contributors",
   "license": "MIT",
