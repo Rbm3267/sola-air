@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: compiler 1.5.1, ui 1.6.1
+
 ### `@sola-air-ui/compiler`
 
 - **Fixed**: `bind:this={el}` emits `set_el(node)` when `el` is declared with `$state(null)` instead of assigning to the constant getter tuple variable.
