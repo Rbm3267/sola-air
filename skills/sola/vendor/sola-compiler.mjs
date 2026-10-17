@@ -9025,7 +9025,7 @@ function compile(source, options = {}) {
       );
     }
   }
-  function emitNode(node, parentVar, locals = /* @__PURE__ */ new Set()) {
+  function emitNode(node, parentVar, locals = /* @__PURE__ */ new Set(), inSvg = false) {
     if (!node) return;
     const rewrite = (expr) => transformTemplateExpression(expr, reactiveVars, locals);
     if (node.type === "text") {
@@ -9155,7 +9155,7 @@ function compile(source, options = {}) {
 `;
         domCode += `      const f = document.createDocumentFragment();
 `;
-        branch.children.forEach((child) => emitNode(child, "f", locals));
+        branch.children.forEach((child) => emitNode(child, "f", locals, inSvg));
         domCode += `      Array.from(f.childNodes).forEach(n => ${cid}_els.push(n));
 `;
         domCode += `      ${cid}_a.parentNode.insertBefore(f, ${cid}_a.nextSibling);
@@ -9227,7 +9227,7 @@ function compile(source, options = {}) {
 `;
         domCode += `        const f = document.createDocumentFragment();
 `;
-        node.children.forEach((child) => emitNode(child, "f", eachLocals));
+        node.children.forEach((child) => emitNode(child, "f", eachLocals, inSvg));
         domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx };
 `;
         domCode += `        } finally { popContext(_kctx); }
@@ -9281,7 +9281,7 @@ function compile(source, options = {}) {
 `;
         if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;
 `;
-        node.children.forEach((child) => emitNode(child, "f", eachLocals));
+        node.children.forEach((child) => emitNode(child, "f", eachLocals, inSvg));
         domCode += `    }
 `;
         domCode += `    Array.from(f.childNodes).forEach(n => ${eid}_els.push(n));
@@ -9295,9 +9295,16 @@ function compile(source, options = {}) {
       }
       return;
     }
+    const isSvg = inSvg || node.name === "svg";
+    const childSvg = isSvg && node.name !== "foreignObject";
     const id = `n${uid++}`;
-    domCode += `  const ${id} = document.createElement('${node.name}');
+    if (isSvg) {
+      domCode += `  const ${id} = document.createElementNS ? document.createElementNS('http://www.w3.org/2000/svg', '${node.name}') : document.createElement('${node.name}');
 `;
+    } else {
+      domCode += `  const ${id} = document.createElement('${node.name}');
+`;
+    }
     if (hasStyles) {
       domCode += `  ${id}.classList.add('${scopeHash}');
 `;
@@ -9312,8 +9319,13 @@ function compile(source, options = {}) {
 `;
         } else if (key === "class" || key === "className") {
           const suffix = hasStyles ? ` + ' ${scopeHash}'` : "";
-          domCode += `  createEffect(() => { ${id}.className = (${expr})${suffix}; });
+          if (isSvg) {
+            domCode += `  createEffect(() => { ${id}.setAttribute('class', (${expr})${suffix}); });
 `;
+          } else {
+            domCode += `  createEffect(() => { ${id}.className = (${expr})${suffix}; });
+`;
+          }
         } else {
           domCode += `  createEffect(() => { ${id}.setAttribute('${key}', String(${expr})); });
 `;
@@ -9348,8 +9360,14 @@ function compile(source, options = {}) {
           }
         }
       } else if (key === "class" || key === "className") {
-        domCode += `  ${id}.className += ' ' + ${JSON.stringify(val)};
+        if (isSvg) {
+          const clsVal = hasStyles ? `${scopeHash} ${val}` : val;
+          domCode += `  ${id}.setAttribute('class', ${JSON.stringify(clsVal)});
 `;
+        } else {
+          domCode += `  ${id}.className += ' ' + ${JSON.stringify(val)};
+`;
+        }
       } else {
         domCode += `  ${id}.setAttribute(${JSON.stringify(key)}, ${JSON.stringify(val)});
 `;
@@ -9359,7 +9377,7 @@ function compile(source, options = {}) {
 `;
     if (node.children && !VOID_ELEMENTS.has(node.name)) {
       for (const child of node.children) {
-        emitNode(child, id, locals);
+        emitNode(child, id, locals, childSvg);
       }
     }
   }
@@ -9410,6 +9428,8 @@ function compile(source, options = {}) {
 `;
   }
   output += `  const __ctx = pushContext();
+`;
+  output += `  try {
 
 `;
   if (hasStyles) {
@@ -9453,12 +9473,16 @@ function compile(source, options = {}) {
   output += `
   __flush_mounts(__ctx);
 `;
+  output += `  } finally {
+`;
+  output += `    popContext(__ctx);
+`;
+  output += `  }
+`;
   output += `
   return () => {
 `;
   output += `    __flush_destroys(__ctx);
-`;
-  output += `    popContext(__ctx);
 `;
   output += `    __target.innerHTML = '';
 `;
