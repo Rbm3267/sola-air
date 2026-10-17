@@ -3,6 +3,7 @@
   "displayName": "Sola AIR",
   "description": "Language support and file icons for Sola AIR (.sola) components",
   "version": "0.2.0",
+  "type": "module",
   "publisher": "SolaAIR",
   "license": "MIT",
   "homepage": "https://sola-air.dev",

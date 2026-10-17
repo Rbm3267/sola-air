@@ -142,12 +142,15 @@ Render the result with `<AmbientSuggestion suggestion={suggestion} />` (`@sola-a
 | Package | npm | Description |
 |---|---|---|
 | `sola-air` | [![npm](https://img.shields.io/npm/v/sola-air)](https://www.npmjs.com/package/sola-air) | Meta-package — install everything at once |
-| `@sola-air-ui/core` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/core)](https://www.npmjs.com/package/@sola-air-ui/core) | Reactive runtime engine (signals, effects, $intent, $data) |
-| `@sola-air-ui/compiler` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/compiler)](https://www.npmjs.com/package/@sola-air-ui/compiler) | Custom Acorn AST compiler (.sola → JS + CSS) |
-| `@sola-air-ui/vite-plugin-sola` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/vite-plugin-sola)](https://www.npmjs.com/package/@sola-air-ui/vite-plugin-sola) | Vite plugin for .sola single-file components |
-| `@sola-air-ui/ui` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/ui)](https://www.npmjs.com/package/@sola-air-ui/ui) | Standard component library |
+| `create-sola` | [![npm](https://img.shields.io/npm/v/create-sola)](https://www.npmjs.com/package/create-sola) | Project scaffolder (`npx create-sola my-app`) |
+| `@sola-air-ui/core` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/core)](https://www.npmjs.com/package/@sola-air-ui/core) | Reactive runtime engine (signals, effects, `$persist`, `$intent`, `$data`, `createBus`, `mountShell`) |
+| `@sola-air-ui/compiler` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/compiler)](https://www.npmjs.com/package/@sola-air-ui/compiler) | Acorn AST compiler & `sola-check` static validator (`.sola` → JS + CSS) |
+| `@sola-air-ui/vite-plugin-sola` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/vite-plugin-sola)](https://www.npmjs.com/package/@sola-air-ui/vite-plugin-sola) | Vite plugin for `.sola` single-file components |
+| `@sola-air-ui/ui` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/ui)](https://www.npmjs.com/package/@sola-air-ui/ui) | 37 compiled `.sola` UI, shell, and ambient-intent primitives |
+| `@sola-air-ui/tokens` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/tokens)](https://www.npmjs.com/package/@sola-air-ui/tokens) | CSS custom-property design tokens (spacing, radius, type scale, light/dark semantic palette) |
+| `@sola-air-ui/sentinel` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/sentinel)](https://www.npmjs.com/package/@sola-air-ui/sentinel) | Framework-agnostic behavioral friction & ambient field observer (`SolaSentinel`) |
 | `@sola-air-ui/relay` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/relay)](https://www.npmjs.com/package/@sola-air-ui/relay) | Local data proxy (PostgreSQL, MySQL, Google Sheets) |
-| `@sola-air-ui/mcp` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/mcp)](https://www.npmjs.com/package/@sola-air-ui/mcp) | MCP server for AI-driven component generation |
+| `@sola-air-ui/mcp` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/mcp)](https://www.npmjs.com/package/@sola-air-ui/mcp) | MCP server for AI-driven component compilation, `sola-check` validation, and `sola://docs` |
 
 ---
 
