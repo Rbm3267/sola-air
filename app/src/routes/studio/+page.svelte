@@ -4,7 +4,8 @@
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import { STUDIO_PRESETS } from '$lib/data/studioPresets';
-  import { CATALOG_COUNT } from '$lib/data/site';
+  import { CATALOG_COUNT, UI_MANIFEST } from '$lib/data/site';
+  import { toSolaFile, mountSnippet, studioCardToItem } from '$lib/data/solaExport';
 
   // --- 1. Universal Canvas Card Data Model ---
   interface StudioCard {
@@ -24,7 +25,7 @@
   let arcError = $state('');
   let activeCardId = $state<string | null>(null);
   let exportModalOpen = $state(false);
-  let exportTab = $state<'react' | 'svelte' | 'webcomponent'>('react');
+  let exportTab = $state<'sola' | 'mount'>('sola');
   let presetMenuOpen = $state(false);
 
   // Non-blocking Left Docked Palette State. Starts closed on phones, where it
@@ -527,35 +528,13 @@
   }
 
   // --- Code Exporter ---
-  const generatedCode = $derived.by(() => {
-    if (exportTab === 'react') {
-      return `import React from 'react';
-import { DataCard, GaugeCard, FlowWaterfall } from '@sola-air-ui/ui';
-
-export default function SolaDashboard() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-8 bg-[#fafafa] dark:bg-[#090d19]">
-      ${cards.map(c => `{/* ${c.title} */}
-      <div className="${c.cols === 3 ? 'lg:col-span-3 md:col-span-2' : c.cols === 2 ? 'md:col-span-2' : 'col-span-1'} bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-white/10 p-6 shadow-sm">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">${c.title}</h3>
-        <p className="text-3xl font-bold font-mono text-slate-900 dark:text-white mt-2">${c.value}</p>
-      </div>`).join('\n      ')}
-    </div>
+  // A real .sola file built from the published components, plus how to mount it.
+  // Card types the package has no component for are listed as comments.
+  const generatedCode = $derived(
+    exportTab === 'sola'
+      ? toSolaFile(cards.map(studioCardToItem), UI_MANIFEST)
+      : mountSnippet('Dashboard.sola')
   );
-}`;
-    } else if (exportTab === 'svelte') {
-      return '<' + 'script lang="ts">\n' +
-        '  import { DataCard, GaugeCard, FlowWaterfall } from "@sola-air-ui/ui";\n' +
-        '<' + '/script>\n\n' +
-        '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-8 bg-[#fafafa] dark:bg-[#090d19]">\n' +
-        cards.map(c => `  <!-- ${c.title} -->\n  <div class="${c.cols === 3 ? 'lg:col-span-3 md:col-span-2' : c.cols === 2 ? 'md:col-span-2' : 'col-span-1'} bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/90 dark:border-white/10 p-6 shadow-sm">\n    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">${c.title}</h3>\n    <div class="text-3xl font-bold font-mono text-slate-900 dark:text-white mt-2">${c.value}</div>\n  </div>`).join('\n') +
-        '\n</div>';
-    } else {
-      return '<!-- Native Zero-VDOM .sola Mount -->\n' +
-        '<' + 'script type="module" src="https://cdn.sola-air.dev/sola-ui.js"><' + '/script>\n\n' +
-        `<sola-canvas cards='${JSON.stringify(cards.map(c => ({ id: c.id, title: c.title, cols: c.cols, value: c.value })))}'></sola-canvas>`;
-    }
-  });
 
   function copyCode() {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -1215,19 +1194,16 @@ export default function SolaDashboard() {
         <!-- Framework Tabs -->
         <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-white/5 p-1 rounded-xl">
           <button
-            onclick={() => (exportTab = 'react')}
-            class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer {exportTab === 'react' ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400'}">
-            React 19
+            onclick={() => (exportTab = 'sola')}
+            aria-pressed={exportTab === 'sola'}
+            class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer {exportTab === 'sola' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}">
+            Dashboard.sola
           </button>
           <button
-            onclick={() => (exportTab = 'svelte')}
-            class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer {exportTab === 'svelte' ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400'}">
-            Svelte 5
-          </button>
-          <button
-            onclick={() => (exportTab = 'webcomponent')}
-            class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer {exportTab === 'webcomponent' ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400'}">
-            Native .sola
+            onclick={() => (exportTab = 'mount')}
+            aria-pressed={exportTab === 'mount'}
+            class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer {exportTab === 'mount' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'}">
+            Mount from JS
           </button>
         </div>
 

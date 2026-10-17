@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { solaSnippets, jsSnippets, dataSnippets } from '../app/src/lib/data/docsSnippets';
+import { solaSnippets, jsSnippets, dataSnippets, shellComponentsExample } from '../app/src/lib/data/docsSnippets';
 
 const REPO_ROOT = join(__dirname, '..');
 
@@ -330,4 +330,47 @@ test.describe('published $data snippets', () => {
       expect(pageErrors, 'snippet must not throw').toEqual([]);
     });
   }
+});
+
+test.describe('published shell components example', () => {
+  // The docs' "Ready-made shell components" sample, mounted with the four real
+  // components preloaded the way a no-bundler page would load them.
+  test('dock, palette, drawer and toasts work together', async ({ page }) => {
+    const compile = await getCompiler();
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+
+    await page.goto('about:blank');
+    await page.addStyleTag({ content: readFileSync(join(REPO_ROOT, 'packages/tokens/src/tokens.css'), 'utf8') });
+    await page.addScriptTag({ content: CORE_IIFE });
+    for (const name of ['LauncherDock', 'CommandPalette', 'CompanionDrawer', 'ToastHost']) {
+      const source = readFileSync(join(REPO_ROOT, 'packages/ui/src', `${name}.sola`), 'utf8');
+      const { code } = compile(source, { target: 'iife', exportName: name, filename: `${name}.sola` });
+      await page.addScriptTag({ content: code });
+    }
+    const { code } = compile(shellComponentsExample, { target: 'iife', exportName: 'Shell', filename: 'docs:shell-components' });
+    await page.addScriptTag({ content: code });
+    await page.evaluate(() => {
+      const host = document.createElement('div');
+      host.id = 'host';
+      document.body.appendChild(host);
+      (window as any).Shell(host, {});
+    });
+
+    // The dock opens the drawer, with its slot content.
+    await page.getByRole('button', { name: 'Assistant' }).click();
+    const drawer = page.getByRole('dialog', { name: 'Assistant' });
+    await expect(drawer).toBeVisible();
+    await expect(drawer).toContainText('Ask about the page you are on.');
+    await drawer.getByRole('button', { name: 'Close' }).click();
+    await expect(drawer).toBeHidden();
+
+    // The palette runs a command that sends a toast over the bus.
+    await page.keyboard.press('ControlOrMeta+k');
+    await page.getByRole('combobox').fill('save');
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('status').filter({ hasText: 'Draft saved' })).toBeVisible();
+
+    expect(errors).toEqual([]);
+  });
 });
