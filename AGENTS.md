@@ -188,6 +188,12 @@ Rules that `createBus()` enforces by throwing: a type in `dom.in` or `broadcast`
 ### A. Dynamic Intent Generation (`$intent`)
 Transpiles to `createIntent(...)`, which resolves ambient UI state by calling an LLM provider (configured via `configureIntent({ endpoint, provider, model, stream })`, backed by `@sola-air-ui/providers` on the server side). Supports SSE streaming.
 
+Per-call options (second argument, or globally through `configureIntent`):
+
+- `debounceMs`: wait this long after the prompt last changed before asking. The prompt must be a function to be reactive: `$intent(() => query, { debounceMs: 300 })`.
+- `trigger: 'manual'`: never ask on its own. Call `widget.run(input)` to ask; `widget.run()` with no input uses the current prompt. `run` also exists in the default mode and skips any debounce.
+- `transport`: a fetch-compatible `(url, init) => Promise<Response>` used instead of global `fetch`, for hosts that must sign or route the request.
+
 ```html
 <script>
   const analyticsWidget = $intent("Show cluster metric graphs");

@@ -52,6 +52,12 @@ export interface IntentConfig {
   endpoint?: string;
   model?: string;
   stream?: boolean;
+  /** Fetch-compatible function used instead of global fetch, e.g. to sign or route the request. */
+  transport?: (url: string, init: RequestInit) => Promise<Response>;
+  /** Wait this many ms after the prompt last changed before asking. */
+  debounceMs?: number;
+  /** 'manual' never asks on its own; call .run(input). Default is 'auto'. */
+  trigger?: 'auto' | 'manual';
 }
 
 export function configureIntent(config: IntentConfig): void;
@@ -62,6 +68,8 @@ export interface IntentAccessor<T = unknown> {
   loading: Accessor<boolean>;
   /** Error message from the last failed request, or null. */
   error: Accessor<string | null>;
+  /** Ask now. With no input, uses the current prompt. Skips any debounce. */
+  run(input?: string): void;
 }
 
 export function createIntent<T = unknown>(

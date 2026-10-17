@@ -5,6 +5,7 @@ import {
   createDerived,
   createEffect,
   createData,
+  createIntent,
   flushSync,
   onMount,
   onDestroy,
@@ -242,5 +243,85 @@ describe('createData lifecycle', () => {
       globalThis.fetch = realFetch;
       mock.timers.reset();
     }
+  });
+});
+
+describe('createIntent options', () => {
+  const okResponse = (result) => ({ ok: true, json: () => Promise.resolve({ result }) });
+  const tick = () => new Promise(r => setImmediate(r));
+
+  it('sends through options.transport instead of fetch', async () => {
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = () => { throw new Error('global fetch must not be used'); };
+    const seen = [];
+    try {
+      const intent = createIntent('hello', {
+        endpoint: '/ask',
+        transport: (url, init) => { seen.push([url, JSON.parse(init.body).messages[0].content]); return Promise.resolve(okResponse('hi')); }
+      });
+      flushSync();
+      await tick();
+      assert.deepStrictEqual(seen, [['/ask', 'hello']]);
+      assert.strictEqual(intent(), 'hi');
+      assert.strictEqual(intent.loading(), false);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
+
+  it('debounceMs waits for the prompt to settle, then asks once', () => {
+    mock.timers.enable({ apis: ['setTimeout'] });
+    const asked = [];
+    try {
+      const [q, setQ] = createSignal('a');
+      createIntent(() => q(), {
+        debounceMs: 300,
+        transport: (_u, init) => { asked.push(JSON.parse(init.body).messages[0].content); return new Promise(() => {}); }
+      });
+      flushSync();
+      setQ('ab'); flushSync();
+      mock.timers.tick(200);
+      setQ('abc'); flushSync();
+      mock.timers.tick(299);
+      assert.deepStrictEqual(asked, [], 'nothing sent before the prompt settles');
+      mock.timers.tick(1);
+      assert.deepStrictEqual(asked, ['abc'], 'one request, with the last prompt');
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  it('a pending debounced request is dropped when the component is destroyed', () => {
+    mock.timers.enable({ apis: ['setTimeout'] });
+    let asked = 0;
+    try {
+      const ctx = pushContext();
+      createIntent('x', { debounceMs: 100, transport: () => { asked += 1; return new Promise(() => {}); } });
+      popContext(ctx);
+      flushSync();
+      __flush_destroys(ctx);
+      mock.timers.tick(500);
+      assert.strictEqual(asked, 0);
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  it("trigger: 'manual' never asks on its own; run(input) does", async () => {
+    const asked = [];
+    const intent = createIntent(() => 'ignored', {
+      trigger: 'manual',
+      transport: (_u, init) => { asked.push(JSON.parse(init.body).messages[0].content); return Promise.resolve(okResponse('done')); }
+    });
+    flushSync();
+    await tick();
+    assert.deepStrictEqual(asked, [], 'no request without run()');
+    intent.run('summarise this');
+    await tick();
+    assert.deepStrictEqual(asked, ['summarise this']);
+    assert.strictEqual(intent(), 'done');
+    intent.run();
+    await tick();
+    assert.deepStrictEqual(asked, ['summarise this', 'ignored'], 'run() with no input uses the current prompt');
   });
 });

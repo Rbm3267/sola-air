@@ -85,7 +85,7 @@ The core runtime is about 7.5 kB gzipped. `scripts/core-size.mjs` measures it, a
 - **`$state(initial)`** — Fine-grained reactive signal
 - **`$derived(expr)`** — Computed values with automatic dependency tracking (a `() => expr` function also works)
 - **`$effect(() => fn)`** — Side effects with automatic cleanup
-- **`$intent(prompt, options)`** — Signal that asks an LLM provider for structured UI and data
+- **`$intent(prompt, options)`** — Signal that asks an LLM provider for structured UI and data. Options: `debounceMs` (wait for the prompt to settle), `trigger: 'manual'` with `.run(input)` (ask only when told to), `transport` (your own fetch-compatible function)
 - **`$data(source, options)`** — Signal of `{ loading, data, error }` fed by the Sola Relay
 - **`$persist(key, initial, options)`** — Like `$state`, but kept in storage and synced across tabs, so it survives page loads
 - **`$on(type, fn)`** — Run a function for every event of a type on the bus; unsubscribes when the component is destroyed
@@ -121,13 +121,12 @@ sentinel.onFriction((event) => console.log(event.message)); // e.g. rage-click b
 field.onfocus = () => sentinel.recordFieldFocus('short_description');
 field.onblur = () => sentinel.recordFieldBlur('short_description', field.value);
 
-// Debounced significance gate — createIntent has no built-in throttle, so this
-// poll decides *when* the observed behavior is worth interrupting the user for.
+// The poll decides *when* the observed behavior is worth interrupting the user
+// for. trigger: 'manual' keeps createIntent from asking on its own; run() asks.
+const suggestion = createIntent('', { trigger: 'manual' });
 setInterval(() => {
-  if (sentinel.checkSignificance()) promptSignal.write(sentinel.buildPrompt());
+  if (sentinel.checkSignificance()) suggestion.run(sentinel.buildPrompt());
 }, 400);
-
-const suggestion = createIntent(() => promptSignal.read());
 ```
 
 Render the result with `<AmbientSuggestion suggestion={suggestion} />` (`@sola-air-ui/ui/ambient-suggestion`) — a small, dismissible, non-blocking suggestion that renders model output as text, never `innerHTML`. A full working example — real Gemini call, real browser-verified, no mocked data — lives in [`examples/ambient-poc`](./examples/ambient-poc).

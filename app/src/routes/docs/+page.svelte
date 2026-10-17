@@ -689,6 +689,11 @@ export function SolaWidget({ title, value }) {
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{intentMacroExample}</code></pre>
             </div>
+            <ul class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch] list-disc pl-5 space-y-1">
+              <li><code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">debounceMs</code>: wait for the prompt to stop changing before asking. Pass the prompt as a function so it stays reactive.</li>
+              <li><code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">trigger: 'manual'</code>: never ask on its own. Call <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">.run(input)</code> when you want an answer.</li>
+              <li><code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">transport</code>: a fetch-compatible function used instead of <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">fetch</code>, for hosts that sign or route requests themselves.</li>
+            </ul>
           </section>
 
           <section class="space-y-3">
