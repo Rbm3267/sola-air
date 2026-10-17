@@ -1587,7 +1587,11 @@ export function compile(source, options = {}) {
           domCode += `  ${id}.addEventListener('input', (e) => { set_${bound}(e.target.value); });\n`;
           domCode += `  createEffect(() => { ${id}.value = ${bound}() ?? ''; });\n`;
         } else if (prop === 'this') {
-          domCode += `  ${bound} = ${id};\n`;
+          if (stateVars.has(bound)) {
+            domCode += `  set_${bound}(${id});\n`;
+          } else {
+            domCode += `  ${bound} = ${id};\n`;
+          }
         }
       } else if (key === 'class' || key === 'className') {
         // Static values: emit as a plain string literal. A template literal here

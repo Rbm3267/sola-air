@@ -82,7 +82,7 @@
 
   .wf-final { text-align: right; flex-shrink: 0; }
   .wf-final-label { font-size: 12px; font-family: ui-monospace, monospace; color: var(--sola-text-tertiary, #94a3b8); text-transform: uppercase; display: block; }
-  .wf-final-value { font-size: 18px; font-weight: 900; font-family: ui-monospace, monospace; color: var(--sola-color-primary-700, #047857); letter-spacing: -0.01em; }
+  .wf-final-value { font-size: 18px; font-weight: 900; font-family: ui-monospace, monospace; color: var(--sola-alert-positive-text, #047857); letter-spacing: -0.01em; }
 
   .wf-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
@@ -117,7 +117,7 @@
   .wf-row.total .wf-row-bar-fill { background: #6366f1; }
 
   .wf-row-value { min-width: 84px; text-align: right; font-size: 12px; font-weight: 900; font-family: ui-monospace, monospace; color: var(--sola-text-secondary, #64748b); }
-  .wf-row.positive .wf-row-value { color: var(--sola-color-primary-700, #047857); }
+  .wf-row.positive .wf-row-value { color: var(--sola-alert-positive-text, #047857); }
   .wf-row.negative .wf-row-value { color: #be123c; }
   .wf-row.total .wf-row-value { color: #4f46e5; }
 

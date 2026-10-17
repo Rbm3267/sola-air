@@ -53,8 +53,6 @@ export interface DataCardProps {
   title?: string;
   value?: string | (() => string);
   trend?: string;
-  icon?: string;
-  accentColor?: string;
 }
 
 export interface TableColumn {
@@ -250,6 +248,99 @@ export interface SolaSafeHTMLProps {
   title?: string;
 }
 
+export interface LauncherDockItem {
+  id: string;
+  label: string;
+  icon?: string;
+  badge?: string | number;
+}
+
+export interface LauncherDockProps {
+  items?: LauncherDockItem[] | (() => LauncherDockItem[]);
+  active?: string | null | (() => string | null);
+  position?: 'bottom' | 'left' | 'right';
+  label?: string;
+  onSelect?: (item: LauncherDockItem) => void;
+}
+
+export interface CommandPaletteItem {
+  id: string;
+  label: string;
+  hint?: string;
+}
+
+export interface CommandPaletteProps {
+  commands?: CommandPaletteItem[] | (() => CommandPaletteItem[]);
+  isOpen?: boolean | null | (() => boolean | null);
+  hotkey?: string;
+  placeholder?: string;
+  label?: string;
+  onSelect?: (command: CommandPaletteItem) => void;
+  onClose?: () => void;
+}
+
+export interface CompanionDrawerProps {
+  title?: string | (() => string);
+  initialOpen?: boolean;
+  isOpen?: boolean | null | (() => boolean | null);
+  side?: 'left' | 'right';
+  width?: string;
+  onClose?: () => void;
+  children?: (target: HTMLElement) => void;
+}
+
+export interface ToastHostItem {
+  id: number;
+  kind: 'info' | 'success' | 'warning' | 'error' | string;
+  text: string;
+}
+
+export interface ToastHostProps {
+  listen?: string;
+  duration?: number;
+  max?: number;
+  onDismiss?: (toast: ToastHostItem) => void;
+}
+
+export interface IntentCardData {
+  title?: string;
+  value?: string | number;
+  trend?: string;
+  [key: string]: unknown;
+}
+
+export interface IntentCardProps {
+  data?: IntentCardData | (() => IntentCardData | string | null) | null;
+  loading?: boolean;
+}
+
+export interface IntentListItem {
+  label?: string;
+  name?: string;
+  description?: string;
+  status?: string;
+}
+
+export interface IntentListProps {
+  data?:
+    | Array<IntentListItem | string>
+    | { items?: Array<IntentListItem | string> }
+    | (() => Array<IntentListItem | string> | { items?: Array<IntentListItem | string> } | string | null)
+    | null;
+  title?: string;
+}
+
+export interface AmbientSuggestionItem {
+  label: string;
+  action?: string;
+  confidence?: number;
+}
+
+export interface AmbientSuggestionProps {
+  suggestion?: AmbientSuggestionItem | (() => AmbientSuggestionItem | null) | null;
+  onDismiss?: (suggestion: AmbientSuggestionItem | null) => void;
+}
+
 export interface ConversationThreadProps {
   endpoint?: string;
   model?: string | null;
@@ -258,6 +349,47 @@ export interface ConversationThreadProps {
   systemLabel?: string;
   userLabel?: string;
   onmessage?: (messages: Array<{ role: string; content: string; error?: boolean }>) => void;
+}
+
+export interface ActionStripItem {
+  label: string;
+  description?: string;
+  icon?: string;
+  badge?: string | number;
+  variant?: 'default' | 'primary' | 'danger';
+  disabled?: boolean;
+  href?: string;
+  onclick?: () => void;
+}
+
+export interface ActionStripProps {
+  actions?: ActionStripItem[];
+  onaction?: (action: ActionStripItem) => void;
+  label?: string;
+  variant?: 'default' | 'compact';
+}
+
+export interface ConfidenceBadgeProps {
+  score?: number | null | (() => number | null);
+  label?: string | null | (() => string | null);
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export interface IntentSheetAction {
+  label: string;
+  variant?: 'default' | 'primary';
+  disabled?: boolean;
+  onclick?: () => void;
+}
+
+export interface IntentSheetProps {
+  open?: boolean | (() => boolean);
+  title?: string;
+  intent?: unknown;
+  actions?: IntentSheetAction[];
+  onclose?: () => void;
+  onaction?: (action: IntentSheetAction) => void;
+  side?: 'right' | 'bottom';
 }
 
 // ─── Layout ───
@@ -294,19 +426,19 @@ export const Modal: SolaComponent<ModalProps>;
 export const Toast: SolaComponent<ToastProps>;
 
 // ─── Shell (see docs/rfcs/0002-shell-primitives.md) ───
-export const LauncherDock: SolaComponent;
-export const CommandPalette: SolaComponent;
-export const CompanionDrawer: SolaComponent;
-export const ToastHost: SolaComponent;
+export const LauncherDock: SolaComponent<LauncherDockProps>;
+export const CommandPalette: SolaComponent<CommandPaletteProps>;
+export const CompanionDrawer: SolaComponent<CompanionDrawerProps>;
+export const ToastHost: SolaComponent<ToastHostProps>;
 
 // ─── Raw HTML ───
 export const SolaSafeHTML: SolaComponent<SolaSafeHTMLProps>;
 
 // ─── Ambient intent ───
-export const IntentCard: SolaComponent;
-export const IntentList: SolaComponent;
-export const AmbientSuggestion: SolaComponent;
+export const IntentCard: SolaComponent<IntentCardProps>;
+export const IntentList: SolaComponent<IntentListProps>;
+export const AmbientSuggestion: SolaComponent<AmbientSuggestionProps>;
 export const ConversationThread: SolaComponent<ConversationThreadProps>;
-export const ActionStrip: SolaComponent;
-export const ConfidenceBadge: SolaComponent;
-export const IntentSheet: SolaComponent;
+export const ActionStrip: SolaComponent<ActionStripProps>;
+export const ConfidenceBadge: SolaComponent<ConfidenceBadgeProps>;
+export const IntentSheet: SolaComponent<IntentSheetProps>;

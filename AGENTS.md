@@ -103,7 +103,7 @@ An earlier version of this document said `{:else if}` was unsupported and nested
 </script>
 
 <div class="grid grid-cols-2 gap-4">
-  <DataCard title="Cluster Volume" value={rps} trend="+14% vs baseline" icon="activity" />
+  <DataCard title="Cluster Volume" value={rps} trend="+14% vs baseline" />
   <StatGrid columns="2" gap="10px">
     <!-- ... -->
   </StatGrid>

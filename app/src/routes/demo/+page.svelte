@@ -4,7 +4,7 @@
   import Navbar from '$lib/components/Navbar.svelte';
   import SignalMeshConsole from '$lib/components/SignalMeshConsole.svelte';
   import BehavioralIntentConsole from '$lib/components/BehavioralIntentConsole.svelte';
-  import SolaHost from '$lib/components/SolaHost.svelte';
+  import SolaMount from '$lib/components/SolaMount.svelte';
   import NativeDashboard from '@sola-air-ui/ui/Dashboard.sola';
   import { fly, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
@@ -464,7 +464,7 @@
     {#if viewMode === 'native'}
       <!-- LIVE NATIVE ZERO-VDOM .SOLA COMPILED ENGINE -->
       <div class="w-full bg-white/70 dark:bg-white/[0.02] backdrop-blur-2xl border border-slate-200/80 dark:border-white/[0.06] rounded-3xl p-6 sm:p-8 shadow-sm">
-        <SolaHost component={NativeDashboard} class="w-full" />
+        <SolaMount component={NativeDashboard} />
       </div>
     {:else if viewMode === 'behavior'}
       <!-- LIVE BEHAVIORAL INTENT & ADAPTIVE PERSONA CONSOLE -->

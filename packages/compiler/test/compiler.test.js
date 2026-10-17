@@ -808,10 +808,14 @@ test('desugarElseIf and transformBlocks handle nested braces in conditions and p
   assert(code.includes('String(keyOf(item))'), 'each key with nested parens: ' + code);
 });
 
-test('bind:this={varName} assigns the created DOM element to varName', () => {
-  const { code } = compile('<script>let canvasEl = null;</script><canvas bind:this={canvasEl}></canvas>');
-  assertValidJs(code);
-  assert(code.includes('canvasEl = n0;'), 'bind:this emitted: ' + code);
+test('bind:this={box} works with both plain let and $state', () => {
+  const { code: plainCode } = compile('<script>let box = null;</script><div bind:this={box}></div>');
+  assertValidJs(plainCode);
+  assert(plainCode.includes('box = n0;'), 'plain let bind:this emitted: ' + plainCode);
+
+  const { code: stateCode } = compile('<script>let box = $state(null);</script><div bind:this={box}></div>');
+  assertValidJs(stateCode);
+  assert(stateCode.includes('set_box(n0);'), '$state bind:this emitted: ' + stateCode);
 });
 
 test('HTML comments with braces or commented-out blocks are stripped before compilation', () => {

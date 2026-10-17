@@ -107,7 +107,7 @@
     font-weight: 700;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     background: var(--sola-alert-positive-bg, #ecfdf5);
-    color: var(--sola-color-primary-700, #047857);
+    color: var(--sola-alert-positive-text, #047857);
     border: 1px solid rgba(16, 185, 129, 0.2);
   }
 

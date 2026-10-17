@@ -19,24 +19,24 @@
   .info {
     background: var(--sola-alert-info-bg, #eff6ff);
     color: var(--sola-alert-info, #1d4ed8);
-    border-color: #bfdbfe;
+    border-color: var(--sola-border-subtle, #bfdbfe);
   }
 
   .success {
     background: var(--sola-alert-positive-bg, #ecfdf5);
-    color: var(--sola-color-primary-700, #047857);
-    border-color: #a7f3d0;
+    color: var(--sola-alert-positive-text, #047857);
+    border-color: var(--sola-border-subtle, #a7f3d0);
   }
 
   .warning {
     background: var(--sola-alert-warning-bg, #fffbeb);
     color: var(--sola-alert-warning, #b45309);
-    border-color: #fde68a;
+    border-color: var(--sola-border-subtle, #fde68a);
   }
 
   .error {
     background: var(--sola-alert-high-bg, #fef2f2);
     color: var(--sola-alert-high, #b91c1c);
-    border-color: #fecaca;
+    border-color: var(--sola-border-subtle, #fecaca);
   }
 </style>

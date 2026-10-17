@@ -27,8 +27,8 @@
   }
 
   .warning {
-    background: #fffbeb;
-    color: #d97706;
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    color: var(--sola-alert-warning, #b45309);
   }
 
   .error {

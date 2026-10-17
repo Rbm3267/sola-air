@@ -48,14 +48,14 @@
 
   <!-- Conditional Alert Banner -->
   {#if isThrottling}
-    <div class="alert-banner alert-warning">
+    <div class="alert-banner alert-warning" role="status">
       <span class="alert-icon">⚠</span>
       <div>
         <strong>Cluster Capacity Warning:</strong> Ingress load reached {capacityPct}% capacity. Auto-scaling edge workers.
       </div>
     </div>
   {:else}
-    <div class="alert-banner alert-nominal">
+    <div class="alert-banner alert-nominal" role="status">
       <span class="alert-icon">✓</span>
       <div>
         <strong>Cluster Status Nominal:</strong> Zero packet loss, all 3 regions healthy.
@@ -182,7 +182,7 @@
   .badge-text {
     font-size: 12px;
     font-weight: 700;
-    color: var(--sola-color-primary-700, #047857);
+    color: var(--sola-alert-positive-text, #047857);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
