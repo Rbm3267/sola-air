@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "npm run dev -w app",
     "build": "npm run build -w app",
-    "test": "node --test packages/core/test/core.test.js packages/core/test/sentinel.test.js packages/core/test/persist.test.js packages/core/test/bus.test.js packages/core/test/size.test.js packages/sentinel/test/sentinel.test.js packages/sentinel/test/observe.test.js packages/create-sola/test/scaffold.test.js packages/sola-extension/test/codegen.test.js packages/sola-extension/test/package.test.js packages/vscode-extension/test/package.test.js scripts/github-releases.test.mjs && node packages/compiler/test/compiler.test.js",
+    "test": "node --test packages/core/test/core.test.js packages/core/test/sentinel.test.js packages/core/test/persist.test.js packages/core/test/bus.test.js packages/core/test/size.test.js packages/sentinel/test/sentinel.test.js packages/sentinel/test/observe.test.js packages/compiler/test/check.test.js packages/create-sola/test/scaffold.test.js packages/sola-extension/test/codegen.test.js packages/sola-extension/test/package.test.js packages/vscode-extension/test/package.test.js scripts/github-releases.test.mjs && node packages/compiler/test/compiler.test.js",
     "test:e2e": "playwright test",
     "test:snippets": "playwright test e2e/docs-snippets.spec.ts"
   },

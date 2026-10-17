@@ -5,10 +5,15 @@
   "type": "module",
   "main": "./src/index.js",
   "bin": {
-    "sola": "src/cli.js"
+    "sola": "src/cli.js",
+    "sola-check": "src/check-cli.js"
   },
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./check": {
+      "types": "./types/check.d.ts",
+      "default": "./src/check.js"
+    }
   },
   "scripts": {
     "test": "node test/compiler.test.js"
