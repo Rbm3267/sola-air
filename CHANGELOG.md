@@ -4,6 +4,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/compiler`
+
+- **Fixed**: removing a child component (its `{#if}` closing, its `{#each}` item going, or a prop change
+  re-mounting it) no longer stops the parent's bindings and effects that come after it. A component's mount
+  left its lifecycle context active, so the parent's later bindings were registered to the child.
+- **Fixed**: inline `<svg>` and its children are created in the SVG namespace, with `class` set as an
+  attribute. They were HTML elements, so shapes rendered with no size.
+
 ### `@sola-air-ui/ui`
 
 - **Fixed**: `Select` shows `initialSelected` when its options come from the `options` prop. The select's

@@ -10,7 +10,6 @@
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, rmSync, readdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execFileSync } from 'node:child_process';
 import { buildSync } from 'esbuild';
 import { parse as acornParse } from 'acorn';
 import { readUiManifest } from './ui-manifest.mjs';

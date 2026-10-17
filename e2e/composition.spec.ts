@@ -156,3 +156,41 @@ test.describe('child components', () => {
     expect(await page.evaluate(() => (window as any).__log)).toEqual(['destroyed:kid']);
   });
 });
+
+test.describe('parent after a child', () => {
+  // A child's mount used to leave its context active, so everything the parent
+  // mounted after it was registered to the child and torn down with it.
+  test('bindings after a child keep updating once the child is removed', async ({ page }) => {
+    const errors = await mountParent(page, `<script>
+  import Chip from './Chip.sola';
+  let show = $state(true);
+  let count = $state(0);
+</script>
+<div>
+  {#if show}<Chip title="kid" />{/if}
+  <p id="count">{count}</p>
+  <button id="hide" onclick={() => (show = false)}>hide</button>
+  <button id="inc" onclick={() => (count += 1)}>inc</button>
+</div>`);
+    await click(page, 'inc');
+    await expect(page.locator('#count')).toHaveText('1');
+    await click(page, 'hide');
+    await expect(page.locator('.chip')).toHaveCount(0);
+    await click(page, 'inc');
+    await expect(page.locator('#count')).toHaveText('2');
+    expect(errors).toEqual([]);
+  });
+
+  test('inline SVG renders as SVG, with its classes', async ({ page }) => {
+    const errors = await mountParent(page, `<div>
+  <svg viewBox="0 0 10 10" width="40" height="40"><circle class="dot" cx="5" cy="5" r="4" /></svg>
+</div>
+<style>.dot { fill: red; }</style>`);
+    const circle = await page.evaluate(() => {
+      const c = document.querySelector('circle')!;
+      return { ns: c.namespaceURI, width: c.getBoundingClientRect().width, cls: c.getAttribute('class')!.split(' ').includes('dot') };
+    });
+    expect(circle).toEqual({ ns: 'http://www.w3.org/2000/svg', width: 32, cls: true });
+    expect(errors).toEqual([]);
+  });
+});
