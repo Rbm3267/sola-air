@@ -46,7 +46,7 @@
          not a drag-and-drop canvas. -->
     <a
       href="/docs"
-      class="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 bg-slate-900 hover:bg-slate-800 text-white dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white shadow-md shadow-slate-900/10 dark:shadow-blue-500/20 hover:-translate-y-0.5 text-center text-sm flex items-center justify-center gap-2 cursor-pointer">
+      class="px-6 py-3 rounded-2xl font-semibold transition-all duration-200 bg-slate-900 hover:bg-slate-800 text-white dark:bg-blue-600 dark:hover:bg-blue-500 dark:text-white shadow-md shadow-slate-900/10 dark:shadow-blue-500/20 hover:-translate-y-0.5 text-center text-sm flex items-center justify-center gap-2 cursor-pointer">
       <span>Get started</span>
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     </a>

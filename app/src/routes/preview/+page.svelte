@@ -126,7 +126,7 @@
           <div class="w-9 h-9 rounded-2xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center font-semibold text-xs">
             B
           </div>
-          <span class="text-xs font-mono uppercase tracking-wider font-semibold text-sky-600 dark:text-sky-400">Mode 2</span>
+          <span class="text-xs font-mono uppercase tracking-wider font-semibold text-sky-700 dark:text-sky-400">Mode 2</span>
         </div>
         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Pull numbers off the page (Drag to Select)</h3>
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
@@ -221,7 +221,7 @@
                   <h3 class="text-lg font-bold text-slate-900 dark:text-white">Active Cloud Console</h3>
                   <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">Live host page DOM (e.g. internal dashboard, cloud admin, or local server)</p>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-xs font-mono font-semibold text-slate-500">
+                <span class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-xs font-mono font-semibold text-slate-600 dark:text-slate-400">
                   Host DOM
                 </span>
               </div>
@@ -262,6 +262,7 @@
                     </span>
                     <button
                       onclick={() => (isCardInjected = false)}
+                      aria-label="Dismiss"
                       class="text-slate-500 dark:text-slate-400 hover:text-white text-xs p-1 rounded-md hover:bg-white/10 flex items-center justify-center cursor-pointer">
                       <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
@@ -319,7 +320,7 @@
                     </div>
                     <span class="font-semibold text-xs text-slate-900 dark:text-white">Sola AIR Side Panel</span>
                   </div>
-                  <span class="text-xs font-mono px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-600 font-semibold">12 Cards</span>
+                  <span class="text-xs font-mono px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-semibold">12 Cards</span>
                 </div>
 
                 <!-- Side Panel Component Cards List -->
@@ -332,7 +333,7 @@
                     class="w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer {selectedComponent === 'Telemetry Stream Chart' && isCardInjected ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-500 text-blue-950 dark:text-white font-bold' : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:bg-blue-50/50'}">
                     <div class="flex items-center justify-between">
                       <span class="text-xs">Telemetry Stream</span>
-                      <span class="text-xs font-mono text-blue-600 font-semibold">Anchor →</span>
+                      <span class="text-xs font-mono text-blue-700 dark:text-blue-400 font-semibold">Anchor →</span>
                     </div>
                     <p class="text-xs text-slate-500 dark:text-slate-400 font-normal mt-0.5 max-w-[68ch]">SVG live chart</p>
                   </button>
@@ -343,7 +344,7 @@
                     class="w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer {selectedComponent === 'Haptic Rotary Dial' && isCardInjected ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-500 text-blue-950 dark:text-white font-bold' : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:bg-blue-50/50'}">
                     <div class="flex items-center justify-between">
                       <span class="text-xs">Haptic Rotary Dial</span>
-                      <span class="text-xs font-mono text-blue-600 font-semibold">Anchor →</span>
+                      <span class="text-xs font-mono text-blue-700 dark:text-blue-400 font-semibold">Anchor →</span>
                     </div>
                     <p class="text-xs text-slate-500 dark:text-slate-400 font-normal mt-0.5 max-w-[68ch]">Tactile rate-limiting throttle</p>
                   </button>
@@ -354,7 +355,7 @@
                     class="w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer {selectedComponent === 'Date Range Picker' && isCardInjected ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-500 text-blue-950 dark:text-white font-bold' : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:bg-blue-50/50'}">
                     <div class="flex items-center justify-between">
                       <span class="text-xs">Date Range Picker</span>
-                      <span class="text-xs font-mono text-blue-600 font-semibold">Anchor →</span>
+                      <span class="text-xs font-mono text-blue-700 dark:text-blue-400 font-semibold">Anchor →</span>
                     </div>
                     <p class="text-xs text-slate-500 dark:text-slate-400 font-normal mt-0.5 max-w-[68ch]">Calendar matrix range filter</p>
                   </button>

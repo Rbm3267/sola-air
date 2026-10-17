@@ -57,7 +57,7 @@
               A drag-and-drop canvas with {CATALOG_COUNT} components and live signal simulators.
             </p>
           </div>
-          <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all">
+          <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all">
             <span>Launch Studio</span>
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
@@ -76,7 +76,7 @@
               A Chrome extension that drops a Sola component into any page you have open, inside a closed Shadow DOM so its styles don't touch the page.
             </p>
           </div>
-          <a href="/preview" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all">
+          <a href="/preview" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all">
             <span>Try in Simulator</span>
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
@@ -162,7 +162,7 @@
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between px-2">
               <span class="font-mono text-xs font-semibold text-slate-500 dark:text-slate-400">ListBlock</span>
-              <span class="text-xs font-mono text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded font-semibold border border-sky-100 dark:border-sky-500/20">Svelte preview</span>
+              <span class="text-xs font-mono text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded font-semibold border border-sky-100 dark:border-sky-500/20">Svelte preview</span>
             </div>
             <div>
               <ListBlock config={{ 

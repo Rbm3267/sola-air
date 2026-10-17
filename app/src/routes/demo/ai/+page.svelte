@@ -75,10 +75,10 @@
 
   const badgeColor = $derived(() => {
     const t = badgeTier();
-    if (t === 'high') return { fg: '#059669', bg: '#ecfdf5', label: 'High confidence' };
-    if (t === 'medium') return { fg: '#ca8a04', bg: '#fefce8', label: 'Medium confidence' };
-    if (t === 'low') return { fg: '#dc2626', bg: '#fef2f2', label: 'Low confidence' };
-    return { fg: '#64748b', bg: '#f8fafc', label: 'Unknown' };
+    if (t === 'high') return { fg: '#047857', bg: '#ecfdf5', label: 'High confidence' };
+    if (t === 'medium') return { fg: '#a16207', bg: '#fefce8', label: 'Medium confidence' };
+    if (t === 'low') return { fg: '#b91c1c', bg: '#fef2f2', label: 'Low confidence' };
+    return { fg: '#475569', bg: '#f8fafc', label: 'Unknown' };
   });
 
   // ── ActionStrip state ──────────────────────────────────────────────────────
@@ -122,13 +122,13 @@
 
   // ── Token showcase state ──────────────────────────────────────────────────
   const alertRoles = [
-    { name: 'low',      fg: '#64748b', bg: '#f8fafc',  label: 'Low'      },
-    { name: 'positive', fg: '#059669', bg: '#ecfdf5',  label: 'Positive' },
-    { name: 'info',     fg: '#0284c7', bg: '#f0f9ff',  label: 'Info'     },
-    { name: 'moderate', fg: '#ca8a04', bg: '#fefce8',  label: 'Moderate' },
-    { name: 'warning',  fg: '#ea580c', bg: '#fff7ed',  label: 'Warning'  },
-    { name: 'high',     fg: '#dc2626', bg: '#fef2f2',  label: 'High'     },
-    { name: 'critical', fg: '#9333ea', bg: '#faf5ff',  label: 'Critical' },
+    { name: 'low',      fg: '#475569', bg: '#f8fafc',  label: 'Low'      },
+    { name: 'positive', fg: '#047857', bg: '#ecfdf5',  label: 'Positive' },
+    { name: 'info',     fg: '#0369a1', bg: '#f0f9ff',  label: 'Info'     },
+    { name: 'moderate', fg: '#a16207', bg: '#fefce8',  label: 'Moderate' },
+    { name: 'warning',  fg: '#c2410c', bg: '#fff7ed',  label: 'Warning'  },
+    { name: 'high',     fg: '#b91c1c', bg: '#fef2f2',  label: 'High'     },
+    { name: 'critical', fg: '#7e22ce', bg: '#faf5ff',  label: 'Critical' },
   ];
 
   const spaceSteps = [
@@ -323,10 +323,11 @@
         <div>
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">score prop (drag to change)</span>
-            <span class="font-mono text-sm font-semibold" style="color: {badgeColor().fg}">{badgeScore.toFixed(2)}</span>
+            <span class="font-mono text-sm font-semibold text-slate-900 dark:text-white">{badgeScore.toFixed(2)}</span>
           </div>
           <input
             type="range" min="0" max="1" step="0.01"
+            aria-label="Score"
             bind:value={badgeScore}
             class="w-full accent-blue-500 cursor-pointer"
           />
@@ -337,7 +338,7 @@
             >
               <span class="w-2 h-2 rounded-full" style="background: {badgeColor().fg}"></span>
               {badgeColor().label}
-              <span class="text-xs font-mono opacity-70">{badgeScore.toFixed(0) === '1' ? '100' : (badgeScore * 100).toFixed(0)}%</span>
+              <span class="text-xs font-mono">{badgeScore.toFixed(0) === '1' ? '100' : (badgeScore * 100).toFixed(0)}%</span>
             </span>
           </div>
         </div>
@@ -347,10 +348,10 @@
           <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 max-w-[68ch]">All tiers · sizes sm / md / lg</p>
           <div class="space-y-3">
             {#each [
-              { score: 0.94, tier: 'high',    fg: '#059669', bg: '#ecfdf5', label: 'High' },
-              { score: 0.71, tier: 'medium',  fg: '#ca8a04', bg: '#fefce8', label: 'Medium' },
-              { score: 0.32, tier: 'low',     fg: '#dc2626', bg: '#fef2f2', label: 'Low' },
-              { score: null, tier: 'unknown', fg: '#64748b', bg: '#f8fafc', label: 'Unknown' },
+              { score: 0.94, tier: 'high',    fg: '#047857', bg: '#ecfdf5', label: 'High' },
+              { score: 0.71, tier: 'medium',  fg: '#a16207', bg: '#fefce8', label: 'Medium' },
+              { score: 0.32, tier: 'low',     fg: '#b91c1c', bg: '#fef2f2', label: 'Low' },
+              { score: null, tier: 'unknown', fg: '#475569', bg: '#f8fafc', label: 'Unknown' },
             ] as row}
               <div class="flex items-center gap-3">
                 {#each ['sm', 'md', 'lg'] as size}
@@ -373,7 +374,7 @@
                     "></span>
                     {row.label}
                     {#if row.score !== null}
-                      <span style="opacity:0.65;font-family:monospace;font-size:1em">{(row.score * 100).toFixed(0)}%</span>
+                      <span style="font-family:monospace;font-size:1em">{(row.score * 100).toFixed(0)}%</span>
                     {/if}
                   </span>
                 {/each}
@@ -522,7 +523,7 @@
                 style="background: {role.bg};"
               >
                 <span class="text-sm font-semibold" style="color: {role.fg};">{role.label}</span>
-                <span class="text-xs font-mono opacity-60" style="color: {role.fg};">{role.fg}</span>
+                <span class="text-xs font-mono" style="color: {role.fg};">{role.fg}</span>
               </div>
             {/each}
           </div>
@@ -543,7 +544,7 @@
                 <span class="text-slate-900 dark:text-white font-semibold leading-tight" style="font-size: {step.px}px;">Aa</span>
                 <div>
                   <span class="text-xs font-mono text-slate-500 dark:text-slate-400">{step.name} · {step.px}px</span>
-                  <span class="text-xs text-slate-400 dark:text-slate-500 ml-2">— {step.use}</span>
+                  <span class="text-xs text-slate-600 dark:text-slate-400 ml-2">— {step.use}</span>
                 </div>
               </div>
             {/each}

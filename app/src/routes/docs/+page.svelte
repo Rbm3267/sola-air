@@ -452,14 +452,14 @@ export function SolaWidget({ title, value }) {
                   <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
                   <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
                   <span class="w-3 h-3 rounded-full bg-blue-500/80"></span>
-                  <span class="text-xs font-mono text-slate-500 dark:text-slate-400 ml-2">Terminal</span>
+                  <span class="text-xs font-mono text-slate-400 ml-2">Terminal</span>
                 </div>
                 <!-- Package Manager Tabs -->
                 <div class="flex items-center bg-slate-800 p-0.5 rounded-lg text-xs font-mono">
                   {#each (['npm', 'pnpm', 'yarn', 'bun'] as const) as pm}
                     <button 
                       onclick={() => packageManager = pm}
-                      class="px-2 py-0.5 rounded transition-all cursor-pointer {packageManager === pm ? 'bg-blue-500 text-white font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-white'}">
+                      class="px-2 py-0.5 rounded transition-all cursor-pointer {packageManager === pm ? 'bg-blue-600 text-white font-bold' : 'text-slate-400 hover:text-white'}">
                       {pm}
                     </button>
                   {/each}
@@ -469,6 +469,7 @@ export function SolaWidget({ title, value }) {
                 <code>$ {scaffoldCmds[packageManager]}</code>
                 <button 
                   onclick={() => handleCopy(scaffoldCmds[packageManager], 'scaffold')}
+                  aria-label="Copy command"
                   class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shrink-0 ml-4">
                   {#if copiedId === 'scaffold'}
                     <span class="text-xs text-blue-400 font-semibold px-1">Copied!</span>
@@ -489,13 +490,14 @@ export function SolaWidget({ title, value }) {
 
             <div class="rounded-2xl bg-slate-950 border border-slate-800 shadow-xl overflow-hidden">
               <div class="px-4 py-2.5 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between">
-                <span class="text-xs font-mono text-slate-500 dark:text-slate-400">Terminal</span>
-                <span class="text-xs font-mono text-slate-500">{packageManager}</span>
+                <span class="text-xs font-mono text-slate-400">Terminal</span>
+                <span class="text-xs font-mono text-slate-400">{packageManager}</span>
               </div>
               <div class="p-5 flex items-center justify-between font-mono text-xs text-blue-400 overflow-x-auto">
                 <code>$ {installCmds[packageManager]}</code>
                 <button 
                   onclick={() => handleCopy(installCmds[packageManager], 'install')}
+                  aria-label="Copy command"
                   class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer shrink-0 ml-4">
                   {#if copiedId === 'install'}
                     <span class="text-xs text-blue-400 font-semibold px-1">Copied!</span>
@@ -516,13 +518,14 @@ export function SolaWidget({ title, value }) {
 
             <div class="rounded-2xl bg-slate-950 border border-slate-800 shadow-xl overflow-hidden">
               <div class="px-4 py-2.5 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between">
-                <span class="text-xs font-mono text-slate-500 dark:text-slate-400">vite.config.ts</span>
-                <span class="text-xs font-mono text-slate-500">TypeScript</span>
+                <span class="text-xs font-mono text-slate-400">vite.config.ts</span>
+                <span class="text-xs font-mono text-slate-400">TypeScript</span>
               </div>
               <div class="p-5 relative font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
                 <pre><code>{viteConfigCode}</code></pre>
                 <button 
                   onclick={() => handleCopy(viteConfigCode, 'vite-cfg')}
+                  aria-label="Copy code"
                   class="absolute top-4 right-4 p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer">
                   {#if copiedId === 'vite-cfg'}
                     <span class="text-xs text-blue-400 font-semibold px-1">Copied!</span>
@@ -578,6 +581,7 @@ export function SolaWidget({ title, value }) {
               <pre><code>{syntaxExample}</code></pre>
               <button 
                 onclick={() => handleCopy(syntaxExample, 'syntax')}
+                aria-label="Copy code"
                 class="absolute top-4 right-4 p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer">
                 {#if copiedId === 'syntax'}
                   <span class="text-xs text-blue-400 font-semibold px-1">Copied!</span>

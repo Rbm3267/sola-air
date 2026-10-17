@@ -29,7 +29,7 @@
         <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-widest font-mono">{config.title}</span>
       </div>
       <div class="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400">
-        <span class="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-900 font-semibold text-xs border border-amber-200 dark:border-amber-500/20/80">POST</span>
+        <span class="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-900 dark:text-amber-300 font-semibold text-xs border border-amber-200 dark:border-amber-500/20/80">POST</span>
         <span class="text-slate-600 dark:text-slate-400 font-semibold">{config.endpoint}</span>
       </div>
     </div>

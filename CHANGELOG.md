@@ -4,6 +4,17 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/ui`
+
+- **Fixed**: `Dashboard` text contrast. Card labels and node sub-lines use the secondary text token
+  instead of tertiary, the primary button is blue-600, the status pill reads from the new
+  `--sola-alert-positive-text` token, and the throughput slider has an accessible name.
+
+### `@sola-air-ui/tokens`
+
+- **Added `--sola-alert-positive-text`**: a foreground for positive status text that meets 4.5:1 on
+  `--sola-alert-positive-bg` in both themes (`#047857` light, `#34d399` dark).
+
 ## 2026-10-17: compiler 1.4.0, ui 1.5.0, create-sola 1.1.0
 
 ### `@sola-air-ui/compiler`

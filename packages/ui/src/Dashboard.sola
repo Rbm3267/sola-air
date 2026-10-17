@@ -105,6 +105,7 @@
       min="200" 
       max="2000" 
       step="10" 
+      aria-label="Target requests per second"
       bind:value={rps} 
       class="sola-range-input" 
     />
@@ -212,7 +213,7 @@
   }
 
   .btn-primary {
-    background: #3b82f6;
+    background: #2563eb;
     color: var(--sola-color-neutral-0, #ffffff);
   }
 
@@ -299,7 +300,7 @@
   .card-label {
     font-size: 12px;
     font-weight: 700;
-    color: var(--sola-text-tertiary, #94a3b8);
+    color: var(--sola-text-secondary, #475569);
     letter-spacing: 0.1em;
     margin-bottom: 6px;
   }
@@ -418,7 +419,7 @@
 
   .node-sub {
     font-size: 12px;
-    color: var(--sola-text-tertiary, #94a3b8);
+    color: var(--sola-text-secondary, #475569);
     font-family: ui-monospace, monospace;
   }
 
@@ -441,7 +442,7 @@
     font-size: 12px;
     font-weight: 800;
     background: var(--sola-alert-positive-bg, #ecfdf5);
-    color: var(--sola-color-primary-700, #047857);
+    color: var(--sola-alert-positive-text, #047857);
     border: 1px solid rgba(16, 185, 129, 0.2);
   }
 </style>

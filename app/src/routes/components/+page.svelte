@@ -160,7 +160,7 @@
         {#each categories as category}
           <button 
             onclick={() => activeCategory = category}
-            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shadow-2xs {activeCategory === category ? 'bg-blue-500 text-white font-semibold shadow-sm' : 'bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'}">
+            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shadow-2xs {activeCategory === category ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'}">
             {category}
           </button>
         {/each}
@@ -238,7 +238,7 @@
           <!-- Open in Studio Action Button -->
           <a 
             href="/studio?add={selectedComponent.id}" 
-            class="px-5 py-2.5 rounded-xl bg-slate-950 dark:bg-blue-500 text-white dark:text-white hover:bg-slate-800 dark:hover:bg-blue-400 font-semibold text-xs flex items-center gap-2 transition-all shadow-md cursor-pointer shrink-0">
+            class="px-5 py-2.5 rounded-xl bg-slate-950 dark:bg-blue-600 text-white dark:text-white hover:bg-slate-800 dark:hover:bg-blue-500 font-semibold text-xs flex items-center gap-2 transition-all shadow-md cursor-pointer shrink-0">
             <span>Drop in Studio</span>
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
@@ -540,10 +540,10 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               {#if liveProps.title !== undefined}
                 <div>
-                  <label class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Title Prop</label>
+                  <label for="live-prop-title" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Title Prop</label>
                   <input 
                     type="text" 
-                    bind:value={liveProps.title} 
+                    id="live-prop-title" bind:value={liveProps.title} 
                     class="w-full bg-white dark:bg-[#090d19] border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -551,10 +551,10 @@
 
               {#if liveProps.value !== undefined}
                 <div>
-                  <label class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Value Prop</label>
+                  <label for="live-prop-value" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Value Prop</label>
                   <input 
                     type="text" 
-                    bind:value={liveProps.value} 
+                    id="live-prop-value" bind:value={liveProps.value} 
                     class="w-full bg-white dark:bg-[#090d19] border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -562,10 +562,10 @@
 
               {#if liveProps.trend !== undefined}
                 <div>
-                  <label class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Trend Badge</label>
+                  <label for="live-prop-trend" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Trend Badge</label>
                   <input 
                     type="text" 
-                    bind:value={liveProps.trend} 
+                    id="live-prop-trend" bind:value={liveProps.trend} 
                     class="w-full bg-white dark:bg-[#090d19] border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -573,14 +573,14 @@
 
               {#if liveProps.percentage !== undefined}
                 <div>
-                  <label class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
+                  <label for="live-prop-percentage" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
                     Percentage ({liveProps.percentage}%)
                   </label>
                   <input 
                     type="range" 
                     min="0" 
                     max="100" 
-                    bind:value={liveProps.percentage} 
+                    id="live-prop-percentage" bind:value={liveProps.percentage} 
                     class="w-full accent-blue-500 cursor-pointer"
                   />
                 </div>
@@ -588,9 +588,9 @@
 
               {#if liveProps.color !== undefined}
                 <div>
-                  <label class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Accent Theme</label>
+                  <label for="live-prop-color" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Accent Theme</label>
                   <select 
-                    bind:value={liveProps.color}
+                    id="live-prop-color" bind:value={liveProps.color}
                     class="w-full bg-white dark:bg-[#090d19] border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500">
                     <option value="emerald">Emerald</option>
                     <option value="sky">Sky Blue</option>
@@ -615,22 +615,22 @@
             <div class="flex items-center bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl text-xs font-mono">
               <button 
                 onclick={() => codeTab = 'sola'} 
-                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'sola' ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400'}">
+                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'sola' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
                 .sola
               </button>
               <button 
                 onclick={() => codeTab = 'react'} 
-                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'react' ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400'}">
+                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'react' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
                 React 19
               </button>
               <button 
                 onclick={() => codeTab = 'svelte'} 
-                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'svelte' ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400'}">
+                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'svelte' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
                 Svelte 5
               </button>
               <button 
                 onclick={() => codeTab = 'html'} 
-                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'html' ? 'bg-white dark:bg-blue-500 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400'}">
+                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'html' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
                 Web Component
               </button>
             </div>
