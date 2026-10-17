@@ -1,6 +1,6 @@
 {
   "name": "@sola-air-ui/compiler",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Compiler for Sola single-file components (.sola) \u2014 transforms template + script + style to ES modules",
   "type": "module",
   "main": "./src/index.js",

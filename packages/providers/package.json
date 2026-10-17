@@ -1,6 +1,6 @@
 {
   "name": "@sola-air-ui/providers",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Server-side LLM provider adapters for Sola AIR — Anthropic, OpenAI, Gemini, Ollama",
   "type": "module",
   "exports": {

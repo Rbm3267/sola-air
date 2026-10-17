@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Sola AIR",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Preview ambient zero-VDOM Sola AIR components directly on top of your live web apps in a closed Shadow DOM.",
   "permissions": [
     "activeTab",

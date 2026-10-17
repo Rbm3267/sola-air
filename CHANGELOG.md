@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: core 1.5.2, compiler 1.5.0, ui 1.6.0, providers 1.0.3, relay 1.0.3, vite-plugin-sola 1.0.4, create-sola 1.1.2, mcp 1.0.5, sola-air 1.2.1
+
 ### `@sola-air-ui/core`
 
 - **Fixed**: `flushSync()` wraps its effect loop in `try / finally` so a throwing effect never leaves `isFlushing` stuck `true`.
@@ -40,9 +42,34 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Fixed**: `.sola` imports with a Vite query (`?import`, `?v=…`, `?t=…`) compile. Asset queries (`?raw`,
   `?url`, `?inline`, `?worker`) are left to Vite, so `import src from './X.sola?raw'` still returns the source.
 
-### Extensions & Website (`app/`)
+### `create-sola`
 
-- **Added**: VS Code grammar rules for `{:else if ...}` and `{@html ...}`; Chrome extension preview drag listener cleanup on close.
+- **Changed**: new projects depend on core ^1.5.1, ui ^1.5.3, compiler ^1.4.1 and vite-plugin-sola ^1.0.3,
+  which resolve to this release's versions. (The floors must already be on npm when the scaffold job runs.)
+- **Changed**: the banner uses the logo's sky, blue and violet.
+
+### `@sola-air-ui/mcp`
+
+- **Fixed**: the `bin` path no longer starts with `./`, so npm stops rewriting it on publish.
+- **Changed**: requires `@sola-air-ui/compiler` ^1.5.0.
+
+### `sola-air`
+
+- **Changed**: dependency floors raised to this release (core ^1.5.2, compiler ^1.5.0, ui ^1.6.0,
+  providers ^1.0.3, relay ^1.0.3, vite-plugin-sola ^1.0.4, mcp ^1.0.5).
+
+### VS Code extension (`sola-vscode` 0.3.0)
+
+- **Added**: grammar rules for `{:else if ...}` and `{@html ...}`.
+- **Changed**: `icons/sola-file.png` upgraded from `32×32` to `128×128` for crisp Retina/HiDPI rendering in file trees and editor tabs.
+
+### Chrome extension (1.1.2)
+
+- **Fixed**: the preview's drag and Escape listeners are removed when it closes, instead of piling up.
+
+### Website (`app/`)
+
+- **Added `/changelog`**: release history page rendered at build time directly from the root `CHANGELOG.md`, with package filter pills and footer navigation.
 - **Fixed**: Dark-mode contrast in `SignalMeshConsole`, `ShellBusDemo` / `BusDemo.sola`, and `DataDemo` / `DataSheetDemo.sola` / `DataNodesDemo.sola`; `/studio` chart bar colors; replaced remaining fake multi-framework tabs in `DesignEngineStudio` and `componentCatalog.ts`; mapped `/components` to `@sola-air-ui/ui` subpaths; unified brand palette onto Sola Sky → Blue → Violet.
 
 ## 2026-10-17: mcp 1.0.4, ui 1.5.3
@@ -63,14 +90,6 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 - **Added**: the package root re-exports all 37 components, adding `AmbientSuggestion`, `Button`,
   `Chart`, `Dashboard`, `DatePicker`, `HtmlViewer` and `MarkdownViewer`, with type declarations.
-
-### VS Code extension (`sola-vscode`)
-
-- **Changed**: `icons/sola-file.png` upgraded from `32×32` to `128×128` for crisp Retina/HiDPI rendering in file trees and editor tabs.
-
-### Website (`app/`)
-
-- **Added `/changelog`**: release history page rendered at build time directly from the root `CHANGELOG.md`, with package filter pills and footer navigation.
 
 ## 2026-10-17: core 1.5.1, ui 1.5.2, create-sola 1.1.1
 
