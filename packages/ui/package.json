@@ -37,7 +37,11 @@
     "./flow-waterfall": "./src/FlowWaterfall.sola",
     "./incident-triage-matrix": "./src/IncidentTriageMatrix.sola",
     "./tactile-dial-card": "./src/TactileDialCard.sola",
-    "./safe-html": "./src/SolaSafeHTML.sola"
+    "./safe-html": "./src/SolaSafeHTML.sola",
+    "./launcher-dock": "./src/LauncherDock.sola",
+    "./command-palette": "./src/CommandPalette.sola",
+    "./companion-drawer": "./src/CompanionDrawer.sola",
+    "./toast-host": "./src/ToastHost.sola"
   },
   "license": "MIT",
   "homepage": "https://sola-air.dev",

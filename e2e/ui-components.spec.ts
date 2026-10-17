@@ -296,7 +296,8 @@ test('the library is overwhelmingly token-driven', async () => {
 test('migrated components take every colour from tokens', async () => {
   // A component that hardcodes colour cannot be rebranded or themed without a
   // fork, which is what made the library unusable as a design system.
-  const files = ['TextInput.sola', 'Modal.sola', 'Toast.sola', 'ai/IntentSheet.sola'];
+  const files = ['TextInput.sola', 'Modal.sola', 'Toast.sola', 'ai/IntentSheet.sola',
+    'LauncherDock.sola', 'CommandPalette.sola', 'CompanionDrawer.sola', 'ToastHost.sola'];
   for (const file of files) {
     const source = readFileSync(join(REPO_ROOT, 'packages/ui/src', file), 'utf8');
     const styleBlock = source.slice(source.indexOf('<style>'));

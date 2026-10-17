@@ -4,6 +4,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/ui`
+
+- **Added shell primitives** (RFC 0002): `LauncherDock` (icon buttons on one edge),
+  `CommandPalette` (searchable commands, opened with `mod+k`), `CompanionDrawer` (side panel
+  with a slot) and `ToastHost` (a toast stack filled from the `sola:toast` bus event). Each is
+  keyboard operable, takes its colors from `@sola-air-ui/tokens`, and is importable by subpath
+  and from the package root.
+
 ### `create-sola`
 
 - **Added**: new projects include `.vscode/extensions.json`, which recommends the
