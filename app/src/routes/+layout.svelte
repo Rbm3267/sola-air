@@ -1,5 +1,4 @@
 <script lang="ts">
-	import 'virtual:uno.css';
 	// Without this the site never loaded the tokens package, so every
 	// var(--sola-*) in a compiled .sola component silently used its light-mode
 	// fallback and dark mode could not work.
@@ -8,6 +7,7 @@
 	// install, which failed the production build twice.
 	import '../../../packages/tokens/src/tokens.css';
 	import '../app.css';
+	import 'virtual:uno.css';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { theme } from '$lib/stores/theme.svelte';
