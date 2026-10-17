@@ -59,3 +59,15 @@ test('.vscodeignore lets every contributed file into the .vsix', () => {
     assert(allowed(p.replace(/^\.\//, '')), `${p} would be left out of the .vsix`);
   }
 });
+
+test('file and extension icons are crisp HiDPI PNGs (>= 128x128)', () => {
+  const { languages } = pkg.contributes;
+  for (const rel of [languages[0].icon.light, languages[0].icon.dark, pkg.icon]) {
+    const buf = readFileSync(join(root, rel));
+    // PNG IHDR width/height sit at bytes 16..23 (big-endian uint32)
+    const width = buf.readUInt32BE(16);
+    const height = buf.readUInt32BE(20);
+    assert(width >= 128 && height >= 128, `${rel} must be >= 128x128 for Retina/HiDPI editors (got ${width}x${height})`);
+  }
+});
+

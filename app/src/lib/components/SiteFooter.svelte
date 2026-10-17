@@ -42,6 +42,7 @@
     {
       heading: 'Project',
       links: [
+        { href: '/changelog', label: 'Changelog' },
         { href: GITHUB_URL, label: 'GitHub', external: true },
         { href: '/privacy', label: 'Privacy' }
       ]

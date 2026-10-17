@@ -21,5 +21,11 @@ declare const __SOLA_UI_MANIFEST__: {
 	props: Record<string, string[]>;
 };
 declare const __SOLA_EXTENSION_VERSION__: string;
+declare const __SOLA_CHANGELOG__: Array<{
+	id: string;
+	date: string;
+	title: string;
+	packages: Array<{ pkg: string; items: string[] }>;
+}>;
 
 export {};

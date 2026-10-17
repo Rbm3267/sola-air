@@ -23,6 +23,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Added**: the package root re-exports all 37 components, adding `AmbientSuggestion`, `Button`,
   `Chart`, `Dashboard`, `DatePicker`, `HtmlViewer` and `MarkdownViewer`, with type declarations.
 
+### VS Code extension (`sola-vscode`)
+
+- **Changed**: `icons/sola-file.png` upgraded from `32×32` to `128×128` for crisp Retina/HiDPI rendering in file trees and editor tabs.
+
+### Website (`app/`)
+
+- **Added `/changelog`**: release history page rendered at build time directly from the root `CHANGELOG.md`, with package filter pills and footer navigation.
+
 ## 2026-10-17: core 1.5.1, ui 1.5.2, create-sola 1.1.1
 
 ### `@sola-air-ui/core`

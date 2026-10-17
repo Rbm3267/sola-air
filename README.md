@@ -11,16 +11,17 @@
 
 <p align="center">
   <a href="https://sola-air.dev"><b>sola-air.dev →</b></a> • 
-  <a href="./CHANGELOG.md"><b>Changelog →</b></a>
+  <a href="https://sola-air.dev/changelog"><b>Changelog →</b></a>
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/sola-air"><img src="https://img.shields.io/npm/v/sola-air?label=sola-air&color=10b981&style=flat-square" alt="npm sola-air" /></a>
-  <a href="https://www.npmjs.com/package/@sola-air-ui/core"><img src="https://img.shields.io/npm/v/@sola-air-ui/core?label=%40sola-air-ui%2Fcore&color=10b981&style=flat-square" alt="npm @sola-air-ui/core" /></a>
-  <a href="https://www.npmjs.com/package/@sola-air-ui/compiler"><img src="https://img.shields.io/npm/v/@sola-air-ui/compiler?label=%40sola-air-ui%2Fcompiler&color=10b981&style=flat-square" alt="npm @sola-air-ui/compiler" /></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode"><img src="https://img.shields.io/visual-studio-marketplace/v/SolaAIR.sola-vscode?label=VS%20Code&color=10b981&style=flat-square" alt="VS Code Marketplace" /></a>
-  <a href="https://chromewebstore.google.com/detail/sola-air/cahdakefpjocaapggijdbbgidcjdaehc"><img src="https://img.shields.io/chrome-web-store/v/cahdakefpjocaapggijdbbgidcjdaehc?label=Chrome&color=10b981&style=flat-square" alt="Chrome Web Store" /></a>
-  <a href="https://github.com/rbm3267/sola-air/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" /></a>
+  <a href="https://www.npmjs.com/package/sola-air"><img src="https://img.shields.io/npm/v/sola-air?label=sola-air&color=3b82f6&style=flat-square" alt="npm sola-air" /></a>
+  <a href="https://www.npmjs.com/package/@sola-air-ui/core"><img src="https://img.shields.io/npm/v/@sola-air-ui/core?label=%40sola-air-ui%2Fcore&color=3b82f6&style=flat-square" alt="npm @sola-air-ui/core" /></a>
+  <a href="https://www.npmjs.com/package/@sola-air-ui/compiler"><img src="https://img.shields.io/npm/v/@sola-air-ui/compiler?label=%40sola-air-ui%2Fcompiler&color=3b82f6&style=flat-square" alt="npm @sola-air-ui/compiler" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode"><img src="https://img.shields.io/visual-studio-marketplace/v/SolaAIR.sola-vscode?label=VS%20Code&color=6366f1&style=flat-square" alt="VS Code Marketplace" /></a>
+  <a href="https://open-vsx.org/extension/SolaAIR/sola-vscode"><img src="https://img.shields.io/open-vsx/v/SolaAIR/sola-vscode?label=Open%20VSX&color=6366f1&style=flat-square" alt="Open VSX Registry" /></a>
+  <a href="https://chromewebstore.google.com/detail/sola-air/cahdakefpjocaapggijdbbgidcjdaehc"><img src="https://img.shields.io/chrome-web-store/v/cahdakefpjocaapggijdbbgidcjdaehc?label=Chrome&color=3b82f6&style=flat-square" alt="Chrome Web Store" /></a>
+  <a href="https://github.com/rbm3267/sola-air/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-0ea5e9?style=flat-square" alt="MIT License" /></a>
 </p>
 
 ```bash

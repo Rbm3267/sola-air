@@ -33,7 +33,9 @@ const c = {
   bold: '\x1b[1m',
   dim: '\x1b[2m',
   emerald: '\x1b[38;2;16;185;129m',
-  sky: '\x1b[38;2;14;165;233m',
+  sky: '\x1b[38;2;56;189;248m',
+  blue: '\x1b[38;2;59;130;246m',
+  violet: '\x1b[38;2;139;92;246m',
   amber: '\x1b[38;2;245;158;11m',
   slate: '\x1b[38;2;148;163;184m'
 };
@@ -46,9 +48,9 @@ export async function run(targetArg, { cwd = process.cwd(), quiet = false } = {}
   const log = quiet ? () => {} : console.log;
 
   log(`
-${c.emerald}   ✧ ${c.reset}
-${c.emerald} ✧ ◯ ✧  ${c.bold}create-sola v${CLI_VERSION}${c.reset}
-${c.emerald}   ✧   ${c.slate}Zero-VDOM Ambient Reactive Runtime${c.reset}
+${c.sky}   ✧ ${c.reset}
+${c.blue} ✧ ◯ ✧  ${c.bold}create-sola v${CLI_VERSION}${c.reset}
+${c.violet}   ✧   ${c.slate}Zero-VDOM Ambient Reactive Runtime${c.reset}
 `);
 
   let projectName = targetArg;
