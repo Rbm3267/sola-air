@@ -4,6 +4,11 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `create-sola`
+
+- **Added**: new projects include `.vscode/extensions.json`, which recommends the
+  Sola AIR VS Code extension (`SolaAIR.sola-vscode`).
+
 ### VS Code extension (`sola-vscode` 0.2.0)
 
 - **Changed**: `.sola` highlighting now uses a grammar of its own instead of borrowing

@@ -92,6 +92,12 @@ describe('create-sola scaffold', () => {
     assert.deepStrictEqual(pkg.dependencies, SOLA_DEPS.dependencies);
     assert.deepStrictEqual(pkg.devDependencies, SOLA_DEPS.devDependencies);
   });
+
+  it('recommends the Sola AIR VS Code extension', async () => {
+    const dir = await scaffoldToTemp('extensions-check');
+    const rec = JSON.parse(fs.readFileSync(path.join(dir, '.vscode', 'extensions.json'), 'utf8'));
+    assert.deepStrictEqual(rec.recommendations, ['SolaAIR.sola-vscode']);
+  });
 });
 
 async function scaffoldToTemp(name) {
