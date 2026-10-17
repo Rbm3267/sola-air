@@ -1,0 +1,67 @@
+name: Publish skill repo
+
+# Regenerates Rbm3267/sola-ui-skill (the Claude plugin marketplace and Gemini
+# CLI extension) from this repo after each npm publish, or by hand. It pushes
+# only when the generated content changed, and tags a release when the skill's
+# version (the @sola-air-ui/ui version) is new. Needs a SKILL_REPO_TOKEN secret:
+# a fine-grained token for Rbm3267/sola-ui-skill with Contents: read and write.
+on:
+  workflow_run:
+    workflows: ['Publish to NPM']
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      SKILL_REPO_TOKEN: ${{ secrets.SKILL_REPO_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @sola-air-ui/core
+
+      - name: The committed skill matches the packages
+        run: node scripts/build-skill.mjs --check
+
+      - name: Skip without a token
+        if: env.SKILL_REPO_TOKEN == ''
+        run: echo "::notice::SKILL_REPO_TOKEN is not set; skipping the push to Rbm3267/sola-ui-skill."
+
+      - name: Generate and push
+        if: env.SKILL_REPO_TOKEN != ''
+        env:
+          GH_TOKEN: ${{ secrets.SKILL_REPO_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone --quiet "https://x-access-token:${SKILL_REPO_TOKEN}@github.com/Rbm3267/sola-ui-skill.git" out
+          node scripts/build-skill.mjs --repo out
+          cd out
+          version=$(node -p "require('./.claude-plugin/plugin.json').version")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "::notice::sola-ui-skill is already up to date."
+          else
+            git commit --quiet -m "sola-ui ${version}, generated from Rbm3267/sola-air@${GITHUB_SHA::7}"
+            git push --quiet origin main
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/v${version}" >/dev/null; then
+            echo "::notice::v${version} is already tagged."
+          else
+            git tag "v${version}"
+            git push --quiet origin "v${version}"
+            gh release create "v${version}" --repo Rbm3267/sola-ui-skill --latest \
+              --title "sola-ui ${version}" \
+              --notes "Generated from Rbm3267/sola-air@${GITHUB_SHA::7} for @sola-air-ui/ui ${version}."
+          fi
