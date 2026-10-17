@@ -6,11 +6,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://sola-air.dev/privacy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://sola-air.dev/studio</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
