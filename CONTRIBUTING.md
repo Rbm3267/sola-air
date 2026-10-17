@@ -30,6 +30,8 @@ npm test          # unit tests: core, compiler, sentinel, scaffold, extension
 npm run test:e2e  # browser tests (Playwright) against the site
 ```
 
+The browser tests include an axe accessibility check of every page in both themes (`e2e/a11y.spec.ts`). It allows the problems listed in its `BASELINE` and fails on anything new, so fix a baseline problem rather than raising its cap.
+
 CI runs both on every pull request. Add a test with each fix. For a bug fix, check that the test fails without the fix.
 
 ## Pull requests
