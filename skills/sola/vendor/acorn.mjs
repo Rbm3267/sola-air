@@ -1,6 +1,5 @@
 // acorn 8.18.0 (MIT), bundled for scripts/preview.mjs. Generated; do not edit.
 
-// node_modules/acorn/dist/acorn.mjs
 var astralIdentifierCodes = [509, 0, 227, 0, 150, 4, 294, 9, 1368, 2, 2, 1, 6, 3, 41, 2, 5, 0, 166, 1, 574, 3, 9, 9, 7, 9, 32, 4, 318, 1, 78, 5, 71, 10, 50, 3, 123, 2, 54, 14, 32, 10, 3, 1, 11, 3, 46, 10, 8, 0, 46, 9, 7, 2, 37, 13, 2, 9, 6, 1, 45, 0, 13, 2, 49, 13, 9, 3, 2, 11, 83, 11, 7, 0, 3, 0, 158, 11, 6, 9, 7, 3, 56, 1, 2, 6, 3, 1, 3, 2, 10, 0, 11, 1, 3, 6, 4, 4, 68, 8, 2, 0, 3, 0, 2, 3, 2, 4, 2, 0, 15, 1, 83, 17, 10, 9, 5, 0, 82, 19, 13, 9, 214, 6, 3, 8, 28, 1, 83, 16, 16, 9, 82, 12, 9, 9, 7, 19, 58, 14, 5, 9, 243, 14, 166, 9, 71, 5, 2, 1, 3, 3, 2, 0, 2, 1, 13, 9, 120, 6, 3, 6, 4, 0, 29, 9, 41, 6, 2, 3, 9, 0, 10, 10, 47, 15, 199, 7, 137, 9, 54, 7, 2, 7, 17, 9, 57, 21, 2, 13, 123, 5, 4, 0, 2, 1, 2, 6, 2, 0, 9, 9, 49, 4, 2, 1, 2, 4, 9, 9, 55, 9, 266, 3, 10, 1, 2, 0, 49, 6, 4, 4, 14, 10, 5350, 0, 7, 14, 11465, 27, 2343, 9, 87, 9, 39, 4, 60, 6, 26, 9, 535, 9, 470, 0, 2, 54, 8, 3, 82, 0, 12, 1, 19628, 1, 4178, 9, 519, 45, 3, 22, 543, 4, 4, 5, 9, 7, 3, 6, 31, 3, 149, 2, 1418, 49, 513, 54, 5, 49, 9, 0, 15, 0, 23, 4, 2, 14, 1361, 6, 2, 16, 3, 6, 2, 1, 2, 4, 101, 0, 161, 6, 10, 9, 357, 0, 62, 13, 499, 13, 245, 1, 2, 9, 233, 0, 3, 0, 8, 1, 6, 0, 475, 6, 110, 6, 6, 9, 4759, 9, 787719, 239];
 var astralIdentifierStartCodes = [0, 11, 2, 25, 2, 18, 2, 1, 2, 14, 3, 13, 35, 122, 70, 52, 268, 28, 4, 48, 48, 31, 14, 29, 6, 37, 11, 29, 3, 35, 5, 7, 2, 4, 43, 157, 19, 35, 5, 35, 5, 39, 9, 51, 13, 10, 2, 14, 2, 6, 2, 1, 2, 10, 2, 14, 2, 6, 2, 1, 4, 51, 13, 310, 10, 21, 11, 7, 25, 5, 2, 41, 2, 8, 70, 5, 3, 0, 2, 43, 2, 1, 4, 0, 3, 22, 11, 22, 10, 30, 66, 18, 2, 1, 11, 21, 11, 25, 7, 25, 39, 55, 7, 1, 65, 0, 16, 3, 2, 2, 2, 28, 43, 28, 4, 28, 36, 7, 2, 27, 28, 53, 11, 21, 11, 18, 14, 17, 111, 72, 56, 50, 14, 50, 14, 35, 39, 27, 10, 22, 251, 41, 7, 1, 17, 5, 57, 28, 11, 0, 9, 21, 43, 17, 47, 20, 28, 22, 13, 52, 58, 1, 3, 0, 14, 44, 33, 24, 27, 35, 30, 0, 3, 0, 9, 34, 4, 0, 13, 47, 15, 3, 22, 0, 2, 0, 36, 17, 2, 24, 20, 1, 64, 6, 2, 0, 2, 3, 2, 14, 2, 9, 8, 46, 39, 7, 3, 1, 3, 21, 2, 6, 2, 1, 2, 4, 4, 0, 19, 0, 13, 4, 31, 9, 2, 0, 3, 0, 2, 37, 2, 0, 26, 0, 2, 0, 45, 52, 19, 3, 21, 2, 31, 47, 21, 1, 2, 0, 185, 46, 42, 3, 37, 47, 21, 0, 60, 42, 14, 0, 72, 26, 38, 6, 186, 43, 117, 63, 32, 7, 3, 0, 3, 7, 2, 1, 2, 23, 16, 0, 2, 0, 95, 7, 3, 38, 17, 0, 2, 0, 29, 0, 11, 39, 8, 0, 22, 0, 12, 45, 20, 0, 19, 72, 200, 32, 32, 8, 2, 36, 18, 0, 50, 29, 113, 6, 2, 1, 2, 37, 22, 0, 26, 5, 2, 1, 2, 31, 15, 0, 24, 43, 261, 18, 16, 0, 2, 12, 2, 33, 125, 0, 80, 921, 103, 110, 18, 195, 2637, 96, 16, 1071, 18, 5, 26, 3994, 6, 582, 6842, 29, 1763, 568, 8, 30, 18, 78, 18, 29, 19, 47, 17, 3, 32, 20, 6, 18, 433, 44, 212, 63, 33, 24, 3, 24, 45, 74, 6, 0, 67, 12, 65, 1, 2, 0, 15, 4, 10, 7381, 42, 31, 98, 114, 8702, 3, 2, 6, 2, 1, 2, 290, 16, 0, 30, 2, 3, 0, 15, 3, 9, 395, 2309, 106, 6, 12, 4, 8, 8, 9, 5991, 84, 2, 70, 2, 1, 3, 0, 3, 1, 3, 3, 2, 11, 2, 0, 2, 6, 2, 64, 2, 3, 3, 7, 2, 6, 2, 27, 2, 3, 2, 4, 2, 0, 4, 6, 2, 339, 3, 24, 2, 24, 2, 30, 2, 24, 2, 30, 2, 24, 2, 30, 2, 24, 2, 30, 2, 24, 2, 7, 1845, 30, 7, 5, 262, 61, 147, 44, 11, 6, 17, 0, 322, 29, 19, 43, 485, 27, 229, 29, 3, 0, 208, 30, 2, 2, 2, 1, 2, 6, 3, 4, 10, 1, 225, 6, 2, 3, 2, 1, 2, 14, 2, 196, 60, 67, 8, 0, 1205, 3, 2, 26, 2, 1, 2, 0, 3, 0, 2, 9, 2, 3, 2, 0, 2, 0, 7, 0, 5, 0, 2, 0, 2, 0, 2, 2, 2, 1, 2, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 1, 2, 0, 3, 3, 2, 6, 2, 3, 2, 3, 2, 0, 2, 9, 2, 16, 6, 2, 2, 4, 2, 16, 4421, 42719, 33, 4381, 3, 5773, 3, 7472, 16, 621, 2467, 541, 1507, 4938, 6, 8489];
 var nonASCIIidentifierChars = "\u200C\u200D\xB7\u0300-\u036F\u0387\u0483-\u0487\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u0669\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u06F0-\u06F9\u0711\u0730-\u074A\u07A6-\u07B0\u07C0-\u07C9\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u0897-\u089F\u08CA-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0966-\u096F\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09E6-\u09EF\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A66-\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AE6-\u0AEF\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B55-\u0B57\u0B62\u0B63\u0B66-\u0B6F\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0BE6-\u0BEF\u0C00-\u0C04\u0C3C\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C66-\u0C6F\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0CE6-\u0CEF\u0CF3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D66-\u0D6F\u0D81-\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0E50-\u0E59\u0EB1\u0EB4-\u0EBC\u0EC8-\u0ECE\u0ED0-\u0ED9\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1040-\u1049\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F-\u109D\u135D-\u135F\u1369-\u1371\u1712-\u1715\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u17E0-\u17E9\u180B-\u180D\u180F-\u1819\u18A9\u1920-\u192B\u1930-\u193B\u1946-\u194F\u19D0-\u19DA\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AB0-\u1ABD\u1ABF-\u1ADD\u1AE0-\u1AEB\u1B00-\u1B04\u1B34-\u1B44\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BB0-\u1BB9\u1BE6-\u1BF3\u1C24-\u1C37\u1C40-\u1C49\u1C50-\u1C59\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DFF\u200C\u200D\u203F\u2040\u2054\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\u30FB\uA620-\uA629\uA66F\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA82C\uA880\uA881\uA8B4-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F1\uA8FF-\uA909\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9D0-\uA9D9\uA9E5\uA9F0-\uA9F9\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA50-\uAA59\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uABF0-\uABF9\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFF10-\uFF19\uFF3F\uFF65";
@@ -114,7 +113,7 @@ var types$1 = {
   name: new TokenType("name", startsExpr),
   privateId: new TokenType("privateId", startsExpr),
   eof: new TokenType("eof"),
-  // Punctuation token types.
+
   bracketL: new TokenType("[", { beforeExpr: true, startsExpr: true }),
   bracketR: new TokenType("]"),
   braceL: new TokenType("{", { beforeExpr: true, startsExpr: true }),
@@ -133,19 +132,7 @@ var types$1 = {
   ellipsis: new TokenType("...", beforeExpr),
   backQuote: new TokenType("`", startsExpr),
   dollarBraceL: new TokenType("${", { beforeExpr: true, startsExpr: true }),
-  // Operators. These carry several kinds of properties to help the
-  // parser use them properly (the presence of these properties is
-  // what categorizes them as operators).
-  //
-  // `binop`, when present, specifies that this operator is a binary
-  // operator, and will refer to its precedence.
-  //
-  // `prefix` and `postfix` mark the operator as a prefix or postfix
-  // unary operator.
-  //
-  // `isAssign` marks all of `=`, `+=`, `-=` etcetera, which act as
-  // binary operators with a very low precedence, that should result
-  // in AssignmentExpression nodes.
+
   eq: new TokenType("=", { beforeExpr: true, isAssign: true }),
   assign: new TokenType("_=", { beforeExpr: true, isAssign: true }),
   incDec: new TokenType("++/--", { prefix: true, postfix: true, startsExpr: true }),
@@ -164,7 +151,7 @@ var types$1 = {
   slash: binop("/", 10),
   starstar: new TokenType("**", { beforeExpr: true }),
   coalesce: binop("??", 1),
-  // Keyword token types.
+
   _break: kw("break"),
   _case: kw("case", beforeExpr),
   _catch: kw("catch"),
@@ -227,7 +214,7 @@ var hasOwn = Object.hasOwn || function(obj, propName) {
 var isArray = Array.isArray || function(obj) {
   return toString.call(obj) === "[object Array]";
 };
-var regexpCache = /* @__PURE__ */ Object.create(null);
+var regexpCache =  Object.create(null);
 function wordsRegexp(words) {
   return regexpCache[words] || (regexpCache[words] = new RegExp("^(?:" + words.replace(/ /g, "|") + ")$"));
 }
@@ -264,108 +251,47 @@ function getLineInfo(input, offset2) {
   }
 }
 var defaultOptions = {
-  // `ecmaVersion` indicates the ECMAScript version to parse. Must be
-  // either 3, 5, 6 (or 2015), 7 (2016), 8 (2017), 9 (2018), 10
-  // (2019), 11 (2020), 12 (2021), 13 (2022), 14 (2023), or `"latest"`
-  // (the latest version the library supports). This influences
-  // support for strict mode, the set of reserved words, and support
-  // for new syntax features.
+
   ecmaVersion: null,
-  // `sourceType` indicates the mode the code should be parsed in.
-  // Can be either `"script"`, `"module"` or `"commonjs"`. This influences global
-  // strict mode and parsing of `import` and `export` declarations.
+
   sourceType: "script",
-  // When set to true, enable strict parsing mode even if `sourceType`
-  // is `"script"`.
+
   strict: false,
-  // `onInsertedSemicolon` can be a callback that will be called when
-  // a semicolon is automatically inserted. It will be passed the
-  // position of the inserted semicolon as an offset, and if
-  // `locations` is enabled, it is given the location as a `{line,
-  // column}` object as second argument.
+
   onInsertedSemicolon: null,
-  // `onTrailingComma` is similar to `onInsertedSemicolon`, but for
-  // trailing commas.
+
   onTrailingComma: null,
-  // By default, reserved words are only enforced if ecmaVersion >= 5.
-  // Set `allowReserved` to a boolean value to explicitly turn this on
-  // an off. When this option has the value "never", reserved words
-  // and keywords can also not be used as property names.
+
   allowReserved: null,
-  // When enabled, a return at the top level is not considered an
-  // error.
+
   allowReturnOutsideFunction: false,
-  // When enabled, import/export statements are not constrained to
-  // appearing at the top of the program, and an import.meta expression
-  // in a script isn't considered an error.
+
   allowImportExportEverywhere: false,
-  // By default, await identifiers are allowed to appear at the top-level scope only if ecmaVersion >= 2022.
-  // When enabled, await identifiers are allowed to appear at the top-level scope,
-  // but they are still not allowed in non-async functions.
+
   allowAwaitOutsideFunction: null,
-  // When enabled, super identifiers are not constrained to
-  // appearing in methods and do not raise an error when they appear elsewhere.
+
   allowSuperOutsideMethod: null,
-  // When enabled, hashbang directive in the beginning of file is
-  // allowed and treated as a line comment. Enabled by default when
-  // `ecmaVersion` >= 2023.
+
   allowHashBang: false,
-  // By default, the parser will verify that private properties are
-  // only used in places where they are valid and have been declared.
-  // Set this to false to turn such checks off.
+
   checkPrivateFields: true,
-  // When `locations` is on, `loc` properties holding objects with
-  // `start` and `end` properties in `{line, column}` form (with
-  // line being 1-based and column 0-based) will be attached to the
-  // nodes.
+
   locations: false,
-  // Pass an optional `{line, column}` object to use for the start of
-  // the parse. This is mostly useful when using `parseExpressionAt`
-  // with `locations: true`, to prevent the parser from having to
-  // determine the line position at the start position.
+
   startLocation: null,
-  // A function can be passed as `onToken` option, which will
-  // cause Acorn to call that function with object in the same
-  // format as tokens returned from `tokenizer().getToken()`. Note
-  // that you are not allowed to call the parser from the
-  // callback—that will corrupt its internal state.
+
   onToken: null,
-  // A function can be passed as `onComment` option, which will
-  // cause Acorn to call that function with `(block, text, start,
-  // end)` parameters whenever a comment is skipped. `block` is a
-  // boolean indicating whether this is a block (`/* */`) comment,
-  // `text` is the content of the comment, and `start` and `end` are
-  // character offsets that denote the start and end of the comment.
-  // When the `locations` option is on, two more parameters are
-  // passed, the full `{line, column}` locations of the start and
-  // end of the comments. Note that you are not allowed to call the
-  // parser from the callback—that will corrupt its internal state.
-  // When this option has an array as value, objects representing the
-  // comments are pushed to it.
+
   onComment: null,
-  // Nodes have their start and end characters offsets recorded in
-  // `start` and `end` properties (directly on the node, rather than
-  // the `loc` object, which holds line/column data. To also add a
-  // [semi-standardized][range] `range` property holding a `[start,
-  // end]` array with the same numbers, set the `ranges` option to
-  // `true`.
-  //
-  // [range]: https://bugzilla.mozilla.org/show_bug.cgi?id=745678
+
   ranges: false,
-  // It is possible to parse multiple files into a single AST by
-  // passing the tree produced by parsing the first file as
-  // `program` option in subsequent parses. This will add the
-  // toplevel forms of the parsed file to the `Program` (top) node
-  // of an existing parse tree.
+
   program: null,
-  // When `locations` is on, you can pass this to record the source
-  // file in every node's `loc` object.
+
   sourceFile: null,
-  // This value, if given, is stored in every node, whether
-  // `locations` is on or off.
+
   directSourceFile: null,
-  // When enabled, parenthesized expressions are represented by
-  // (non-standard) ParenthesizedExpression nodes
+
   preserveParens: false
 };
 var warnedAboutEcmaVersion = false;
@@ -487,7 +413,7 @@ var Parser = function Parser2(options, input, startPos) {
   this.potentialArrowInForAwait = false;
   this.yieldPos = this.awaitPos = this.awaitIdentPos = 0;
   this.labels = [];
-  this.undefinedExports = /* @__PURE__ */ Object.create(null);
+  this.undefinedExports =  Object.create(null);
   if (this.pos === 0 && options.allowHashBang && this.input.slice(0, 2) === "#!") {
     this.skipLineComment(2);
   }
@@ -735,7 +661,7 @@ pp$9.isSimpleAssignTarget = function(expr) {
 };
 var pp$8 = Parser.prototype;
 pp$8.parseTopLevel = function(node) {
-  var exports$1 = /* @__PURE__ */ Object.create(null);
+  var exports$1 =  Object.create(null);
   if (!node.body) {
     node.body = [];
   }
@@ -837,7 +763,7 @@ pp$8.isUsingKeyword = function(isAwaitUsing, isFor) {
     skipWhiteSpace.lastIndex = next;
     var skipAfterOf = skipWhiteSpace.exec(this.input);
     next = next + skipAfterOf[0].length;
-    if (this.input.charCodeAt(next) !== 61 || // Check for ==, === and => operators
+    if (this.input.charCodeAt(next) !== 61 ||
     (ch = this.input.charCodeAt(next + 1)) === 61 || ch === 62) {
       return false;
     }
@@ -1550,7 +1476,7 @@ pp$8.parseClassSuper = function(node) {
   node.superClass = this.eat(types$1._extends) ? this.parseExprSubscripts(null, false) : null;
 };
 pp$8.enterClassBody = function() {
-  var element = { declared: /* @__PURE__ */ Object.create(null), used: [] };
+  var element = { declared:  Object.create(null), used: [] };
   this.privateNameStack.push(element);
   return element.declared;
 };
@@ -1884,7 +1810,7 @@ pp$8.adaptDirectivePrologue = function(statements) {
   }
 };
 pp$8.isDirectiveCandidate = function(statement) {
-  return this.options.ecmaVersion >= 5 && statement.type === "ExpressionStatement" && statement.expression.type === "Literal" && typeof statement.expression.value === "string" && // Reject parenthesized strings.
+  return this.options.ecmaVersion >= 5 && statement.type === "ExpressionStatement" && statement.expression.type === "Literal" && typeof statement.expression.value === "string" &&
   (this.input[statement.start] === '"' || this.input[statement.start] === "'");
 };
 var pp$7 = Parser.prototype;
@@ -3190,7 +3116,7 @@ pp$5.isSimpleParamList = function(params) {
   return true;
 };
 pp$5.checkParams = function(node, allowDuplicates) {
-  var nameHash = /* @__PURE__ */ Object.create(null);
+  var nameHash =  Object.create(null);
   for (var i = 0, list = node.params; i < list.length; i += 1) {
     var param = list[i];
     this.checkLValInnerPattern(param, BIND_VAR, allowDuplicates ? null : nameHash);
@@ -3560,7 +3486,7 @@ var RegExpValidationState = function RegExpValidationState2(parser) {
   this.lastAssertionIsQuantifiable = false;
   this.numCapturingParens = 0;
   this.maxBackReference = 0;
-  this.groupNames = /* @__PURE__ */ Object.create(null);
+  this.groupNames =  Object.create(null);
   this.backReferenceNames = [];
   this.branchID = null;
 };
@@ -3688,23 +3614,23 @@ pp$1.regexp_pattern = function(state) {
   state.lastAssertionIsQuantifiable = false;
   state.numCapturingParens = 0;
   state.maxBackReference = 0;
-  state.groupNames = /* @__PURE__ */ Object.create(null);
+  state.groupNames =  Object.create(null);
   state.backReferenceNames.length = 0;
   state.branchID = null;
   this.regexp_disjunction(state);
   if (state.pos !== state.source.length) {
     if (state.eat(
       41
-      /* ) */
+
     )) {
       state.raise("Unmatched ')'");
     }
     if (state.eat(
       93
-      /* ] */
+
     ) || state.eat(
       125
-      /* } */
+
     )) {
       state.raise("Lone quantifier brackets");
     }
@@ -3727,7 +3653,7 @@ pp$1.regexp_disjunction = function(state) {
   this.regexp_alternative(state);
   while (state.eat(
     124
-    /* | */
+
   )) {
     if (trackDisjunction) {
       state.branchID = state.branchID.sibling();
@@ -3742,7 +3668,7 @@ pp$1.regexp_disjunction = function(state) {
   }
   if (state.eat(
     123
-    /* { */
+
   )) {
     state.raise("Lone quantifier brackets");
   }
@@ -3771,23 +3697,23 @@ pp$1.regexp_eatAssertion = function(state) {
   state.lastAssertionIsQuantifiable = false;
   if (state.eat(
     94
-    /* ^ */
+
   ) || state.eat(
     36
-    /* $ */
+
   )) {
     return true;
   }
   if (state.eat(
     92
-    /* \ */
+
   )) {
     if (state.eat(
       66
-      /* B */
+
     ) || state.eat(
       98
-      /* b */
+
     )) {
       return true;
     }
@@ -3795,29 +3721,29 @@ pp$1.regexp_eatAssertion = function(state) {
   }
   if (state.eat(
     40
-    /* ( */
+
   ) && state.eat(
     63
-    /* ? */
+
   )) {
     var lookbehind = false;
     if (this.options.ecmaVersion >= 9) {
       lookbehind = state.eat(
         60
-        /* < */
+
       );
     }
     if (state.eat(
       61
-      /* = */
+
     ) || state.eat(
       33
-      /* ! */
+
     )) {
       this.regexp_disjunction(state);
       if (!state.eat(
         41
-        /* ) */
+
       )) {
         state.raise("Unterminated group");
       }
@@ -3833,7 +3759,7 @@ pp$1.regexp_eatQuantifier = function(state, noError) {
   if (this.regexp_eatQuantifierPrefix(state, noError)) {
     state.eat(
       63
-      /* ? */
+
     );
     return true;
   }
@@ -3842,33 +3768,33 @@ pp$1.regexp_eatQuantifier = function(state, noError) {
 pp$1.regexp_eatQuantifierPrefix = function(state, noError) {
   return state.eat(
     42
-    /* * */
+
   ) || state.eat(
     43
-    /* + */
+
   ) || state.eat(
     63
-    /* ? */
+
   ) || this.regexp_eatBracedQuantifier(state, noError);
 };
 pp$1.regexp_eatBracedQuantifier = function(state, noError) {
   var start = state.pos;
   if (state.eat(
     123
-    /* { */
+
   )) {
     var min = 0, max = -1;
     if (this.regexp_eatDecimalDigits(state)) {
       min = state.lastIntValue;
       if (state.eat(
         44
-        /* , */
+
       ) && this.regexp_eatDecimalDigits(state)) {
         max = state.lastIntValue;
       }
       if (state.eat(
         125
-        /* } */
+
       )) {
         if (max !== -1 && max < min && !noError) {
           state.raise("numbers out of order in {} quantifier");
@@ -3886,14 +3812,14 @@ pp$1.regexp_eatBracedQuantifier = function(state, noError) {
 pp$1.regexp_eatAtom = function(state) {
   return this.regexp_eatPatternCharacters(state) || state.eat(
     46
-    /* . */
+
   ) || this.regexp_eatReverseSolidusAtomEscape(state) || this.regexp_eatCharacterClass(state) || this.regexp_eatUncapturingGroup(state) || this.regexp_eatCapturingGroup(state);
 };
 pp$1.regexp_eatReverseSolidusAtomEscape = function(state) {
   var start = state.pos;
   if (state.eat(
     92
-    /* \ */
+
   )) {
     if (this.regexp_eatAtomEscape(state)) {
       return true;
@@ -3906,17 +3832,17 @@ pp$1.regexp_eatUncapturingGroup = function(state) {
   var start = state.pos;
   if (state.eat(
     40
-    /* ( */
+
   )) {
     if (state.eat(
       63
-      /* ? */
+
     )) {
       if (this.options.ecmaVersion >= 16) {
         var addModifiers = this.regexp_eatModifiers(state);
         var hasHyphen = state.eat(
           45
-          /* - */
+
         );
         if (addModifiers || hasHyphen) {
           for (var i = 0; i < addModifiers.length; i++) {
@@ -3941,12 +3867,12 @@ pp$1.regexp_eatUncapturingGroup = function(state) {
       }
       if (state.eat(
         58
-        /* : */
+
       )) {
         this.regexp_disjunction(state);
         if (state.eat(
           41
-          /* ) */
+
         )) {
           return true;
         }
@@ -3960,7 +3886,7 @@ pp$1.regexp_eatUncapturingGroup = function(state) {
 pp$1.regexp_eatCapturingGroup = function(state) {
   if (state.eat(
     40
-    /* ( */
+
   )) {
     if (this.options.ecmaVersion >= 9) {
       this.regexp_groupSpecifier(state);
@@ -3970,7 +3896,7 @@ pp$1.regexp_eatCapturingGroup = function(state) {
     this.regexp_disjunction(state);
     if (state.eat(
       41
-      /* ) */
+
     )) {
       state.numCapturingParens += 1;
       return true;
@@ -3994,7 +3920,7 @@ function isRegularExpressionModifier(ch) {
 pp$1.regexp_eatExtendedAtom = function(state) {
   return state.eat(
     46
-    /* . */
+
   ) || this.regexp_eatReverseSolidusAtomEscape(state) || this.regexp_eatCharacterClass(state) || this.regexp_eatUncapturingGroup(state) || this.regexp_eatCapturingGroup(state) || this.regexp_eatInvalidBracedQuantifier(state) || this.regexp_eatExtendedPatternCharacter(state);
 };
 pp$1.regexp_eatInvalidBracedQuantifier = function(state) {
@@ -4034,7 +3960,7 @@ pp$1.regexp_eatExtendedPatternCharacter = function(state) {
 pp$1.regexp_groupSpecifier = function(state) {
   if (state.eat(
     63
-    /* ? */
+
   )) {
     if (!this.regexp_eatGroupName(state)) {
       state.raise("Invalid group");
@@ -4064,11 +3990,11 @@ pp$1.regexp_eatGroupName = function(state) {
   state.lastStringValue = "";
   if (state.eat(
     60
-    /* < */
+
   )) {
     if (this.regexp_eatRegExpIdentifierName(state) && state.eat(
       62
-      /* > */
+
     )) {
       return true;
     }
@@ -4155,7 +4081,7 @@ pp$1.regexp_eatBackReference = function(state) {
 pp$1.regexp_eatKGroupName = function(state) {
   if (state.eat(
     107
-    /* k */
+
   )) {
     if (this.regexp_eatGroupName(state)) {
       state.backReferenceNames.push(state.lastStringValue);
@@ -4172,7 +4098,7 @@ pp$1.regexp_eatCControlLetter = function(state) {
   var start = state.pos;
   if (state.eat(
     99
-    /* c */
+
   )) {
     if (this.regexp_eatControlLetter(state)) {
       return true;
@@ -4236,7 +4162,7 @@ pp$1.regexp_eatRegExpUnicodeEscapeSequence = function(state, forceU) {
   var switchU = forceU || state.switchU;
   if (state.eat(
     117
-    /* u */
+
   )) {
     if (this.regexp_eatFixedHexDigits(state, 4)) {
       var lead = state.lastIntValue;
@@ -4244,10 +4170,10 @@ pp$1.regexp_eatRegExpUnicodeEscapeSequence = function(state, forceU) {
         var leadSurrogateEnd = state.pos;
         if (state.eat(
           92
-          /* \ */
+
         ) && state.eat(
           117
-          /* u */
+
         ) && this.regexp_eatFixedHexDigits(state, 4)) {
           var trail = state.lastIntValue;
           if (trail >= 56320 && trail <= 57343) {
@@ -4262,10 +4188,10 @@ pp$1.regexp_eatRegExpUnicodeEscapeSequence = function(state, forceU) {
     }
     if (switchU && state.eat(
       123
-      /* { */
+
     ) && this.regexp_eatHexDigits(state) && state.eat(
       125
-      /* } */
+
     ) && isValidUnicode(state.lastIntValue)) {
       return true;
     }
@@ -4286,7 +4212,7 @@ pp$1.regexp_eatIdentityEscape = function(state) {
     }
     if (state.eat(
       47
-      /* / */
+
     )) {
       state.lastIntValue = 47;
       return true;
@@ -4330,10 +4256,10 @@ pp$1.regexp_eatCharacterClassEscape = function(state) {
     var result;
     if (state.eat(
       123
-      /* { */
+
     ) && (result = this.regexp_eatUnicodePropertyValueExpression(state)) && state.eat(
       125
-      /* } */
+
     )) {
       if (negate && result === CharSetString) {
         state.raise("Invalid property name");
@@ -4351,7 +4277,7 @@ pp$1.regexp_eatUnicodePropertyValueExpression = function(state) {
   var start = state.pos;
   if (this.regexp_eatUnicodePropertyName(state) && state.eat(
     61
-    /* = */
+
   )) {
     var name = state.lastStringValue;
     if (this.regexp_eatUnicodePropertyValue(state)) {
@@ -4414,16 +4340,16 @@ pp$1.regexp_eatLoneUnicodePropertyNameOrValue = function(state) {
 pp$1.regexp_eatCharacterClass = function(state) {
   if (state.eat(
     91
-    /* [ */
+
   )) {
     var negate = state.eat(
       94
-      /* ^ */
+
     );
     var result = this.regexp_classContents(state);
     if (!state.eat(
       93
-      /* ] */
+
     )) {
       state.raise("Unterminated character class");
     }
@@ -4449,7 +4375,7 @@ pp$1.regexp_nonEmptyClassRanges = function(state) {
     var left = state.lastIntValue;
     if (state.eat(
       45
-      /* - */
+
     ) && this.regexp_eatClassAtom(state)) {
       var right = state.lastIntValue;
       if (state.switchU && (left === -1 || right === -1)) {
@@ -4465,7 +4391,7 @@ pp$1.regexp_eatClassAtom = function(state) {
   var start = state.pos;
   if (state.eat(
     92
-    /* \ */
+
   )) {
     if (this.regexp_eatClassEscape(state)) {
       return true;
@@ -4491,21 +4417,21 @@ pp$1.regexp_eatClassEscape = function(state) {
   var start = state.pos;
   if (state.eat(
     98
-    /* b */
+
   )) {
     state.lastIntValue = 8;
     return true;
   }
   if (state.switchU && state.eat(
     45
-    /* - */
+
   )) {
     state.lastIntValue = 45;
     return true;
   }
   if (!state.switchU && state.eat(
     99
-    /* c */
+
   )) {
     if (this.regexp_eatClassControlLetter(state)) {
       return true;
@@ -4524,7 +4450,7 @@ pp$1.regexp_classSetExpression = function(state) {
     var start = state.pos;
     while (state.eatChars(
       [38, 38]
-      /* && */
+
     )) {
       if (state.current() !== 38 && (subResult = this.regexp_eatClassSetOperand(state))) {
         if (subResult !== CharSetString) {
@@ -4539,7 +4465,7 @@ pp$1.regexp_classSetExpression = function(state) {
     }
     while (state.eatChars(
       [45, 45]
-      /* -- */
+
     )) {
       if (this.regexp_eatClassSetOperand(state)) {
         continue;
@@ -4571,7 +4497,7 @@ pp$1.regexp_eatClassSetRange = function(state) {
     var left = state.lastIntValue;
     if (state.eat(
       45
-      /* - */
+
     ) && this.regexp_eatClassSetCharacter(state)) {
       var right = state.lastIntValue;
       if (left !== -1 && right !== -1 && left > right) {
@@ -4593,16 +4519,16 @@ pp$1.regexp_eatNestedClass = function(state) {
   var start = state.pos;
   if (state.eat(
     91
-    /* [ */
+
   )) {
     var negate = state.eat(
       94
-      /* ^ */
+
     );
     var result = this.regexp_classContents(state);
     if (state.eat(
       93
-      /* ] */
+
     )) {
       if (negate && result === CharSetString) {
         state.raise("Negated character class may contain strings");
@@ -4613,7 +4539,7 @@ pp$1.regexp_eatNestedClass = function(state) {
   }
   if (state.eat(
     92
-    /* \ */
+
   )) {
     var result$1 = this.regexp_eatCharacterClassEscape(state);
     if (result$1) {
@@ -4627,16 +4553,16 @@ pp$1.regexp_eatClassStringDisjunction = function(state) {
   var start = state.pos;
   if (state.eatChars(
     [92, 113]
-    /* \q */
+
   )) {
     if (state.eat(
       123
-      /* { */
+
     )) {
       var result = this.regexp_classStringDisjunctionContents(state);
       if (state.eat(
         125
-        /* } */
+
       )) {
         return result;
       }
@@ -4651,7 +4577,7 @@ pp$1.regexp_classStringDisjunctionContents = function(state) {
   var result = this.regexp_classString(state);
   while (state.eat(
     124
-    /* | */
+
   )) {
     if (this.regexp_classString(state) === CharSetString) {
       result = CharSetString;
@@ -4670,14 +4596,14 @@ pp$1.regexp_eatClassSetCharacter = function(state) {
   var start = state.pos;
   if (state.eat(
     92
-    /* \ */
+
   )) {
     if (this.regexp_eatCharacterEscape(state) || this.regexp_eatClassSetReservedPunctuator(state)) {
       return true;
     }
     if (state.eat(
       98
-      /* b */
+
     )) {
       state.lastIntValue = 8;
       return true;
@@ -4727,7 +4653,7 @@ pp$1.regexp_eatHexEscapeSequence = function(state) {
   var start = state.pos;
   if (state.eat(
     120
-    /* x */
+
   )) {
     if (this.regexp_eatFixedHexDigits(state, 2)) {
       return true;

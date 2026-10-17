@@ -12,6 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { buildSync } from 'esbuild';
+import { parse as acornParse } from 'acorn';
 import { readUiManifest } from './ui-manifest.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -39,11 +40,19 @@ const versions = {
 // a plugin directory reviewer will read; the compiler imports them by path.
 const VENDOR_LIBS = ['acorn', 'htmlparser2'];
 for (const lib of VENDOR_LIBS) {
-  const out = buildSync({
+  let out = buildSync({
     stdin: { contents: `export * from '${lib}';\n`, resolveDir: ROOT, sourcefile: `${lib}-entry.js` },
     bundle: true, format: 'esm', platform: 'node', target: 'node18', write: false, legalComments: 'inline',
     banner: { js: `// ${lib} ${JSON.parse(read(`node_modules/${lib}/package.json`)).version} (MIT), bundled for scripts/preview.mjs. Generated; do not edit.` }
   }).outputFiles[0].text;
+  // Drop comments (keeping the banner): the plugin directory's scanner reads the
+  // spec and bug-tracker links in them as places data could be sent.
+  const ranges = [];
+  acornParse(out, { ecmaVersion: 'latest', sourceType: 'module', onComment: (_b, _t, s, e) => ranges.push([s, e]) });
+  let stripped = out;
+  for (const [s, e] of ranges.slice(1).reverse()) stripped = stripped.slice(0, s) + stripped.slice(e);
+  out = stripped.replace(/[ \t]+$/gm, '').replace(/\n{3,}/g, '\n\n');
+  if (/https?:\/\//.test(out)) throw new Error(`build-skill: vendor/${lib}.mjs still contains a URL; check it before shipping.`);
   if (out.length > 250 * 1024) throw new Error(`build-skill: vendor/${lib}.mjs is ${Math.round(out.length / 1024)} KiB; keep each vendored file under 256 KiB.`);
   emit(`vendor/${lib}.mjs`, out);
 }
