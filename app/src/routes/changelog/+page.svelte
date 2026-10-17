@@ -56,8 +56,9 @@
       <!-- Package Filter Pills -->
       <div class="mt-6 flex flex-wrap gap-2" role="group" aria-label="Filter releases by package">
         {#each packageNames as name (name)}
+          <!-- No type="button": the CSS reset's [type="button"] rule ties with bg-blue-600 and
+               loads later, which left the selected pill white on white. -->
           <button
-            type="button"
             onclick={() => (activeFilter = name)}
             aria-pressed={activeFilter === name}
             class="px-3 py-1.5 rounded-xl text-xs font-mono transition-colors cursor-pointer border {activeFilter === name

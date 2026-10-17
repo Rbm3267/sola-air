@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
 import { releaseNotes, tagFor, publishedPackages } from './github-releases.mjs';
-import { parseChangelog, readChangelog } from './changelog-parse.mjs';
+import { parseChangelog, readChangelog, packageLabel } from './changelog-parse.mjs';
 
 const changelog = `# Changelog
 
@@ -75,12 +75,26 @@ test('parseChangelog parses dated sections and skips empty Unreleased sections',
   assert.strictEqual(parsed[1].packages.length, 3);
 });
 
+test('packageLabel folds versions and notes into one package name', () => {
+  assert.strictEqual(packageLabel('`@sola-air-ui/ui@1.3.0`'), '@sola-air-ui/ui');
+  assert.strictEqual(packageLabel('`@sola-air-ui/ui`'), '@sola-air-ui/ui');
+  assert.strictEqual(packageLabel('VS Code extension (`sola-vscode` 0.2.0)'), 'VS Code extension');
+  assert.strictEqual(packageLabel('Website (app/, not published to npm)'), 'Website');
+  assert.strictEqual(packageLabel('`sola-air`'), 'sola-air');
+});
+
 test('readChangelog parses the real root CHANGELOG.md with non-empty entries', () => {
   const entries = readChangelog();
   assert(entries.length >= 5, `expected >= 5 changelog releases, got ${entries.length}`);
   for (const entry of entries) {
     assert(entry.date, 'entry.date must be non-empty');
     assert(entry.packages.length > 0, `entry ${entry.id} must have at least one package group`);
+    const names = entry.packages.map((p) => p.pkg);
+    assert.strictEqual(new Set(names).size, names.length, `entry ${entry.id} lists a package twice`);
   }
+  const ids = entries.map((e) => e.id);
+  assert.strictEqual(new Set(ids).size, ids.length, 'section ids must be unique');
+  const labels = new Set(entries.flatMap((e) => e.packages.map((p) => p.pkg)));
+  for (const label of labels) assert.doesNotMatch(label, /@\d+\.\d+\.\d+|\(/, `filter label "${label}" still carries a version or note`);
 });
 

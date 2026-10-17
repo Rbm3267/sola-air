@@ -23,6 +23,20 @@ const DEFAULT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
  */
 
 /**
+ * A package heading as a filter label: no backticks, no `@version` suffix and no
+ * trailing note in parentheses, so `@sola-air-ui/ui@1.3.0` and `@sola-air-ui/ui`
+ * are one package and "Website (app/, not published to npm)" is "Website".
+ * @param {string} heading
+ */
+export function packageLabel(heading) {
+  return heading
+    .replace(/`/g, '')
+    .replace(/\s*\([^)]*\)\s*$/, '')
+    .replace(/@\d+\.\d+\.\d+\S*$/, '')
+    .trim();
+}
+
+/**
  * @param {string} markdown
  * @returns {ChangelogSection[]}
  */
@@ -77,8 +91,11 @@ export function parseChangelog(markdown) {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
 
+      let id = slug || `release-${sections.length + 1}`;
+      // The page keys sections by id, so a repeated heading must not collide.
+      while (sections.some((s) => s.id === id)) id += '-2';
       currentSection = {
-        id: slug || `release-${sections.length + 1}`,
+        id,
         date,
         title: rawTitle || date,
         packages: []
@@ -91,9 +108,14 @@ export function parseChangelog(markdown) {
     const h3 = rawLine.match(/^###\s+(.+?)\s*$/);
     if (h3) {
       flushBullet();
-      const pkg = h3[1].replace(/`/g, '').trim();
-      currentPkg = { pkg, items: [] };
-      currentSection.packages.push(currentPkg);
+      const pkg = packageLabel(h3[1]);
+      // Older sections sometimes split one package across several headings
+      // (`@sola-air-ui/ui@1.2.1`, `@sola-air-ui/ui@1.3.0`); keep them together.
+      currentPkg = currentSection.packages.find((p) => p.pkg === pkg) ?? null;
+      if (!currentPkg) {
+        currentPkg = { pkg, items: [] };
+        currentSection.packages.push(currentPkg);
+      }
       continue;
     }
 
