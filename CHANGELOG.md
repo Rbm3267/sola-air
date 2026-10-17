@@ -4,6 +4,15 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/compiler`
+
+- **Added `sola-check`**: a second bin that checks `.sola` files for compile errors and for
+  unbalanced template blocks. The compiler accepts an unclosed `{#if}`, a stray `{/each}` or
+  a `{:else}` outside an `{#if}` without an error and renders it as literal text on the page.
+  Run `npx -p @sola-air-ui/compiler sola-check src`; it exits 1 on any error and takes `--json`.
+  The same checks are available as `checkSource` and `checkFiles` from
+  `@sola-air-ui/compiler/check`.
+
 ### `create-sola`
 
 - **Added**: new projects include `.vscode/extensions.json`, which recommends the
