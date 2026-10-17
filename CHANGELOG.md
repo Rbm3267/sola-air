@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: compiler 1.3.1
+
 ### `@sola-air-ui/compiler`
 
 - **Fixed**: a bare `$effect(() => { ... })` statement, the form the docs show, was left
