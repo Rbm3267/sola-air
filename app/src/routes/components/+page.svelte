@@ -44,7 +44,8 @@
   import SolaKbd from '$lib/components/SolaKbd.svelte';
   import SolaHoverCard from '$lib/components/SolaHoverCard.svelte';
   import { COMPONENT_CATALOG, type CatalogComponent } from '$lib/data/componentCatalog';
-  import { isPublished, PUBLISHED_COUNT, CATALOG_COUNT, VERSIONS } from '$lib/data/site';
+  import { isPublished, PUBLISHED_COUNT, CATALOG_COUNT, VERSIONS, UI_MANIFEST } from '$lib/data/site';
+  import { toSolaFile, mountComponentSnippet, previewNote, PACKAGE_EQUIVALENT } from '$lib/data/solaExport';
   import { fade, fly } from 'svelte/transition';
 
   import { onMount } from 'svelte';
@@ -53,7 +54,7 @@
   let activeCategory = $state<string>('All');
   let searchQuery = $state<string>('');
   let selectedComponent = $state<CatalogComponent>(COMPONENT_CATALOG[0]);
-  let codeTab = $state<'sola' | 'react' | 'svelte' | 'html'>('sola');
+  let codeTab = $state<'sola' | 'mount'>('sola');
 
   // Interactive Live Playground State
   let liveProps = $state<Record<string, any>>({ ...COMPONENT_CATALOG[0].defaultConfig });
@@ -113,7 +114,18 @@
     })
   );
 
-  const activeCodeSnippet = $derived(selectedComponent.codeSnippets[codeTab]);
+  // Generated from what @sola-air-ui/ui really exports, never hand-written:
+  // a published component gets a real .sola file or mount call with only the
+  // props it declares; a site preview says plainly that there is nothing to install.
+  const activeCodeSnippet = $derived.by(() => {
+    const name = selectedComponent.componentName;
+    if (!isPublished(selectedComponent)) return previewNote(name, UI_MANIFEST);
+    return codeTab === 'sola'
+      ? toSolaFile([{ component: name, props: liveProps }], UI_MANIFEST)
+      : mountComponentSnippet(name, liveProps, UI_MANIFEST);
+  });
+
+  const catalogPublishedCount = COMPONENT_CATALOG.filter(isPublished).length;
 </script>
 
 <svelte:head>
@@ -174,7 +186,7 @@
       <div class="lg:col-span-4 flex flex-col gap-3">
         <div class="flex items-center justify-between px-1 text-xs font-mono font-semibold text-slate-500 dark:text-slate-400">
           <span>CATALOG ({filteredComponents.length})</span>
-          <span>{PUBLISHED_COUNT} published in v{VERSIONS.ui}</span>
+          <span>{catalogPublishedCount} of {PUBLISHED_COUNT} package components shown</span>
         </div>
 
         <div class="flex flex-col gap-2.5 max-h-[750px] overflow-y-auto pr-1">
@@ -517,15 +529,17 @@
                   <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs leading-relaxed">{selectedComponent.description}</p>
                 </div>
                 <div class="w-full bg-slate-950 rounded-xl p-4 text-xs font-mono text-blue-300 overflow-x-auto">
-                  <pre><code>{selectedComponent.codeSnippets.sola}</code></pre>
+                  <pre><code>{previewNote(selectedComponent.componentName, UI_MANIFEST)}</code></pre>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-mono font-semibold border border-amber-200 dark:border-amber-500/20">
-                    Schema Ready
+                  <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 text-xs font-mono font-semibold border border-slate-200 dark:border-white/10">
+                    Site preview
                   </span>
-                  <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-xs font-mono font-semibold border border-slate-200 dark:border-white/10">
-                    Use via @sola-air-ui/ui
-                  </span>
+                  {#if PACKAGE_EQUIVALENT[selectedComponent.componentName]}
+                    <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-semibold border border-emerald-200 dark:border-emerald-500/20">
+                      Package has {PACKAGE_EQUIVALENT[selectedComponent.componentName]}
+                    </span>
+                  {/if}
                 </div>
               </div>
             {/if}
@@ -615,23 +629,15 @@
             <div class="flex items-center bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl text-xs font-mono">
               <button 
                 onclick={() => codeTab = 'sola'} 
+                aria-pressed={codeTab === 'sola'}
                 class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'sola' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
                 .sola
               </button>
               <button 
-                onclick={() => codeTab = 'react'} 
-                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'react' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
-                React 19
-              </button>
-              <button 
-                onclick={() => codeTab = 'svelte'} 
-                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'svelte' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
-                Svelte 5
-              </button>
-              <button 
-                onclick={() => codeTab = 'html'} 
-                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'html' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
-                Web Component
+                onclick={() => codeTab = 'mount'} 
+                aria-pressed={codeTab === 'mount'}
+                class="px-3 py-1 rounded-lg transition-all cursor-pointer font-bold {codeTab === 'mount' ? 'bg-white dark:bg-blue-600 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400'}">
+                Mount from JS
               </button>
             </div>
           </div>

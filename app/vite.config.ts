@@ -10,6 +10,7 @@ import solaPlugin from '../packages/vite-plugin-sola/src/index.js';
 import { compile } from '../packages/compiler/src/index.js';
 // The size the site states for the core runtime is measured from the real bundle.
 import { measureCore } from '../scripts/core-size.mjs';
+import { readUiManifest } from '../scripts/ui-manifest.mjs';
 
 // Every version shown anywhere on the site comes from a package manifest, so
 // the site cannot advertise a version that was never released.
@@ -31,13 +32,13 @@ const compilerVersion = manifestVersion('compiler');
 const uiVersion = manifestVersion('ui');
 const coreSizeKb = measureCore().gzipKb;
 
-// The names @sola-air-ui/ui actually exports, read from its entry point. The
-// site uses this to tell a published primitive apart from a preview built only
-// for this site, instead of asserting a component count by hand.
-const uiExports = [
-	...readFileSync(path.resolve(__dirname, '../packages/ui/src/index.js'), 'utf-8')
-		.matchAll(/export\s*\{\s*default as (\w+)/g)
-].map((m) => m[1]);
+// The components @sola-air-ui/ui actually ships, read from the subpath exports
+// in its manifest (every component has one; the root entry re-exports most but
+// not all), with the props each declares. The site uses this to tell a
+// published primitive apart from a preview built only for this site, and to
+// generate code that only names real components and props.
+const uiManifest = readUiManifest(path.resolve(__dirname, '..'));
+const uiExports = Object.keys(uiManifest.subpaths);
 
 // Banner only — compilation itself is the published plugin, so the site and a
 // scaffolded project run the same code path.
@@ -72,6 +73,7 @@ export default defineConfig({
 		__SOLA_UI_VERSION__: JSON.stringify(uiVersion),
 		__SOLA_CORE_SIZE_KB__: JSON.stringify(coreSizeKb),
 		__SOLA_UI_EXPORTS__: JSON.stringify(uiExports),
+		__SOLA_UI_MANIFEST__: JSON.stringify(uiManifest),
 		__SOLA_EXTENSION_VERSION__: JSON.stringify(extensionVersion)
 	},
 	resolve: {

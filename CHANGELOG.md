@@ -4,6 +4,18 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: sola-air 1.2.0, compiler 1.4.1
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: `sola-check` no longer reports a block inside an HTML comment. A commented-out
+  `{#if}` or `{:else}` produced a false SOLA001.
+
+### `sola-air`
+
+- **Changed**: the meta-package's dependency floors raised from `^1.0.x` to the current releases (`core` ^1.5.0, `compiler` ^1.4.0, `vite-plugin-sola` ^1.0.3, `relay` ^1.0.2, `mcp` ^1.0.3, `ui` ^1.5.1, `providers` ^1.0.2, `tokens` ^1.2.0),
+  so a fresh `npm install sola-air` or `npm update sola-air` can no longer settle on a first-generation package.
+
 ## 2026-10-17: ui 1.5.1, tokens 1.2.0
 
 ### `@sola-air-ui/ui`

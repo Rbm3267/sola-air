@@ -13,6 +13,9 @@
     dataMacroExample,
     persistDockExample,
     shellBootstrapExample,
+    shellComponentsExample,
+    solaCheckExample,
+    solaCheckOutput,
     busBasicsExample,
     busComponentExample,
     busConfigExample,
@@ -536,6 +539,22 @@ export function SolaWidget({ title, value }) {
               </div>
             </div>
           </section>
+
+          <!-- Step 4: Template check -->
+          <section class="space-y-4 pt-4">
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Checking templates</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
+              The compiler accepts an unclosed <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">{'{#if}'}</code>, a stray <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">{'{/each}'}</code> or an <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">{'{:else}'}</code> outside an <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">{'{#if}'}</code> without an error, and the page then shows the tag as text.
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">sola-check</code> (in <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/compiler</code> 1.4.0 and later) finds those and any compile error. It exits 1 on an error, so it can run in CI; add <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">--json</code> for machine output.
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 shadow-xl overflow-hidden">
+              <div class="p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+                <pre><code>$ {solaCheckExample}
+
+{solaCheckOutput}</code></pre>
+              </div>
+            </div>
+          </section>
         </article>
 
       <!-- ================= 2. SYNTAX ================= -->
@@ -855,6 +874,39 @@ export function SolaWidget({ title, value }) {
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{shellBootstrapExample}</code></pre>
             </div>
+          </section>
+
+          <section class="space-y-3">
+            <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">3. Ready-made shell components</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/ui</code> 1.5 ships four components for this job. Each works with props and callbacks alone, takes its colors from the design tokens, and is keyboard operable. Spec: <a class="text-blue-700 dark:text-blue-400 underline" href="https://github.com/Rbm3267/sola-air/blob/main/docs/rfcs/0002-shell-primitives.md" target="_blank" rel="noreferrer">RFC 0002</a>.
+            </p>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400">
+                  <tr><th class="px-4 py-2 font-semibold">Component</th><th class="px-4 py-2 font-semibold">What it is</th></tr>
+                </thead>
+                <tbody class="text-slate-700 dark:text-slate-300 divide-y divide-slate-100 dark:divide-white/5">
+                  <tr><td class="px-4 py-2 font-mono">LauncherDock</td><td class="px-4 py-2">A row of icon buttons fixed to one edge, with an active item and badges.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">CommandPalette</td><td class="px-4 py-2">A searchable command list opened with Ctrl+K or Cmd+K; arrow keys, Enter, Escape.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">CompanionDrawer</td><td class="px-4 py-2">A side panel for any content. It does not block the page.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">ToastHost</td><td class="px-4 py-2">A toast stack filled by <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">bus.emit('sola:toast', {'{'} kind, text {'}'})</code>.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 shadow-xl overflow-hidden">
+              <div class="px-4 py-2.5 bg-slate-900/80 border-b border-slate-800">
+                <span class="flex items-center gap-2 text-xs font-mono text-slate-400">
+                  <img src="/sola-file-icon.png" alt="" width="16" height="16" class="w-4 h-4" />Shell.sola
+                </span>
+              </div>
+              <div class="p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+                <pre><code>{shellComponentsExample}</code></pre>
+              </div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
+              Mount it with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">mountShell(Shell, {'{}'}, {'{'} id: 'portal-shell' {'}'})</code> from the bootstrap above. The drawer's open state is in <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$persist</code>, so it reopens on every page.
+            </p>
           </section>
 
           <section class="space-y-3">
