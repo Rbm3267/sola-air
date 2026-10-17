@@ -4,6 +4,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/core`
+
+- **Added `$intent` options**: `debounceMs` waits for the prompt to settle before
+  asking; `trigger: 'manual'` stops it asking on its own, and the accessor's
+  `.run(input)` asks when you say so (it exists in the default mode too);
+  `transport` is a fetch-compatible function used instead of global `fetch`, for
+  hosts that must sign or route the request. Defaults are unchanged.
+
 ## 2026-10-17: compiler 1.3.1
 
 ### `@sola-air-ui/compiler`

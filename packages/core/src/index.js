@@ -297,13 +297,21 @@ export function createIntent(promptFn, options = {}) {
   const [loading, setLoading] = createSignal(false);
   const [error, setError] = createSignal(null);
   let abortController = null;
+  let timer = null;
 
-  onDestroy(() => {
+  // options.transport is a fetch-compatible function (url, init) => Promise<Response>,
+  // for hosts that must sign, proxy or route the request themselves.
+  const send = config.transport || ((url, init) => fetch(url, init));
+
+  function cancel() {
+    if (timer) clearTimeout(timer);
+    timer = null;
     if (abortController) abortController.abort();
-  });
+  }
 
-  createEffect(() => {
-    const prompt = typeof promptFn === 'function' ? promptFn() : promptFn;
+  onDestroy(cancel);
+
+  function request(prompt) {
     if (!prompt) return;
 
     if (abortController) abortController.abort();
@@ -320,12 +328,12 @@ export function createIntent(promptFn, options = {}) {
       stream: config.stream
     });
 
-    fetch(config.endpoint, {
+    Promise.resolve(send(config.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
       signal: abortController.signal
-    }).then(res => {
+    })).then(res => {
       if (!res.ok) throw new Error(`Intent failed: ${res.status}`);
 
       if (config.stream) {
@@ -351,11 +359,36 @@ export function createIntent(promptFn, options = {}) {
         setLoading(false);
       }
     });
-  });
+  }
+
+  const resolve = () => (typeof promptFn === 'function' ? promptFn() : promptFn);
+
+  // trigger: 'manual' never runs on its own; call .run(input) instead.
+  if (config.trigger !== 'manual') {
+    createEffect(() => {
+      const prompt = resolve();
+      if (timer) clearTimeout(timer);
+      timer = null;
+      const wait = Number(config.debounceMs) || 0;
+      if (wait > 0 && prompt) {
+        // The prompt is read above, so the effect still tracks it; only the request waits.
+        timer = setTimeout(() => { timer = null; request(prompt); }, wait);
+      } else {
+        request(prompt);
+      }
+    });
+  }
 
   const accessor = read;
   accessor.loading = loading;
   accessor.error = error;
+  // run(input) asks now, with input as the prompt, or with the current prompt when
+  // called without one. It skips the debounce.
+  accessor.run = (input) => {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    request(input !== undefined ? input : __untrack(resolve));
+  };
   return accessor;
 }
 
