@@ -36,3 +36,21 @@ for (const filePath of solaFiles) {
     assert.ok(typeof res.dts === 'string' && res.dts.includes('export interface Props'), `${relName} failed to emit .d.ts declarations`);
   });
 }
+
+test('types/index.d.ts defines a typed *Props interface and SolaComponent<*Props> for all 37 components', () => {
+  const dts = fs.readFileSync(path.resolve(__dirname, '../types/index.d.ts'), 'utf8');
+  for (const filePath of solaFiles) {
+    const name = path.basename(filePath, '.sola');
+    assert.match(
+      dts,
+      new RegExp(`export interface ${name}Props\\b`),
+      `types/index.d.ts missing interface ${name}Props`
+    );
+    assert.match(
+      dts,
+      new RegExp(`export const ${name}: SolaComponent<${name}Props>;`),
+      `types/index.d.ts must type ${name} as SolaComponent<${name}Props>`
+    );
+  }
+});
+

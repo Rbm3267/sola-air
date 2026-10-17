@@ -202,12 +202,12 @@
           </span>
 
           {#if resolving}
-            <div class="rounded-2xl border border-emerald-200/70 dark:border-blue-500/20 bg-emerald-50/70 dark:bg-blue-500/5 p-4 flex items-center gap-2.5" role="status" aria-live="polite">
+            <div class="rounded-2xl border border-blue-200/70 dark:border-blue-500/20 bg-blue-50/70 dark:bg-blue-500/5 p-4 flex items-center gap-2.5" role="status" aria-live="polite">
               <span class="w-3.5 h-3.5 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></span>
               <span class="text-sm text-blue-800 dark:text-blue-300">Resolving…</span>
             </div>
           {:else if suggestion}
-            <div class="rounded-2xl border border-emerald-200/70 dark:border-blue-500/20 bg-emerald-50/70 dark:bg-blue-500/5 p-4 flex flex-col gap-1.5" role="status" aria-live="polite">
+            <div class="rounded-2xl border border-blue-200/70 dark:border-blue-500/20 bg-blue-50/70 dark:bg-blue-500/5 p-4 flex flex-col gap-1.5" role="status" aria-live="polite">
               <span class="text-sm font-semibold text-blue-900 dark:text-blue-300">{suggestion.label}</span>
               <span class="text-sm text-blue-800/90 dark:text-blue-200/80 leading-relaxed">{suggestion.action}</span>
               <span class="text-xs font-mono text-blue-700/70 dark:text-blue-400/60 mt-0.5">

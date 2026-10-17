@@ -118,7 +118,7 @@
 
   <!-- Interactive Test Playground Bar -->
   <div class="bg-white dark:bg-white/[0.02] border border-slate-200/90 dark:border-white/[0.04] rounded-3xl p-5 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
-    <div class="flex-1 w-full flex items-center gap-3 bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] rounded-2xl px-4 py-2.5 focus-within:border-amber-400 focus-within:bg-white dark:bg-white/[0.02] transition-all">
+    <div class="flex-1 w-full flex items-center gap-3 bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] rounded-2xl px-4 py-2.5 focus-within:border-blue-500 focus-within:bg-white dark:bg-white/[0.02] transition-all">
       <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       <input 
         type="text"

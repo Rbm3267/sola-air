@@ -29,7 +29,7 @@ By default this starts a local relay process that Sola's `createData()` calls co
   let customers = $data('postgres-primary:customers', { sync: 'realtime' });
 </script>
 
-<Table rows={customers} />
+<Table rows={() => customers().data} />
 ```
 
 `postgres-primary` refers to the connection alias configured when you start the relay — see `sola-relay --help` for connection/alias options.

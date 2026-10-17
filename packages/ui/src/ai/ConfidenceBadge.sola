@@ -64,23 +64,23 @@
 
   /* tier colors */
   .tier-high {
-    background: #f0fdf9;
-    color: #065f46;
-    border-color: #a7f3d0;
+    background: var(--sola-alert-positive-bg, #f0fdf9);
+    color: var(--sola-alert-positive-text, #065f46);
+    border-color: var(--sola-border-subtle, #a7f3d0);
   }
   .tier-high .dot { background: var(--sola-color-primary-500, #10b981); box-shadow: 0 0 4px #10b981; }
 
   .tier-medium {
-    background: #fffbeb;
-    color: #78350f;
-    border-color: #fde68a;
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    color: var(--sola-alert-warning, #78350f);
+    border-color: var(--sola-border-subtle, #fde68a);
   }
   .tier-medium .dot { background: #f59e0b; }
 
   .tier-low {
     background: var(--sola-alert-high-bg, #fef2f2);
-    color: #7f1d1d;
-    border-color: #fecaca;
+    color: var(--sola-alert-high, #7f1d1d);
+    border-color: var(--sola-border-subtle, #fecaca);
   }
   .tier-low .dot { background: #ef4444; }
 

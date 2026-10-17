@@ -109,11 +109,11 @@
 
   .action-chip.danger {
     background: var(--sola-alert-high-bg, #fef2f2);
-    color: #ef4444;
-    border-color: #fecaca;
+    color: var(--sola-alert-high, #ef4444);
+    border-color: var(--sola-border-subtle, #fecaca);
   }
   .action-chip.danger:hover:not(.disabled) {
-    background: #fee2e2;
+    background: var(--sola-alert-high-bg, #fee2e2);
   }
 
   .action-chip.disabled {

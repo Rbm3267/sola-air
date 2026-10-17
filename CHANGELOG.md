@@ -4,6 +4,20 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/compiler`
+
+- **Fixed**: `bind:this={el}` emits `set_el(node)` when `el` is declared with `$state(null)` instead of assigning to the constant getter tuple variable.
+
+### `@sola-air-ui/ui`
+
+- **Fixed**: dark-mode alert/badge token contrast in `AmbientSuggestion`, `ConfidenceBadge`, `IncidentTriageMatrix`, `Alert`, `DataCard`, `FlowWaterfall`, `Dashboard`, `Badge`, `TactileDialCard`, `ConversationThread`, and `ActionStrip` (`--sola-alert-positive-text`, `--sola-alert-warning-bg`, `--sola-alert-high-bg`, `--sola-alert-info-bg`, `--sola-border-subtle`).
+- **Added**: keyboard activation (`tabindex="0"` + `Enter`/`Space`) on clickable `Table` rows and `role="status"` on `Dashboard` alert banner.
+- **Added**: dedicated TypeScript `*Props` interfaces (`SolaComponent<...Props>`) for all 37 components in `types/index.d.ts`, enforced by `test/ui.test.js`.
+
+### Website (`app/`)
+
+- **Changed**: consolidated `SolaHost.svelte` into `SolaMount.svelte`, aligned remaining suggestion/focus borders in `SentinelHeroDemo.svelte` and `BehavioralIntentConsole.svelte` to Sola blue, and updated `<Table rows={() => customers().data} />` in `packages/relay/README.md`.
+
 ## 2026-10-17: core 1.5.2, compiler 1.5.0, ui 1.6.0, providers 1.0.3, relay 1.0.3, vite-plugin-sola 1.0.4, create-sola 1.1.2, mcp 1.0.5, sola-air 1.2.1
 
 ### `@sola-air-ui/core`
