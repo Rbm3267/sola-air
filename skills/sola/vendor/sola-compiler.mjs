@@ -1,11 +1,11 @@
-// @sola-air-ui/compiler 1.5.1, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.5.2, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 import { readFileSync } from "node:fs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.5.1\"}"
+  "{\"version\":\"1.5.2\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
