@@ -4,6 +4,11 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/compiler`
+
+- **Fixed**: `sola-check` no longer reports a block inside an HTML comment. A commented-out
+  `{#if}` or `{:else}` produced a false SOLA001.
+
 ## 2026-10-17: ui 1.5.1, tokens 1.2.0
 
 ### `@sola-air-ui/ui`

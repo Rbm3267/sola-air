@@ -14,9 +14,12 @@ export const RULES = {
   SOLA001: 'unbalanced block'
 };
 
-// Blank out <script> and <style> bodies, keeping newlines so line numbers hold.
+// Blank out <script> and <style> bodies and HTML comments, keeping newlines so
+// line numbers hold. A commented-out block is not a block.
 function maskNonTemplate(source) {
-  return source.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, (m) => m.replace(/[^\n]/g, ' '));
+  return source
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, (m) => m.replace(/[^\n]/g, ' '))
+    .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '));
 }
 
 function position(source, index) {
