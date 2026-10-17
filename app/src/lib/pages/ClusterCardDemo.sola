@@ -1,0 +1,60 @@
+<script>
+  // The homepage's Compiler X-Ray shows this file and the compiler's real output
+  // for it, generated at build time. Keep the bindings direct ({rps}, {util}) so
+  // what the X-Ray shows is a text-node update, not a child re-mount.
+  let rps = $state(1420);
+  let util = $derived(Math.min(100, Math.round(rps / 20)));
+
+  $on('sola:compiler-rps', (e) => {
+    if (e && typeof e.rps === 'number') rps = e.rps;
+  });
+</script>
+
+<div class="cluster-card">
+  <span class="label">Cluster Throughput</span>
+  <span class="value">{rps} req/s</span>
+  <span class="trend">{util}% capacity</span>
+  <div class="track" aria-hidden="true">
+    <div class="fill" style="width: {util}%"></div>
+  </div>
+</div>
+
+<style>
+  .cluster-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sola-text-secondary, #475569);
+  }
+  .value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--sola-text-primary, #0f172a);
+  }
+  .trend {
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--sola-text-secondary, #475569);
+  }
+  .track {
+    height: 10px;
+    margin-top: 6px;
+    border-radius: 999px;
+    background: var(--sola-surface-2, #e2e8f0);
+    overflow: hidden;
+  }
+  .fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #38bdf8, #2563eb, #9333ea);
+    transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>

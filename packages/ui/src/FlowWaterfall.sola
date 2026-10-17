@@ -81,8 +81,8 @@
   .wf-title { font-size: 15px; font-weight: 900; color: var(--sola-text-primary, #020617); letter-spacing: -0.01em; font-family: ui-monospace, monospace; margin: 0; }
 
   .wf-final { text-align: right; flex-shrink: 0; }
-  .wf-final-label { font-size: 12px; font-family: ui-monospace, monospace; color: var(--sola-text-tertiary, #94a3b8); text-transform: uppercase; display: block; }
-  .wf-final-value { font-size: 18px; font-weight: 900; font-family: ui-monospace, monospace; color: var(--sola-alert-positive-text, #047857); letter-spacing: -0.01em; }
+  .wf-final-label { font-size: 12px; font-family: ui-monospace, monospace; color: var(--sola-text-tertiary, #475569); text-transform: uppercase; display: block; }
+  .wf-final-value { font-size: 18px; font-weight: 800; font-family: ui-monospace, monospace; color: var(--sola-alert-positive-text, #047857); letter-spacing: -0.01em; }
 
   .wf-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
@@ -108,7 +108,7 @@
   .wf-row.positive .wf-row-dot { background: var(--sola-color-primary-500, #10b981); }
   .wf-row.negative .wf-row-dot { background: #f43f5e; }
   .wf-row.total .wf-row-dot { background: #6366f1; }
-  .wf-row-name { font-size: 12px; font-weight: 700; font-family: ui-monospace, monospace; color: var(--sola-text-primary, #334155); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wf-row-name { font-size: 12px; font-weight: 600; font-family: ui-monospace, monospace; color: var(--sola-text-primary, #334155); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   .wf-row-bar-track { flex: 1; max-width: 220px; height: 14px; background: rgba(203, 213, 225, 0.5); border-radius: 999px; padding: 2px; }
   .wf-row-bar-fill { height: 100%; border-radius: 999px; background: #94a3b8; transition: width 0.5s ease; }
@@ -116,10 +116,10 @@
   .wf-row.negative .wf-row-bar-fill { background: #f43f5e; }
   .wf-row.total .wf-row-bar-fill { background: #6366f1; }
 
-  .wf-row-value { min-width: 84px; text-align: right; font-size: 12px; font-weight: 900; font-family: ui-monospace, monospace; color: var(--sola-text-secondary, #64748b); }
+  .wf-row-value { min-width: 84px; text-align: right; font-size: 12px; font-weight: 600; font-family: ui-monospace, monospace; color: var(--sola-text-secondary, #475569); }
   .wf-row.positive .wf-row-value { color: var(--sola-alert-positive-text, #047857); }
-  .wf-row.negative .wf-row-value { color: #be123c; }
-  .wf-row.total .wf-row-value { color: #4f46e5; }
+  .wf-row.negative .wf-row-value { color: var(--sola-alert-high, #be123c); }
+  .wf-row.total .wf-row-value { color: var(--sola-alert-info, #0369a1); }
 
   .wf-footer {
     display: flex;
@@ -127,7 +127,7 @@
     justify-content: space-between;
     font-size: 12px;
     font-family: ui-monospace, monospace;
-    color: var(--sola-text-tertiary, #94a3b8);
+    color: var(--sola-text-tertiary, #475569);
     padding-top: 12px;
     border-top: 1px solid var(--sola-surface-2, #f1f5f9);
   }

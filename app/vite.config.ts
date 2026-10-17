@@ -43,6 +43,15 @@ const uiManifest = readUiManifest(repoRoot);
 const uiExports = Object.keys(uiManifest.subpaths);
 const changelogSections = readChangelog(repoRoot);
 
+// The homepage Compiler X-Ray shows this file and what the compiler really
+// emits for it, so neither pane can drift from the code that runs in pane 3.
+const xrayFile = path.resolve(__dirname, 'src/lib/pages/ClusterCardDemo.sola');
+const xraySource = readFileSync(xrayFile, 'utf-8');
+const xray = {
+	source: xraySource,
+	compiled: compile(xraySource, { filename: 'ClusterCardDemo.sola', sourcemap: false }).code
+};
+
 // Banner only — compilation itself is the published plugin, so the site and a
 // scaffolded project run the same code path.
 function solaBanner() {
@@ -78,7 +87,8 @@ export default defineConfig({
 		__SOLA_UI_EXPORTS__: JSON.stringify(uiExports),
 		__SOLA_UI_MANIFEST__: JSON.stringify(uiManifest),
 		__SOLA_EXTENSION_VERSION__: JSON.stringify(extensionVersion),
-		__SOLA_CHANGELOG__: JSON.stringify(changelogSections)
+		__SOLA_CHANGELOG__: JSON.stringify(changelogSections),
+		__SOLA_XRAY__: JSON.stringify(xray)
 	},
 	resolve: {
 		alias: {

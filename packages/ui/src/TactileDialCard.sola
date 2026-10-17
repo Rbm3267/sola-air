@@ -162,7 +162,7 @@
   .dial-badge {
     font-size: 12px;
     font-family: ui-monospace, monospace;
-    font-weight: 700;
+    font-weight: 600;
     background: var(--sola-alert-warning-bg, #fffbeb);
     color: var(--sola-alert-warning, #b45309);
     border: 1px solid var(--sola-border-subtle, #fde68a);

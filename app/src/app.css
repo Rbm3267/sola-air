@@ -126,3 +126,101 @@ nav::-webkit-scrollbar,
 .measure {
   max-width: 68ch;
 }
+
+/* WCAG AA contrast overrides for mounted @sola-air-ui/ui primitives in light and dark themes */
+:root,
+:root:not([data-theme="dark"]) {
+  --sola-text-secondary: #475569;
+  --sola-text-tertiary: #475569;
+  --sola-alert-warning: #b45309;
+  --sola-alert-warning-bg: #fffbeb;
+  --sola-alert-high: #be123c;
+  --sola-alert-high-bg: #fff1f2;
+  --sola-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --sola-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html.dark:root {
+  --sola-text-primary:   #f8fafc;
+  --sola-text-secondary: #cbd5e1;
+  --sola-text-tertiary:  #cbd5e1;
+
+  --sola-surface-0:       #0f172a;
+  --sola-surface-1:       #1e293b;
+  --sola-surface-2:       #334155;
+  --sola-surface-overlay: rgba(2, 6, 23, 0.75);
+
+  --sola-border-subtle:  #1e293b;
+  --sola-border-default: #334155;
+  --sola-border-strong:  #475569;
+
+  --sola-alert-low:          #cbd5e1;
+  --sola-alert-low-bg:       #1e293b;
+  --sola-alert-positive:     #34d399;
+  --sola-alert-positive-bg:  #022c22;
+  --sola-alert-positive-text: #34d399;
+  --sola-alert-info:         #38bdf8;
+  --sola-alert-info-bg:      #082f49;
+  --sola-alert-moderate:     #facc15;
+  --sola-alert-moderate-bg:  #1c1400;
+  --sola-alert-warning:      #fbbf24;
+  --sola-alert-warning-bg:   #1c0c00;
+  --sola-alert-high:         #fda4af;
+  --sola-alert-high-bg:      #1c0000;
+  --sola-alert-critical:     #d8b4fe;
+  --sola-alert-critical-bg:  #1a0030;
+}
+
+/* Prompt Motion Choreography: GPU-accelerated entrance and ambient signal flow */
+@keyframes solaBeatReveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes solaSignalFlow {
+  from {
+    stroke-dashoffset: 320;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.sola-beat-enter {
+  animation: solaBeatReveal 560ms var(--sola-ease-out) both;
+}
+
+.sola-beat-delay-1 {
+  animation-delay: 70ms;
+}
+
+.sola-beat-delay-2 {
+  animation-delay: 140ms;
+}
+
+.sola-beat-delay-3 {
+  animation-delay: 210ms;
+}
+
+.sola-spring-card {
+  transition:
+    transform 280ms var(--sola-ease-spring),
+    box-shadow 260ms var(--sola-ease-out),
+    border-color 220ms var(--sola-ease-out);
+}
+
+.sola-spring-card:hover {
+  transform: translate3d(0, -3px, 0);
+}
+
+.sola-signal-path {
+  stroke-dasharray: 14 26;
+  animation: solaSignalFlow 14s linear infinite;
+}
+
