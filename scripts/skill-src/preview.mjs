@@ -48,8 +48,9 @@ function addSola(file, globalName, label) {
 
   // Imports become globals in the no-bundler build, under their local names.
   const script = (source.match(/<script[^>]*>([\s\S]*?)<\/script>/) || [, ''])[1];
-  for (const m of script.matchAll(/^\s*import\s+([\s\S]+?)\s+from\s+['"]([^'"]+)['"]/gm)) {
+  for (const m of script.matchAll(/^\s*import\s+([^;'"]+?)\s+from\s+['"]([^'"]+)['"]/gm)) {
     const [, what, from] = m;
+    if (/^type\b/.test(what.trim())) continue;
     if (from === '@sola-air-ui/core' || from === '@sola/core') continue;
     const named = what.match(/^\{([\s\S]*)\}$/);
     const locals = named
@@ -120,7 +121,7 @@ body { margin: 0; padding: 24px; font-family: ui-sans-serif, system-ui, -apple-s
 <div id="app"></div>
 <script>${inline(readFileSync(path.join(VENDOR, 'sola-core.iife.min.js'), 'utf8'))}</script>
 ${scripts.map((s) => `<script>${inline(s)}</script>`).join('\n')}
-<script>window.__SolaPreviewApp(document.getElementById('app'), ${JSON.stringify(props)});</script>
+<script>window.__SolaPreviewApp(document.getElementById('app'), ${inline(JSON.stringify(props))});</script>
 </body>
 </html>
 `;
