@@ -28,12 +28,22 @@ test.describe('Sola AIR Site & Product Audit', () => {
     await expect(page.locator('h1')).toContainText('Foundational UI Building Blocks');
     await expect(page.getByRole('button', { name: 'Metric Card' }).first()).toBeVisible();
 
-    // Test code tabs (Native .sola, React 19, Svelte 5, HTML)
-    await page.getByRole('button', { name: '.sola' }).first().click();
-    await expect(page.locator('pre code')).toBeVisible();
+    // Code export is generated from the real package: an import from its
+    // subpath, only declared props, and a mount call. No JSX, no `config={...}`.
+    await page.getByRole('button', { name: '.sola', exact: true }).click();
+    const code = page.locator('pre code').last();
+    await expect(code).toContainText("import DataCard from '@sola-air-ui/ui/data-card';");
+    await expect(code).toContainText('<DataCard title="Net Revenue Retention"');
+    await expect(code).not.toContainText('config=');
+    await expect(code).not.toContainText('icon=');
 
-    await page.getByRole('button', { name: 'React 19' }).click();
-    await expect(page.locator('pre code')).toBeVisible();
+    await page.getByRole('button', { name: 'Mount from JS' }).click();
+    await expect(code).toContainText("DataCard(document.getElementById('app'),");
+
+    // A site-only preview says so instead of offering code that cannot install.
+    await page.getByRole('button', { name: /Button/ }).filter({ hasText: 'Preview' }).first().click();
+    await expect(code).toContainText('is a preview built for this site');
+    await expect(code).toContainText("import Button from '@sola-air-ui/ui/button';");
   });
 
   test('Interactive Documentation & Navigation Audit', async ({ page }) => {

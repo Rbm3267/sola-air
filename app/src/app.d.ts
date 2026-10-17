@@ -16,6 +16,10 @@ declare const __SOLA_COMPILER_VERSION__: string;
 declare const __SOLA_UI_VERSION__: string;
 declare const __SOLA_CORE_SIZE_KB__: string;
 declare const __SOLA_UI_EXPORTS__: string[];
+declare const __SOLA_UI_MANIFEST__: {
+	subpaths: Record<string, string>;
+	props: Record<string, string[]>;
+};
 declare const __SOLA_EXTENSION_VERSION__: string;
 
 export {};

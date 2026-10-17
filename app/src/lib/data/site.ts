@@ -6,6 +6,7 @@
 // package manifest, so a claim can only be wrong if the code is.
 
 import { COMPONENT_CATALOG, type CatalogComponent } from './componentCatalog';
+import type { UiManifest } from './solaExport';
 
 export const GITHUB_URL = 'https://github.com/Rbm3267/sola-air';
 export const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode';
@@ -21,8 +22,11 @@ export const VERSIONS = {
   extension: __SOLA_EXTENSION_VERSION__
 };
 
-/** Names @sola-air-ui/ui really exports, read from its entry point at build time. */
+/** Components @sola-air-ui/ui really ships, read from its manifest at build time. */
 export const PUBLISHED_PRIMITIVES: ReadonlySet<string> = new Set(__SOLA_UI_EXPORTS__);
+
+/** Import path and declared props for each shipped component, for the code exporters. */
+export const UI_MANIFEST: UiManifest = __SOLA_UI_MANIFEST__;
 
 /**
  * True when a catalog entry is a primitive someone can install today, rather
