@@ -47,7 +47,7 @@
   "homepage": "https://sola-air.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rbm3267/sola-air"
+    "url": "git+https://github.com/Rbm3267/sola-air.git"
   },
   "dependencies": {
     "@sola-air-ui/core": "^1.4.0"

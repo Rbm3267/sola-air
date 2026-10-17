@@ -22,7 +22,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rbm3267/sola-air"
+    "url": "git+https://github.com/Rbm3267/sola-air.git"
   },
   "publishConfig": {
     "access": "public",
