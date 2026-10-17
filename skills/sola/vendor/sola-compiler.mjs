@@ -1432,7 +1432,7 @@ function compile(source, options = {}) {
     const childSvg = isSvg && node.name !== "foreignObject";
     const id = `n${uid++}`;
     if (isSvg) {
-      domCode += `  const ${id} = document.createElementNS ? document.createElementNS('http://www.w3.org/2000/svg', '${node.name}') : document.createElement('${node.name}');
+      domCode += `  const ${id} = document.createElementNS('http://www.w3.org/2000/svg', '${node.name}');
 `;
     } else {
       domCode += `  const ${id} = document.createElement('${node.name}');
