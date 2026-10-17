@@ -17,9 +17,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      SKILL_REPO_TOKEN: ${{ secrets.SKILL_REPO_TOKEN }}
     steps:
+      # The token is only exposed to the step that pushes, not to npm install scripts.
+      - name: Token present?
+        id: token
+        env:
+          SKILL_REPO_TOKEN: ${{ secrets.SKILL_REPO_TOKEN }}
+        run: |
+          if [ -n "$SKILL_REPO_TOKEN" ]; then echo "set=true" >> "$GITHUB_OUTPUT"; else
+            echo "::notice::SKILL_REPO_TOKEN is not set; skipping the push to Rbm3267/sola-ui-skill."; fi
+
       - uses: actions/checkout@v6
         with:
           ref: main
@@ -33,13 +40,10 @@ jobs:
       - name: The committed skill matches the packages
         run: node scripts/build-skill.mjs --check
 
-      - name: Skip without a token
-        if: env.SKILL_REPO_TOKEN == ''
-        run: echo "::notice::SKILL_REPO_TOKEN is not set; skipping the push to Rbm3267/sola-ui-skill."
-
       - name: Generate and push
-        if: env.SKILL_REPO_TOKEN != ''
+        if: steps.token.outputs.set == 'true'
         env:
+          SKILL_REPO_TOKEN: ${{ secrets.SKILL_REPO_TOKEN }}
           GH_TOKEN: ${{ secrets.SKILL_REPO_TOKEN }}
         run: |
           set -euo pipefail

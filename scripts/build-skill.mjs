@@ -178,6 +178,17 @@ const REPO_URL = 'https://github.com/Rbm3267/sola-ui-skill';
 const repoDirArg = (() => { const i = process.argv.indexOf('--repo'); return i >= 0 ? process.argv[i + 1] : null; })();
 if (repoDirArg) {
   const dir = path.resolve(repoDirArg);
+  // The directory is emptied (except .git), so refuse anything that could be this
+  // repo or someone's unrelated folder.
+  if (!path.relative(dir, ROOT).startsWith('..')) {
+    console.error(`build-skill: --repo ${repoDirArg} contains this repo; pass an empty folder or a sola-ui-skill clone`);
+    process.exit(2);
+  }
+  const existing = existsSync(dir) ? readdirSync(dir).filter((f) => f !== '.git') : [];
+  if (existing.length && !existing.includes('gemini-extension.json')) {
+    console.error(`build-skill: ${repoDirArg} is not empty and is not a sola-ui-skill checkout; refusing to clear it`);
+    process.exit(2);
+  }
   mkdirSync(dir, { recursive: true });
   for (const f of readdirSync(dir)) if (f !== '.git') rmSync(path.join(dir, f), { recursive: true, force: true });
   const put = (rel, contents) => {
