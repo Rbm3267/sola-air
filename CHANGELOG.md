@@ -4,6 +4,25 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: core 1.5.1, ui 1.5.2, create-sola 1.1.1
+
+### `@sola-air-ui/core`
+
+- **Changed**: the signal, effect and lifecycle primitives live in `src/signal.js`, and `bus.js` and
+  `persist.js` import from it instead of from `index.js`, so the package has no circular imports.
+  The functions are moved unchanged and still exported from the package root. A test keeps sibling
+  modules from importing `index.js` again.
+
+### `@sola-air-ui/ui`
+
+- **Changed**: depends on `@sola-air-ui/core` ^1.5.0 (was ^1.4.0).
+
+### `create-sola`
+
+- **Changed**: new projects depend on `@sola-air-ui/core` ^1.5.0, `@sola-air-ui/ui` ^1.5.1 and
+  `@sola-air-ui/compiler` ^1.4.0 (were ^1.1.1, ^1.3.0 and ^1.0.8), so a fresh project starts with the
+  `$intent` options, the shell components and `sola-check`.
+
 ## 2026-10-17: sola-air 1.2.0, compiler 1.4.1
 
 ### `@sola-air-ui/compiler`
