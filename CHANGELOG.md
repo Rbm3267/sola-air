@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: core 1.5.0
+
 ### `@sola-air-ui/core`
 
 - **Added `$intent` options**: `debounceMs` waits for the prompt to settle before
