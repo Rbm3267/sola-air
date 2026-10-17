@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: ui 1.5.1, tokens 1.2.0
+
 ### `@sola-air-ui/ui`
 
 - **Fixed**: `Dashboard` text contrast. Card labels and node sub-lines use the secondary text token
