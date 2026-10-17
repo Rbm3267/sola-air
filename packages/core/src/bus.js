@@ -12,7 +12,7 @@
 //   - `dom.in` / `dom.out` are explicit, disjoint allowlists.
 //   - `sticky` replays the last payload to a handler that registers late.
 
-import { createSignal } from './index.js';
+import { createSignal } from './signal.js';
 import { onClearPersistentState } from './persist.js';
 
 const STICKY_PREFIX = 'sola:bus:sticky:';

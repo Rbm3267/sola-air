@@ -1,5 +1,8 @@
 import assert from 'node:assert';
 import { describe, it, mock } from 'node:test';
+import { readFileSync, readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import {
   createSignal,
   createDerived,
@@ -15,6 +18,21 @@ import {
   __flush_destroys,
   __untrack
 } from '../src/index.js';
+
+describe('@sola/core module graph hygiene', () => {
+  it('has no circular imports back into ./index.js from sibling core modules', () => {
+    const srcDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src');
+    for (const file of readdirSync(srcDir)) {
+      if (!file.endsWith('.js') || file === 'index.js') continue;
+      const code = readFileSync(path.join(srcDir, file), 'utf8');
+      assert.doesNotMatch(
+        code,
+        /from\s+['"]\.\/index\.js['"]/,
+        `${file} must not import from ./index.js (causes circular dependency warnings in Rollup/Vite)`
+      );
+    }
+  });
+});
 
 describe('@sola/core reactivity engine', () => {
   it('should create reactive signals and update values', () => {
