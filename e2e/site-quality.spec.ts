@@ -69,6 +69,11 @@ test('nav offers four destinations, with the rest under Tools', async ({ page })
   const header = page.locator('header');
   await expect(header.getByRole('link', { name: /AI Demo/ })).toBeVisible();
   await expect(header.getByRole('link', { name: /Extension/ })).toBeVisible();
+
+  // The VS Code extension is linked from the menu and the footer, to its listing.
+  const listing = 'https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode';
+  await expect(header.getByRole('link', { name: /VS Code/ })).toHaveAttribute('href', listing);
+  await expect(page.locator('footer').getByRole('link', { name: 'VS Code Extension' })).toHaveAttribute('href', listing);
 });
 
 test('hero CTA sends a developer to the quickstart', async ({ page }) => {
