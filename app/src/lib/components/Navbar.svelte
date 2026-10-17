@@ -4,7 +4,7 @@
   import SolaLogo from './SolaLogo.svelte';
   import AiAssistantModal from './AiAssistantModal.svelte';
 
-  import { GITHUB_URL, VERSIONS } from '$lib/data/site';
+  import { GITHUB_URL, VSCODE_URL, VERSIONS } from '$lib/data/site';
 
   const version = VERSIONS.solaAir;
 
@@ -19,7 +19,8 @@
 
   const toolsNav = [
     { href: '/demo/ai', label: 'AI Demo', blurb: 'Ambient intent, resolved live' },
-    { href: '/preview', label: 'Extension', blurb: 'Inspect Sola in any page' }
+    { href: '/preview', label: 'Extension', blurb: 'Inspect Sola in any page' },
+    { href: VSCODE_URL, label: 'VS Code', blurb: 'Syntax and snippets for .sola', external: true }
   ];
 
   let isAiModalOpen = $state(false);
@@ -98,6 +99,8 @@
               {#each toolsNav as item (item.href)}
                 <a
                   href={item.href}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noreferrer' : undefined}
                   onclick={() => (isToolsOpen = false)}
                   class="block px-3 py-2 rounded-xl transition-all {isActive(item.href) ? 'bg-emerald-500/10' : 'hover:bg-slate-100/70 dark:hover:bg-white/5'}">
                   <span class="block text-[13px] font-semibold {isActive(item.href) ? 'text-emerald-900 dark:text-emerald-400' : 'text-slate-800 dark:text-slate-200'}">{item.label}</span>
@@ -181,6 +184,8 @@
         {#each toolsNav as item (item.href)}
           <a
             href={item.href}
+            target={item.external ? '_blank' : undefined}
+            rel={item.external ? 'noreferrer' : undefined}
             onclick={() => (isMobileMenuOpen = false)}
             aria-current={isActive(item.href) ? 'page' : undefined}
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {isActive(item.href) ? 'bg-emerald-500/10 text-emerald-900 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'}">

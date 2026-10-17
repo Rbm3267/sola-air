@@ -3,7 +3,7 @@
   // nowhere: /privacy (a policy nobody could find, which a Chrome Web Store
   // listing is expected to link), /demo, and /overview — the one page actually
   // written in Sola, and so the strongest dogfooding argument the project has.
-  import { GITHUB_URL, VERSIONS, PUBLISHED_COUNT } from '$lib/data/site';
+  import { GITHUB_URL, VSCODE_URL, VERSIONS, PUBLISHED_COUNT } from '$lib/data/site';
 
   const columns = [
     {
@@ -20,7 +20,8 @@
         { href: '/studio', label: 'Studio' },
         { href: '/demo', label: 'Playground' },
         { href: '/demo/ai', label: 'AI Demo' },
-        { href: '/preview', label: 'Browser Extension' }
+        { href: '/preview', label: 'Browser Extension' },
+        { href: VSCODE_URL, label: 'VS Code Extension', external: true }
       ]
     },
     {
