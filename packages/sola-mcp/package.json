@@ -1,6 +1,6 @@
 {
   "name": "@sola-air-ui/mcp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "MCP server for Sola — compile .sola components and query the API reference directly from Claude Code",
   "type": "module",
   "bin": {
