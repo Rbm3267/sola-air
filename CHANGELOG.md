@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: compiler 1.4.0, ui 1.5.0, create-sola 1.1.0
+
 ### `@sola-air-ui/compiler`
 
 - **Added `sola-check`**: a second bin that checks `.sola` files for compile errors and for
