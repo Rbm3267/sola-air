@@ -8,6 +8,7 @@
 import { COMPONENT_CATALOG, type CatalogComponent } from './componentCatalog';
 
 export const GITHUB_URL = 'https://github.com/Rbm3267/sola-air';
+export const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode';
 export const GITHUB_REPO = 'Rbm3267/sola-air';
 
 /** Versions injected at build time from the package manifests (see vite.config.ts). */
