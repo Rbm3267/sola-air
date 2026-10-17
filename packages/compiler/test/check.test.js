@@ -38,6 +38,11 @@ describe('checkSource', () => {
     assert.deepStrictEqual(codes(`<script>let a=$state(1);</script>\n{#if a}<p>x</p>{/each}`), ['SOLA001']);
   });
 
+  it('ignores a commented-out block', () => {
+    const src = `<script>let a=$state(1);</script>\n<!-- {#if a} old branch -->\n<p>{a}</p>\n<!--\n  {:else}\n-->`;
+    assert.deepStrictEqual(codes(src), []);
+  });
+
   it('ignores block-looking text inside <script> and <style>', () => {
     const src = `<script>const s = '{#if x}';\nlet a=$state(1);</script>\n<p>{a}</p>\n<style>/* {:else} */ p{color:red}</style>`;
     assert.deepStrictEqual(codes(src), []);

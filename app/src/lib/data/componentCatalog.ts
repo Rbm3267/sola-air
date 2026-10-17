@@ -16,12 +16,6 @@ export interface CatalogComponent {
   componentName: string;
   defaultConfig: Record<string, any>;
   props: ComponentPropSpec[];
-  codeSnippets: {
-    sola: string;
-    react: string;
-    svelte: string;
-    html: string;
-  };
 }
 
 export const COMPONENT_CATALOG: CatalogComponent[] = [
@@ -47,12 +41,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'trend', type: 'string', defaultValue: '+14.2%', description: 'Subtext or trend percentage badge' },
       { name: 'icon', type: 'string', defaultValue: 'activity', description: 'Vector icon glyph identifier', options: ['activity', 'trending-up', 'check-circle', 'zap', 'shield'] }
     ],
-    codeSnippets: {
-      sola: `<DataCard \n  title="Net Revenue Retention"\n  value="138.4%"\n  trend="+12.6% vs target"\n  icon="activity"\n/>`,
-      react: `import { DataCard } from '@sola-air-ui/ui';\n\nexport function KPIWidget() {\n  return (\n    <DataCard\n      title="Net Revenue Retention"\n      value="138.4%"\n      trend="+12.6% vs target"\n      icon="activity"\n    />\n  );\n}`,
-      svelte: `<script>\n  import { DataCard } from '@sola-air-ui/ui';\n</script>\n\n<DataCard config={{\n  title: "Net Revenue Retention",\n  value: "138.4%",\n  trend: "+12.6% vs target",\n  icon: "activity"\n}} />`,
-      html: `<sola-data-card\n  title="Net Revenue Retention"\n  value="138.4%"\n  trend="+12.6% vs target"\n  icon="activity"\n></sola-data-card>`
-    }
   },
 
   // 2. GaugeCard
@@ -78,12 +66,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'subtext', type: 'string', defaultValue: 'Normal range', description: 'Contextual sub-label' },
       { name: 'color', type: 'string', defaultValue: 'emerald', description: 'Ring accent color', options: ['emerald', 'sky', 'amber', 'violet', 'rose'] }
     ],
-    codeSnippets: {
-      sola: `<GaugeCard\n  title="Target SLA Utilization"\n  percentage={94}\n  value="94.2%"\n  color="emerald"\n/>`,
-      react: `import { GaugeCard } from '@sola-air-ui/ui';\n\nexport function CapacityGauge() {\n  return (\n    <GaugeCard\n      title="Target SLA Utilization"\n      percentage={94}\n      value="94.2%"\n      color="emerald"\n    />\n  );\n}`,
-      svelte: `<script>\n  import { GaugeCard } from '@sola-air-ui/ui';\n</script>\n\n<GaugeCard config={{\n  title: "Target SLA Utilization",\n  percentage: 94,\n  value: "94.2%",\n  color: "emerald"\n}} />`,
-      html: `<sola-gauge-card\n  title="Target SLA Utilization"\n  percentage="94"\n  value="94.2%"\n  color="emerald"\n></sola-gauge-card>`
-    }
   },
 
   // 3. TactileDialCard
@@ -110,12 +92,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'max', type: 'number', defaultValue: 100, description: 'Maximum dial threshold' },
       { name: 'currentValue', type: 'number', defaultValue: 48, description: 'Active rotational value' }
     ],
-    codeSnippets: {
-      sola: `<TactileDialCard\n  title="Bandwidth Rate Limiter"\n  metric="48 Nodes"\n  min={1}\n  max={100}\n  currentValue={48}\n/>`,
-      react: `import { TactileDialCard } from '@sola-air-ui/ui';\n\nexport function ThrottleControl() {\n  return (\n    <TactileDialCard\n      title="Bandwidth Rate Limiter"\n      min={1}\n      max={100}\n      defaultValue={48}\n      onChange={(val) => console.log('Dial changed:', val)}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { TactileDialCard } from '@sola-air-ui/ui';\n</script>\n\n<TactileDialCard config={{\n  title: "Bandwidth Rate Limiter",\n  metric: "48 Nodes",\n  min: 1,\n  max: 100,\n  currentValue: 48\n}} />`,
-      html: `<sola-tactile-dial\n  title="Bandwidth Rate Limiter"\n  min="1"\n  max="100"\n  value="48"\n></sola-tactile-dial>`
-    }
   },
 
   // 4. FlowWaterfall
@@ -140,12 +116,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Cash Flow Breakdown', description: 'Header title of the waterfall' },
       { name: 'steps', type: 'Array<Step>', defaultValue: [], description: 'Array of steps with name, value, and type (positive/negative/total)' }
     ],
-    codeSnippets: {
-      sola: `<FlowWaterfall\n  title="Net Margin Realization"\n  steps={[\n    { name: "Gross Ingress", value: 840000, type: "positive" },\n    { name: "Overhead", value: -140000, type: "negative" },\n    { name: "Net Balance", value: 700000, type: "total" }\n  ]}\n/>`,
-      react: `import { FlowWaterfall } from '@sola-air-ui/ui';\n\nexport function MarginChart() {\n  return (\n    <FlowWaterfall\n      title="Net Margin Realization"\n      steps={[\n        { name: "Gross Ingress", value: 840000, type: "positive" },\n        { name: "Overhead", value: -140000, type: "negative" },\n        { name: "Net Balance", value: 700000, type: "total" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { FlowWaterfall } from '@sola-air-ui/ui';\n</script>\n\n<FlowWaterfall config={{\n  title: "Net Margin Realization",\n  steps: [\n    { name: "Gross Ingress", value: 840000, type: "positive" },\n    { name: "Overhead", value: -140000, type: "negative" },\n    { name: "Net Balance", value: 700000, type: "total" }\n  ]\n}} />`,
-      html: `<sola-flow-waterfall title="Net Margin Realization"></sola-flow-waterfall>`
-    }
   },
 
   // 5. ListBlock
@@ -169,12 +139,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Active Feed', description: 'List block header' },
       { name: 'items', type: 'Array<Item>', defaultValue: [], description: 'List items containing label, description, and status' }
     ],
-    codeSnippets: {
-      sola: `<ListBlock\n  title="Active Signal Stream"\n  items={[\n    { label: "Worker-01", description: "Healthy", status: "Active" }\n  ]}\n/>`,
-      react: `import { ListBlock } from '@sola-air-ui/ui';\n\nexport function SignalStream() {\n  return (\n    <ListBlock\n      title="Active Signal Stream"\n      items={[\n        { label: "Worker-01", description: "Healthy", status: "Active" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { ListBlock } from '@sola-air-ui/ui';\n</script>\n\n<ListBlock config={{\n  title: "Active Signal Stream",\n  items: [{ label: "Worker-01", description: "Healthy", status: "Active" }]\n}} />`,
-      html: `<sola-list-block title="Active Signal Stream"></sola-list-block>`
-    }
   },
 
   // 6. DynamicForm
@@ -200,12 +164,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'endpoint', type: 'string', defaultValue: '/api/submit', description: 'Form submission endpoint' },
       { name: 'fields', type: 'Array<Field>', defaultValue: [], description: 'Array of form field definitions' }
     ],
-    codeSnippets: {
-      sola: `<DynamicForm\n  title="Cluster Configuration"\n  endpoint="/api/provision"\n  fields={[\n    { name: "cluster_name", label: "Identifier", type: "text", required: true }\n  ]}\n/>`,
-      react: `import { DynamicForm } from '@sola-air-ui/ui';\n\nexport function ConfigForm() {\n  return (\n    <DynamicForm\n      title="Cluster Configuration"\n      endpoint="/api/provision"\n      fields={[\n        { name: "cluster_name", label: "Identifier", type: "text", required: true }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { DynamicForm } from '@sola-air-ui/ui';\n</script>\n\n<DynamicForm config={{\n  title: "Cluster Configuration",\n  endpoint: "/api/provision",\n  fields: [{ name: "cluster_name", label: "Identifier", type: "text", required: true }]\n}} />`,
-      html: `<sola-dynamic-form title="Cluster Configuration"></sola-dynamic-form>`
-    }
   },
 
   // 7. ClusterMatrix
@@ -229,12 +187,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Topology Grid', description: 'Matrix title' },
       { name: 'clusters', type: 'Array<Cluster>', defaultValue: [], description: 'Cluster telemetry nodes' }
     ],
-    codeSnippets: {
-      sola: `<ClusterMatrix\n  title="Global Node Topologies"\n  clusters={[\n    { name: "us-east-1", status: "healthy", load: "38%", p99: "8.4ms" }\n  ]}\n/>`,
-      react: `import { ClusterMatrix } from '@sola-air-ui/ui';\n\nexport function ClusterView() {\n  return (\n    <ClusterMatrix\n      title="Global Node Topologies"\n      clusters={[\n        { name: "us-east-1", status: "healthy", load: "38%", p99: "8.4ms" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { ClusterMatrix } from '@sola-air-ui/ui';\n</script>\n\n<ClusterMatrix config={{\n  title: "Global Node Topologies",\n  clusters: [{ name: "us-east-1", status: "healthy", load: "38%", p99: "8.4ms" }]\n}} />`,
-      html: `<sola-cluster-matrix title="Global Node Topologies"></sola-cluster-matrix>`
-    }
   },
 
   // 8. IncidentTriageMatrix
@@ -258,12 +210,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Status Matrix', description: 'Radar title' },
       { name: 'incidents', type: 'Array<Incident>', defaultValue: [], description: 'Priority items array' }
     ],
-    codeSnippets: {
-      sola: `<IncidentTriageMatrix\n  title="Live Priority Radar"\n  incidents={[\n    { id: "T-100", service: "Auth API", severity: "P1", status: "Active" }\n  ]}\n/>`,
-      react: `import { IncidentTriageMatrix } from '@sola-air-ui/ui';\n\nexport function PriorityRadar() {\n  return (\n    <IncidentTriageMatrix\n      title="Live Priority Radar"\n      incidents={[\n        { id: "T-100", service: "Auth API", severity: "P1", status: "Active" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { IncidentTriageMatrix } from '@sola-air-ui/ui';\n</script>\n\n<IncidentTriageMatrix config={{\n  title: "Live Priority Radar",\n  incidents: [{ id: "T-100", service: "Auth API", severity: "P1", status: "Active" }]\n}} />`,
-      html: `<sola-incident-triage title="Live Priority Radar"></sola-incident-triage>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -289,12 +235,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Live Stream', description: 'Stream header label' },
       { name: 'events', type: 'Array<Event>', defaultValue: [], description: 'Array of event objects with id, message, timestamp, and type' }
     ],
-    codeSnippets: {
-      sola: `<StreamView\n  title="Runtime Event Log"\n  events={[\n    { id: "1", message: "Connected", timestamp: "00:01.02", type: "success" }\n  ]}\n/>`,
-      react: `import { StreamView } from '@sola-air-ui/ui';\n\nexport function EventLog() {\n  return (\n    <StreamView\n      title="Runtime Event Log"\n      events={[\n        { id: "1", message: "Connected", timestamp: "00:01.02", type: "success" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { StreamView } from '@sola-air-ui/ui';\n</script>\n\n<StreamView config={{\n  title: "Runtime Event Log",\n  events: [{ id: "1", message: "Connected", timestamp: "00:01.02", type: "success" }]\n}} />`,
-      html: `<sola-stream-view title="Runtime Event Log"></sola-stream-view>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -329,12 +269,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'riskLevel', type: 'string', defaultValue: 'Moderate', description: 'Risk severity level', options: ['Low', 'Moderate', 'High', 'Destructive'] },
       { name: 'riskScore', type: 'number', defaultValue: 45, description: 'Numerical risk score (0–100)' }
     ],
-    codeSnippets: {
-      sola: `<DiffAudit\n  title="Config Change Review"\n  entityId="CFG-2847"\n  riskLevel="Moderate"\n  riskScore={45}\n/>`,
-      react: `import { DiffAudit } from '@sola-air-ui/ui';\n\nexport function ChangeReview() {\n  return (\n    <DiffAudit\n      title="Config Change Review"\n      entityId="CFG-2847"\n      riskLevel="Moderate"\n      riskScore={45}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { DiffAudit } from '@sola-air-ui/ui';\n</script>\n\n<DiffAudit config={{\n  title: "Config Change Review",\n  entityId: "CFG-2847",\n  riskLevel: "Moderate",\n  riskScore: 45\n}} />`,
-      html: `<sola-diff-audit\n  title="Config Change Review"\n  entity-id="CFG-2847"\n  risk-level="Moderate"\n></sola-diff-audit>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -366,12 +300,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'sizeBytes', type: 'string', defaultValue: '1.8 GB', description: 'Table size on disk' },
       { name: 'columns', type: 'Array<Column>', defaultValue: [], description: 'Column definitions array' }
     ],
-    codeSnippets: {
-      sola: `<SchemaInspector\n  table="users"\n  rowCount="2.4M"\n  sizeBytes="1.8 GB"\n  columns={[\n    { name: "id", type: "UUID", isPrimary: true }\n  ]}\n/>`,
-      react: `import { SchemaInspector } from '@sola-air-ui/ui';\n\nexport function TableView() {\n  return (\n    <SchemaInspector\n      table="users"\n      rowCount="2.4M"\n      columns={[\n        { name: "id", type: "UUID", isPrimary: true }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { SchemaInspector } from '@sola-air-ui/ui';\n</script>\n\n<SchemaInspector config={{\n  table: "users",\n  rowCount: "2.4M",\n  columns: [{ name: "id", type: "UUID", isPrimary: true }]\n}} />`,
-      html: `<sola-schema-inspector table="users" row-count="2.4M"></sola-schema-inspector>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -395,12 +323,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'frictionCount', type: 'number', defaultValue: 0, description: 'Active friction or error count' },
       { name: 'isCircuitBreakerActive', type: 'boolean', defaultValue: false, description: 'Whether circuit breaker is tripped' }
     ],
-    codeSnippets: {
-      sola: `<SentinelCapsule\n  flowIndex={99.8}\n  frictionCount={0}\n  isCircuitBreakerActive={false}\n/>`,
-      react: `import { SentinelCapsule } from '@sola-air-ui/ui';\n\nexport function HealthBeacon() {\n  return (\n    <SentinelCapsule\n      flowIndex={99.8}\n      frictionCount={0}\n      isCircuitBreakerActive={false}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { SentinelCapsule } from '@sola-air-ui/ui';\n</script>\n\n<SentinelCapsule\n  flowIndex={99.8}\n  frictionCount={0}\n  isCircuitBreakerActive={false}\n/>`,
-      html: `<sola-sentinel-capsule\n  flow-index="99.8"\n  friction-count="0"\n></sola-sentinel-capsule>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -428,12 +350,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'trendDirection', type: 'string', defaultValue: 'up', description: 'Trend direction', options: ['up', 'down', 'flat'] },
       { name: 'sparkData', type: 'number[]', defaultValue: [22, 28, 35, 31, 42], description: 'Array of numeric data points for sparkline' }
     ],
-    codeSnippets: {
-      sola: `<SparklineTile\n  title="Active Sessions"\n  value="12,847"\n  trend="+8.3%"\n  trendDirection="up"\n  sparkData={[22, 28, 35, 31, 42, 38, 52]}\n/>`,
-      react: `import { SparklineTile } from '@sola-air-ui/ui';\n\nexport function SessionMetric() {\n  return (\n    <SparklineTile\n      title="Active Sessions"\n      value="12,847"\n      trend="+8.3%"\n      sparkData={[22, 28, 35, 31, 42, 38, 52]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { SparklineTile } from '@sola-air-ui/ui';\n</script>\n\n<SparklineTile config={{\n  title: "Active Sessions",\n  value: "12,847",\n  trend: "+8.3%",\n  sparkData: [22, 28, 35, 31, 42, 38, 52]\n}} />`,
-      html: `<sola-sparkline-tile\n  title="Active Sessions"\n  value="12,847"\n  trend="+8.3%"\n></sola-sparkline-tile>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -465,12 +381,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'delta', type: 'string', defaultValue: '+32.7%', description: 'Delta between values' },
       { name: 'deltaType', type: 'string', defaultValue: 'positive', description: 'Delta coloring', options: ['positive', 'negative', 'neutral'] }
     ],
-    codeSnippets: {
-      sola: `<ComparisonCard\n  title="Plan vs Actual"\n  labelA="Target" valueA="$240,000"\n  labelB="Actual" valueB="$318,400"\n  delta="+32.7%" deltaType="positive"\n/>`,
-      react: `import { ComparisonCard } from '@sola-air-ui/ui';\n\nexport function PlanActual() {\n  return (\n    <ComparisonCard\n      title="Plan vs Actual"\n      labelA="Target" valueA="$240,000"\n      labelB="Actual" valueB="$318,400"\n      delta="+32.7%"\n    />\n  );\n}`,
-      svelte: `<script>\n  import { ComparisonCard } from '@sola-air-ui/ui';\n</script>\n\n<ComparisonCard config={{\n  title: "Plan vs Actual",\n  labelA: "Target", valueA: "$240,000",\n  labelB: "Actual", valueB: "$318,400",\n  delta: "+32.7%"\n}} />`,
-      html: `<sola-comparison-card\n  title="Plan vs Actual"\n  label-a="Target" value-a="$240,000"\n  label-b="Actual" value-b="$318,400"\n></sola-comparison-card>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -497,12 +407,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Pipeline', description: 'Progress bar heading' },
       { name: 'steps', type: 'Array<Step>', defaultValue: [], description: 'Array of steps with label and status (completed/active/pending)' }
     ],
-    codeSnippets: {
-      sola: `<ProgressSteps\n  title="Deployment Pipeline"\n  steps={[\n    { label: "Build", status: "completed" },\n    { label: "Test", status: "active" },\n    { label: "Deploy", status: "pending" }\n  ]}\n/>`,
-      react: `import { ProgressSteps } from '@sola-air-ui/ui';\n\nexport function Pipeline() {\n  return (\n    <ProgressSteps\n      title="Deployment Pipeline"\n      steps={[\n        { label: "Build", status: "completed" },\n        { label: "Test", status: "active" },\n        { label: "Deploy", status: "pending" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { ProgressSteps } from '@sola-air-ui/ui';\n</script>\n\n<ProgressSteps config={{\n  title: "Deployment Pipeline",\n  steps: [\n    { label: "Build", status: "completed" },\n    { label: "Test", status: "active" }\n  ]\n}} />`,
-      html: `<sola-progress-steps title="Deployment Pipeline"></sola-progress-steps>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -531,12 +435,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'suffix', type: 'string', defaultValue: '', description: 'Suffix string (e.g. users, ms)' },
       { name: 'format', type: 'string', defaultValue: 'currency', description: 'Number format', options: ['currency', 'percent', 'integer', 'decimal'] }
     ],
-    codeSnippets: {
-      sola: `<CounterTicker\n  title="Total Revenue"\n  value={1284930}\n  prefix="$"\n  format="currency"\n/>`,
-      react: `import { CounterTicker } from '@sola-air-ui/ui';\n\nexport function RevenueTicker() {\n  return (\n    <CounterTicker\n      title="Total Revenue"\n      value={1284930}\n      prefix="$"\n      format="currency"\n    />\n  );\n}`,
-      svelte: `<script>\n  import { CounterTicker } from '@sola-air-ui/ui';\n</script>\n\n<CounterTicker config={{\n  title: "Total Revenue",\n  value: 1284930,\n  prefix: "$",\n  format: "currency"\n}} />`,
-      html: `<sola-counter-ticker\n  title="Total Revenue"\n  value="1284930"\n  prefix="$"\n></sola-counter-ticker>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -562,12 +460,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'checked', type: 'boolean', defaultValue: false, description: 'Toggle state' },
       { name: 'size', type: 'string', defaultValue: 'default', description: 'Toggle size variant', options: ['sm', 'default', 'lg'] }
     ],
-    codeSnippets: {
-      sola: `<ToggleSwitch\n  label="Enable Dark Mode"\n  description="Switch between themes"\n  checked={true}\n/>`,
-      react: `import { ToggleSwitch } from '@sola-air-ui/ui';\nimport { useState } from 'react';\n\nexport function ThemeToggle() {\n  const [on, setOn] = useState(true);\n  return (\n    <ToggleSwitch\n      label="Enable Dark Mode"\n      checked={on}\n      onChange={setOn}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { ToggleSwitch } from '@sola-air-ui/ui';\n  let darkMode = $state(true);\n</script>\n\n<ToggleSwitch\n  label="Enable Dark Mode"\n  bind:checked={darkMode}\n/>`,
-      html: `<sola-toggle-switch\n  label="Enable Dark Mode"\n  checked\n></sola-toggle-switch>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -600,12 +492,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'step', type: 'number', defaultValue: 10, description: 'Step increment' },
       { name: 'prefix', type: 'string', defaultValue: '$', description: 'Value prefix' }
     ],
-    codeSnippets: {
-      sola: `<RangeSlider\n  title="Price Range"\n  min={0} max={1000}\n  valueLow={150} valueHigh={750}\n  step={10} prefix="$"\n/>`,
-      react: `import { RangeSlider } from '@sola-air-ui/ui';\n\nexport function PriceFilter() {\n  return (\n    <RangeSlider\n      title="Price Range"\n      min={0} max={1000}\n      valueLow={150} valueHigh={750}\n      onChange={([lo, hi]) => console.log(lo, hi)}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { RangeSlider } from '@sola-air-ui/ui';\n  let lo = $state(150);\n  let hi = $state(750);\n</script>\n\n<RangeSlider\n  title="Price Range"\n  min={0} max={1000}\n  bind:valueLow={lo}\n  bind:valueHigh={hi}\n/>`,
-      html: `<sola-range-slider\n  title="Price Range"\n  min="0" max="1000"\n  value-low="150" value-high="750"\n></sola-range-slider>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -632,12 +518,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Timeline', description: 'Timeline header' },
       { name: 'entries', type: 'Array<Entry>', defaultValue: [], description: 'Array of timeline entries with time, label, description, and status' }
     ],
-    codeSnippets: {
-      sola: `<TimelineLog\n  title="Activity History"\n  entries={[\n    { time: "2 min ago", label: "Deployed", status: "success" },\n    { time: "18 min ago", label: "Tests passed", status: "success" }\n  ]}\n/>`,
-      react: `import { TimelineLog } from '@sola-air-ui/ui';\n\nexport function ActivityFeed() {\n  return (\n    <TimelineLog\n      title="Activity History"\n      entries={[\n        { time: "2 min ago", label: "Deployed", status: "success" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { TimelineLog } from '@sola-air-ui/ui';\n</script>\n\n<TimelineLog config={{\n  title: "Activity History",\n  entries: [{ time: "2 min ago", label: "Deployed", status: "success" }]\n}} />`,
-      html: `<sola-timeline-log title="Activity History"></sola-timeline-log>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -666,12 +546,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Properties', description: 'Grid heading' },
       { name: 'pairs', type: 'Array<Pair>', defaultValue: [], description: 'Array of key-value pairs with optional badge' }
     ],
-    codeSnippets: {
-      sola: `<KeyValueGrid\n  title="Instance Metadata"\n  pairs={[\n    { key: "Instance ID", value: "i-0a1b2c3d4e5f67890" },\n    { key: "State", value: "Running", badge: "success" }\n  ]}\n/>`,
-      react: `import { KeyValueGrid } from '@sola-air-ui/ui';\n\nexport function InstanceDetails() {\n  return (\n    <KeyValueGrid\n      title="Instance Metadata"\n      pairs={[\n        { key: "Instance ID", value: "i-0a1b2c3d" },\n        { key: "State", value: "Running", badge: "success" }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { KeyValueGrid } from '@sola-air-ui/ui';\n</script>\n\n<KeyValueGrid config={{\n  title: "Instance Metadata",\n  pairs: [\n    { key: "Instance ID", value: "i-0a1b2c3d" },\n    { key: "State", value: "Running", badge: "success" }\n  ]\n}} />`,
-      html: `<sola-key-value-grid title="Instance Metadata"></sola-key-value-grid>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -699,12 +573,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'actionLabel', type: 'string', defaultValue: '', description: 'Optional action button text' },
       { name: 'dismissible', type: 'boolean', defaultValue: true, description: 'Whether the banner can be dismissed' }
     ],
-    codeSnippets: {
-      sola: `<AlertBanner\n  title="Scheduled Maintenance"\n  message="Services may be briefly unavailable."\n  severity="warning"\n  dismissible={true}\n/>`,
-      react: `import { AlertBanner } from '@sola-air-ui/ui';\n\nexport function MaintenanceNotice() {\n  return (\n    <AlertBanner\n      title="Scheduled Maintenance"\n      message="Services may be briefly unavailable."\n      severity="warning"\n      dismissible\n    />\n  );\n}`,
-      svelte: `<script>\n  import { AlertBanner } from '@sola-air-ui/ui';\n</script>\n\n<AlertBanner\n  title="Scheduled Maintenance"\n  message="Services may be briefly unavailable."\n  severity="warning"\n  dismissible={true}\n/>`,
-      html: `<sola-alert-banner\n  title="Scheduled Maintenance"\n  message="Services may be briefly unavailable."\n  severity="warning"\n  dismissible\n></sola-alert-banner>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -732,12 +600,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Funnel', description: 'Chart title' },
       { name: 'stages', type: 'Array<Stage>', defaultValue: [], description: 'Funnel stages with label, value, and optional color' }
     ],
-    codeSnippets: {
-      sola: `<FunnelChart\n  title="Signup Funnel"\n  stages={[\n    { label: "Page Views", value: 48200 },\n    { label: "Sign Up", value: 12400 },\n    { label: "First Purchase", value: 2100 }\n  ]}\n/>`,
-      react: `import { FunnelChart } from '@sola-air-ui/ui';\n\nexport function SignupFunnel() {\n  return (\n    <FunnelChart\n      title="Signup Funnel"\n      stages={[\n        { label: "Page Views", value: 48200 },\n        { label: "Sign Up", value: 12400 },\n        { label: "Purchase", value: 2100 }\n      ]}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { FunnelChart } from '@sola-air-ui/ui';\n</script>\n\n<FunnelChart config={{\n  title: "Signup Funnel",\n  stages: [\n    { label: "Page Views", value: 48200 },\n    { label: "Sign Up", value: 12400 }\n  ]\n}} />`,
-      html: `<sola-funnel-chart title="Signup Funnel"></sola-funnel-chart>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -764,12 +626,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'maxVisible', type: 'number', defaultValue: 5, description: 'Maximum toasts visible at once before stacking' },
       { name: 'defaultDuration', type: 'number', defaultValue: 4000, description: 'Auto-dismiss duration in milliseconds (0 = persistent)' }
     ],
-    codeSnippets: {
-      sola: `<ToastStack position="bottom-right" />\n\n// Dispatch from anywhere:\ntoast.success("Changes saved");\ntoast.error("Deploy failed", { duration: 8000 });\ntoast.info("New version available");`,
-      react: `import { ToastProvider, useToast } from '@sola-air-ui/ui';\n\nexport function App() {\n  return (\n    <ToastProvider position="bottom-right">\n      <Dashboard />\n    </ToastProvider>\n  );\n}\n\nfunction Dashboard() {\n  const toast = useToast();\n  return (\n    <button onClick={() => toast.success("Saved!")}>\n      Save\n    </button>\n  );\n}`,
-      svelte: `<script>\n  import { ToastStack, toast } from '@sola-air-ui/ui';\n</script>\n\n<button onclick={() => toast.success("Changes saved")}>\n  Save\n</button>\n\n<ToastStack position="bottom-right" />`,
-      html: `<sola-toast-stack position="bottom-right"></sola-toast-stack>\n\n<script>\n  document.querySelector('sola-toast-stack')\n    .dispatch({ title: "Saved!", severity: "success" });\n</script>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -799,12 +655,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'actionHref', type: 'string', defaultValue: '', description: 'Action link URL' },
       { name: 'dismissible', type: 'boolean', defaultValue: false, description: 'Whether the callout can be dismissed' }
     ],
-    codeSnippets: {
-      sola: `<InlineCallout\n  variant="warning"\n  title="Breaking Change"\n  message="The config prop schema has changed."\n  actionLabel="Migration Guide"\n  actionHref="/docs#migration"\n/>`,
-      react: `import { InlineCallout } from '@sola-air-ui/ui';\n\nexport function DeprecationNotice() {\n  return (\n    <InlineCallout\n      variant="warning"\n      title="Breaking Change"\n      message="The config prop schema has changed."\n      actionLabel="Migration Guide"\n      actionHref="/docs#migration"\n    />\n  );\n}`,
-      svelte: `<script>\n  import { InlineCallout } from '@sola-air-ui/ui';\n</script>\n\n<InlineCallout\n  variant="warning"\n  title="Breaking Change"\n  message="The config prop schema has changed."\n  actionLabel="Migration Guide"\n  actionHref="/docs#migration"\n/>`,
-      html: `<sola-inline-callout\n  variant="warning"\n  title="Breaking Change"\n  message="The config prop schema has changed."\n></sola-inline-callout>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -834,12 +684,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'pulse', type: 'boolean', defaultValue: false, description: 'Enable pulse animation for attention' },
       { name: 'variant', type: 'string', defaultValue: 'counter', description: 'Badge variant', options: ['counter', 'dot', 'ping'] }
     ],
-    codeSnippets: {
-      sola: `<NotificationBadge count={12} color="rose">\n  <IconButton icon="bell" />\n</NotificationBadge>\n\n<!-- Status dot variant -->\n<NotificationBadge variant="dot" color="emerald" pulse />\n\n<!-- Overflow threshold -->\n<NotificationBadge count={142} maxCount={99} />`,
-      react: `import { NotificationBadge } from '@sola-air-ui/ui';\n\nexport function NavBell() {\n  return (\n    <NotificationBadge count={12} color="rose">\n      <button aria-label="Notifications">\n        <BellIcon />\n      </button>\n    </NotificationBadge>\n  );\n}`,
-      svelte: `<script>\n  import { NotificationBadge } from '@sola-air-ui/ui';\n  let unread = $state(12);\n</script>\n\n<NotificationBadge count={unread} color="rose">\n  <button aria-label="Notifications">\n    <!-- bell icon -->\n  </button>\n</NotificationBadge>`,
-      html: `<sola-notification-badge count="12" color="rose">\n  <button>Notifications</button>\n</sola-notification-badge>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -867,12 +711,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'position', type: 'string', defaultValue: 'bottom-center', description: 'Anchor position', options: ['bottom-center', 'bottom-left', 'bottom-right'] },
       { name: 'icon', type: 'string', defaultValue: '', description: 'Optional leading icon identifier' }
     ],
-    codeSnippets: {
-      sola: `<Snackbar\n  message="3 items moved to archive."\n  actionLabel="Undo"\n  duration={6000}\n  onAction={() => undoArchive()}\n/>`,
-      react: `import { useSnackbar } from '@sola-air-ui/ui';\n\nexport function ArchiveButton() {\n  const snackbar = useSnackbar();\n\n  const handleArchive = () => {\n    archiveItems(selected);\n    snackbar.show({\n      message: "3 items archived.",\n      actionLabel: "Undo",\n      onAction: () => undoArchive()\n    });\n  };\n\n  return <button onClick={handleArchive}>Archive</button>;\n}`,
-      svelte: `<script>\n  import { Snackbar, snackbar } from '@sola-air-ui/ui';\n\n  function handleArchive() {\n    archiveItems(selected);\n    snackbar.show({\n      message: "3 items archived.",\n      actionLabel: "Undo",\n      onAction: () => undoArchive()\n    });\n  }\n</script>\n\n<button onclick={handleArchive}>Archive</button>\n<Snackbar />`,
-      html: `<sola-snackbar\n  message="3 items moved to archive."\n  action-label="Undo"\n  duration="6000"\n></sola-snackbar>`
-    }
   },
 
   // ───────────────────────────────────────────
@@ -903,12 +741,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'maxVisible', type: 'number', defaultValue: 10, description: 'Items visible before scroll pagination' },
       { name: 'groupByTime', type: 'boolean', defaultValue: true, description: 'Group notifications by time period (Today, Earlier)' }
     ],
-    codeSnippets: {
-      sola: `<NotificationCenter\n  title="Notifications"\n  notifications={[\n    { title: "Deploy succeeded", time: "2m ago", severity: "success", read: false },\n    { title: "PR review", time: "15m ago", severity: "info", read: false }\n  ]}\n  onMarkAllRead={() => markAllRead()}\n/>`,
-      react: `import { NotificationCenter } from '@sola-air-ui/ui';\n\nexport function NavNotifications() {\n  const [items, setItems] = useState(notifications);\n  return (\n    <NotificationCenter\n      notifications={items}\n      onMarkAllRead={() => setItems(\n        items.map(n => ({ ...n, read: true }))\n      )}\n      onItemClick={(id) => router.push(\`/detail/\${id}\`)}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { NotificationCenter } from '@sola-air-ui/ui';\n  let items = $state(notifications);\n</script>\n\n<NotificationCenter\n  notifications={items}\n  onMarkAllRead={() => {\n    items = items.map(n => ({ ...n, read: true }));\n  }}\n/>`,
-      html: `<sola-notification-center\n  title="Notifications"\n></sola-notification-center>`
-    }
   },
 
   // ═══════════════════════════════════════════
@@ -938,12 +770,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'loading', type: 'boolean', defaultValue: false, description: 'Show loading spinner' },
       { name: 'disabled', type: 'boolean', defaultValue: false, description: 'Disable interaction' }
     ],
-    codeSnippets: {
-      sola: `<SolaButton variant="primary" label="Save Changes" />\n<SolaButton variant="destructive" label="Delete" />\n<SolaButton variant="ghost" label="Cancel" />\n<SolaButton variant="primary" label="Saving..." loading={true} />`,
-      react: `import { Button } from '@sola-air-ui/ui';\n\nexport function Actions() {\n  return (\n    <>\n      <Button variant="primary">Save Changes</Button>\n      <Button variant="destructive">Delete</Button>\n      <Button variant="ghost">Cancel</Button>\n      <Button loading>Saving...</Button>\n    </>\n  );\n}`,
-      svelte: `<script>\n  import { SolaButton } from '@sola-air-ui/ui';\n</script>\n\n<SolaButton variant="primary" label="Save Changes" />\n<SolaButton variant="destructive" label="Delete" />\n<SolaButton variant="ghost" label="Cancel" />`,
-      html: `<sola-button variant="primary">Save Changes</sola-button>\n<sola-button variant="destructive">Delete</sola-button>`
-    }
   },
 
   // 29. Dialog
@@ -965,12 +791,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: 'Dialog', description: 'Dialog heading' },
       { name: 'description', type: 'string', defaultValue: '', description: 'Optional description text below heading' }
     ],
-    codeSnippets: {
-      sola: `<SolaDialog\n  open={showModal}\n  title="Confirm Action"\n  description="This action cannot be undone."\n  onclose={() => showModal = false}\n>\n  <SolaButton variant="destructive" label="Delete" />\n  <SolaButton variant="ghost" label="Cancel" />\n</SolaDialog>`,
-      react: `import { Dialog } from '@sola-air-ui/ui';\n\nexport function ConfirmDelete() {\n  const [open, setOpen] = useState(false);\n  return (\n    <Dialog\n      open={open}\n      onClose={() => setOpen(false)}\n      title="Confirm Action"\n      description="This cannot be undone."\n    >\n      <Button variant="destructive">Delete</Button>\n      <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>\n    </Dialog>\n  );\n}`,
-      svelte: `<script>\n  import { SolaDialog, SolaButton } from '@sola-air-ui/ui';\n  let open = $state(false);\n</script>\n\n<SolaButton label="Open" onclick={() => open = true} />\n<SolaDialog {open} title="Confirm" onclose={() => open = false}>\n  <SolaButton variant="destructive" label="Delete" />\n</SolaDialog>`,
-      html: `<sola-dialog open title="Confirm Action">\n  <p>This action cannot be undone.</p>\n</sola-dialog>`
-    }
   },
 
   // 30. Tabs
@@ -996,12 +816,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'tabs', type: 'Array<Tab>', defaultValue: [], description: 'Array of tab objects with id, label, and optional badge' },
       { name: 'activeTab', type: 'string', defaultValue: '', description: 'ID of the currently active tab' }
     ],
-    codeSnippets: {
-      sola: `<SolaTabs\n  variant="segment"\n  tabs={[\n    { id: "overview", label: "Overview" },\n    { id: "analytics", label: "Analytics", badge: "12" },\n    { id: "settings", label: "Settings" }\n  ]}\n  activeTab="overview"\n  onchange={(id) => currentTab = id}\n/>`,
-      react: `import { Tabs } from '@sola-air-ui/ui';\n\nexport function PageNav() {\n  const [tab, setTab] = useState("overview");\n  return (\n    <Tabs\n      variant="segment"\n      tabs={[\n        { id: "overview", label: "Overview" },\n        { id: "analytics", label: "Analytics", badge: "12" }\n      ]}\n      activeTab={tab}\n      onChange={setTab}\n    />\n  );\n}`,
-      svelte: `<script>\n  import { SolaTabs } from '@sola-air-ui/ui';\n  let current = $state('overview');\n</script>\n\n<SolaTabs\n  variant="segment"\n  tabs={[{ id: "overview", label: "Overview" }, { id: "settings", label: "Settings" }]}\n  activeTab={current}\n  onchange={(id) => current = id}\n/>`,
-      html: `<sola-tabs variant="segment">\n  <sola-tab id="overview" label="Overview" active />\n  <sola-tab id="settings" label="Settings" />\n</sola-tabs>`
-    }
   },
 
   // 31. Tooltip
@@ -1023,12 +837,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'position', type: 'string', defaultValue: 'top', description: 'Anchor position', options: ['top', 'bottom', 'left', 'right'] },
       { name: 'delay', type: 'number', defaultValue: 300, description: 'Show delay in milliseconds' }
     ],
-    codeSnippets: {
-      sola: `<SolaTooltip text="Edit settings" position="top">\n  <SolaButton variant="icon" label="Settings">\n    <GearIcon />\n  </SolaButton>\n</SolaTooltip>`,
-      react: `import { Tooltip, Button } from '@sola-air-ui/ui';\n\nexport function IconAction() {\n  return (\n    <Tooltip text="Edit settings" position="top">\n      <Button variant="icon">\n        <GearIcon />\n      </Button>\n    </Tooltip>\n  );\n}`,
-      svelte: `<script>\n  import { SolaTooltip, SolaButton } from '@sola-air-ui/ui';\n</script>\n\n<SolaTooltip text="Edit settings" position="top">\n  <SolaButton variant="icon" label="Settings" />\n</SolaTooltip>`,
-      html: `<sola-tooltip text="Edit settings" position="top">\n  <button>Settings</button>\n</sola-tooltip>`
-    }
   },
 
   // 32. Avatar
@@ -1054,12 +862,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'status', type: 'string', defaultValue: 'none', description: 'Status dot indicator', options: ['online', 'offline', 'busy', 'away', 'none'] },
       { name: 'shape', type: 'string', defaultValue: 'circle', description: 'Avatar shape', options: ['circle', 'rounded'] }
     ],
-    codeSnippets: {
-      sola: `<SolaAvatar\n  src="/avatars/jane.jpg"\n  alt="Jane Smith"\n  size="lg"\n  status="online"\n/>\n\n<!-- Initials fallback -->\n<SolaAvatar initials="JD" size="default" status="busy" />`,
-      react: `import { Avatar } from '@sola-air-ui/ui';\n\nexport function UserProfile() {\n  return (\n    <Avatar\n      src="/avatars/jane.jpg"\n      alt="Jane Smith"\n      size="lg"\n      status="online"\n    />\n  );\n}`,
-      svelte: `<script>\n  import { SolaAvatar } from '@sola-air-ui/ui';\n</script>\n\n<SolaAvatar\n  src="/avatars/jane.jpg"\n  alt="Jane Smith"\n  size="lg"\n  status="online"\n/>`,
-      html: `<sola-avatar\n  src="/avatars/jane.jpg"\n  alt="Jane Smith"\n  size="lg"\n  status="online"\n></sola-avatar>`
-    }
   },
 
   // 33. Skeleton Loader
@@ -1083,12 +885,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'count', type: 'number', defaultValue: 1, description: 'Number of skeleton items to render' },
       { name: 'animate', type: 'boolean', defaultValue: true, description: 'Enable pulse animation' }
     ],
-    codeSnippets: {
-      sola: `<!-- Card skeleton -->\n<SolaSkeleton variant="card" />\n\n<!-- Text block skeleton -->\n<SolaSkeleton variant="text" count={3} />\n\n<!-- Circle + lines -->\n<div class="flex gap-3">\n  <SolaSkeleton variant="circle" />\n  <SolaSkeleton variant="line" width="3/4" count={2} />\n</div>`,
-      react: `import { Skeleton } from '@sola-air-ui/ui';\n\nexport function LoadingCard() {\n  return (\n    <div>\n      <Skeleton variant="card" />\n      <Skeleton variant="text" count={3} />\n      <div className="flex gap-3">\n        <Skeleton variant="circle" />\n        <Skeleton variant="line" width="3/4" />\n      </div>\n    </div>\n  );\n}`,
-      svelte: `<script>\n  import { SolaSkeleton } from '@sola-air-ui/ui';\n</script>\n\n<SolaSkeleton variant="card" />\n<SolaSkeleton variant="text" count={3} />`,
-      html: `<sola-skeleton variant="card"></sola-skeleton>\n<sola-skeleton variant="text" count="3"></sola-skeleton>`
-    }
   },
 
   // 34. Select / Combobox
@@ -1118,12 +914,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'placeholder', type: 'string', defaultValue: 'Select...', description: 'Placeholder text' },
       { name: 'searchable', type: 'boolean', defaultValue: true, description: 'Enable type-to-search filtering' }
     ],
-    codeSnippets: {
-      sola: `<SolaSelect\n  options={[{ value: "react", label: "React" }, { value: "svelte", label: "Svelte" }]}\n  value="svelte"\n  searchable\n  onchange={(v) => selected = v}\n/>`,
-      react: `import { Select } from '@sola-air-ui/ui';\n\n<Select\n  options={frameworks}\n  value={selected}\n  onChange={setSelected}\n  searchable\n/>`,
-      svelte: `<script>\n  import { SolaSelect } from '@sola-air-ui/ui';\n  let selected = $state('svelte');\n</script>\n\n<SolaSelect options={frameworks} value={selected} onchange={(v) => selected = v} />`,
-      html: `<sola-select placeholder="Select..." searchable></sola-select>`
-    }
   },
 
   // 35. Dropdown Menu
@@ -1150,12 +940,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'items', type: 'Array<MenuItem>', defaultValue: [], description: 'Menu items with label, action, divider, variant' },
       { name: 'position', type: 'string', defaultValue: 'bottom-left', description: 'Dropdown anchor position', options: ['bottom-left', 'bottom-right'] }
     ],
-    codeSnippets: {
-      sola: `<SolaDropdown items={[\n  { label: "Edit", action: () => edit() },\n  { label: "Delete", variant: "destructive", action: () => del() }\n]} />`,
-      react: `import { Dropdown } from '@sola-air-ui/ui';\n\n<Dropdown items={[\n  { label: "Edit", action: edit },\n  { label: "Delete", variant: "destructive", action: del }\n]} />`,
-      svelte: `<SolaDropdown items={menuItems} position="bottom-right" />`,
-      html: `<sola-dropdown position="bottom-left"></sola-dropdown>`
-    }
   },
 
   // 36. Accordion
@@ -1181,12 +965,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'variant', type: 'string', defaultValue: 'default', description: 'Visual style', options: ['default', 'bordered', 'separated'] },
       { name: 'multiple', type: 'boolean', defaultValue: false, description: 'Allow multiple sections open simultaneously' }
     ],
-    codeSnippets: {
-      sola: `<SolaAccordion\n  variant="separated"\n  multiple\n  items={[\n    { id: "1", title: "Section 1", content: "Content here", defaultOpen: true },\n    { id: "2", title: "Section 2", content: "More content" }\n  ]}\n/>`,
-      react: `import { Accordion } from '@sola-air-ui/ui';\n\n<Accordion variant="separated" multiple items={sections} />`,
-      svelte: `<SolaAccordion variant="bordered" items={faqItems} multiple />`,
-      html: `<sola-accordion variant="separated" multiple></sola-accordion>`
-    }
   },
 
   // 37. Checkbox
@@ -1205,12 +983,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'label', type: 'string', defaultValue: '', description: 'Label text' },
       { name: 'disabled', type: 'boolean', defaultValue: false, description: 'Disable interaction' }
     ],
-    codeSnippets: {
-      sola: `<SolaCheckbox checked={agreed} label="I agree to the terms" onchange={(v) => agreed = v} />`,
-      react: `<Checkbox checked={agreed} onChange={setAgreed} label="I agree" />`,
-      svelte: `<SolaCheckbox bind:checked={agreed} label="I agree to the terms" />`,
-      html: `<sola-checkbox label="I agree to the terms"></sola-checkbox>`
-    }
   },
 
   // 38. Radio Group
@@ -1236,12 +1008,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'value', type: 'string', defaultValue: '', description: 'Currently selected value' },
       { name: 'variant', type: 'string', defaultValue: 'default', description: 'Visual style', options: ['default', 'card'] }
     ],
-    codeSnippets: {
-      sola: `<SolaRadioGroup\n  variant="card"\n  options={plans}\n  value={selected}\n  onchange={(v) => selected = v}\n/>`,
-      react: `<RadioGroup variant="card" options={plans} value={plan} onChange={setPlan} />`,
-      svelte: `<SolaRadioGroup variant="card" options={plans} value={selected} onchange={(v) => selected = v} />`,
-      html: `<sola-radio-group variant="card"></sola-radio-group>`
-    }
   },
 
   // 39. Text Input
@@ -1261,12 +1027,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'error', type: 'string', defaultValue: '', description: 'Error message (shows rose border)' },
       { name: 'hint', type: 'string', defaultValue: '', description: 'Help text below input' }
     ],
-    codeSnippets: {
-      sola: `<SolaInput label="Email" type="email" placeholder="you@example.com" hint="We won't share your email." />`,
-      react: `<Input label="Email" type="email" value={email} onChange={setEmail} error={errors.email} />`,
-      svelte: `<SolaInput label="Email" type="email" value={email} oninput={(v) => email = v} />`,
-      html: `<sola-input label="Email" type="email" placeholder="you@example.com"></sola-input>`
-    }
   },
 
   // 40. Textarea
@@ -1286,12 +1046,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'maxLength', type: 'number', defaultValue: 0, description: 'Character limit (0 = unlimited)' },
       { name: 'resize', type: 'string', defaultValue: 'vertical', description: 'Resize behavior', options: ['none', 'vertical', 'both'] }
     ],
-    codeSnippets: {
-      sola: `<SolaTextarea label="Description" maxLength={500} placeholder="Enter details..." />`,
-      react: `<Textarea label="Description" maxLength={500} value={desc} onChange={setDesc} />`,
-      svelte: `<SolaTextarea label="Description" maxLength={500} value={desc} oninput={(v) => desc = v} />`,
-      html: `<sola-textarea label="Description" max-length="500"></sola-textarea>`
-    }
   },
 
   // 41. Data Table
@@ -1326,12 +1080,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'striped', type: 'boolean', defaultValue: false, description: 'Alternate row striping' },
       { name: 'compact', type: 'boolean', defaultValue: false, description: 'Reduce row height' }
     ],
-    codeSnippets: {
-      sola: `<SolaDataTable\n  columns={columns}\n  rows={data}\n  selectable\n  striped\n/>`,
-      react: `<DataTable columns={columns} rows={data} selectable striped onRowClick={handleClick} />`,
-      svelte: `<SolaDataTable columns={columns} rows={data} selectable striped />`,
-      html: `<sola-data-table selectable striped></sola-data-table>`
-    }
   },
 
   // 42. Pagination
@@ -1349,12 +1097,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'totalPages', type: 'number', defaultValue: 10, description: 'Total page count' },
       { name: 'siblingCount', type: 'number', defaultValue: 1, description: 'Pages shown around current page' }
     ],
-    codeSnippets: {
-      sola: `<SolaPagination currentPage={page} totalPages={20} onPageChange={(p) => page = p} />`,
-      react: `<Pagination current={page} total={20} onChange={setPage} />`,
-      svelte: `<SolaPagination currentPage={page} totalPages={20} onPageChange={(p) => page = p} />`,
-      html: `<sola-pagination current-page="3" total-pages="12"></sola-pagination>`
-    }
   },
 
   // 43. Empty State
@@ -1373,12 +1115,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'icon', type: 'string', defaultValue: 'inbox', description: 'Icon type', options: ['search', 'inbox', 'folder', 'chart', 'users'] },
       { name: 'actionLabel', type: 'string', defaultValue: '', description: 'Optional action button text' }
     ],
-    codeSnippets: {
-      sola: `<SolaEmptyState\n  icon="search"\n  title="No results found"\n  description="Try different search terms."\n  actionLabel="Clear Filters"\n  onaction={() => clearFilters()}\n/>`,
-      react: `<EmptyState icon="inbox" title="No messages" description="You're all caught up!" />`,
-      svelte: `<SolaEmptyState icon="search" title="No results" actionLabel="Reset" onaction={reset} />`,
-      html: `<sola-empty-state icon="search" title="No results found"></sola-empty-state>`
-    }
   },
 
   // 44. Popover
@@ -1395,12 +1131,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'position', type: 'string', defaultValue: 'bottom', description: 'Panel position', options: ['top', 'bottom', 'left', 'right'] },
       { name: 'align', type: 'string', defaultValue: 'center', description: 'Panel alignment', options: ['start', 'center', 'end'] }
     ],
-    codeSnippets: {
-      sola: `<SolaPopover position="bottom" align="start">\n  {#snippet trigger()}<SolaButton label="Filter" />{/snippet}\n  <div class="p-4">Popover content here</div>\n</SolaPopover>`,
-      react: `<Popover position="bottom" trigger={<Button>Filter</Button>}>\n  <div className="p-4">Content</div>\n</Popover>`,
-      svelte: `<SolaPopover position="bottom">\n  {#snippet trigger()}<button>Open</button>{/snippet}\n  <p>Popover content</p>\n</SolaPopover>`,
-      html: `<sola-popover position="bottom"></sola-popover>`
-    }
   },
 
   // ═══════════════════════════════════════════
@@ -1423,12 +1153,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'title', type: 'string', defaultValue: '', description: 'Drawer heading' },
       { name: 'width', type: 'string', defaultValue: '400px', description: 'Drawer width (or height for bottom)' }
     ],
-    codeSnippets: {
-      sola: `<SolaDrawer open={showPanel} position="right" title="Details" onclose={() => showPanel = false}>\n  <p>Panel content here</p>\n</SolaDrawer>`,
-      react: `<Drawer open={open} position="right" title="Details" onClose={() => setOpen(false)}>\n  <p>Content</p>\n</Drawer>`,
-      svelte: `<SolaDrawer open={show} position="right" title="Details" onclose={() => show = false}>\n  Content\n</SolaDrawer>`,
-      html: `<sola-drawer open position="right" title="Details"></sola-drawer>`
-    }
   },
 
   // 46. Breadcrumb
@@ -1451,12 +1175,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     props: [
       { name: 'items', type: 'Array<BreadcrumbItem>', defaultValue: [], description: 'Path items with label and optional href/onclick' }
     ],
-    codeSnippets: {
-      sola: `<SolaBreadcrumb items={[\n  { label: "Home", href: "/" },\n  { label: "Settings", href: "/settings" },\n  { label: "Profile" }\n]} />`,
-      react: `<Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Profile" }]} />`,
-      svelte: `<SolaBreadcrumb items={breadcrumbs} />`,
-      html: `<sola-breadcrumb></sola-breadcrumb>`
-    }
   },
 
   // 47. Command Palette
@@ -1484,12 +1202,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'commands', type: 'Array<Command>', defaultValue: [], description: 'Command items with id, label, shortcut, group, action' },
       { name: 'placeholder', type: 'string', defaultValue: 'Type a command...', description: 'Search input placeholder' }
     ],
-    codeSnippets: {
-      sola: `<SolaCommandPalette\n  open={showPalette}\n  commands={commands}\n  onselect={(cmd) => cmd.action?.()}\n  onclose={() => showPalette = false}\n/>`,
-      react: `<CommandPalette open={open} commands={cmds} onSelect={exec} onClose={() => setOpen(false)} />`,
-      svelte: `<SolaCommandPalette open={show} commands={cmds} onclose={() => show = false} />`,
-      html: `<sola-command-palette></sola-command-palette>`
-    }
   },
 
   // 48. Code Block
@@ -1515,12 +1227,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'showLineNumbers', type: 'boolean', defaultValue: true, description: 'Show line number gutter' },
       { name: 'copyable', type: 'boolean', defaultValue: true, description: 'Show copy-to-clipboard button' }
     ],
-    codeSnippets: {
-      sola: `<SolaCodeBlock\n  language="typescript"\n  title="signal.ts"\n  showLineNumbers\n  copyable\n  code={codeString}\n/>`,
-      react: `<CodeBlock language="typescript" title="app.ts" code={src} showLineNumbers copyable />`,
-      svelte: `<SolaCodeBlock language="typescript" code={src} showLineNumbers />`,
-      html: `<sola-code-block language="typescript" show-line-numbers></sola-code-block>`
-    }
   },
 
   // 49. Date & Date-Range Picker
@@ -1538,12 +1244,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'range', type: 'boolean', defaultValue: false, description: 'Enable start/end date range picking' },
       { name: 'label', type: 'string', defaultValue: 'Select Date', description: 'Label text above input' }
     ],
-    codeSnippets: {
-      sola: `<SolaDatePicker range rangeValue={{ start: "2026-08-01", end: "2026-08-30" }} onchange={handleRange} />`,
-      react: `<DatePicker range value={range} onChange={setRange} />`,
-      svelte: `<SolaDatePicker range bind:rangeValue={range} />`,
-      html: `<sola-date-picker range></sola-date-picker>`
-    }
   },
 
   // 50. Sidebar Shell & Navigation Rail
@@ -1560,12 +1260,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'collapsed', type: 'boolean', defaultValue: false, description: 'Collapse sidebar to narrow icon rail' },
       { name: 'activeId', type: 'string', defaultValue: 'dashboard', description: 'Active item identifier' }
     ],
-    codeSnippets: {
-      sola: `<SolaSidebar collapsed={isCollapsed} activeId="dashboard" onselect={(item) => navigate(item.href)} />`,
-      react: `<Sidebar collapsed={collapsed} activeId="dashboard" onSelect={handleNav} />`,
-      svelte: `<SolaSidebar bind:collapsed activeId="dashboard" />`,
-      html: `<sola-sidebar active-id="dashboard"></sola-sidebar>`
-    }
   },
 
   // 51. Signal Area / Bar / Line Chart
@@ -1592,12 +1286,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'color', type: 'string', defaultValue: 'emerald', description: 'Color theme', options: ['emerald', 'sky', 'indigo', 'amber', 'rose'] },
       { name: 'height', type: 'number', defaultValue: 200, description: 'Chart viewport height in pixels' }
     ],
-    codeSnippets: {
-      sola: `<SolaChart type="area" color="emerald" data={metricsStream} height={200} />`,
-      react: `<Chart type="area" color="emerald" data={stream} height={200} />`,
-      svelte: `<SolaChart type="area" color="emerald" data={stream} />`,
-      html: `<sola-chart type="area" color="emerald"></sola-chart>`
-    }
   },
 
   // 52. Resizable Multi-Pane Splitter
@@ -1614,12 +1302,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'direction', type: 'string', defaultValue: 'horizontal', description: 'Split direction', options: ['horizontal', 'vertical'] },
       { name: 'initialSplit', type: 'number', defaultValue: 50, description: 'Starting percentage for first pane' }
     ],
-    codeSnippets: {
-      sola: `<SolaSplitter direction="horizontal" initialSplit={50} />`,
-      react: `<Splitter direction="horizontal" initialSplit={50} />`,
-      svelte: `<SolaSplitter direction="horizontal" initialSplit={50} />`,
-      html: `<sola-splitter direction="horizontal"></sola-splitter>`
-    }
   },
 
   // 53. Context Menu
@@ -1635,12 +1317,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     props: [
       { name: 'items', type: 'Array<ContextMenuItem>', defaultValue: [], description: 'Menu items with label, shortcut, action, variant' }
     ],
-    codeSnippets: {
-      sola: `<SolaContextMenu items={menuItems} />`,
-      react: `<ContextMenu items={menuItems} />`,
-      svelte: `<SolaContextMenu items={menuItems} />`,
-      html: `<sola-context-menu></sola-context-menu>`
-    }
   },
 
   // 54. File Upload Dropzone
@@ -1657,12 +1333,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'accept', type: 'string', defaultValue: '*', description: 'Accepted file extensions' },
       { name: 'maxSizeMb', type: 'number', defaultValue: 10, description: 'Maximum file size in megabytes' }
     ],
-    codeSnippets: {
-      sola: `<SolaFileUpload accept=".json, .csv" maxSizeMb={10} onupload={handleUpload} />`,
-      react: `<FileUpload accept=".json,.csv" onUpload={handleUpload} />`,
-      svelte: `<SolaFileUpload accept=".json, .csv" onupload={handleUpload} />`,
-      html: `<sola-file-upload accept=".json, .csv"></sola-file-upload>`
-    }
   },
 
   // 55. Keyboard Shortcut Badge
@@ -1679,12 +1349,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'keys', type: 'Array<string>', defaultValue: ['⌘', 'K'], description: 'Key labels or symbols in the chord' },
       { name: 'size', type: 'string', defaultValue: 'md', description: 'Badge size', options: ['sm', 'md', 'lg'] }
     ],
-    codeSnippets: {
-      sola: `<SolaKbd keys={["⌘", "K"]} size="md" />`,
-      react: `<Kbd keys={["⌘", "K"]} size="md" />`,
-      svelte: `<SolaKbd keys={['⌘', 'K']} size="md" />`,
-      html: `<sola-kbd keys='["⌘","K"]'></sola-kbd>`
-    }
   },
 
   // 56. Hover Card Preview
@@ -1707,12 +1371,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'description', type: 'string', defaultValue: '', description: 'Card description' },
       { name: 'handle', type: 'string', defaultValue: '', description: 'Interactive trigger text' }
     ],
-    codeSnippets: {
-      sola: `<SolaHoverCard handle="@sola-engine" title="Sola Architecture" description="Zero-VDOM signals" />`,
-      react: `<HoverCard handle="@sola-engine" title="Sola" description="Zero-VDOM" />`,
-      svelte: `<SolaHoverCard handle="@sola-engine" title="Sola" />`,
-      html: `<sola-hover-card handle="@sola-engine"></sola-hover-card>`
-    }
   },
 
   // 57. SolaSafeHTML
@@ -1734,12 +1392,6 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       { name: 'maxHeight', type: 'string', defaultValue: '', description: 'Caps height and adds a bottom mask-fade when set (e.g. "130px")' },
       { name: 'title', type: 'string', defaultValue: 'Rich text content', description: 'Accessible region label' }
     ],
-    codeSnippets: {
-      sola: `<SolaSafeHTML\n  content={kbArticle.html}\n  maxHeight="130px"\n  title={kbArticle.title}\n/>`,
-      react: `import { SolaSafeHTML } from '@sola-air-ui/ui';\n\nexport function KbExcerpt({ article }) {\n  return (\n    <SolaSafeHTML content={article.html} maxHeight="130px" title={article.title} />\n  );\n}`,
-      svelte: `<script>\n  import { SolaSafeHTML } from '@sola-air-ui/ui';\n</script>\n\n<SolaSafeHTML config={{ content: article.html, maxHeight: "130px", title: article.title }} />`,
-      html: `<sola-safe-html max-height="130px"></sola-safe-html>`
-    }
   }
 ];
 

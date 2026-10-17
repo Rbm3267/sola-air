@@ -10,6 +10,8 @@
   import { fly, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { onMount } from 'svelte';
+  import { UI_MANIFEST } from '$lib/data/site';
+  import { toSolaFile } from '$lib/data/solaExport';
 
   interface DashboardWidget {
     id: string;
@@ -273,15 +275,13 @@
     saveLayout();
   }
 
+  // Copies a real .sola file: published components with the props they declare,
+  // and a comment for each site-only preview.
   function exportSolaCode() {
-    const code = `<` + `script>
-  // Sola Production Dashboard Schema
-  const dashboard = $data("sheet://production-telemetry");
-</` + `script>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-` + widgets.map(w => `  <${w.component} class="col-span-${w.colSpan}" config={${JSON.stringify(w.config)}} />`).join('\n') + `
-</div>`;
+    const code = toSolaFile(
+      widgets.map((w) => ({ component: w.component, span: w.colSpan, props: w.config ?? {}, label: w.config?.title })),
+      UI_MANIFEST
+    );
     navigator.clipboard.writeText(code);
     copiedExport = true;
     setTimeout(() => copiedExport = false, 2000);

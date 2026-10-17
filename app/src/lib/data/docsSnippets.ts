@@ -241,6 +241,48 @@ export function onSignOut() {
   shell.teardown();
 }`;
 
+/** The four shell components from RFC 0002 working together. Mounted by e2e/docs-snippets.spec.ts. */
+export const shellComponentsExample = `${OPEN}
+  import LauncherDock from '@sola-air-ui/ui/launcher-dock';
+  import CommandPalette from '@sola-air-ui/ui/command-palette';
+  import CompanionDrawer from '@sola-air-ui/ui/companion-drawer';
+  import ToastHost from '@sola-air-ui/ui/toast-host';
+  import { bus } from '@sola-air-ui/core';
+
+  let drawerOpen = $persist('shell.drawer', false);
+
+  const items = [
+    { id: 'assistant', label: 'Assistant', icon: '✦' },
+    { id: 'save', label: 'Save', icon: '↓' }
+  ];
+  const commands = [
+    { id: 'assistant', label: 'Open assistant' },
+    { id: 'save', label: 'Save draft', hint: 'shows a toast' }
+  ];
+
+  function run(item) {
+    if (item.id === 'assistant') drawerOpen = true;
+    else bus.emit('sola:toast', { kind: 'success', text: 'Draft saved' });
+  }
+
+  function closeDrawer() {
+    drawerOpen = false;
+  }
+${CLOSE}
+
+<LauncherDock items={items} onSelect={run} />
+<CommandPalette commands={commands} onSelect={run} />
+<CompanionDrawer title="Assistant" isOpen={drawerOpen} onClose={closeDrawer}>
+  <p>Ask about the page you are on.</p>
+</CompanionDrawer>
+<ToastHost />`;
+
+export const solaCheckExample = `npx -p @sola-air-ui/compiler sola-check src`;
+
+export const solaCheckOutput = `src/Panel.sola:14:3  error  SOLA001  \`{#if}\` is never closed. It renders as literal text.
+
+12 files checked: 1 error, 0 warnings`;
+
 export const busBasicsExample = `import { createBus } from '@sola-air-ui/core';
 
 const bus = createBus();
