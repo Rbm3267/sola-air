@@ -18,6 +18,8 @@
   <a href="https://www.npmjs.com/package/sola-air"><img src="https://img.shields.io/npm/v/sola-air?label=sola-air&color=10b981&style=flat-square" alt="npm sola-air" /></a>
   <a href="https://www.npmjs.com/package/@sola-air-ui/core"><img src="https://img.shields.io/npm/v/@sola-air-ui/core?label=%40sola-air-ui%2Fcore&color=10b981&style=flat-square" alt="npm @sola-air-ui/core" /></a>
   <a href="https://www.npmjs.com/package/@sola-air-ui/compiler"><img src="https://img.shields.io/npm/v/@sola-air-ui/compiler?label=%40sola-air-ui%2Fcompiler&color=10b981&style=flat-square" alt="npm @sola-air-ui/compiler" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode"><img src="https://img.shields.io/visual-studio-marketplace/v/SolaAIR.sola-vscode?label=VS%20Code&color=10b981&style=flat-square" alt="VS Code Marketplace" /></a>
+  <a href="https://chromewebstore.google.com/detail/sola-air/cahdakefpjocaapggijdbbgidcjdaehc"><img src="https://img.shields.io/chrome-web-store/v/cahdakefpjocaapggijdbbgidcjdaehc?label=Chrome&color=10b981&style=flat-square" alt="Chrome Web Store" /></a>
   <a href="https://github.com/rbm3267/sola-air/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" /></a>
 </p>
 
@@ -103,7 +105,7 @@ The core runtime is about 7.5 kB gzipped. `scripts/core-size.mjs` measures it, a
 
 ## Editor and browser tools
 
-- **VS Code**: `SolaAIR.sola-vscode` adds `.sola` syntax highlighting (source in [`packages/vscode-extension`](./packages/vscode-extension)).
+- **VS Code**: `SolaAIR.sola-vscode` adds `.sola` syntax highlighting, snippets and bracket pairing (source in [`packages/vscode-extension`](./packages/vscode-extension)).
 - **Chrome extension**: pick elements on any page and get matching Sola component code in a side panel (source in [`packages/sola-extension`](./packages/sola-extension)).
 
 ---
@@ -158,6 +160,10 @@ sola/
 │   ├── core/              # Reactive runtime engine (signals, effects, $intent, $data)
 │   ├── ui/                # Standard component library (.sola files)
 │   ├── relay/             # Local data proxy (PostgreSQL, MySQL, Google Sheets)
+│   ├── providers/         # Server-side LLM adapters for $intent
+│   ├── sentinel/          # Form-hesitation observer that builds a prompt
+│   ├── behavior/          # Behavior and playbook helpers
+│   ├── tokens/            # Design tokens (CSS variables)
 │   ├── sola-mcp/          # MCP server for AI-driven component generation
 │   ├── sola-air/          # Meta-package (installs the full Sola AIR stack)
 │   ├── vite-plugin-sola/  # Vite plugin for .sola SFC compilation

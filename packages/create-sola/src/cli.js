@@ -299,7 +299,14 @@ dist
 `;
   fs.writeFileSync(path.join(targetDir, '.gitignore'), gitignore);
 
-  // 7. README.md
+  // 7. .vscode/extensions.json — suggests the Sola AIR extension to editors that read it
+  fs.mkdirSync(path.join(targetDir, '.vscode'), { recursive: true });
+  fs.writeFileSync(
+    path.join(targetDir, '.vscode', 'extensions.json'),
+    JSON.stringify({ recommendations: ['SolaAIR.sola-vscode'] }, null, 2) + '\n'
+  );
+
+  // 8. README.md
   const readme = `# ${projectName}
 
 Built with [Sola](https://sola-air.dev) — Zero-VDOM Ambient Reactive Runtime.
