@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-17: mcp 1.0.4, ui 1.5.3
+
 ### `@sola-air-ui/mcp`
 
 - **Fixed**: `compile_component` passed the filename as the compiler's options argument; it now
