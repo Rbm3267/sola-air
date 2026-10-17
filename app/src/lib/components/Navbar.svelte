@@ -125,7 +125,7 @@
           <span class="font-medium text-slate-700 dark:text-slate-300 hidden sm:inline">Ask Sola AIR...</span>
           <span class="font-medium text-slate-700 dark:text-slate-300 sm:hidden">AIR</span>
         </div>
-        <kbd class="hidden sm:inline text-xs font-mono bg-slate-200/60 dark:bg-white/10 px-1.5 py-0.5 rounded text-slate-500 dark:text-slate-400 font-semibold">⌘K</kbd>
+        <kbd class="hidden sm:inline text-xs font-mono bg-slate-200/60 dark:bg-white/10 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400 font-semibold">⌘K</kbd>
       </button>
 
       <!-- Theme Toggle -->

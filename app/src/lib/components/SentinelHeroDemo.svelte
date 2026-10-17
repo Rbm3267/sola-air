@@ -236,7 +236,7 @@
             {#each events as event, i (i + event)}
               <li class="truncate">· {event}</li>
             {:else}
-              <li class="text-slate-400 dark:text-slate-500">· idle</li>
+              <li class="text-slate-600 dark:text-slate-400">· idle</li>
             {/each}
           </ul>
         </div>

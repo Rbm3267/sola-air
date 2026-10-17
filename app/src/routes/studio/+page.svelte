@@ -585,11 +585,11 @@ export default function SolaDashboard() {
         <h1 class="text-sm font-semibold text-slate-900 dark:text-white whitespace-nowrap hidden sm:block">Studio</h1>
         <button
           onclick={() => (paletteOpen = !paletteOpen)}
-          class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer {paletteOpen ? 'bg-blue-500 text-slate-950 shadow-xs' : 'bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'}"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer {paletteOpen ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'}"
           title={paletteOpen ? 'Hide Component Palette' : 'Show Component Palette'}>
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
           <span class="hidden sm:inline">Palette</span>
-          <span class="px-1.5 py-0.2 bg-slate-950/15 rounded-md text-xs font-mono">{COMPONENT_CATALOG.length}</span>
+          <span class="px-1.5 py-0.2 bg-blue-900/50 rounded-md text-xs font-mono">{COMPONENT_CATALOG.length}</span>
         </button>
 
         <div class="h-4 w-px bg-slate-200 dark:bg-white/10 hidden sm:block"></div>
@@ -673,7 +673,7 @@ export default function SolaDashboard() {
               <span class="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white font-mono">Primitives</span>
               <span class="text-xs font-mono px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold">Drag & Drop</span>
             </div>
-            <button onclick={() => (paletteOpen = false)} class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
+            <button onclick={() => (paletteOpen = false)} aria-label="Close primitives palette" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
             </button>
           </div>
@@ -711,10 +711,10 @@ export default function SolaDashboard() {
             </div>
           {:else}
             {#each filteredCatalog as item}
+              <!-- The row only drags; the "+ Add" button inside it is the keyboard path. -->
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
               <div
                 draggable="true"
-                role="button"
-                tabindex="0"
                 ondragstart={(e) => onPaletteDragStart(e, item)}
                 ondragend={onDragEnd}
                 class="group flex items-start gap-2.5 p-2.5 bg-white dark:bg-white/[0.03] hover:bg-blue-50/60 dark:hover:bg-blue-500/10 border border-slate-200/70 dark:border-white/5 hover:border-blue-500/40 rounded-xl transition-all cursor-grab active:cursor-grabbing shadow-2xs hover:shadow-xs">
@@ -842,17 +842,17 @@ export default function SolaDashboard() {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
           {#each cards as card (card.id)}
             {@const c = getColor(card.accentColor)}
+            <!-- A card holds inputs and buttons, so it is not itself a button; focus on any of them selects it. -->
+            <!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
             <div
               draggable="true"
-              role="button"
-              tabindex="0"
               ondragstart={(e) => onDragStart(e, card.id)}
               ondragover={(e) => onDragOver(e, card.id)}
               ondragleave={() => onDragLeave(card.id)}
               ondrop={(e) => onDrop(e, card.id)}
               ondragend={onDragEnd}
               onclick={() => (activeCardId = card.id)}
-              onkeydown={(e) => e.key === 'Enter' && (activeCardId = card.id)}
+              onfocusin={() => (activeCardId = card.id)}
               class="{card.cols === 3 ? 'lg:col-span-3 md:col-span-2' : card.cols === 2 ? 'md:col-span-2' : 'col-span-1'} bg-white dark:bg-[#0f172a]/90 backdrop-blur-xl rounded-2xl border transition-all duration-150 p-5 shadow-xs relative group flex flex-col justify-between select-none cursor-pointer {activeCardId === card.id ? `${c.border} ring-2 ${c.ring} shadow-md` : 'border-slate-200/90 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 hover:shadow-sm'} {dragOverCardId === card.id ? `scale-[1.01] ${c.border} ring-2 ${c.ring} bg-slate-50/50 dark:bg-white/5` : ''}">
               
               <!-- Card Controls Bar (Header) -->
@@ -872,18 +872,18 @@ export default function SolaDashboard() {
                 </div>
 
                 <!-- Right Inline Quick Controls -->
-                <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                <div class="flex items-center gap-1">
                   <!-- Width Span Pills -->
                   <div class="flex items-center bg-slate-100 dark:bg-white/5 p-0.5 rounded-lg border border-slate-200/60 dark:border-white/10 text-xs font-mono font-semibold">
                     <button
                       onclick={(e) => setCols(card, 1, e)}
-                      class="px-1.5 py-0.5 rounded {card.cols === 1 ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-2xs' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}">1x</button>
+                      class="px-1.5 py-0.5 rounded {card.cols === 1 ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-2xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}">1x</button>
                     <button
                       onclick={(e) => setCols(card, 2, e)}
-                      class="px-1.5 py-0.5 rounded {card.cols === 2 ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-2xs' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}">2x</button>
+                      class="px-1.5 py-0.5 rounded {card.cols === 2 ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-2xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}">2x</button>
                     <button
                       onclick={(e) => setCols(card, 3, e)}
-                      class="px-1.5 py-0.5 rounded {card.cols === 3 ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-2xs' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'}">3x</button>
+                      class="px-1.5 py-0.5 rounded {card.cols === 3 ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-2xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}">3x</button>
                   </div>
 
                   <!-- Duplicate -->
@@ -936,6 +936,7 @@ export default function SolaDashboard() {
                         type="range"
                         min="0"
                         max="100"
+                        aria-label="Completion"
                         bind:value={card.value}
                         class="w-full {c.accent} cursor-pointer h-1.5 bg-slate-100 dark:bg-white/10 rounded-lg appearance-none" />
                     </div>
@@ -951,6 +952,7 @@ export default function SolaDashboard() {
                       type="range"
                       min="0"
                       max="100"
+                      aria-label="Live signal value"
                       bind:value={card.value}
                       class="w-full {c.accent} cursor-pointer h-2 bg-slate-100 dark:bg-white/10 rounded-lg appearance-none" />
                     <div class="flex justify-between text-xs font-mono text-slate-500 dark:text-slate-400">
@@ -976,6 +978,7 @@ export default function SolaDashboard() {
                       type="range"
                       min="0"
                       max="100"
+                      aria-label="Dial value"
                       bind:value={card.value}
                       class="w-32 {c.accent} cursor-pointer h-1.5 bg-slate-100 dark:bg-white/10 rounded-lg appearance-none" />
                   </div>

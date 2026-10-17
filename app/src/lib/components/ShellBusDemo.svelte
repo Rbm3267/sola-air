@@ -36,7 +36,9 @@
           <span class="text-xs font-mono font-semibold text-slate-300">BusDemo.sola</span>
           <span class="text-xs font-mono text-slate-400">the file running on the right</span>
         </div>
-        <pre class="font-mono text-xs sm:text-[13px] leading-relaxed text-slate-300 overflow-x-auto whitespace-pre" data-testid="bus-demo-source"><code>{source}</code></pre>
+        <!-- A scroll region must take keyboard focus (axe scrollable-region-focusable). -->
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+        <pre class="font-mono text-xs sm:text-[13px] leading-relaxed text-slate-300 overflow-x-auto whitespace-pre" role="region" aria-label="BusDemo.sola source" tabindex="0" data-testid="bus-demo-source"><code>{source}</code></pre>
       </div>
 
       <div class="lg:col-span-5 bg-white dark:bg-white/[0.02] border border-slate-200/90 dark:border-white/[0.04] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between gap-8">

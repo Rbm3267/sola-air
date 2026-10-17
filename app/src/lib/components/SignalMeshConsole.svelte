@@ -120,6 +120,7 @@
           <div class="w-full flex flex-col gap-2 mt-2">
             <input 
               type="range" 
+              aria-label="Cluster replica quota"
               min="8" 
               max="128" 
               step="2"

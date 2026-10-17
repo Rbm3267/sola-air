@@ -33,7 +33,7 @@
     primary: 'bg-slate-900 dark:bg-blue-500 text-white dark:text-slate-950 hover:bg-slate-800 dark:hover:bg-blue-400 shadow-sm',
     secondary: 'bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/15 border border-slate-200 dark:border-white/10',
     ghost: 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5',
-    destructive: 'bg-rose-500 text-white hover:bg-rose-600 shadow-sm',
+    destructive: 'bg-rose-600 text-white hover:bg-rose-700 shadow-sm',
     outline: 'bg-transparent text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5'
   };
 </script>
