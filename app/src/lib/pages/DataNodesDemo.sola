@@ -26,11 +26,14 @@
 </div>
 
 <style>
-  .panel { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; display: grid; gap: 10px; }
+  .panel { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; display: grid; gap: 10px; color: #0f172a; }
   table { width: 100%; border-collapse: collapse; }
   th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
-  th { font-weight: 600; opacity: 0.7; }
-  .note { margin: 0; font-size: 12px; opacity: 0.7; }
+  th { font-weight: 600; color: #475569; }
+  .note { margin: 0; font-size: 12px; color: #475569; }
   .error { margin: 0; color: #b91c1c; }
   button { justify-self: start; font: inherit; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); background: transparent; color: inherit; cursor: pointer; }
+  :global(.dark) .panel { color: #f8fafc; }
+  :global(.dark) th, :global(.dark) .note { color: #94a3b8; }
+  :global(.dark) .error { color: #f87171; }
 </style>

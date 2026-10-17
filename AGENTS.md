@@ -226,7 +226,7 @@ Transpiles to `createData(source, options)`, which POSTs `{ source, query, filte
 
 ## 6. Component Library (`@sola-air-ui/ui`)
 
-37 real, shipped `.sola` components (verified against `packages/ui/src/` and the `exports` map in its `package.json`). Every one is importable by subpath, e.g. `import Table from '@sola-air-ui/ui/table'`; 30 of them are also re-exported from the package root (`import { Table } from '@sola-air-ui/ui'`). The seven that are subpath-only are `AmbientSuggestion`, `Button`, `Chart`, `Dashboard`, `DatePicker`, `HtmlViewer` and `MarkdownViewer`.
+37 real, shipped `.sola` components (verified against `packages/ui/src/` and the `exports` map in its `package.json`). Every one is importable both by subpath (e.g. `import Table from '@sola-air-ui/ui/table'`) and from the package root (`import { Table } from '@sola-air-ui/ui'`).
 
 **Layout & display** — `Card`, `Stack`, `Dashboard`, `Table`, `DataCard`, `StatGrid`, `Canvas`
 

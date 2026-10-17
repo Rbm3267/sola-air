@@ -1,6 +1,5 @@
 <script lang="ts">
   import DynamicRenderer from '$lib/components/DynamicRenderer.svelte';
-  import LivingSolaCore from '$lib/components/LivingSolaCore.svelte';
   import SolaLogo from '$lib/components/SolaLogo.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
   import SignalMeshConsole from '$lib/components/SignalMeshConsole.svelte';
@@ -322,7 +321,7 @@
         <!-- Left Status / Command Prompt -->
         <div class="pl-3 sm:pl-4 shrink-0 text-slate-500 dark:text-slate-400">
           {#if isLoading}
-            <svg class="w-5 h-5 animate-spin text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4m-3.93 7.07l-2.83-2.83M7.76 7.76L4.93 4.93"/></svg>
+            <svg class="w-5 h-5 animate-spin text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4m-3.93 7.07l-2.83-2.83M7.76 7.76L4.93 4.93"/></svg>
           {:else if isListening}
             <div class="flex items-center gap-1">
               <span class="w-1.5 h-4 bg-rose-500 rounded-full animate-bounce"></span>
@@ -364,7 +363,7 @@
           type="submit" 
           disabled={isLoading || !intentQuery.trim()}
           aria-label="Submit intent"
-          style={!isLoading && intentQuery.trim() ? "background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #ffffff !important;" : ""}
+          style={!isLoading && intentQuery.trim() ? "background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;" : ""}
           class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl font-bold transition-all active:scale-[0.97] disabled:bg-slate-100 dark:bg-white/[0.08] disabled:text-slate-500 dark:text-slate-400 disabled:cursor-not-allowed flex items-center justify-center shadow-md shrink-0 cursor-pointer"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -378,7 +377,7 @@
       {#each sampleIntents as sample}
         <button 
           onclick={() => pickSample(sample)}
-          class="text-xs bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-3.5 py-2 rounded-2xl hover:border-amber-400 hover:text-amber-900 dark:hover:text-amber-300 hover:bg-amber-50 dark:bg-amber-500/10/50 transition-all cursor-pointer shadow-xs">
+          class="text-xs bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-3.5 py-2 rounded-2xl hover:border-blue-400 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all cursor-pointer shadow-xs">
           {sample}
         </button>
       {/each}
@@ -422,7 +421,7 @@
           <div class="flex items-center gap-2 self-end sm:self-auto">
             <button 
               onclick={exportSolaCode}
-              style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #ffffff !important;"
+              style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;"
               class="text-xs font-mono font-medium px-4 py-1.5 rounded-full text-white shadow-sm hover:brightness-105 active:scale-[0.97] transition-all cursor-pointer flex items-center gap-1.5">
               {#if copiedExport}
                 <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -478,10 +477,10 @@
       {#if isLoading}
         <div 
           transition:fly={{ y: 20, duration: 300 }}
-          class="bg-white dark:bg-white/[0.02] backdrop-blur-2xl rounded-3xl p-8 border border-amber-200 dark:border-amber-500/20/90 shadow-sm flex flex-col items-center justify-center relative overflow-hidden"
+          class="bg-white dark:bg-white/[0.02] backdrop-blur-2xl rounded-3xl p-8 border border-blue-200 dark:border-blue-500/20 shadow-sm flex flex-col items-center justify-center relative overflow-hidden"
         >
           <div class="flex items-center gap-3">
-            <div class="w-5 h-5 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
+            <div class="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
             <span class="text-sm font-mono font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Building Reactive DOM Tree...</span>
           </div>
           <span class="text-xs font-mono text-slate-500 dark:text-slate-400 mt-2">Generated with Gemini 3.6 Flash</span>
@@ -503,7 +502,7 @@
               onclick={() => moveWidget(index, 'left')}
               disabled={index === 0}
               title="Move left"
-              class="p-1 hover:text-amber-300 disabled:opacity-30 cursor-pointer">
+              class="p-1 hover:text-blue-300 disabled:opacity-30 cursor-pointer">
               ←
             </button>
 
@@ -512,7 +511,7 @@
               onclick={() => moveWidget(index, 'right')}
               disabled={index === widgets.length - 1}
               title="Move right"
-              class="p-1 hover:text-amber-300 disabled:opacity-30 cursor-pointer">
+              class="p-1 hover:text-blue-300 disabled:opacity-30 cursor-pointer">
               →
             </button>
 
@@ -522,7 +521,7 @@
             <button 
               onclick={() => cycleColSpan(widget)}
               title="Toggle width (1x / 2x / 3x)"
-              class="px-1.5 py-0.5 hover:text-amber-300 font-bold cursor-pointer">
+              class="px-1.5 py-0.5 hover:text-blue-300 font-bold cursor-pointer">
               {widget.colSpan}x
             </button>
 
@@ -533,7 +532,7 @@
               onclick={() => editingWidget = widget}
               title="Configure widget data"
               aria-label="Configure widget"
-              class="p-1 hover:text-amber-300 cursor-pointer flex items-center justify-center">
+              class="p-1 hover:text-blue-300 cursor-pointer flex items-center justify-center">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
 
@@ -558,14 +557,14 @@
     <!-- Empty State -->
     {#if widgets.length === 0}
       <div class="bg-white dark:bg-white/[0.02] backdrop-blur-2xl border border-slate-200 dark:border-white/[0.04] rounded-3xl p-16 text-center max-w-lg mx-auto shadow-sm">
-        <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-4">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
         </div>
         <h3 class="text-base font-bold text-slate-900 dark:text-white font-mono mb-1">Canvas is Clean</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 max-w-[68ch]">Speak your intent or load a starter preset to begin constructing your dashboard.</p>
         <button 
           onclick={() => loadPreset('finance')}
-          style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #ffffff !important;"
+          style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;"
           class="font-semibold text-xs text-white px-6 py-3 rounded-2xl transition-all cursor-pointer shadow-md">
           Load Starter Preset
         </button>
@@ -650,7 +649,7 @@
               min="0" 
               max="100" 
               bind:value={editingWidget.config.percentage}
-              class="w-full accent-amber-500 cursor-pointer"
+              class="w-full accent-blue-500 cursor-pointer"
             />
           </div>
         {/if}
@@ -659,7 +658,7 @@
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.04]">
         <button 
           onclick={() => editingWidget = null}
-          style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #ffffff !important;"
+          style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;"
           class="font-semibold text-xs text-white px-6 py-2.5 rounded-xl transition-all cursor-pointer shadow-sm">
           Done
         </button>

@@ -159,6 +159,7 @@ export interface FrictionEvent {
 
 export type FieldEvent =
   | { type: 'focus'; fieldId: string; revisit: boolean; timestamp: number }
+  | { type: 'input'; fieldId: string; valuePreview: string; valueLength: number; timestamp: number }
   | { type: 'blur'; fieldId: string; valuePreview: string; valueLength: number; timestamp: number };
 
 export class SolaSentinel {
@@ -178,6 +179,8 @@ export class SolaSentinel {
 
   /** Records focus on a field; returns true when the user is returning to it. */
   recordFieldFocus(fieldId: string, ts?: number): boolean;
+  /** Records typing. A run of keystrokes in one field collapses into one event. */
+  recordFieldInput(fieldId: string, value: unknown, ts?: number): void;
   recordFieldBlur(fieldId: string, value: unknown, ts?: number): void;
 
   /** True at most once per `minSuggestIntervalMs`, after a quiet period. */
@@ -315,6 +318,7 @@ export interface BusOptions<E extends BusEvents = BusEvents> {
   /** In-page only; never forwarded to the DOM or the bus. */
   onReject?: (info: BusRejection) => void;
   storage?: { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void };
+  now?: () => number;
 }
 
 export interface Bus<E extends BusEvents = BusEvents> {

@@ -32,11 +32,14 @@ test('highlighting does not depend on another extension', () => {
   assert(!JSON.stringify(grammar).includes('source.svelte'), 'grammar must not include the Svelte grammar');
 });
 
-test('the grammar covers script, style, blocks and expressions', () => {
+test('the grammar covers script, style, blocks, special-html and expressions', () => {
   const g = read(pkg.contributes.grammars[0].path);
-  for (const key of ['script', 'style', 'block-if', 'block-each', 'block-else', 'block-close', 'expression', 'macros']) {
+  for (const key of ['script', 'style', 'block-if', 'block-each', 'block-else', 'block-close', 'special-html', 'expression', 'macros']) {
     assert(g.repository[key], `repository.${key}`);
   }
+  assert(g.patterns.some((p) => p.include === '#special-html'), '#special-html included in top-level patterns');
+  assert(g.repository['block-else'].begin.includes('else') && g.repository['block-else'].begin.includes('if'), 'block-else supports {:else if}');
+  assert(g.repository['special-html'].begin.includes('html'), 'special-html matches {@html ...}');
   assert(/state\|derived\|effect\|persist\|intent\|data\|on\|lastEvent/.test(g.repository.macros.match), 'macro names');
 });
 

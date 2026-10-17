@@ -64,7 +64,7 @@
       </div>
 
       <div class="lg:col-span-5 bg-white dark:bg-white/[0.02] border border-slate-200/90 dark:border-white/[0.04] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between gap-8">
-        <div class="rounded-2xl border border-slate-200 dark:border-white/10 bg-white text-slate-900 p-5 min-h-[200px]" data-testid="data-demo-live">
+        <div class="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 p-5 min-h-[200px]" data-testid="data-demo-live">
           {#key activeMode}
             <SolaMount {component} />
           {/key}

@@ -92,6 +92,27 @@ describe('@sola/core reactivity engine', () => {
     assert.strictEqual(effectRan, 2);
   });
 
+  it('recovers future reactive flushes after an effect throws inside flushSync()', () => {
+    const [trigger, setTrigger] = createSignal(0);
+    let shouldThrow = false;
+    createEffect(() => {
+      const v = trigger();
+      if (shouldThrow && v === 1) throw new Error('boom');
+    });
+
+    shouldThrow = true;
+    setTrigger(1);
+    assert.throws(() => flushSync(), /boom/);
+
+    // Subsequent signals and effects must still schedule and flush normally
+    const [healthy, setHealthy] = createSignal('a');
+    const seen = [];
+    createEffect(() => { seen.push(healthy()); });
+    setHealthy('b');
+    flushSync();
+    assert.deepStrictEqual(seen, ['a', 'b']);
+  });
+
   it('should isolate component lifecycle contextStack without leaking', () => {
     const ctx1 = pushContext();
     let mounted1 = false;
@@ -341,5 +362,30 @@ describe('createIntent options', () => {
     intent.run();
     await tick();
     assert.deepStrictEqual(asked, ['summarise this', 'ignored'], 'run() with no input uses the current prompt');
+  });
+
+  it('ignores a stale in-flight request that resolves after a newer request was started', async () => {
+    let resolveFirst;
+    let call = 0;
+    const intent = createIntent('first', {
+      trigger: 'manual',
+      transport: () => {
+        call += 1;
+        if (call === 1) {
+          return new Promise((resolve) => { resolveFirst = resolve; });
+        }
+        return Promise.resolve(okResponse('second-result'));
+      }
+    });
+
+    intent.run('first');
+    intent.run('second');
+    await tick();
+    assert.strictEqual(intent(), 'second-result');
+
+    // Now resolve the aborted first request — it must not clobber the newer result
+    resolveFirst(okResponse('stale-first-result'));
+    await tick();
+    assert.strictEqual(intent(), 'second-result');
   });
 });

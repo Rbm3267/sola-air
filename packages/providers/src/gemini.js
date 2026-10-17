@@ -22,7 +22,8 @@ export function GeminiProvider({
 
       const activeModel = reqModel || model;
       const action = stream ? 'streamGenerateContent?alt=sse' : 'generateContent';
-      const url = `${GEMINI_BASE}/${activeModel}:${action}&key=${apiKey}`;
+      const sep = action.includes('?') ? '&' : '?';
+      const url = `${GEMINI_BASE}/${activeModel}:${action}${sep}key=${encodeURIComponent(apiKey)}`;
 
       // Gemini uses 'contents' with 'parts', and roles are 'user'/'model'
       const contents = messages.map(m => ({

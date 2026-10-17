@@ -10,7 +10,7 @@
 </script>
 
 <div class="intent-card">
-  {#if !resolved()}
+  {#if loading || !resolved()}
     <div class="loading">
       <div class="shimmer"></div>
       <div class="shimmer short"></div>
@@ -45,7 +45,7 @@
 
   .shimmer {
     height: 16px;
-    background: linear-gradient(90deg, var(--sola-surface-2, #f1f5f9) 25%, var(--sola-color-neutral-200, #e2e8f0) 50%, var(--sola-surface-2, #f1f5f9) 75%);
+    background: linear-gradient(90deg, var(--sola-surface-2, #f1f5f9) 25%, var(--sola-border-subtle, #e2e8f0) 50%, var(--sola-surface-2, #f1f5f9) 75%);
     background-size: 200% 100%;
     border-radius: 8px;
     animation: shimmer 1.5s infinite;

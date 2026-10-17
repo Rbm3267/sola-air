@@ -4,6 +4,34 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/core`
+
+- **Fixed**: `flushSync()` wraps its effect loop in `try / finally` so a throwing effect never leaves `isFlushing` stuck `true`.
+- **Fixed**: `createIntent` and `createData` ignore late promise resolutions from aborted requests.
+- **Fixed**: `clearPersistentState()` resets `sync: false` and custom/memory storage persistent signals via `onClearPersistentState`.
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: `stripTypeScript` in `<script lang="ts">` preserves object literals, ternary expressions, and statements following `interface` blocks.
+- **Fixed**: `{#if}`, `{:else if}`, and `{#each}` headers parse balanced braces and nested key parentheses; static text nodes escape `${`; HTML comments are stripped before block parsing.
+- **Added**: `bind:this={el}` element reference binding.
+- **Added**: `sola-check` (`SOLA001`) flags `{#each}` headers missing `as <ident>` and empty `{#if}` / `{:else if}` conditions.
+
+### `@sola-air-ui/ui`
+
+- **Fixed**: `ConversationThread` uses `.sola` assignment syntax (`input = ''`, `messages = [...]`) instead of calling `$state` getters as functions; `DatePicker` binds `{selectedDate}` with `value` and `onChange` props and light/dark tokens; `Dashboard` exposes `initialRps` / `initialErrorRate` / `initialNodes` props and binds its SVG gauge arc to `capacityPct()`; `StreamView` accepts structured `events` arrays; `SolaSafeHTML` uses `:global(...)` for descendant tags; `Table` wires `striped` and auto-derives `columns` from `rows[0]` when omitted; dark/light mode tokens and ARIA attributes updated across primitives.
+- **Added**: `packages/ui/test/ui.test.js` compiling and running `sola-check` across all 37 `.sola` components.
+
+### `@sola-air-ui/providers` & `@sola-air-ui/relay`
+
+- **Fixed**: `GeminiProvider` uses `?key=` vs `&key=` based on query string presence; `AzureOpenAIProvider` sends the `api-key` header.
+- **Fixed**: `RelayServer` enforces single-statement read-only `SELECT` on both string and `{ text, params }` object queries and forwards `limit` options to `sheet` / `servicenow` connectors.
+
+### Extensions & Website (`app/`)
+
+- **Added**: VS Code grammar rules for `{:else if ...}` and `{@html ...}`; Chrome extension preview drag listener cleanup on close.
+- **Fixed**: Dark-mode contrast in `SignalMeshConsole`, `ShellBusDemo` / `BusDemo.sola`, and `DataDemo` / `DataSheetDemo.sola` / `DataNodesDemo.sola`; `/studio` chart bar colors; replaced remaining fake multi-framework tabs in `DesignEngineStudio` and `componentCatalog.ts`; mapped `/components` to `@sola-air-ui/ui` subpaths; unified brand palette onto Sola Sky → Blue → Violet.
+
 ## 2026-10-17: mcp 1.0.4, ui 1.5.3
 
 ### `@sola-air-ui/mcp`

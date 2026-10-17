@@ -1,13 +1,6 @@
 <script>
-  // Accepts either a plain markdown string or a getter function (const content = () =>
-  // signal()), mirroring IntentCard/StreamView's convention for live/reactive content.
   export let content = '';
 
-  // {@html}-injected markup bypasses this component's own scoped <style> block entirely —
-  // it's raw HTML set via innerHTML at runtime, not DOM nodes the compiler created and
-  // hashed, so a scoped `h1 { ... }` rule (or `:global(h1)`, which this compiler doesn't
-  // support at all) can never match it. Styling is baked directly into the generated
-  // markup as inline styles instead, which works regardless of that limitation.
   var STYLES = {
     h1: 'font-size:26px;font-weight:800;color:var(--sola-text-primary, #0f172a);letter-spacing:-0.02em;margin:20px 0 10px 0;',
     h2: 'font-size:21px;font-weight:800;color:var(--sola-text-primary, #0f172a);letter-spacing:-0.02em;margin:20px 0 10px 0;',
@@ -30,12 +23,20 @@
       .replace(/>/g, '&gt;');
   }
 
+  function sanitizeUrl(url) {
+    var trimmed = String(url || '').trim();
+    if (/^(javascript|data|vbscript):/i.test(trimmed)) return '#';
+    return trimmed.replace(/"/g, '&quot;');
+  }
+
   function renderInline(text) {
     var out = escapeHtml(text);
     out = out.replace(/`([^`]+)`/g, '<code style="' + STYLES.code + '">$1</code>');
     out = out.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight:800;color:var(--sola-text-primary, #0f172a);">$1</strong>');
     out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="' + STYLES.a + '">$1</a>');
+    out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(_, label, url) {
+      return '<a href="' + sanitizeUrl(url) + '" target="_blank" rel="noopener noreferrer" style="' + STYLES.a + '">' + label + '</a>';
+    });
     return out;
   }
 

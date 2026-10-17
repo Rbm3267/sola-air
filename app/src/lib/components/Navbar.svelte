@@ -4,7 +4,7 @@
   import SolaLogo from './SolaLogo.svelte';
   import AiAssistantModal from './AiAssistantModal.svelte';
 
-  import { GITHUB_URL, VSCODE_URL, VERSIONS } from '$lib/data/site';
+  import { GITHUB_URL, VSCODE_URL, OPEN_VSX_URL, VERSIONS } from '$lib/data/site';
 
   const version = VERSIONS.solaAir;
 
@@ -18,9 +18,13 @@
   ];
 
   const toolsNav = [
+    { href: '/demo', label: 'Playground', blurb: 'Interactive .sola & signal mesh stage' },
     { href: '/demo/ai', label: 'AI Demo', blurb: 'Ambient intent, resolved live' },
+    { href: '/overview', label: 'Written in Sola', blurb: 'Live page compiled from Overview.sola' },
     { href: '/preview', label: 'Extension', blurb: 'Inspect Sola in any page' },
-    { href: VSCODE_URL, label: 'VS Code', blurb: 'Syntax and snippets for .sola', external: true }
+    { href: '/changelog', label: 'Changelog', blurb: 'Release history across packages' },
+    { href: VSCODE_URL, label: 'VS Code', blurb: 'Syntax and snippets for .sola', external: true },
+    { href: OPEN_VSX_URL, label: 'Open VSX', blurb: 'Cursor, Windsurf & VSCodium extension', external: true }
   ];
 
   let isAiModalOpen = $state(false);
@@ -28,14 +32,16 @@
   let isToolsOpen = $state(false);
 
   let currentPath = $derived(page.url.pathname);
-  let isToolsActive = $derived(toolsNav.some((i) => currentPath.startsWith(i.href)));
+  let isToolsActive = $derived(toolsNav.some((i) => !i.external && isActive(i.href)));
 
   function isActive(href: string) {
-    return href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+    if (href.startsWith('http')) return false;
+    if (href === '/' || href === '/demo') return currentPath === href;
+    return currentPath.startsWith(href);
   }
 
   const linkBase = 'px-3 py-1.5 rounded-xl text-[13px] font-semibold transition-all';
-  const linkOn = 'bg-emerald-500/10 text-emerald-900 dark:text-emerald-400';
+  const linkOn = 'bg-blue-500/10 text-blue-700 dark:text-blue-400';
   const linkOff = 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/60 dark:hover:bg-white/5';
 </script>
 
@@ -102,8 +108,8 @@
                   target={item.external ? '_blank' : undefined}
                   rel={item.external ? 'noreferrer' : undefined}
                   onclick={() => (isToolsOpen = false)}
-                  class="block px-3 py-2 rounded-xl transition-all {isActive(item.href) ? 'bg-emerald-500/10' : 'hover:bg-slate-100/70 dark:hover:bg-white/5'}">
-                  <span class="block text-[13px] font-semibold {isActive(item.href) ? 'text-emerald-900 dark:text-emerald-400' : 'text-slate-800 dark:text-slate-200'}">{item.label}</span>
+                  class="block px-3 py-2 rounded-xl transition-all {isActive(item.href) ? 'bg-blue-500/10' : 'hover:bg-slate-100/70 dark:hover:bg-white/5'}">
+                  <span class="block text-[13px] font-semibold {isActive(item.href) ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}">{item.label}</span>
                   <span class="block text-xs text-slate-500 dark:text-slate-400 mt-0.5">{item.blurb}</span>
                 </a>
               {/each}
@@ -174,7 +180,7 @@
           href={item.href}
           onclick={() => (isMobileMenuOpen = false)}
           aria-current={isActive(item.href) ? 'page' : undefined}
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {isActive(item.href) ? 'bg-emerald-500/10 text-emerald-900 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'}">
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {isActive(item.href) ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'}">
           <span>{item.label}</span>
         </a>
       {/each}
@@ -188,7 +194,7 @@
             rel={item.external ? 'noreferrer' : undefined}
             onclick={() => (isMobileMenuOpen = false)}
             aria-current={isActive(item.href) ? 'page' : undefined}
-            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {isActive(item.href) ? 'bg-emerald-500/10 text-emerald-900 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'}">
+            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {isActive(item.href) ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'}">
             <span>{item.label}</span>
           </a>
         {/each}

@@ -76,7 +76,7 @@ describe('@sola-air-ui/ui root exports & TypeScript declarations', () => {
         `packages/ui/src/index.js must re-export ${name} (${subpath} -> ${relFromSrc})`
       );
       assert.ok(
-        indexDts.includes(`export const ${name}: SolaComponent;`),
+        new RegExp(`export const ${name}: SolaComponent(?:<[^>]+>)?;`).test(indexDts),
         `packages/ui/types/index.d.ts must declare ${name}`
       );
     }

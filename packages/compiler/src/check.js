@@ -28,6 +28,23 @@ function position(source, index) {
   return { line, column: index - before.lastIndexOf('\n') };
 }
 
+function matchBrace(text, openPos) {
+  let depth = 0;
+  let inStr = null;
+  for (let i = openPos; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      if (ch === '\\') { i++; continue; }
+      if (ch === inStr) inStr = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === '`') { inStr = ch; continue; }
+    if (ch === '{') depth++;
+    else if (ch === '}') { if (--depth === 0) return i; }
+  }
+  return -1;
+}
+
 /**
  * Check one component's source. Returns diagnostics:
  * `{ file, line, column, severity: 'error' | 'warning', code, message }`.
@@ -58,10 +75,40 @@ export function checkSource(source, filename = 'component.sola') {
   while ((match = tag.exec(template))) {
     const kind = match[1];
     const at = match.index;
-    if (kind === '#if' || kind === '#each') {
-      stack.push({ kind: kind.slice(1), at });
+    const closeIdx = matchBrace(template, at);
+    if (kind === '#if') {
+      stack.push({ kind: 'if', at });
+      if (closeIdx !== -1) {
+        const cond = template.slice(at + 4, closeIdx).trim();
+        if (!cond) {
+          add(at, 'error', 'SOLA001', '`{#if}` is missing a condition. It renders as literal text.');
+        }
+      }
+    } else if (kind === '#each') {
+      stack.push({ kind: 'each', at });
+      if (closeIdx !== -1) {
+        const head = template.slice(at, closeIdx + 1);
+        const parsed = /^\{#each\s+([\s\S]*?)\s+as\s+([\w$]+)(?:\s*,\s*([\w$]+))?(?:\s*\(([\s\S]+)\))?\}$/.exec(head);
+        if (!parsed || !parsed[1].trim()) {
+          add(at, 'error', 'SOLA001', '`{#each}` is missing `as <item>` (expected `{#each list as item}`). It renders as literal text.');
+        }
+      }
     } else if (kind === ':else') {
-      if (stack.at(-1)?.kind !== 'if') add(at, 'error', 'SOLA001', '`{:else}` outside an `{#if}` block. It renders as literal text.');
+      if (stack.at(-1)?.kind !== 'if') {
+        add(at, 'error', 'SOLA001', '`{:else}` outside an `{#if}` block. It renders as literal text.');
+      } else if (closeIdx !== -1) {
+        const inner = template.slice(at + 6, closeIdx);
+        if (inner.trim() !== '') {
+          if (/^\s+if\b/.test(inner)) {
+            const cond = inner.replace(/^\s+if\b/, '').trim();
+            if (!cond) {
+              add(at, 'error', 'SOLA001', '`{:else if}` is missing a condition. It renders as literal text.');
+            }
+          } else {
+            add(at, 'error', 'SOLA001', '`{:else}` unexpected token (use `{:else}` or `{:else if <condition>}`). It renders as literal text.');
+          }
+        }
+      }
     } else {
       const want = kind.slice(1);
       const open = stack.pop();

@@ -3,8 +3,11 @@
   import DataCard from '$lib/components/DataCard.svelte';
   // Every runnable sample below comes from one module that e2e/docs-snippets.spec.ts
   // compiles and mounts in a browser, so a broken sample fails the build, not the reader.
+  import { onMount } from 'svelte';
   import {
     syntaxExample,
+    eachExample,
+    conditionalExample,
     signalExample,
     derivedExample,
     effectExample,
@@ -21,7 +24,7 @@
     busConfigExample,
     busHostExample
   } from '$lib/data/docsSnippets';
-  import { VERSIONS, FACTS } from '$lib/data/site';
+  import { VERSIONS, FACTS, VSCODE_URL, OPEN_VSX_URL } from '$lib/data/site';
 
   let activeSection = $state('quickstart');
   let askQuery = $state('');
@@ -82,6 +85,26 @@
   const currentGroup = $derived(groups.find(g => g.items.some(i => i.id === activeSection)) || groups[0]);
   const prevItem = $derived(currentIndex > 0 ? allItems[currentIndex - 1] : null);
   const nextItem = $derived(currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null);
+
+  function selectSection(id: string) {
+    if (!allItems.some((i) => i.id === id)) return;
+    activeSection = id;
+    if (typeof window !== 'undefined' && window.history) {
+      window.history.replaceState(null, '', `#${id}`);
+    }
+  }
+
+  onMount(() => {
+    const syncFromHash = () => {
+      const raw = window.location.hash.replace(/^#/, '');
+      if (raw && allItems.some((i) => i.id === raw)) {
+        activeSection = raw;
+      }
+    };
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  });
 
   async function askSolaAi() {
     if (!askQuery.trim() || askLoading) return;
@@ -155,17 +178,6 @@ CMD ["node", "relay-server.js"]`;
         proxy_set_header Connection "upgrade";
         proxy_set_header Host $host;
     }
-}`;
-
-  const relayJsonCode = `{
-  "port": 8080,
-  "datasources": {
-    "postgres": {
-      "host": "db.internal.net",
-      "user": "sola_reader",
-      "password": "\${DB_PASSWORD}"
-    }
-  }
 }`;
 
   const engineExample = `// Sola Native Output (Zero Virtual DOM overhead)
@@ -331,7 +343,7 @@ export function SolaWidget({ title, value }) {
           <div class="space-y-1">
             {#each grp.items as item}
               <button 
-                onclick={() => { activeSection = item.id; isMobileNavOpen = false; }}
+                onclick={() => { selectSection(item.id); isMobileNavOpen = false; }}
                 class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium transition-all flex items-center justify-between {activeSection === item.id ? 'bg-blue-500/10 text-blue-800 dark:text-blue-400 font-semibold border border-blue-500/25' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'}">
                 <span>{item.title}</span>
                 {#if item.badge}
@@ -357,7 +369,7 @@ export function SolaWidget({ title, value }) {
           type="text"
           bind:value={askQuery}
           onkeydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); askSolaAi(); } }}
-          placeholder="Quick search... ⌘K"
+          placeholder="Filter sections or ask AI..."
           class="w-full pl-8 pr-4 py-2 bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-blue-500 dark:focus:border-blue-400 shadow-2xs transition-all"
         />
         <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 absolute left-2.5 top-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -373,7 +385,7 @@ export function SolaWidget({ title, value }) {
             {#each grp.items as item}
               <li>
                 <button 
-                  onclick={() => activeSection = item.id}
+                  onclick={() => selectSection(item.id)}
                   class="w-full text-left pl-4 pr-3 py-1.5 text-xs transition-all duration-150 cursor-pointer flex items-center justify-between border-l -ml-px {activeSection === item.id ? 'border-blue-500 font-semibold text-blue-700 dark:text-blue-400 bg-blue-500/5 dark:bg-blue-500/10 rounded-r-lg' : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-400'}">
                   <span class="truncate">{item.title}</span>
                   {#if item.badge}
@@ -540,7 +552,24 @@ export function SolaWidget({ title, value }) {
             </div>
           </section>
 
-          <!-- Step 4: Template check -->
+          <!-- Step 4: Mounting a component -->
+          <section class="space-y-4 pt-4">
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Mounting your first component</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
+              Every compiled <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">.sola</code> file exports a plain <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">mount(target, props)</code> function that returns a teardown callback:
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 shadow-xl overflow-hidden">
+              <div class="px-4 py-2.5 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between">
+                <span class="text-xs font-mono text-slate-400">main.ts</span>
+                <span class="text-xs font-mono text-slate-400">TypeScript</span>
+              </div>
+              <div class="p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+                <pre><code>{mountExample}</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 5: Template check -->
           <section class="space-y-4 pt-4">
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Checking templates</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
@@ -553,6 +582,22 @@ export function SolaWidget({ title, value }) {
 
 {solaCheckOutput}</code></pre>
               </div>
+            </div>
+          </section>
+
+          <!-- Step 6: Editor Setup -->
+          <section class="space-y-4 pt-4">
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Editor Setup</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
+              Install the official <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaAIR.sola-vscode</code> extension for <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">.sola</code> syntax highlighting, rune completions, and snippets in VS Code or any Open VSX compatible editor (Cursor, Windsurf, VSCodium):
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <a href={VSCODE_URL} target="_blank" rel="noreferrer" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors">
+                VS Code Marketplace →
+              </a>
+              <a href={OPEN_VSX_URL} target="_blank" rel="noreferrer" class="px-4 py-2 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 hover:border-blue-500/40 text-xs font-semibold transition-colors">
+                Open VSX Registry →
+              </a>
             </div>
           </section>
         </article>
@@ -608,6 +653,22 @@ export function SolaWidget({ title, value }) {
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 {/if}
               </button>
+            </div>
+          </div>
+
+          <!-- Control Flow: Loops & Conditionals -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Keyed Lists ({'{#each}'})</h3>
+              <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+                <pre><code>{eachExample}</code></pre>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Conditional Branches ({'{#if} / {:else}'})</h3>
+              <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+                <pre><code>{conditionalExample}</code></pre>
+              </div>
             </div>
           </div>
 
@@ -689,6 +750,34 @@ export function SolaWidget({ title, value }) {
               <pre><code>{effectExample}</code></pre>
             </div>
           </section>
+
+          <section class="space-y-3 pt-2">
+            <h3 class="text-base font-bold font-mono text-slate-900 dark:text-white">.sola Runes & Lifecycle Reference</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              Inside a <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">.sola</code> component <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">&lt;script&gt;</code> block, compiler runes wire directly to <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/core</code> primitives and automatically clean up when the component unmounts:
+            </p>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400">
+                  <tr>
+                    <th class="px-4 py-2.5 font-semibold">Rune / Hook</th>
+                    <th class="px-4 py-2.5 font-semibold">Compiled Core Primitive</th>
+                    <th class="px-4 py-2.5 font-semibold">Purpose</th>
+                  </tr>
+                </thead>
+                <tbody class="text-slate-700 dark:text-slate-300 divide-y divide-slate-100 dark:divide-white/5">
+                  <tr><td class="px-4 py-2 font-mono">$state(initial)</td><td class="px-4 py-2 font-mono">createSignal(initial)</td><td class="px-4 py-2">Reactive local variable; assignments update dependent DOM nodes directly.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">$derived(expr)</td><td class="px-4 py-2 font-mono">createDerived(() =&gt; expr)</td><td class="px-4 py-2">Memoized computed value that updates when its dependencies change.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">$effect(fn)</td><td class="px-4 py-2 font-mono">createEffect(fn)</td><td class="px-4 py-2">Side-effect runner scoped to the component's lifecycle.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">$persist(key, init, opts?)</td><td class="px-4 py-2 font-mono">createPersistentSignal(...)</td><td class="px-4 py-2">State backed by sessionStorage/localStorage and synced across same-origin tabs.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">$on(type, handler)</td><td class="px-4 py-2 font-mono">bus.on(type, handler)</td><td class="px-4 py-2">Subscribes to a typed event bus topic and unsubscribes on destroy.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">$lastEvent(type)</td><td class="px-4 py-2 font-mono">bus.last(type)</td><td class="px-4 py-2">Reactive value holding the latest payload emitted for <code class="font-mono">type</code>.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">onMount(fn)</td><td class="px-4 py-2 font-mono">Lifecycle hook</td><td class="px-4 py-2">Runs after the component's DOM tree is attached to its target container.</td></tr>
+                  <tr><td class="px-4 py-2 font-mono">onDestroy(fn)</td><td class="px-4 py-2 font-mono">Lifecycle hook</td><td class="px-4 py-2">Runs when the teardown function returned by mounting the component is called.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </article>
 
       <!-- ================= 4. MACROS ================= -->
@@ -732,14 +821,14 @@ export function SolaWidget({ title, value }) {
           <section class="space-y-3">
             <h3 class="text-base font-bold font-mono text-slate-900 dark:text-white">$persist(key, initial, options)</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Reads and assigns like <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$state</code>, but the value survives a page load and syncs across tabs. See <button type="button" class="underline decoration-dotted cursor-pointer" onclick={() => activeSection = 'persistent-shell'}>Persistent Shell</button>.
+              Reads and assigns like <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$state</code>, but the value survives a page load and syncs across tabs. See <button type="button" class="underline decoration-dotted cursor-pointer" onclick={() => selectSection('persistent-shell')}>Persistent Shell</button>.
             </p>
           </section>
 
           <section class="space-y-3">
             <h3 class="text-base font-bold font-mono text-slate-900 dark:text-white">$on(type, handler) and $lastEvent(type)</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$on</code> runs a handler on every emission of a bus event, repeats included, and unsubscribes when the component is destroyed. <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">let x = $lastEvent(type)</code> is the latest payload as a reactive value. See <button type="button" class="underline decoration-dotted cursor-pointer" onclick={() => activeSection = 'event-bus'}>Event Bus</button>.
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">$on</code> runs a handler on every emission of a bus event, repeats included, and unsubscribes when the component is destroyed. <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">let x = $lastEvent(type)</code> is the latest payload as a reactive value. See <button type="button" class="underline decoration-dotted cursor-pointer" onclick={() => selectSection('event-bus')}>Event Bus</button>.
             </p>
           </section>
         </article>
@@ -1128,7 +1217,7 @@ export function SolaWidget({ title, value }) {
       <nav class="pt-8 border-t border-slate-900/[0.04] dark:border-white/[0.05] grid grid-cols-1 sm:grid-cols-2 gap-4">
         {#if prevItem}
           <button 
-            onclick={() => activeSection = prevItem.id}
+            onclick={() => selectSection(prevItem.id)}
             class="p-4 rounded-2xl border border-slate-200/80 dark:border-white/10 hover:border-blue-500/40 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 text-left transition-all group cursor-pointer shadow-2xs">
             <div class="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
               <svg class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
@@ -1144,7 +1233,7 @@ export function SolaWidget({ title, value }) {
 
         {#if nextItem}
           <button 
-            onclick={() => activeSection = nextItem.id}
+            onclick={() => selectSection(nextItem.id)}
             class="p-4 rounded-2xl border border-slate-200/80 dark:border-white/10 hover:border-blue-500/40 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 text-right transition-all group cursor-pointer shadow-2xs ml-auto w-full sm:w-auto sm:min-w-[200px]">
             <div class="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-end gap-1">
               <span>Next</span>

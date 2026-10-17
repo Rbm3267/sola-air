@@ -142,8 +142,8 @@
     <div class="px-5 py-3.5 border-b border-slate-100 dark:border-white/5 bg-slate-50/70 dark:bg-white/[0.02] flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <span class="flex h-2 w-2 relative">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
         </span>
         <span class="text-xs font-mono font-semibold text-slate-600 dark:text-slate-300 tracking-wider uppercase">
           Sentinel · observing
@@ -174,7 +174,7 @@
           <input
             bind:value={fields.destination}
             placeholder="Lisbon"
-            class="px-3.5 py-2.5 text-sm rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all" />
+            class="px-3.5 py-2.5 text-sm rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
         </label>
 
         <label class="flex flex-col gap-1.5">
@@ -182,7 +182,7 @@
           <input
             bind:value={fields.dates}
             placeholder="12–19 October"
-            class="px-3.5 py-2.5 text-sm rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all" />
+            class="px-3.5 py-2.5 text-sm rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
         </label>
 
         <label class="flex flex-col gap-1.5">
@@ -190,7 +190,7 @@
           <input
             bind:value={fields.travelers}
             placeholder="2 adults"
-            class="px-3.5 py-2.5 text-sm rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all" />
+            class="px-3.5 py-2.5 text-sm rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
         </label>
       </div>
 
@@ -202,15 +202,15 @@
           </span>
 
           {#if resolving}
-            <div class="rounded-2xl border border-emerald-200/70 dark:border-emerald-500/20 bg-emerald-50/70 dark:bg-emerald-500/5 p-4 flex items-center gap-2.5" role="status" aria-live="polite">
-              <span class="w-3.5 h-3.5 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin"></span>
-              <span class="text-sm text-emerald-800 dark:text-emerald-300">Resolving…</span>
+            <div class="rounded-2xl border border-emerald-200/70 dark:border-blue-500/20 bg-emerald-50/70 dark:bg-blue-500/5 p-4 flex items-center gap-2.5" role="status" aria-live="polite">
+              <span class="w-3.5 h-3.5 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></span>
+              <span class="text-sm text-blue-800 dark:text-blue-300">Resolving…</span>
             </div>
           {:else if suggestion}
-            <div class="rounded-2xl border border-emerald-200/70 dark:border-emerald-500/20 bg-emerald-50/70 dark:bg-emerald-500/5 p-4 flex flex-col gap-1.5" role="status" aria-live="polite">
-              <span class="text-sm font-semibold text-emerald-900 dark:text-emerald-300">{suggestion.label}</span>
-              <span class="text-sm text-emerald-800/90 dark:text-emerald-200/80 leading-relaxed">{suggestion.action}</span>
-              <span class="text-xs font-mono text-emerald-700/70 dark:text-emerald-400/60 mt-0.5">
+            <div class="rounded-2xl border border-emerald-200/70 dark:border-blue-500/20 bg-emerald-50/70 dark:bg-blue-500/5 p-4 flex flex-col gap-1.5" role="status" aria-live="polite">
+              <span class="text-sm font-semibold text-blue-900 dark:text-blue-300">{suggestion.label}</span>
+              <span class="text-sm text-blue-800/90 dark:text-blue-200/80 leading-relaxed">{suggestion.action}</span>
+              <span class="text-xs font-mono text-blue-700/70 dark:text-blue-400/60 mt-0.5">
                 confidence {Math.round(suggestion.confidence * 100)}%
               </span>
             </div>

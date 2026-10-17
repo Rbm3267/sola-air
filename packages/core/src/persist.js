@@ -200,6 +200,11 @@ export function createPersistentSignal(key, initialValue, options = {}) {
     }
   };
 
+  const offClear = onClearPersistentState(() => {
+    try { store.removeItem(storageKey); } catch { /* ignore */ }
+    rawWrite(() => initialValue);
+  });
+
   const clear = () => {
     try { store.removeItem(storageKey); } catch { /* ignore */ }
     rawWrite(() => initialValue);
@@ -209,6 +214,7 @@ export function createPersistentSignal(key, initialValue, options = {}) {
   const dispose = () => {
     if (disposed) return;
     disposed = true;
+    offClear();
     if (bus) {
       bus.handlers.get(storageKey)?.delete(onMessage);
       if (!bus.handlers.get(storageKey)?.size) bus.handlers.delete(storageKey);

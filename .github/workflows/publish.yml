@@ -63,15 +63,15 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @sola-air-ui/mcp
+      - name: Publish @sola-air-ui/compiler
         run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
-        working-directory: packages/sola-mcp
+        working-directory: packages/compiler
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @sola/compiler
+      - name: Publish @sola-air-ui/mcp
         run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
-        working-directory: packages/compiler
+        working-directory: packages/sola-mcp
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

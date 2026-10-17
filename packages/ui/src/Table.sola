@@ -1,22 +1,22 @@
 <script>
   // Both columns and rows accept either a plain array or a getter function
   // (const rows = () => signal()), matching StreamView/IntentCard/Modal's convention.
-  // Needed because a nested component's props are captured once at mount, not
-  // re-evaluated on later signal changes — a getter function is what stays live.
   export let columns = [];
   export let rows = [];
   export let striped = false;
-  // Optional (row, index) => void — when provided, rows get a pointer cursor and
-  // hover treatment. Common pattern: open a Modal with that row's detail.
   export let onRowClick = null;
-  // Was previously left to every consumer to hand-roll via cascade overrides
-  // (th/td color, border, hover-background) whenever their own page had a
-  // dark mode — real, repeated boilerplate across this codebase's own
-  // consumers. Built in now so `dark={darkMode()}` replaces that.
   export let dark = false;
 
-  let resolvedColumns = $derived(() => (typeof columns === 'function' ? columns() : columns));
-  let resolvedRows = $derived(() => (typeof rows === 'function' ? rows() : rows));
+  let resolvedRows = $derived(() => (typeof rows === 'function' ? rows() : rows) || []);
+  let resolvedColumns = $derived(() => {
+    const c = typeof columns === 'function' ? columns() : columns;
+    if (Array.isArray(c) && c.length > 0) return c;
+    const r = resolvedRows();
+    if (Array.isArray(r) && r.length > 0 && r[0] && typeof r[0] === 'object') {
+      return Object.keys(r[0]);
+    }
+    return [];
+  });
 
   function handleRowClick(row, i) {
     if (typeof onRowClick === 'function') {
@@ -25,7 +25,7 @@
   }
 </script>
 
-<div class="table-wrapper {dark ? 'dark' : ''}">
+<div class="table-wrapper {dark ? 'dark' : ''} {striped ? 'striped' : ''}">
   <table>
     <thead>
       <tr>
@@ -84,6 +84,10 @@
     padding: 12px 16px;
     color: var(--sola-text-primary, #334155);
     border-bottom: 1px solid var(--sola-surface-2, #f1f5f9);
+  }
+
+  .table-wrapper.striped tbody tr:nth-child(even) td {
+    background: var(--sola-surface-1, #f8fafc);
   }
 
   .table-wrapper.dark td {

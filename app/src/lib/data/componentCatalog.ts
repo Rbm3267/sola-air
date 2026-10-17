@@ -641,10 +641,10 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     componentName: 'InlineCallout',
     defaultConfig: {
       variant: 'info',
-      title: 'Breaking Change',
-      message: 'The `config` prop now accepts a typed schema object instead of a plain record. See the migration guide for details.',
-      actionLabel: 'View Migration Guide',
-      actionHref: '/docs#migration',
+      title: 'Compiler Check',
+      message: 'Run sola-check in CI to catch unclosed template blocks and compile diagnostics before deployment. See the quickstart guide for details.',
+      actionLabel: 'View Quickstart Guide',
+      actionHref: '/docs#quickstart',
       dismissible: false
     },
     props: [
@@ -953,9 +953,9 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     componentName: 'SolaAccordion',
     defaultConfig: {
       items: [
-        { id: '1', title: 'What is Sola?', content: 'Sola is a zero-VDOM, signal-reactive design system with tactile physics and multi-framework code export.', defaultOpen: true },
-        { id: '2', title: 'How does signal reactivity work?', content: 'Signals establish direct reactive graph bindings to exact DOM nodes. Updates trigger O(1) mutations bypassing virtual DOM diffing entirely.' },
-        { id: '3', title: 'Which frameworks are supported?', content: 'Sola exports to React 19, Svelte 5, Vue 3, SolidJS, and native Web Components from a single component definition.' }
+        { id: '1', title: 'What is Sola AIR?', content: 'Sola AIR is a zero-VDOM, signal-reactive runtime and design system powered by the .sola single-file compiler and @sola-air-ui/core signals.', defaultOpen: true },
+        { id: '2', title: 'How does signal reactivity work?', content: 'Signals establish direct reactive bindings to the DOM nodes they own, mutating text nodes and attributes directly with no virtual DOM diffing.' },
+        { id: '3', title: 'How do I embed Sola in an existing app?', content: 'Compiled .sola components export a plain mount(target, props) function and can be mounted into any DOM container or isolated in a persistent Shadow DOM via mountShell from @sola-air-ui/core.' }
       ],
       variant: 'separated',
       multiple: true
@@ -1218,7 +1218,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
       title: 'signal.ts',
       showLineNumbers: true,
       copyable: true,
-      code: 'import { signal } from "@sola-air-ui/core";\n\nconst count = signal(0);\nconst doubled = derived(() => count.value * 2);\n\n// Direct DOM binding — zero VDOM overhead\ncount.subscribe((value) => {\n  element.textContent = String(value);\n});'
+      code: 'import { createSignal, createDerived, createEffect } from "@sola-air-ui/core";\n\nconst [count, setCount] = createSignal(0);\nconst doubled = createDerived(() => count() * 2);\n\n// Direct DOM binding — zero VDOM overhead\ncreateEffect(() => {\n  element.textContent = String(doubled());\n});'
     },
     props: [
       { name: 'code', type: 'string', defaultValue: '', description: 'Code string to display' },

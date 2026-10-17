@@ -3,7 +3,7 @@
   export let variant = 'info';
 </script>
 
-<div class="alert {variant}">
+<div class="alert {variant}" role={variant === 'error' || variant === 'warning' ? 'alert' : 'status'}>
   <span class="message">{message}</span>
 </div>
 
@@ -17,8 +17,8 @@
   }
 
   .info {
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: var(--sola-alert-info-bg, #eff6ff);
+    color: var(--sola-alert-info, #1d4ed8);
     border-color: #bfdbfe;
   }
 
@@ -29,14 +29,14 @@
   }
 
   .warning {
-    background: #fffbeb;
-    color: #b45309;
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    color: var(--sola-alert-warning, #b45309);
     border-color: #fde68a;
   }
 
   .error {
     background: var(--sola-alert-high-bg, #fef2f2);
-    color: #b91c1c;
+    color: var(--sola-alert-high, #b91c1c);
     border-color: #fecaca;
   }
 </style>

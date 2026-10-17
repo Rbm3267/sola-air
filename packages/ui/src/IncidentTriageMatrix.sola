@@ -1,14 +1,10 @@
 <script>
   export let title = "Live Priority Radar";
   export let description = "Active triage items staged for automated mitigation";
-  // Array of { id, service, severity: 'P1'|'P2'|'P3', status, latency }
   export let incidents = [
     { id: "TICKET-492", service: "Authentication Token Gateway", severity: "P1", status: "Investigating", latency: "320ms" },
     { id: "TICKET-495", service: "Database Connection Pool", severity: "P2", status: "Mitigating", latency: "48ms" },
   ];
-  // Not part of the catalog's editable props (a real incident list doesn't come
-  // with pre-scripted responses) — kept as a sensible default so the card still
-  // demonstrates the "1-click mitigation" capability out of the box.
   export let playbooks = [
     { id: "pb-1", title: "Reroute Edge DNS to eu-west-1", action: "Route53 Failover" },
     { id: "pb-2", title: "Page Tier 3 SRE On-Call", action: "PagerDuty Page" },
@@ -93,7 +89,7 @@
   .sola-triage:hover { box-shadow: 0 8px 24px -8px rgba(225, 29, 72, 0.12); }
 
   .triage-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--sola-surface-2, #f1f5f9); margin-bottom: 16px; }
-  .triage-title { font-size: 15px; font-weight: 900; color: #020617; font-family: ui-monospace, monospace; letter-spacing: -0.01em; margin: 0 0 4px 0; }
+  .triage-title { font-size: 15px; font-weight: 900; color: var(--sola-text-primary, #020617); font-family: ui-monospace, monospace; letter-spacing: -0.01em; margin: 0 0 4px 0; }
   .triage-description { font-size: 12px; color: var(--sola-text-secondary, #64748b); margin: 0; }
   .triage-count {
     flex-shrink: 0;

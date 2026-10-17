@@ -10,6 +10,9 @@
     "./gemini": "./src/gemini.js",
     "./ollama": "./src/ollama.js"
   },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
   "keywords": ["sola", "ai", "llm", "provider", "anthropic", "openai", "gemini", "ollama", "streaming"],
   "license": "MIT",
   "homepage": "https://sola-air.dev",

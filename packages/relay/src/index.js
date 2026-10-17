@@ -5,6 +5,30 @@ import { createServer } from 'http';
 import { readFileSync, appendFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
+const { version: RELAY_VERSION } = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+);
+
+// Only single-statement read-only SELECT queries are permitted on SQL connectors.
+export function isReadOnlySql(sql) {
+  if (typeof sql !== 'string') return false;
+  const trimmed = sql.trim().replace(/;+\s*$/, '');
+  if (!trimmed) return false;
+  const withoutStrings = trimmed
+    .replace(/'(?:''|\\.|[^'])*'/g, "''")
+    .replace(/"(?:""|\\.|[^"])*"/g, '""');
+  const withoutComments = withoutStrings
+    .replace(/--[^\r\n]*/g, ' ')
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .trim();
+  if (!/^SELECT\b/i.test(withoutComments)) return false;
+  if (withoutComments.includes(';')) return false;
+  if (/\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|GRANT|REVOKE|COPY|CALL|EXEC|EXECUTE)\b/i.test(withoutComments)) {
+    return false;
+  }
+  return true;
+}
+
 // ─── Connectors ───
 const connectors = new Map();
 
@@ -273,9 +297,9 @@ function auditLog(entry) {
 }
 
 // ─── Connection Store ───
-const connections = new Map();
+export const connections = new Map();
 
-function addConnection(name, type, config) {
+export function addConnection(name, type, config) {
   let connector;
   switch (type) {
     case 'postgres':
@@ -372,7 +396,7 @@ export class RelayServer {
           status[name] = { type: conn.type, status: conn.status };
         }
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ relay: 'sola-relay', version: '1.0.0', connections: status }));
+        res.end(JSON.stringify({ relay: 'sola-relay', version: RELAY_VERSION, connections: status }));
         return;
       }
 
@@ -443,21 +467,39 @@ export class RelayServer {
 
           const safeLimit = Math.min(Math.max(1, parseInt(limit, 10) || 100), 1000);
 
+          const isNonSql =
+            conn.type === 'sheet' ||
+            conn.type === 'googlesheets' ||
+            conn.type === 'servicenow' ||
+            conn.type === 'now';
+
           let result;
-          if (typeof query === 'object' && query !== null && typeof query.text === 'string') {
-            // Parameterized query — safe by construction
+          if (isNonSql) {
+            result = await conn.connector.query({
+              ...(typeof query === 'object' && query !== null ? query : { query }),
+              limit: safeLimit
+            });
+          } else if (typeof query === 'object' && query !== null && typeof query.text === 'string') {
+            if (!isReadOnlySql(query.text)) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Only SELECT queries are permitted' }));
+              return;
+            }
             const params = Array.isArray(query.params) ? query.params : [];
             result = await conn.connector.query(query.text, params);
           } else if (typeof query === 'string') {
-            // String query — only SELECT permitted
-            if (!/^\s*SELECT\b/i.test(query)) {
+            if (!isReadOnlySql(query)) {
               res.writeHead(400, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ error: 'Only SELECT queries are permitted' }));
               return;
             }
             result = await conn.connector.query(query);
-          } else {
+          } else if (query == null) {
             result = await conn.connector.query(`SELECT * FROM ${source} LIMIT ${safeLimit}`);
+          } else {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Only SELECT queries are permitted' }));
+            return;
           }
 
           // Local audit log
@@ -522,11 +564,13 @@ export class RelayServer {
       res.end('Not found');
     });
 
+    this.server = server;
     // Connect to all configured data sources
     connectAll().then(() => {
       server.listen(this.port, '127.0.0.1', () => {
         console.log(`  Relay listening on http://127.0.0.1:${this.port}\n`);
       });
     });
+    return server;
   }
 }

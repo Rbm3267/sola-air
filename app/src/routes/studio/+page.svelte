@@ -136,7 +136,8 @@
 
   // Color Accent Themes
   const COLOR_OPTIONS = [
-    { id: 'emerald', name: 'Emerald', hex: '#10b981', bg: 'bg-blue-500', text: 'text-blue-500', textDark: 'text-blue-600 dark:text-blue-400', badgeBg: 'bg-blue-50 dark:bg-blue-500/10', badgeBorder: 'border-blue-200/60 dark:border-blue-500/20', accent: 'accent-blue-500', ring: 'ring-blue-500/20', border: 'border-blue-500' },
+    { id: 'blue', name: 'Blue', hex: '#3b82f6', bg: 'bg-blue-500', text: 'text-blue-500', textDark: 'text-blue-600 dark:text-blue-400', badgeBg: 'bg-blue-50 dark:bg-blue-500/10', badgeBorder: 'border-blue-200/60 dark:border-blue-500/20', accent: 'accent-blue-500', ring: 'ring-blue-500/20', border: 'border-blue-500' },
+    { id: 'emerald', name: 'Emerald', hex: '#10b981', bg: 'bg-emerald-500', text: 'text-emerald-500', textDark: 'text-emerald-700 dark:text-emerald-400', badgeBg: 'bg-emerald-50 dark:bg-emerald-500/10', badgeBorder: 'border-emerald-200/60 dark:border-emerald-500/20', accent: 'accent-emerald-500', ring: 'ring-emerald-500/20', border: 'border-emerald-500' },
     { id: 'sky', name: 'Sky Blue', hex: '#0ea5e9', bg: 'bg-sky-500', text: 'text-sky-500', textDark: 'text-sky-600 dark:text-sky-400', badgeBg: 'bg-sky-50 dark:bg-sky-500/10', badgeBorder: 'border-sky-200/60 dark:border-sky-500/20', accent: 'accent-sky-500', ring: 'ring-sky-500/20', border: 'border-sky-500' },
     { id: 'violet', name: 'Violet', hex: '#8b5cf6', bg: 'bg-violet-500', text: 'text-violet-500', textDark: 'text-violet-600 dark:text-violet-400', badgeBg: 'bg-violet-50 dark:bg-violet-500/10', badgeBorder: 'border-violet-200/60 dark:border-violet-500/20', accent: 'accent-violet-500', ring: 'ring-violet-500/20', border: 'border-violet-500' },
     { id: 'amber', name: 'Amber', hex: '#f59e0b', bg: 'bg-amber-500', text: 'text-amber-500', textDark: 'text-amber-600 dark:text-amber-400', badgeBg: 'bg-amber-50 dark:bg-amber-500/10', badgeBorder: 'border-amber-200/60 dark:border-amber-500/20', accent: 'accent-amber-500', ring: 'ring-amber-500/20', border: 'border-amber-500' },
@@ -985,7 +986,7 @@
                     </div>
                     <div class="h-16 flex items-end gap-1.5 pt-2">
                       {#each [40, 25, 60, 45, 80, 55, 90, 70, 85, 65, 95, 75] as height, idx}
-                        <div class="flex-1 {c.barBg} rounded-t transition-all" style="height: {height}%;"></div>
+                        <div class="flex-1 {c.bg} rounded-t transition-all" style="height: {height}%;"></div>
                       {/each}
                     </div>
                   </div>

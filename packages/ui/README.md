@@ -10,7 +10,7 @@ npm install @sola-air-ui/ui
 
 ## Usage
 
-Import individual components by subpath:
+Import individual components by subpath or from the package root:
 
 ```html
 <script>
@@ -23,7 +23,7 @@ Import individual components by subpath:
 <Badge label="In Progress" variant="warning" />
 ```
 
-## Components
+## Components (37 total)
 
 **Layout & display** — `Card`, `Stack`, `Dashboard`, `Table`, `DataCard`, `StatGrid`, `Canvas`
 
@@ -31,11 +31,15 @@ Import individual components by subpath:
 
 **Feedback** — `Alert`, `Toast`, `Spinner`, `Badge`, `Modal`
 
-**Content rendering** — `MarkdownViewer`, `HtmlViewer`, `Chart`, `StreamView`
+**Shell** — `LauncherDock`, `CommandPalette`, `CompanionDrawer`, `ToastHost`
+
+**Gauges & telemetry** — `GaugeCard`, `TactileDialCard`, `FlowWaterfall`, `IncidentTriageMatrix`
+
+**Content rendering** — `MarkdownViewer`, `HtmlViewer`, `SolaSafeHTML`, `Chart`, `StreamView`
 
 **AI / intent-driven** — `IntentCard`, `IntentList`, `AmbientSuggestion`, and under `./ai/`: `ConversationThread`, `ActionStrip`, `ConfidenceBadge`, `IntentSheet`
 
-Each has its own export path (e.g. `@sola-air-ui/ui/data-card`) — see `package.json` `exports` for the full map, or import everything from `@sola-air-ui/ui` directly.
+Each of the 37 components has its own subpath export (e.g. `@sola-air-ui/ui/data-card`, `@sola-air-ui/ui/safe-html`, `@sola-air-ui/ui/launcher-dock`) and is also exported from the package root (`import { Table, GaugeCard, SolaSafeHTML } from '@sola-air-ui/ui'`) — see `package.json` `exports` for the full map.
 
 ## Peer dependency
 

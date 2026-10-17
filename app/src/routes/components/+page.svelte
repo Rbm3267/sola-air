@@ -205,8 +205,12 @@
                 <!-- A reader needs to know whether they can install this today
                      or whether it only exists in this catalog. -->
                 {#if isPublished(comp)}
-                  <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-500/20">
+                  <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-500/20">
                     Published
+                  </span>
+                {:else if PACKAGE_EQUIVALENT[comp.componentName]}
+                  <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-200/80 dark:border-sky-500/20">
+                    → {PACKAGE_EQUIVALENT[comp.componentName]}
                   </span>
                 {:else}
                   <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400">
@@ -219,9 +223,15 @@
                 {comp.description}
               </p>
 
-              <div class="flex items-center justify-between pt-1 text-xs font-mono text-slate-500 dark:text-slate-400">
-                <span class="text-blue-600 dark:text-blue-400 font-bold">{comp.category}</span>
-                <span>.{comp.componentName}</span>
+              <div class="flex items-center justify-between pt-1 text-xs font-mono text-slate-500 dark:text-slate-400 gap-2">
+                <span class="text-blue-600 dark:text-blue-400 font-bold shrink-0">{comp.category}</span>
+                {#if UI_MANIFEST.subpaths[comp.componentName]}
+                  <span class="truncate text-slate-500 dark:text-slate-400" title={UI_MANIFEST.subpaths[comp.componentName]}>{UI_MANIFEST.subpaths[comp.componentName]}</span>
+                {:else if PACKAGE_EQUIVALENT[comp.componentName] && UI_MANIFEST.subpaths[PACKAGE_EQUIVALENT[comp.componentName]]}
+                  <span class="truncate text-slate-500 dark:text-slate-400" title={UI_MANIFEST.subpaths[PACKAGE_EQUIVALENT[comp.componentName]]}>{UI_MANIFEST.subpaths[PACKAGE_EQUIVALENT[comp.componentName]]}</span>
+                {:else}
+                  <span>.{comp.componentName}</span>
+                {/if}
               </div>
             </button>
           {/each}
@@ -234,10 +244,19 @@
         <!-- Component Header & Actions -->
         <div class="bg-white dark:bg-[#0f172a]/80 backdrop-blur-xl border border-slate-200/90 dark:border-white/10 rounded-3xl p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div class="flex items-center gap-2 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 mb-1">
+            <div class="flex flex-wrap items-center gap-2 text-xs font-mono font-semibold text-blue-600 dark:text-blue-400 mb-1">
               <span>{selectedComponent.category}</span>
               <span>•</span>
               <span class="text-slate-500 dark:text-slate-400">{selectedComponent.componentName}.sola</span>
+              {#if UI_MANIFEST.subpaths[selectedComponent.componentName]}
+                <span class="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-500/20">
+                  {UI_MANIFEST.subpaths[selectedComponent.componentName]}
+                </span>
+              {:else if PACKAGE_EQUIVALENT[selectedComponent.componentName] && UI_MANIFEST.subpaths[PACKAGE_EQUIVALENT[selectedComponent.componentName]]}
+                <span class="px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-200/80 dark:border-sky-500/20">
+                  {UI_MANIFEST.subpaths[PACKAGE_EQUIVALENT[selectedComponent.componentName]]}
+                </span>
+              {/if}
             </div>
             <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
               {selectedComponent.name}

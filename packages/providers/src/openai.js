@@ -15,7 +15,8 @@ export function OpenAIProvider({
   model = 'gpt-4o',
   maxTokens = 4096,
   system,
-  baseURL = OPENAI_API
+  baseURL = OPENAI_API,
+  headers: extraHeaders
 } = {}) {
   async function handler(request) {
     try {
@@ -37,7 +38,9 @@ export function OpenAIProvider({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Authorization': `Bearer ${apiKey}`,
+          'api-key': apiKey,
+          ...extraHeaders
         },
         body: JSON.stringify(body)
       });
@@ -74,7 +77,7 @@ export function OpenAIProvider({
  */
 export function AzureOpenAIProvider({ apiKey, endpoint, deployment, apiVersion = '2024-02-01', ...rest } = {}) {
   const baseURL = `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
-  return OpenAIProvider({ apiKey, baseURL, ...rest });
+  return OpenAIProvider({ apiKey, baseURL, headers: { 'api-key': apiKey }, ...rest });
 }
 
 async function* _parseOpenAIStream(res) {

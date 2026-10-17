@@ -64,7 +64,7 @@
   <Navbar />
 
   <!-- Soft Ambient Glow -->
-  <div class="absolute top-0 inset-x-0 h-[450px] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(16,185,129,0.06),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(16,185,129,0.1),rgba(9,13,25,0))] pointer-events-none"></div>
+  <div class="absolute top-0 inset-x-0 h-[450px] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(59,130,246,0.06),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(59,130,246,0.1),rgba(9,13,25,0))] pointer-events-none"></div>
 
   <main id="main-content" class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-16">
     

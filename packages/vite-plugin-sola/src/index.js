@@ -27,11 +27,12 @@ export default function solaPlugin(options = {}) {
     enforce: 'pre',
 
     async load(id) {
-      if (!id.endsWith('.sola')) return null;
+      const cleanId = id.split('?', 1)[0];
+      if (!cleanId.endsWith('.sola')) return null;
       try {
         const compile = await getCompile();
-        const source = readFileSync(id, 'utf-8');
-        const compiled = compile(source, { filename: id, sourcemap });
+        const source = readFileSync(cleanId, 'utf-8');
+        const compiled = compile(source, { filename: cleanId, sourcemap });
         return { code: compiled.code, map: compiled.map ?? null };
       } catch (err) {
         this.error(err.message);

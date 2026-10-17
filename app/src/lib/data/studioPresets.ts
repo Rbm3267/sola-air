@@ -17,7 +17,6 @@ export interface StudioPreset {
     accentColor: string;
     config?: Record<string, any>;
   }>;
-  solaCode: string;
 }
 
 export const STUDIO_PRESETS: StudioPreset[] = [
@@ -37,18 +36,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'as2', type: 'stat', title: 'Agent Agreement Rate', subtitle: 'Multi-model agreement index', cols: 1, value: '99.4%', delta: '+0.8%', accentColor: 'emerald' },
       { id: 'as3', type: 'feed', title: 'Live Reasoning & Thought Stream', subtitle: 'What each subagent is doing', cols: 2, value: 'Executing', accentColor: 'slate' },
       { id: 'as4', type: 'slider', title: 'Autonomy & Permission Dial', subtitle: 'Max allowable tool risk threshold', cols: 1, value: 85, accentColor: 'emerald' }
-    ],
-    solaCode: `<script>
-  let subagentCount = $state(8);
-  let consensus = $state(99.4);
-  let autonomyLevel = $state(85);
-</script>
-
-<div class="agent-mesh">
-  <h2>Active Subagents: {subagentCount}</h2>
-  <span>Consensus: {consensus}%</span>
-  <SolaSlider bind:value={autonomyLevel} />
-</div>`
+    ]
   },
   {
     id: 'llm-streaming-token-hud',
@@ -63,16 +51,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'nt2', type: 'progress', title: 'Context Window Saturation', subtitle: '128k token allocation', cols: 1, value: 68, delta: '68%', accentColor: 'violet' },
       { id: 'nt3', type: 'chart', title: 'Token Egress Velocity Stream', subtitle: 'Text node mutation rate', cols: 2, value: '4.2k tok/s', accentColor: 'violet' },
       { id: 'nt4', type: 'code', title: 'Zero-VDOM Streaming Buffer', subtitle: 'Direct reactive DOM binding', cols: 2, value: 'Prompt Engine', accentColor: 'slate' }
-    ],
-    solaCode: `<script>
-  let tokenRate = $state(4280);
-  let contextFill = $state(68);
-</script>
-
-<div class="token-hud">
-  <span class="rate">{tokenRate} tok/s</span>
-  <SolaProgressRing value={contextFill} />
-</div>`
+    ]
   },
 
   // ==========================================
@@ -91,16 +70,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'ew2', type: 'progress', title: 'Linear Memory Allocation', subtitle: '4MB per isolate cap', cols: 1, value: 42, delta: '42%', accentColor: 'emerald' },
       { id: 'ew3', type: 'chart', title: 'Global Edge Ingress Map', subtitle: '32 Edge PoPs real-time load', cols: 2, value: '98k req/s', accentColor: 'emerald' },
       { id: 'ew4', type: 'radial_dial', title: 'Concurrency Limiter', subtitle: 'Dynamic worker scaling cap', cols: 1, value: 75, accentColor: 'emerald' }
-    ],
-    solaCode: `<script>
-  let coldStart = $state(0.08);
-  let memoryUsage = $state(42);
-</script>
-
-<div class="wasm-hud">
-  <h2>Boot Time: {coldStart}ms</h2>
-  <p>Memory: {memoryUsage}%</p>
-</div>`
+    ]
   },
   {
     id: 'zkp-verification-pipeline',
@@ -114,16 +84,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'zk1', type: 'stat', title: 'Proof Synthesis Time', subtitle: 'PlonKish arithmetization speed', cols: 1, value: '380ms', delta: '-45ms', accentColor: 'sky' },
       { id: 'zk2', type: 'stat', title: 'Verified State Root', subtitle: 'Cryptographic state anchor', cols: 1, value: '0x7F...9A4', delta: 'Confirmed', accentColor: 'sky' },
       { id: 'zk3', type: 'waterfall', title: 'Proof Generation Stages', subtitle: 'Witness generation to commitment', cols: 2, value: '380ms', accentColor: 'sky', config: { bars: [{ name: 'Witness Gen', val: 120, d: '120ms' }, { name: 'FFT Polynomial', val: 180, d: '180ms' }, { name: 'MSM Commitment', val: 80, d: '80ms' }] } }
-    ],
-    solaCode: `<script>
-  let proofTime = $state(380);
-  let stateRoot = $state("0x7F89B2...9A4E");
-</script>
-
-<div class="zkp-card">
-  <h3>Proof Synthesized in {proofTime}ms</h3>
-  <code>State: {stateRoot}</code>
-</div>`
+    ]
   },
 
   // ==========================================
@@ -142,16 +103,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'rb2', type: 'stat', title: 'Actuator Torque Peak', subtitle: 'Load sensor feedback', cols: 1, value: '28.4 Nm', delta: 'Nominal', accentColor: 'amber' },
       { id: 'rb3', type: 'chart', title: 'Sensor Fusion Curve', subtitle: 'IMU & Torque continuous telemetry', cols: 2, value: '1.0 kHz', accentColor: 'amber' },
       { id: 'rb4', type: 'status', title: 'Hardware Sentinel Condition', subtitle: 'E-Stop closed-loop watchdog', cols: 1, value: 'Armed & Nominal', accentColor: 'emerald' }
-    ],
-    solaCode: `<script>
-  let jointAngle = $state(45);
-  let torque = $state(28.4);
-</script>
-
-<div class="robotics-hud">
-  <h2>Joint Angle: {jointAngle}°</h2>
-  <span>Torque: {torque} Nm</span>
-</div>`
+    ]
   },
   {
     id: 'spatial-audio-haptics',
@@ -165,16 +117,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'sa1', type: 'slider', title: 'Azimuth Soundfield Orientation', subtitle: '360 degree spatial panning', cols: 1, value: 180, accentColor: 'emerald' },
       { id: 'sa2', type: 'slider', title: 'Haptic Vibration Damping', subtitle: 'Tactile spring resistance', cols: 1, value: 65, accentColor: 'emerald' },
       { id: 'sa3', type: 'node_graph', title: 'Acoustic Anchor Nodes', subtitle: 'Virtual spatial emitters', cols: 2, value: '6 Emitters', accentColor: 'emerald' }
-    ],
-    solaCode: `<script>
-  let azimuth = $state(180);
-  let damping = $state(65);
-</script>
-
-<div class="spatial-stage">
-  <h3>Azimuth: {azimuth}°</h3>
-  <SolaSlider bind:value={damping} />
-</div>`
+    ]
   },
 
   // ==========================================
@@ -193,24 +136,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'c2', type: 'progress', title: 'Net Revenue Retention', subtitle: 'Annualized benchmark', cols: 1, value: 138, delta: '138%', accentColor: 'emerald' },
       { id: 'c3', type: 'waterfall', title: 'Revenue Realization Flow', subtitle: 'Gross billing to net settlement', cols: 2, value: '$184k', accentColor: 'emerald', config: { bars: [{ name: 'Gross Billing', val: 240, d: '+240' }, { name: 'Expansions', val: 40, d: '+40' }, { name: 'Fees & Refunds', val: -30, d: '-30' }, { name: 'Net Realized', val: 250, d: '250' }] } },
       { id: 'c4', type: 'chart', title: 'Subscription Growth Stream', subtitle: 'Signal ingestion rate', cols: 2, value: '94 subs/day', accentColor: 'emerald' }
-    ],
-    solaCode: `<script>
-  let mrr = $state(184200);
-  let retention = $state(138);
-</script>
-
-<div class="template-grid">
-  <div class="card col-1">
-    <span class="label">MONTHLY RECURRING REVENUE</span>
-    <div class="val">\${mrr.toLocaleString()}</div>
-    <span class="trend">+14.8% vs last month</span>
-  </div>
-  <div class="card col-1">
-    <span class="label">NET RETENTION</span>
-    <div class="val">{retention}%</div>
-    <span class="trend">Optimal cohort</span>
-  </div>
-</div>`
+    ]
   },
   {
     id: 'conversion-funnel-matrix',
@@ -224,16 +150,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'cf1', type: 'stat', title: 'Conversion Rate', subtitle: 'Visitor to paid subscription', cols: 1, value: '4.82%', delta: '+0.6%', accentColor: 'sky' },
       { id: 'cf2', type: 'progress', title: 'Onboarding Completion', subtitle: 'Activation milestone rate', cols: 1, value: 84, delta: '84%', accentColor: 'sky' },
       { id: 'cf3', type: 'waterfall', title: 'Full-Funnel Drop-Off', subtitle: 'Acquisition to retention stages', cols: 2, value: '100k', accentColor: 'sky', config: { bars: [{ name: 'Impressions', val: 100, d: '100k' }, { name: 'Signups', val: 32, d: '32k' }, { name: 'Active Trial', val: 18, d: '18k' }, { name: 'Paid', val: 4.8, d: '4.8k' }] } }
-    ],
-    solaCode: `<script>
-  let conversionRate = $state(4.82);
-  let activation = $state(84);
-</script>
-
-<div class="funnel-hud">
-  <h2>Conversion: {conversionRate}%</h2>
-  <p>Activation: {activation}%</p>
-</div>`
+    ]
   },
   {
     id: 'global-payout-velocity',
@@ -247,16 +164,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'gp1', type: 'stat', title: 'Settlement Balance', subtitle: 'Available liquidity pool', cols: 1, value: '$1.42M', delta: '+$240k', accentColor: 'emerald' },
       { id: 'gp2', type: 'slider', title: 'Liquidity Reserve Threshold', subtitle: 'Auto-sweep trigger margin', cols: 1, value: 75, accentColor: 'emerald' },
       { id: 'gp3', type: 'chart', title: 'Daily Disbursement Velocity', subtitle: 'Settlement run rate', cols: 2, value: '$340k/day', accentColor: 'emerald' }
-    ],
-    solaCode: `<script>
-  let balance = $state(1420000);
-  let reserve = $state(75);
-</script>
-
-<div class="treasury-card">
-  <h2>Balance: \${(balance / 1000000).toFixed(2)}M</h2>
-  <span>Reserve Margin: {reserve}%</span>
-</div>`
+    ]
   },
 
   // ==========================================
@@ -275,16 +183,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'ec2', type: 'progress', title: 'Fulfillment Target SLA', subtitle: 'Same-day dispatch speed', cols: 1, value: 92, delta: '92%', accentColor: 'amber' },
       { id: 'ec3', type: 'table', title: 'Live Order Intake Stream', subtitle: 'Recent buyer transactions', cols: 2, value: 'Orders', accentColor: 'slate' },
       { id: 'ec4', type: 'feed', title: 'Warehouse Dispatch Stream', subtitle: 'Real-time packing events', cols: 1, value: 'Active', accentColor: 'slate' }
-    ],
-    solaCode: `<script>
-  let gmv = $state(42850);
-  let fulfillment = $state(92);
-</script>
-
-<div class="commerce-hud">
-  <h2>Today GMV: \${gmv.toLocaleString()}</h2>
-  <p>Fulfillment SLA: {fulfillment}%</p>
-</div>`
+    ]
   },
   {
     id: 'inventory-stock-matrix',
@@ -298,16 +197,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'iv1', type: 'stat', title: 'Total Managed SKUs', subtitle: 'Across 4 global hubs', cols: 1, value: '12,480', delta: '+140 new', accentColor: 'slate' },
       { id: 'iv2', type: 'progress', title: 'Warehouse Capacity Utilization', subtitle: 'Main distribution center', cols: 1, value: 78, delta: '78%', accentColor: 'amber' },
       { id: 'iv3', type: 'table', title: 'Depletion Watchlist Table', subtitle: 'Low-stock reorder triggers', cols: 2, value: 'Stock Records', accentColor: 'slate' }
-    ],
-    solaCode: `<script>
-  let totalSkus = $state(12480);
-  let capacity = $state(78);
-</script>
-
-<div class="inventory-card">
-  <h3>SKUs: {totalSkus}</h3>
-  <p>Capacity: {capacity}%</p>
-</div>`
+    ]
   },
 
   // ==========================================
@@ -326,16 +216,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'sp2', type: 'datepicker', title: 'Sprint Milestone', subtitle: 'Target ship deadline', cols: 1, value: '2026-09-15', accentColor: 'emerald' },
       { id: 'sp3', type: 'table', title: 'Active Pull Requests', subtitle: 'Pending code review queue', cols: 2, value: 'PR Queue', accentColor: 'slate' },
       { id: 'sp4', type: 'chart', title: 'Burndown Progression', subtitle: 'Points remaining vs ideal trajectory', cols: 2, value: 'Burndown', accentColor: 'emerald' }
-    ],
-    solaCode: `<script>
-  let points = $state(64);
-  let shipDate = $state("2026-09-15");
-</script>
-
-<div class="sprint-board">
-  <h2>Sprint Points: {points}</h2>
-  <span>Target Ship: {shipDate}</span>
-</div>`
+    ]
   },
   {
     id: 'habit-streak-matrix',
@@ -349,16 +230,7 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'hb1', type: 'progress', title: 'Daily Goal Completion', subtitle: '4 of 5 habits checked', cols: 1, value: 80, delta: '80%', accentColor: 'emerald' },
       { id: 'hb2', type: 'stat', title: 'Current Streak', subtitle: 'Unbroken daily execution', cols: 1, value: '28 Days', delta: '+1 day', accentColor: 'emerald' },
       { id: 'hb3', type: 'feed', title: 'Recent Logged Activities', subtitle: 'Real-time habit completions', cols: 1, value: 'Active', accentColor: 'slate' }
-    ],
-    solaCode: `<script>
-  let completion = $state(80);
-  let streak = $state(28);
-</script>
-
-<div class="habit-tracker">
-  <h3>Goal: {completion}%</h3>
-  <p>Streak: {streak} Days</p>
-</div>`
+    ]
   },
 
   // ==========================================
@@ -377,15 +249,6 @@ export const STUDIO_PRESETS: StudioPreset[] = [
       { id: 'noc2', type: 'stat', title: 'p99 Ingress Latency', subtitle: 'Edge CDN routing', cols: 1, value: '4.2ms', delta: '-0.4ms', accentColor: 'emerald' },
       { id: 'noc3', type: 'node_graph', title: 'Global Regional Nodes', subtitle: 'Auto-clustering edge nodes', cols: 2, value: 'Clusters', accentColor: 'emerald' },
       { id: 'noc4', type: 'feed', title: 'System Event Stream', subtitle: 'Live failover audit logs', cols: 1, value: 'Optimal', accentColor: 'slate' }
-    ],
-    solaCode: `<script>
-  let uptime = $state(99.994);
-  let latency = $state(4.2);
-</script>
-
-<div class="noc-sentinel">
-  <h1>Availability: {uptime}%</h1>
-  <p>p99 Latency: {latency}ms</p>
-</div>`
+    ]
   }
 ];

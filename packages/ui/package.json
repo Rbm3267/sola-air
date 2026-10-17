@@ -3,6 +3,9 @@
   "version": "1.5.3",
   "type": "module",
   "main": "./src/index.js",
+  "scripts": {
+    "test": "node --test test/ui.test.js"
+  },
   "exports": {
     ".": "./src/index.js",
     "./canvas": "./src/Canvas.sola",
@@ -50,7 +53,7 @@
     "url": "git+https://github.com/Rbm3267/sola-air.git"
   },
   "dependencies": {
-    "@sola-air-ui/core": "^1.5.0"
+    "@sola-air-ui/core": "^1.5.1"
   },
   "publishConfig": {
     "access": "public",
