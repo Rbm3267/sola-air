@@ -11,6 +11,7 @@ import { compile } from '../packages/compiler/src/index.js';
 // The size the site states for the core runtime is measured from the real bundle.
 import { measureCore } from '../scripts/core-size.mjs';
 import { readUiManifest } from '../scripts/ui-manifest.mjs';
+import { readChangelog } from '../scripts/changelog-parse.mjs';
 
 // Every version shown anywhere on the site comes from a package manifest, so
 // the site cannot advertise a version that was never released.
@@ -37,8 +38,10 @@ const coreSizeKb = measureCore().gzipKb;
 // not all), with the props each declares. The site uses this to tell a
 // published primitive apart from a preview built only for this site, and to
 // generate code that only names real components and props.
-const uiManifest = readUiManifest(path.resolve(__dirname, '..'));
+const repoRoot = path.resolve(__dirname, '..');
+const uiManifest = readUiManifest(repoRoot);
 const uiExports = Object.keys(uiManifest.subpaths);
+const changelogSections = readChangelog(repoRoot);
 
 // Banner only — compilation itself is the published plugin, so the site and a
 // scaffolded project run the same code path.
@@ -74,7 +77,8 @@ export default defineConfig({
 		__SOLA_CORE_SIZE_KB__: JSON.stringify(coreSizeKb),
 		__SOLA_UI_EXPORTS__: JSON.stringify(uiExports),
 		__SOLA_UI_MANIFEST__: JSON.stringify(uiManifest),
-		__SOLA_EXTENSION_VERSION__: JSON.stringify(extensionVersion)
+		__SOLA_EXTENSION_VERSION__: JSON.stringify(extensionVersion),
+		__SOLA_CHANGELOG__: JSON.stringify(changelogSections)
 	},
 	resolve: {
 		alias: {

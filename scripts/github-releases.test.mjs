@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
 import { releaseNotes, tagFor, publishedPackages } from './github-releases.mjs';
+import { parseChangelog, readChangelog } from './changelog-parse.mjs';
 
 const changelog = `# Changelog
 
@@ -62,3 +63,24 @@ test('the real package list excludes the VS Code extension and private packages'
   assert(names.includes('@sola-air-ui/core'));
   assert(!names.includes('sola-vscode'));
 });
+
+test('parseChangelog parses dated sections and skips empty Unreleased sections', () => {
+  const parsed = parseChangelog(changelog);
+  assert.strictEqual(parsed.length, 3);
+  assert.strictEqual(parsed[0].date, '2026-10-17');
+  assert.strictEqual(parsed[0].title, 'core 1.5.0');
+  assert.deepStrictEqual(parsed[0].packages, [
+    { pkg: '@sola-air-ui/core', items: ['Added a thing.'] }
+  ]);
+  assert.strictEqual(parsed[1].packages.length, 3);
+});
+
+test('readChangelog parses the real root CHANGELOG.md with non-empty entries', () => {
+  const entries = readChangelog();
+  assert(entries.length >= 5, `expected >= 5 changelog releases, got ${entries.length}`);
+  for (const entry of entries) {
+    assert(entry.date, 'entry.date must be non-empty');
+    assert(entry.packages.length > 0, `entry ${entry.id} must have at least one package group`);
+  }
+});
+

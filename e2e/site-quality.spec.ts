@@ -12,7 +12,7 @@ const PHONE = { width: 390, height: 844 };
  *  covered four or five, so a dead repository link on /privacy and stale
  *  "1,000Hz" copy on /demo both passed while broken. */
 const ALL_PAGES = ['/', '/docs', '/components', '/studio',
-                   '/demo', '/demo/ai', '/preview', '/overview', '/privacy'];
+                   '/demo', '/demo/ai', '/preview', '/overview', '/privacy', '/changelog'];
 
 /** Every rendered text size on the page, for elements that actually show text. */
 async function textSizes(page: Page) {
@@ -332,7 +332,7 @@ test('light-mode text contrast does not regress', async ({ page }) => {
   // cannot describe a gradient, so they cannot be judged this way.
   const budget: Record<string, number> = {
     '/': 20, '/docs': 11, '/components': 5, '/studio': 12,
-    '/demo': 12, '/demo/ai': 38, '/preview': 6, '/overview': 1, '/privacy': 1
+    '/demo': 12, '/demo/ai': 38, '/preview': 6, '/overview': 1, '/privacy': 1, '/changelog': 0
   };
 
   await page.emulateMedia({ colorScheme: 'light' });

@@ -10,7 +10,23 @@ import type { UiManifest } from './solaExport';
 
 export const GITHUB_URL = 'https://github.com/Rbm3267/sola-air';
 export const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode';
+export const OPEN_VSX_URL = 'https://open-vsx.org/extension/SolaAIR/sola-vscode';
 export const GITHUB_REPO = 'Rbm3267/sola-air';
+
+export interface ChangelogPackageEntry {
+  pkg: string;
+  items: string[];
+}
+
+export interface ChangelogSection {
+  id: string;
+  date: string;
+  title: string;
+  packages: ChangelogPackageEntry[];
+}
+
+/** Release history parsed at build time from the root CHANGELOG.md. */
+export const CHANGELOG: readonly ChangelogSection[] = __SOLA_CHANGELOG__;
 
 /** Versions injected at build time from the package manifests (see vite.config.ts). */
 export const VERSIONS = {
