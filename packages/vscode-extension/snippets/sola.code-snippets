@@ -1,0 +1,93 @@
+{
+  "Sola component": {
+    "prefix": "sola",
+    "description": "A new .sola component",
+    "body": [
+      "<script>",
+      "  export let ${1:title} = '${2:Hello}';",
+      "  let ${3:count} = \\$state(0);",
+      "</script>",
+      "",
+      "<div class=\"${4:card}\">",
+      "  <h3>{${1:title}}</h3>",
+      "  <button onclick={() => ${3:count} += 1}>{${3:count}}</button>",
+      "</div>",
+      "",
+      "<style>",
+      "  .${4:card} {",
+      "    $0",
+      "  }",
+      "</style>"
+    ]
+  },
+  "State": {
+    "prefix": "state",
+    "description": "Reactive state",
+    "body": "let ${1:name} = \\$state(${2:0});"
+  },
+  "Derived": {
+    "prefix": "derived",
+    "description": "Derived value",
+    "body": "let ${1:name} = \\$derived(${2:expression});"
+  },
+  "Effect": {
+    "prefix": "effect",
+    "description": "Run a function when the signals it reads change",
+    "body": ["\\$effect(() => {", "  $0", "});"]
+  },
+  "Persist": {
+    "prefix": "persist",
+    "description": "State kept in storage and synced across tabs",
+    "body": "let ${1:name} = \\$persist('${2:key}', ${3:initial});"
+  },
+  "Intent": {
+    "prefix": "intent",
+    "description": "Ask the configured LLM provider",
+    "body": "const ${1:widget} = \\$intent(${2:() => prompt});"
+  },
+  "Intent (manual)": {
+    "prefix": "intent-manual",
+    "description": "$intent that only asks when you call run()",
+    "body": "const ${1:widget} = \\$intent('', { trigger: 'manual' });"
+  },
+  "Data": {
+    "prefix": "data",
+    "description": "Read from a Sola Relay source",
+    "body": "let ${1:rows} = \\$data('${2:postgres-primary:customers}');"
+  },
+  "On event": {
+    "prefix": "on",
+    "description": "Run for every event of a type on the bus",
+    "body": ["\\$on('${1:sola:toast}', (${2:payload}) => {", "  $0", "});"]
+  },
+  "Last event": {
+    "prefix": "lastevent",
+    "description": "Latest payload of a bus event",
+    "body": "let ${1:ctx} = \\$lastEvent('${2:sola:context}');"
+  },
+  "Prop": {
+    "prefix": "prop",
+    "description": "Component prop",
+    "body": "export let ${1:name} = ${2:null};"
+  },
+  "If block": {
+    "prefix": "if",
+    "description": "{#if} block",
+    "body": ["{#if ${1:condition}}", "  $0", "{/if}"]
+  },
+  "If / else block": {
+    "prefix": "ifelse",
+    "description": "{#if} with a single {:else}",
+    "body": ["{#if ${1:condition}}", "  $2", "{:else}", "  $0", "{/if}"]
+  },
+  "Each block": {
+    "prefix": "each",
+    "description": "Keyed {#each} block",
+    "body": ["{#each ${1:items} as ${2:item}, ${3:index} (${2:item}.${4:id})}", "  $0", "{/each}"]
+  },
+  "Import UI component": {
+    "prefix": "import-ui",
+    "description": "Import a component from @sola-air-ui/ui by subpath",
+    "body": "import ${1:DataCard} from '@sola-air-ui/ui/${2:data-card}';"
+  }
+}

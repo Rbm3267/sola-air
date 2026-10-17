@@ -4,9 +4,16 @@ Language support and a file icon for [Sola AIR](https://sola-air.dev) `.sola` co
 
 - **File icon.** `.sola` files get the Sola icon in the explorer and in editor tabs, in
   any file icon theme that falls back to language-contributed icons.
-- **Syntax highlighting.** `.sola` files are highlighted as HTML with `<script>` and
-  `<style>` blocks (this extension uses the Svelte grammar, so the Svelte extension is
-  installed with it).
+- **Syntax highlighting.** A grammar written for `.sola`: HTML markup, `<script>` as
+  JavaScript, `<style>` as CSS, `{expressions}` and attribute values like
+  `onclick={handler}` as JavaScript, `{#if}` / `{:else}` / `{#each items as item, i (key)}`
+  blocks, and the `$state`, `$derived`, `$effect`, `$persist`, `$intent`, `$data`, `$on`
+  and `$lastEvent` macros. It no longer needs the Svelte extension.
+- **Snippets.** Type `sola` for a new component, or `state`, `derived`, `effect`,
+  `persist`, `intent`, `data`, `on`, `lastevent`, `prop`, `if`, `ifelse`, `each`,
+  `import-ui`.
+- **Editing.** Brackets and quotes close automatically, `<!-- -->` comments toggle, and
+  `<!-- #region -->` folds.
 
 ## About the icon
 
