@@ -1,0 +1,172 @@
+<script>
+  // title and isOpen take a plain value or a getter function, like Modal.
+  export let title = "Companion";
+  export let initialOpen = false;
+  export let isOpen = null;
+  export let side = "right";
+  export let width = "380px";
+  export let onClose = null;
+
+  let open = $state(initialOpen);
+  let resolvedIsOpen = $derived(() => (typeof isOpen === "function" ? isOpen() : isOpen));
+  let resolvedTitle = $derived(() => (typeof title === "function" ? title() : title));
+
+  createEffect(() => {
+    const controlled = resolvedIsOpen();
+    if (controlled !== null && controlled !== undefined) {
+      open = controlled;
+    }
+  });
+
+  const uid = Math.random().toString(36).slice(2, 9);
+  const titleId = "sola-drawer-title-" + uid;
+  const panelId = "sola-drawer-panel-" + uid;
+
+  let returnFocusTo = null;
+
+  function panelElement() {
+    return typeof document === "undefined" ? null : document.getElementById(panelId);
+  }
+
+  // The drawer does not block the page, so Escape is heard only while focus is inside it.
+  function handleKeydown(e) {
+    if (e.key !== "Escape" || !open()) return;
+    const panel = panelElement();
+    if (panel && panel.contains(document.activeElement)) {
+      e.stopPropagation();
+      close();
+    }
+  }
+
+  createEffect(() => {
+    if (typeof document === "undefined") return;
+    if (open()) {
+      returnFocusTo = document.activeElement;
+      document.addEventListener("keydown", handleKeydown, true);
+      queueMicrotask(() => {
+        const panel = panelElement();
+        if (panel) panel.focus();
+      });
+    } else {
+      document.removeEventListener("keydown", handleKeydown, true);
+      if (returnFocusTo && typeof returnFocusTo.focus === "function") {
+        returnFocusTo.focus();
+        returnFocusTo = null;
+      }
+    }
+  });
+
+  onDestroy(() => {
+    if (typeof document !== "undefined") {
+      document.removeEventListener("keydown", handleKeydown, true);
+    }
+  });
+
+  function close() {
+    open = false;
+    if (typeof onClose === "function") onClose();
+  }
+</script>
+
+<aside
+  class="sola-drawer {side} {open() ? 'open' : ''}"
+  id={panelId}
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby={titleId}
+  tabindex="-1"
+  style="width: {width};"
+>
+  <header class="drawer-header">
+    <h2 class="drawer-title" id={titleId}>{resolvedTitle()}</h2>
+    <button class="drawer-close" type="button" on:click={close} aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </header>
+  <div class="drawer-body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .sola-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    max-width: 100vw;
+    z-index: var(--sola-z-sheet, 800);
+    display: flex;
+    flex-direction: column;
+    background: var(--sola-surface-1, #ffffff);
+    color: var(--sola-text-primary, #0f172a);
+    box-shadow: 0 0 40px -8px rgba(0, 0, 0, 0.35);
+    /* Closed: out of sight and out of the tab order, once the slide ends. */
+    visibility: hidden;
+    transition: transform var(--sola-duration-base, 200ms) var(--sola-ease-standard, ease),
+      visibility 0s linear var(--sola-duration-base, 200ms);
+  }
+
+  .sola-drawer.right {
+    right: 0;
+    border-left: 1px solid var(--sola-border-default, #e2e8f0);
+    transform: translateX(100%);
+  }
+
+  .sola-drawer.left {
+    left: 0;
+    border-right: 1px solid var(--sola-border-default, #e2e8f0);
+    transform: translateX(-100%);
+  }
+
+  .sola-drawer.open {
+    visibility: visible;
+    transform: translateX(0);
+    transition-delay: 0s;
+  }
+
+  .sola-drawer:focus-visible {
+    outline: 2px solid var(--sola-color-primary-600, #059669);
+    outline-offset: -2px;
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sola-space-md, 12px) var(--sola-space-lg, 16px);
+    border-bottom: 1px solid var(--sola-border-subtle, #eef2f6);
+  }
+
+  .drawer-title {
+    margin: 0;
+    font-size: var(--sola-font-size-lg, 16px);
+    font-weight: var(--sola-font-weight-semibold, 600);
+  }
+
+  .drawer-close {
+    display: inline-flex;
+    padding: var(--sola-space-xs, 6px);
+    border: 0;
+    border-radius: var(--sola-radius-md, 10px);
+    background: transparent;
+    color: var(--sola-text-secondary, #475569);
+    cursor: pointer;
+  }
+
+  .drawer-close:hover {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-primary, #0f172a);
+  }
+
+  .drawer-close:focus-visible {
+    outline: 2px solid var(--sola-color-primary-600, #059669);
+    outline-offset: 2px;
+  }
+
+  .drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--sola-space-lg, 16px);
+  }
+</style>

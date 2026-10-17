@@ -1,0 +1,119 @@
+<script>
+  // items and active take a plain value or a getter function, like Modal's isOpen,
+  // so a parent can drive them from signals after mount.
+  export let items = [];
+  export let active = null;
+  export let position = "bottom";
+  export let label = "Launcher";
+  export let onSelect = null;
+
+  let list = $derived(() => (typeof items === "function" ? items() : items) || []);
+  let activeId = $derived(() => (typeof active === "function" ? active() : active));
+
+  function pick(item) {
+    if (typeof onSelect === "function") onSelect(item);
+  }
+</script>
+
+<nav class="sola-dock {position}" aria-label={label}>
+  {#each list() as item (item.id)}
+    <button
+      type="button"
+      class="dock-item {activeId() === item.id ? 'active' : ''}"
+      aria-label={item.label}
+      aria-pressed={activeId() === item.id ? "true" : "false"}
+      title={item.label}
+      on:click={() => pick(item)}
+    >
+      <span class="dock-icon" aria-hidden="true">{item.icon || item.label.charAt(0)}</span>
+      {#if item.badge}
+        <span class="dock-badge">{item.badge}</span>
+      {/if}
+    </button>
+  {/each}
+</nav>
+
+<style>
+  .sola-dock {
+    position: fixed;
+    z-index: var(--sola-z-nav, 100);
+    display: flex;
+    gap: var(--sola-space-xs, 6px);
+    padding: var(--sola-space-xs, 6px);
+    background: var(--sola-surface-1, #ffffff);
+    border: 1px solid var(--sola-border-default, #e2e8f0);
+    border-radius: var(--sola-radius-xl, 20px);
+    box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.25);
+  }
+
+  .sola-dock.bottom {
+    bottom: var(--sola-space-lg, 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+  }
+
+  .sola-dock.left {
+    left: var(--sola-space-lg, 16px);
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+  }
+
+  .sola-dock.right {
+    right: var(--sola-space-lg, 16px);
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+  }
+
+  .dock-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--sola-radius-lg, 14px);
+    background: transparent;
+    color: var(--sola-text-secondary, #475569);
+    font-size: var(--sola-font-size-lg, 16px);
+    font-weight: var(--sola-font-weight-semibold, 600);
+    cursor: pointer;
+    transition: background var(--sola-duration-fast, 120ms) var(--sola-ease-standard, ease),
+      color var(--sola-duration-fast, 120ms) var(--sola-ease-standard, ease);
+  }
+
+  .dock-item:hover {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-primary, #0f172a);
+  }
+
+  .dock-item:focus-visible {
+    outline: 2px solid var(--sola-color-primary-600, #059669);
+    outline-offset: 2px;
+  }
+
+  .dock-item.active {
+    background: var(--sola-color-primary-600, #059669);
+    color: var(--sola-color-neutral-0, #ffffff);
+  }
+
+  .dock-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: var(--sola-radius-full, 999px);
+    background: var(--sola-alert-critical, #b91c1c);
+    color: var(--sola-color-neutral-0, #ffffff);
+    font-size: 10px;
+    font-weight: var(--sola-font-weight-bold, 700);
+    line-height: 16px;
+    text-align: center;
+  }
+</style>

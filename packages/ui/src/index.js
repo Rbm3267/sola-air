@@ -22,6 +22,12 @@ export { default as IncidentTriageMatrix } from './IncidentTriageMatrix.sola';
 export { default as TactileDialCard } from './TactileDialCard.sola';
 export { default as SolaSafeHTML } from './SolaSafeHTML.sola';
 
+// Shell primitives (RFC 0002)
+export { default as LauncherDock } from './LauncherDock.sola';
+export { default as CommandPalette } from './CommandPalette.sola';
+export { default as CompanionDrawer } from './CompanionDrawer.sola';
+export { default as ToastHost } from './ToastHost.sola';
+
 // AI Interaction Primitives
 export { default as ConversationThread } from './ai/ConversationThread.sola';
 export { default as ActionStrip } from './ai/ActionStrip.sola';

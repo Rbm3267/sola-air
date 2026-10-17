@@ -34,6 +34,12 @@ export const Alert: SolaComponent;
 export const Modal: SolaComponent;
 export const Toast: SolaComponent;
 
+// ─── Shell (see docs/rfcs/0002-shell-primitives.md) ───
+export const LauncherDock: SolaComponent;
+export const CommandPalette: SolaComponent;
+export const CompanionDrawer: SolaComponent;
+export const ToastHost: SolaComponent;
+
 // ─── Raw HTML ───
 export const SolaSafeHTML: SolaComponent;
 
