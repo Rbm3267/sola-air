@@ -75,4 +75,20 @@ describe('skills/sola', () => {
     assert.strictEqual(fake.status, 1);
     assert.match(fake.stderr, /cannot preview import '@sola-air-ui\/ui\/fancy'/);
   });
+
+  it('handles side-effect imports and escapes </script> in --props JSON', () => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'sola-skill-'));
+    const solaPath = path.join(dir, 'sideeffect.sola');
+    const outPath = path.join(dir, 'sideeffect.preview.html');
+    writeFileSync(
+      solaPath,
+      "<script>\nimport '@sola-air-ui/tokens/css';\nimport Button from '@sola-air-ui/ui/button';\nexport let label = 'Go';\n</script>\n<Button label={label} />\n"
+    );
+    const r = run(PREVIEW, [solaPath, '-o', outPath, '--props', '{"label":"</script><script>alert(1)</script>"}']);
+    assert.strictEqual(r.status, 0, r.stderr || r.stdout);
+    const html = readFileSync(outPath, 'utf8');
+    assert.ok(!html.includes('"</script><script>alert(1)</script>"'), 'raw </script> must not appear unescaped in props');
+    assert.ok(html.includes('<\\/script>'), '</script> must be escaped inside inline script');
+  });
 });
+
