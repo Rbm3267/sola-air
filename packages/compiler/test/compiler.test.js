@@ -836,7 +836,22 @@ test('class method and property definitions sharing a signal name are not rewrit
   assert(!code.includes('count() = 1'), 'PropertyDefinition key not called');
 });
 
+test('SVG elements and children use createElementNS and setAttribute("class")', () => {
+  const { code } = compile(`<style>.ring { stroke: red; }</style><svg class="radar" viewBox="0 0 100 100"><circle class="ring" cx="50" cy="50" r="40" /></svg>`);
+  assertValidJs(code);
+  assert(code.includes("document.createElementNS('http://www.w3.org/2000/svg', 'svg')"), 'svg uses createElementNS: ' + code);
+  assert(code.includes("document.createElementNS('http://www.w3.org/2000/svg', 'circle')"), 'circle uses createElementNS: ' + code);
+  assert(code.includes(".setAttribute('class',"), 'svg class uses setAttribute instead of className +=: ' + code);
+});
+
+test('mount() pops __ctx in finally so child component unmount never destroys sibling components', () => {
+  const { code } = compile(`<div>ok</div>`);
+  assertValidJs(code);
+  assert(/}\s*finally\s*\{\s*popContext\(__ctx\);\s*\}/.test(code), 'popContext(__ctx) runs in finally at end of mount: ' + code);
+});
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 
 console.log(`\n${passed + failed} tests: ${passed} passed, ${failed} failed\n`);
 if (failed > 0) process.exit(1);
+

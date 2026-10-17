@@ -1301,7 +1301,7 @@ export function compile(source, options = {}) {
     }
   }
 
-  function emitNode(node, parentVar, locals = new Set()) {
+  function emitNode(node, parentVar, locals = new Set(), inSvg = false) {
     if (!node) return;
     // Template-expression rewrite with the current template scope (each-item /
     // each-index names shadow signals of the same name).
@@ -1450,7 +1450,7 @@ export function compile(source, options = {}) {
         domCode += `      ${cid}_ctx = pushContext();\n`;
         domCode += `      try {\n`;
         domCode += `      const f = document.createDocumentFragment();\n`;
-        branch.children.forEach(child => emitNode(child, 'f', locals));
+        branch.children.forEach(child => emitNode(child, 'f', locals, inSvg));
         domCode += `      Array.from(f.childNodes).forEach(n => ${cid}_els.push(n));\n`;
         domCode += `      ${cid}_a.parentNode.insertBefore(f, ${cid}_a.nextSibling);\n`;
         domCode += `      } finally { popContext(${cid}_ctx); }\n`;
@@ -1508,7 +1508,7 @@ export function compile(source, options = {}) {
         domCode += `        const _kctx = pushContext();\n`;
         domCode += `        try {\n`;
         domCode += `        const f = document.createDocumentFragment();\n`;
-        node.children.forEach(child => emitNode(child, 'f', eachLocals));
+        node.children.forEach(child => emitNode(child, 'f', eachLocals, inSvg));
         domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx };\n`;
         domCode += `        } finally { popContext(_kctx); }\n`;
         domCode += `        ${eid}_keyMap.set(_key, _entry);\n`;
@@ -1537,7 +1537,7 @@ export function compile(source, options = {}) {
         domCode += `    for (let _i = 0; _i < _items.length; _i++) {\n`;
         domCode += `      const ${node.attribs.item} = _items[_i];\n`;
         if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;\n`;
-        node.children.forEach(child => emitNode(child, 'f', eachLocals));
+        node.children.forEach(child => emitNode(child, 'f', eachLocals, inSvg));
         domCode += `    }\n`;
         domCode += `    Array.from(f.childNodes).forEach(n => ${eid}_els.push(n));\n`;
         domCode += `    ${eid}_a.parentNode.insertBefore(f, ${eid}_a.nextSibling);\n`;
@@ -1548,8 +1548,14 @@ export function compile(source, options = {}) {
     }
 
     // Normal element
+    const isSvg = inSvg || node.name === 'svg';
+    const childSvg = isSvg && node.name !== 'foreignObject';
     const id = `n${uid++}`;
-    domCode += `  const ${id} = document.createElement('${node.name}');\n`;
+    if (isSvg) {
+      domCode += `  const ${id} = document.createElementNS('http://www.w3.org/2000/svg', '${node.name}');\n`;
+    } else {
+      domCode += `  const ${id} = document.createElement('${node.name}');\n`;
+    }
 
     if (hasStyles) {
       domCode += `  ${id}.classList.add('${scopeHash}');\n`;
@@ -1565,7 +1571,11 @@ export function compile(source, options = {}) {
           domCode += `  createEffect(() => { const _v = !!(${expr}); if (_v) ${id}.setAttribute('${key}', ''); else ${id}.removeAttribute('${key}'); });\n`;
         } else if (key === 'class' || key === 'className') {
           const suffix = hasStyles ? ` + ' ${scopeHash}'` : '';
-          domCode += `  createEffect(() => { ${id}.className = (${expr})${suffix}; });\n`;
+          if (isSvg) {
+            domCode += `  createEffect(() => { ${id}.setAttribute('class', (${expr})${suffix}); });\n`;
+          } else {
+            domCode += `  createEffect(() => { ${id}.className = (${expr})${suffix}; });\n`;
+          }
         } else {
           domCode += `  createEffect(() => { ${id}.setAttribute('${key}', String(${expr})); });\n`;
         }
@@ -1597,7 +1607,12 @@ export function compile(source, options = {}) {
         // Static values: emit as a plain string literal. A template literal here
         // would let a backtick or ${ in the markup break out into expression
         // position; JSON.stringify cannot.
-        domCode += `  ${id}.className += ' ' + ${JSON.stringify(val)};\n`;
+        if (isSvg) {
+          const clsVal = hasStyles ? `${scopeHash} ${val}` : val;
+          domCode += `  ${id}.setAttribute('class', ${JSON.stringify(clsVal)});\n`;
+        } else {
+          domCode += `  ${id}.className += ' ' + ${JSON.stringify(val)};\n`;
+        }
       } else {
         domCode += `  ${id}.setAttribute(${JSON.stringify(key)}, ${JSON.stringify(val)});\n`;
       }
@@ -1607,7 +1622,7 @@ export function compile(source, options = {}) {
 
     if (node.children && !VOID_ELEMENTS.has(node.name)) {
       for (const child of node.children) {
-        emitNode(child, id, locals);
+        emitNode(child, id, locals, childSvg);
       }
     }
   }
@@ -1651,7 +1666,8 @@ export function compile(source, options = {}) {
     output += `\n`;
     output += `export default function mount(__target, props = {}) {\n`;
   }
-  output += `  const __ctx = pushContext();\n\n`;
+  output += `  const __ctx = pushContext();\n`;
+  output += `  try {\n\n`;
 
   if (hasStyles) {
     // Styles go into whichever root the component actually lives in: the
@@ -1685,9 +1701,11 @@ export function compile(source, options = {}) {
   output += domCode;
 
   output += `\n  __flush_mounts(__ctx);\n`;
+  output += `  } finally {\n`;
+  output += `    popContext(__ctx);\n`;
+  output += `  }\n`;
   output += `\n  return () => {\n`;
   output += `    __flush_destroys(__ctx);\n`;
-  output += `    popContext(__ctx);\n`;
   output += `    __target.innerHTML = '';\n`;
   output += `  };\n`;
   output += `};\n`;

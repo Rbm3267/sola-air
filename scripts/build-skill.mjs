@@ -10,7 +10,6 @@
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, rmSync, readdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execFileSync } from 'node:child_process';
 import { buildSync } from 'esbuild';
 import { parse as acornParse } from 'acorn';
 import { readUiManifest } from './ui-manifest.mjs';
@@ -83,9 +82,19 @@ for (const lib of VENDOR_LIBS) {
 if (!versionRead.test(bundled)) throw new Error('build-skill: the compiler no longer reads ../package.json the expected way; update the version replacement.');
 emit('vendor/sola-compiler.mjs', bundled.replace(versionRead, () => JSON.stringify(JSON.stringify({ version: versions.compiler }))));
 
-const coreIife = path.join(ROOT, 'packages/core/dist/sola-core.iife.min.js');
-if (!existsSync(coreIife)) execFileSync(process.execPath, ['build.js'], { cwd: path.join(ROOT, 'packages/core'), stdio: 'ignore' });
-emit('vendor/sola-core.iife.min.js', readFileSync(coreIife, 'utf8'));
+const coreBundle = buildSync({
+  entryPoints: [path.join(ROOT, 'packages/core/src/index.js')],
+  bundle: true,
+  format: 'iife',
+  globalName: 'SolaCore',
+  minify: true,
+  target: ['es2020'],
+  write: false,
+  banner: {
+    js: `/* @sola-air-ui/core v${versions.core} | MIT */`
+  }
+});
+emit('vendor/sola-core.iife.min.js', coreBundle.outputFiles[0].text);
 emit('vendor/tokens.css', read('packages/tokens/src/tokens.css'));
 
 const ui = readUiManifest(ROOT);
