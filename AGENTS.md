@@ -62,15 +62,19 @@ A Sola component encapsulates logic (`<script>`), template markup (`HTML`), and 
 
 ### A. Conditionals (`{#if}`)
 
-Only a single `{:else}` is supported — there is no `{:else if}` chaining in the current compiler. For a three-way branch, either nest a second `{#if}` inside the `{:else}` block, or (recommended — nested `{#if}` blocks have been unreliable in practice across this codebase) compute the branch as a derived string/class and use flat, sibling `{#if}` blocks instead of nesting:
+`{#if}`, `{:else if}` and `{:else}` all work, and blocks nest. The compiler rewrites an `{:else if}` chain into nested if/else blocks, and a later branch's expression is only evaluated when the earlier conditions are false (`compiler.test.js`: "{:else if} compiles to a nested conditional"). `IntentSheet.sola` in the shipped library uses a three-way chain.
 
 ```html
 {#if status === 'critical'}
   <div class="badge-red">CRITICAL INCIDENT</div>
+{:else if status === 'degraded'}
+  <div class="badge-amber">DEGRADED</div>
 {:else}
   <div class="badge-emerald">SYSTEM NOMINAL</div>
 {/if}
 ```
+
+An earlier version of this document said `{:else if}` was unsupported and nested `{#if}` was unreliable; both were fixed in the block scanner rewrite. One thing the compiler still does **not** catch: an unbalanced block (an unclosed `{#if}`, a stray `{/each}`, a `{:else}` outside an `{#if}`) compiles without error and renders as literal text on the page. Run `sola-check` (in `@sola-air-ui/compiler` 1.4.0+) to find those.
 
 ### B. Iteration Loops (`{#each}`)
 ```html
@@ -269,7 +273,7 @@ You are an expert Sola developer. Follow these rules when authoring .sola compon
 2. Declare computed values with 'let y = $derived(expression)'. The compiler wraps it so it is tracked; 'let y = $derived(() => expression)' also works.
 3. Read a signal by its plain name in templates and script ({x}); the compiler turns reads into tracked calls. An explicit {x()} also compiles, but the plain form is what the docs use.
 4. Attach native DOM event handlers directly: '<button onclick={handleClick}>'.
-5. Control flow uses {#if condition}...{:else}...{/if} (single else only, no else-if chaining) and {#each items as item, index (key)}...{/each}. Avoid nesting {#if} blocks inside each other.
+5. Control flow uses {#if condition}...{:else if other}...{:else}...{/if} and {#each items as item, index (key)}...{/each}. Blocks may nest. Close every block you open: an unbalanced block compiles without error and shows up as literal text.
 6. Export props with 'export let propName = defaultValue;'.
 7. A compiled component's default export is its own mount(target, props) => teardown function — there is no separate core-level mount() helper.
 </sola_rules>
