@@ -11,7 +11,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 ### `@sola-air-ui/ui`
 
 - **Fixed**: dark-mode alert/badge token contrast in `AmbientSuggestion`, `ConfidenceBadge`, `IncidentTriageMatrix`, `Alert`, `DataCard`, `FlowWaterfall`, `Dashboard`, `Badge`, `TactileDialCard`, `ConversationThread`, and `ActionStrip` (`--sola-alert-positive-text`, `--sola-alert-warning-bg`, `--sola-alert-high-bg`, `--sola-alert-info-bg`, `--sola-border-subtle`).
-- **Added**: keyboard activation (`tabindex="0"` + `Enter`/`Space`) on clickable `Table` rows and `role="status"` on `Dashboard` alert banner.
+- **Added**: keyboard activation on clickable `Table` rows: they join the tab order and open with `Enter` or `Space`. Rows of a table without `onRowClick` stay out of the tab order and `role="status"` on `Dashboard` alert banner.
 - **Added**: dedicated TypeScript `*Props` interfaces (`SolaComponent<...Props>`) for all 37 components in `types/index.d.ts`, enforced by `test/ui.test.js`.
 
 ### Website (`app/`)

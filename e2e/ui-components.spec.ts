@@ -315,3 +315,36 @@ test('migrated components take every colour from tokens', async () => {
     expect(bareHex.map((m) => m[0]), `${file} has colours outside a token fallback`).toEqual([]);
   }
 });
+
+test.describe('Table', () => {
+  const rows = "[{ name: 'alpha', size: 1 }, { name: 'beta', size: 2 }]";
+
+  test('rows stay out of the tab order when nothing handles a click', async ({ page }) => {
+    await mount(page, 'Table.sola', { columns: ['name', 'size'], rows: [{ name: 'alpha', size: 1 }, { name: 'beta', size: 2 }] });
+    const bodyRows = page.locator('tbody tr');
+    await expect(bodyRows).toHaveCount(2);
+    for (const i of [0, 1]) await expect(bodyRows.nth(i)).toHaveAttribute('tabindex', '-1');
+  });
+
+  test('clickable rows are reachable by Tab and open with Enter or Space', async ({ page }) => {
+    await mount(page, 'Table.sola', {});
+    await page.evaluate((r) => {
+      (window as any).__clicked = [];
+      const host = document.getElementById('host')!;
+      host.innerHTML = '';
+      (window as any).Component(host, {
+        columns: ['name', 'size'],
+        rows: new Function(`return ${r}`)(),
+        onRowClick: (row: any) => (window as any).__clicked.push(row.name)
+      });
+    }, rows);
+
+    const first = page.locator('tbody tr').first();
+    await expect(first).toHaveAttribute('tabindex', '0');
+    await first.focus();
+    await page.keyboard.press('Enter');
+    await page.locator('tbody tr').nth(1).focus();
+    await page.keyboard.press(' ');
+    expect(await page.evaluate(() => (window as any).__clicked)).toEqual(['alpha', 'beta']);
+  });
+});
