@@ -2,8 +2,10 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
+import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { compileComponentTool, validateComponentTool, SOLA_DOCS } from '../src/index.js';
+import { compileComponentTool, validateComponentTool, SOLA_DOCS } from '../src/mcp-server.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const UI_DIR = path.resolve(__dirname, '../../ui');
@@ -77,6 +79,51 @@ describe('@sola-air-ui/ui root exports & TypeScript declarations', () => {
         indexDts.includes(`export const ${name}: SolaComponent;`),
         `packages/ui/types/index.d.ts must declare ${name}`
       );
+    }
+  });
+});
+
+describe('sola-mcp bin', () => {
+  // Starts the real bin and speaks MCP to it over stdio. npm runs bins through a
+  // symlink on macOS and Linux; an earlier version only started when argv[1]
+  // matched its own real path, so it exited silently there. The linked case is
+  // what catches that.
+  const SRC = path.resolve(__dirname, '../src');
+  const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf8'));
+
+  function initialize(binPath) {
+    return new Promise((resolve, reject) => {
+      const child = spawn(process.execPath, [binPath], { stdio: ['pipe', 'pipe', 'pipe'] });
+      let out = '';
+      const timer = setTimeout(() => { child.kill(); reject(new Error(`no reply from ${binPath}; stdout: ${out}`)); }, 10000);
+      child.stdout.on('data', (chunk) => {
+        out += chunk;
+        const line = out.split('\n').find((l) => l.includes('"id":1'));
+        if (line) { clearTimeout(timer); child.kill(); resolve(JSON.parse(line)); }
+      });
+      child.on('exit', (code) => { if (!out.includes('"id":1')) { clearTimeout(timer); reject(new Error(`bin exited (${code}) without replying`)); } });
+      child.stdin.write(JSON.stringify({
+        jsonrpc: '2.0', id: 1, method: 'initialize',
+        params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test', version: '0' } }
+      }) + '\n');
+    });
+  }
+
+  it('answers initialize with its package version', async () => {
+    const reply = await initialize(path.join(SRC, 'index.js'));
+    assert.strictEqual(reply.result.serverInfo.name, 'sola-mcp');
+    assert.strictEqual(reply.result.serverInfo.version, version);
+  });
+
+  it('still starts when run through a linked path, as npm bins are', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sola-mcp-bin-'));
+    const linked = path.join(dir, 'src');
+    fs.symlinkSync(SRC, linked, process.platform === 'win32' ? 'junction' : 'dir');
+    try {
+      const reply = await initialize(path.join(linked, 'index.js'));
+      assert.strictEqual(reply.result.serverInfo.name, 'sola-mcp');
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
     }
   });
 });
