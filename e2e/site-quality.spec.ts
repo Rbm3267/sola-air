@@ -123,7 +123,7 @@ test('every repository link points at the real repository', async ({ page }) => 
       .evaluateAll((els) => els.map((e) => e.getAttribute('href') ?? ''));
     for (const href of hrefs) {
       expect(href, `${path} links to a repository that does not exist: ${href}`)
-        .toMatch(/github\.com\/[Rr]bm3267\/sola-air/);
+        .toMatch(/github\.com\/[Rr]bm3267\/(sola-air|sola-ui-skill)/);
     }
   }
 });

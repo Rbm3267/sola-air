@@ -36,7 +36,7 @@
     </thead>
     <tbody>
       {#each resolvedRows() as row, i}
-        <tr class="{typeof onRowClick === 'function' ? 'clickable' : ''}" tabindex={typeof onRowClick === 'function' ? '0' : '-1'} onclick={() => handleRowClick(row, i)} onkeydown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && onRowClick) { e.preventDefault(); onRowClick(row); } }}>
+        <tr class="{typeof onRowClick === 'function' ? 'clickable' : ''}" tabindex={typeof onRowClick === 'function' ? '0' : '-1'} onclick={() => handleRowClick(row, i)} onkeydown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && typeof onRowClick === 'function') { e.preventDefault(); handleRowClick(row, i); } }}>
           {#each resolvedColumns() as col}
             <td>{row[col.key || col]}</td>
           {/each}
