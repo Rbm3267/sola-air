@@ -1,6 +1,6 @@
 {
   "name": "@sola-air-ui/ui",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "type": "module",
   "main": "./src/index.js",
   "scripts": {
