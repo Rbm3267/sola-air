@@ -153,13 +153,15 @@ Render the result with `<AmbientSuggestion suggestion={suggestion} />` (`@sola-a
 | `@sola-air-ui/sentinel` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/sentinel)](https://www.npmjs.com/package/@sola-air-ui/sentinel) | Framework-agnostic behavioral friction & ambient field observer (`SolaSentinel`) |
 | `@sola-air-ui/relay` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/relay)](https://www.npmjs.com/package/@sola-air-ui/relay) | Local data proxy (PostgreSQL, MySQL, Google Sheets) |
 | `@sola-air-ui/mcp` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/mcp)](https://www.npmjs.com/package/@sola-air-ui/mcp) | MCP server for AI-driven component compilation, `sola-check` validation, and `sola://docs` |
+| `@sola-air-ui/providers` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/providers)](https://www.npmjs.com/package/@sola-air-ui/providers) | Server-side LLM adapters for `$intent` |
+| `@sola-air-ui/behavior` | [![npm](https://img.shields.io/npm/v/@sola-air-ui/behavior)](https://www.npmjs.com/package/@sola-air-ui/behavior) | Behavior and playbook helpers (0.x, early) |
 
 ---
 
 ## Monorepo Architecture
 
 ```
-sola/
+sola-air/
 ├── packages/
 │   ├── compiler/          # Custom Acorn AST compiler (.sola -> JS + CSS)
 │   ├── core/              # Reactive runtime engine (signals, effects, $intent, $data)
@@ -175,8 +177,12 @@ sola/
 │   ├── create-sola/       # Project scaffolding CLI
 │   ├── vscode-extension/  # VS Code language support for .sola
 │   └── sola-extension/    # Chrome extension (side panel code generator)
+├── skills/
+│   └── sola/              # Claude and Gemini skill (generated; published as Rbm3267/sola-ui-skill)
 ├── examples/
 │   └── ambient-poc/       # Standalone Sola Sentinel + $intent ambient-suggestion demo
+├── scripts/               # Release, skill-generation and size-check scripts
+├── e2e/                   # Playwright browser tests
 ├── brand/                 # Official brand kit, logos, and favicons
 └── app/                   # Marketing site & interactive playground
 ```
@@ -187,22 +193,22 @@ sola/
 
 ### Application Developers
 *   **Workflow**: Build frontends using `.sola` files. Use `$state` and `$derived` for local state, and `$intent` to bind AI capability.
-*   **Data Binding**: Connect components to backend databases or APIs using `$data("sheet://...")` or `$data("postgres://...")`.
-*   **Security Caret**: Never commit credentials in code; pass only resource identifiers to `$data`.
+*   **Data Binding**: `$data(source)` names a connection configured in the relay. The component never sees a connection string.
+*   **Credentials**: Never put credentials in component code. They belong in the relay's config on the machine that runs it.
 
 ### System Administrators
-*   **Deployment**: Deploy the Sola Relay server on-premises or close to the databases.
+*   **Deployment**: Run the Sola Relay on your machine or a server close to the databases.
     ```bash
     npm install -g @sola-air-ui/relay
-    sola-relay --config ./relay.json
+    sola-relay --port 4040
     ```
-*   **Access Provisioning**: Configure connection strings and table filters in `relay.json`.
-*   **Monitoring**: Check the relay logs for latency targets and query performance (default target is sub-1ms signal propagation).
+*   **Connections**: The relay reads `sola-relay.json` from the directory it starts in. Each entry under `connections` has a name and a `type` (`postgres`, `mysql` or `sheet`) plus its connection settings.
+*   **Monitoring**: `GET /api/status` lists each connection and whether it is connected. Every query is appended to `sola-relay-audit.log`.
 
 ### Security Engineers
-*   **Credential Isolation**: Ensure that connection credentials (passwords, certificates) are set via local environment variables on the Sola Relay server. They never leave the private network.
-*   **Query Sanitation**: Define read-only schema mappings and query rate-limits in Sola Relay config to prevent injections.
-*   **Write-Back Gates**: Assign `TransactionCapability` parameters and security levels (Tiers 1 & 2) to control which mutations require confirmation overlays.
+*   **Credential Isolation**: Connection settings live in `sola-relay.json` on the relay's host and are never sent to the browser.
+*   **Read-only queries**: SQL connectors accept a single read-only `SELECT`; anything else is rejected. Give the relay a read-only database role as well.
+*   **Exposure**: The relay has no authentication of its own. Keep it on a trusted machine or network, or put your own auth in front of it.
 
 ---
 
