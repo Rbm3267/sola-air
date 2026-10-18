@@ -43,7 +43,7 @@ Sola AIR is a compiler-first JavaScript framework where AI isn't bolted on — i
   let count = $state(0);
   let doubled = $derived(count * 2);
   let dashboard = $intent("Show MRR trend for Q3");
-  let customerData = $data("postgres-primary:customers", { sync: "realtime" });
+  let customerData = $data("postgres-primary:customers", { refresh: "30s" });
 </script>
 
 <div>
@@ -193,7 +193,7 @@ sola-air/
 
 ### Application Developers
 *   **Workflow**: Build frontends using `.sola` files. Use `$state` and `$derived` for local state, and `$intent` to bind AI capability.
-*   **Data Binding**: `$data(source)` names a connection configured in the relay. The component never sees a connection string.
+*   **Data Binding**: `$data('connection:table')` names a connection configured in the relay and a table in it, for example `$data('postgres-primary:customers')`. The component never sees a connection string.
 *   **Credentials**: Never put credentials in component code. They belong in the relay's config on the machine that runs it.
 
 ### System Administrators

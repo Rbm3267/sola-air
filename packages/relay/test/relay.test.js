@@ -49,6 +49,17 @@ describe('RelayServer HTTP query guard & connectors', () => {
         }
       }
     });
+    connections.set('pg-primary', {
+      type: 'postgres',
+      status: 'connected',
+      connector: {
+        async connect() {},
+        async query(sql, params = []) {
+          sqlCalls.push({ sql, params });
+          return { rows: [{ id: 1 }], rowCount: 1 };
+        }
+      }
+    });
     connections.set('sn_prod', {
       type: 'servicenow',
       status: 'connected',
@@ -135,5 +146,71 @@ describe('RelayServer HTTP query guard & connectors', () => {
       query: 'active=true',
       limit: 15
     });
+  });
+
+  const post = (body) => fetch(`${baseUrl}/api/query`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  it('reads a table through a connection alias: $data("alias:table")', async () => {
+    sqlCalls.length = 0;
+    const res = await post({ source: 'pg-primary:customers', limit: 25 });
+    assert.strictEqual(res.status, 200);
+    assert.deepStrictEqual((await res.json()).rows, [{ id: 1 }]);
+    assert.strictEqual(sqlCalls[0].sql, 'SELECT * FROM customers LIMIT 25');
+  });
+
+  it('accepts a schema-qualified table', async () => {
+    sqlCalls.length = 0;
+    const res = await post({ source: 'pg-primary:public.customers' });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(sqlCalls[0].sql, 'SELECT * FROM public.customers LIMIT 100');
+  });
+
+  it('still reads the table named like the connection when no table is given', async () => {
+    sqlCalls.length = 0;
+    const res = await post({ source: 'pg_main' });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(sqlCalls[0].sql, 'SELECT * FROM pg_main LIMIT 100');
+  });
+
+  it('runs a custom SELECT on the aliased connection', async () => {
+    sqlCalls.length = 0;
+    const res = await post({ source: 'pg-primary:customers', query: { text: 'SELECT id FROM customers WHERE id = $1', params: [7] } });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(sqlCalls[0].sql, 'SELECT id FROM customers WHERE id = $1');
+  });
+
+  it('passes the table to non-SQL connectors when the query does not name one', async () => {
+    snCalls.length = 0;
+    const res = await post({ source: 'sn_prod:incident', query: { query: 'active=true' }, limit: 5 });
+    assert.strictEqual(res.status, 200);
+    assert.deepStrictEqual(snCalls[0], { table: 'incident', query: 'active=true', limit: 5 });
+  });
+
+  it('rejects malformed sources and table names that are not plain identifiers', async () => {
+    sqlCalls.length = 0;
+    for (const source of [
+      'pg-primary:customers; DROP TABLE users',
+      'pg-primary:customers--',
+      'pg-primary:',
+      ':customers',
+      'pg-primary:a:b',
+      'pg-primary:1customers',
+      'pg-primary:a.b.c',
+      'pg primary:customers',
+      ''
+    ]) {
+      const res = await post({ source });
+      assert.strictEqual(res.status, 400, `expected 400 for ${JSON.stringify(source)}`);
+    }
+    assert.strictEqual(sqlCalls.length, 0);
+  });
+
+  it('returns 404 for an unknown connection alias', async () => {
+    const res = await post({ source: 'nope:customers' });
+    assert.strictEqual(res.status, 404);
   });
 });

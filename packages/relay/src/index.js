@@ -31,6 +31,18 @@ export function isReadOnlySql(sql) {
   return true;
 }
 
+// A source is `connection` or `connection:table` (as in $data('pg-primary:customers')).
+// The connection is a name from sola-relay.json. The table goes into SQL, so it must
+// be a plain identifier, optionally schema-qualified; anything else is rejected.
+// Without a table, the connection name doubles as the table name, as before.
+const SOURCE_PATTERN = /^([A-Za-z0-9_-]+)(?::([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)?))?$/;
+
+export function parseSource(source) {
+  const m = typeof source === 'string' ? SOURCE_PATTERN.exec(source) : null;
+  if (!m) return null;
+  return { connection: m[1], table: m[2] ?? null };
+}
+
 // ─── Connectors ───
 const connectors = new Map();
 
@@ -405,15 +417,16 @@ export class RelayServer {
       // ── Schema endpoint ──
       if (url.pathname === '/api/schema' && req.method === 'GET') {
         const source = url.searchParams.get('source');
-        if (!source || !/^[a-zA-Z0-9_]+$/.test(source)) {
+        const parsedSource = parseSource(source);
+        if (!parsedSource) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Invalid source identifier' }));
           return;
         }
-        const conn = connections.get(source);
+        const conn = connections.get(parsedSource.connection);
         if (!conn) {
           res.writeHead(404, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: `Source '${source}' not found` }));
+          res.end(JSON.stringify({ error: `Source '${parsedSource.connection}' not found` }));
           return;
         }
         try {
@@ -447,23 +460,26 @@ export class RelayServer {
           const parsed = JSON.parse(body);
           const { source, query, limit } = parsed;
 
-          if (!source || !/^[a-zA-Z0-9_]+$/.test(source)) {
+          const parsedSource = parseSource(source);
+          if (!parsedSource) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Invalid source identifier' }));
             return;
           }
+          const { connection } = parsedSource;
+          const table = parsedSource.table ?? connection;
 
-          const conn = connections.get(source);
+          const conn = connections.get(connection);
 
           if (!conn) {
             res.writeHead(404, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: `Source '${source}' not found` }));
+            res.end(JSON.stringify({ error: `Source '${connection}' not found` }));
             return;
           }
 
           if (conn.status !== 'connected') {
             res.writeHead(503, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: `Source '${source}' is not connected` }));
+            res.end(JSON.stringify({ error: `Source '${connection}' is not connected` }));
             return;
           }
 
@@ -477,8 +493,10 @@ export class RelayServer {
 
           let result;
           if (isNonSql) {
+            const options = typeof query === 'object' && query !== null ? query : (query == null ? {} : { query });
             result = await conn.connector.query({
-              ...(typeof query === 'object' && query !== null ? query : { query }),
+              ...(parsedSource.table && options.table == null ? { table: parsedSource.table } : {}),
+              ...options,
               limit: safeLimit
             });
           } else if (typeof query === 'object' && query !== null && typeof query.text === 'string') {
@@ -497,7 +515,7 @@ export class RelayServer {
             }
             result = await conn.connector.query(query);
           } else if (query == null) {
-            result = await conn.connector.query(`SELECT * FROM ${source} LIMIT ${safeLimit}`);
+            result = await conn.connector.query(`SELECT * FROM ${table} LIMIT ${safeLimit}`);
           } else {
             res.writeHead(400, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Only SELECT queries are permitted' }));
