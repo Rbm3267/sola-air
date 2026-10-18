@@ -119,7 +119,7 @@ body { margin: 0; padding: 24px; font-family: ui-sans-serif, system-ui, -apple-s
 </head>
 <body>
 <div id="app"></div>
-<script>${inline(readFileSync(path.join(VENDOR, 'sola-core.iife.min.js'), 'utf8'))}</script>
+<script>${inline(readFileSync(path.join(VENDOR, 'sola-core.iife.js'), 'utf8'))}</script>
 ${scripts.map((s) => `<script>${inline(s)}</script>`).join('\n')}
 <script>window.__SolaPreviewApp(document.getElementById('app'), ${inline(JSON.stringify(props))});</script>
 </body>

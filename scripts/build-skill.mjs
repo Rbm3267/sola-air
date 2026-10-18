@@ -37,10 +37,28 @@ const versions = {
 // ── vendor: what scripts/preview.mjs needs to run with no install ───────────
 // acorn and htmlparser2 go in files of their own, readable and under the 256 KiB
 // a plugin directory reviewer will read; the compiler imports them by path.
-const VENDOR_LIBS = ['acorn', 'htmlparser2'];
-for (const lib of VENDOR_LIBS) {
+// The compiler only uses htmlparser2's Parser; exporting just that leaves out the
+// DOM helpers and their second copy of the entity tables.
+const VENDOR_LIBS = { acorn: "export * from 'acorn';\n", htmlparser2: "export { Parser } from './node_modules/htmlparser2/lib/esm/Parser.js';\n" };
+// entities ships its decode tables as one long string of UTF-16 code units
+// ("...".split("").map(c => c.charCodeAt(0))). The directory's scanner treats a
+// string like that as a packed payload it cannot read, so write the same numbers
+// out as a plain array.
+const PACKED_TABLE = /new Uint16Array\(\s*('(?:[^'\\]|\\[\s\S])*'|"(?:[^"\\]|\\[\s\S])*")\.split\(""\)\.map\(\(c\) => c\.charCodeAt\(0\)\)\s*\)/g;
+const unpackTables = (code) => code.replace(PACKED_TABLE, (_, literal) => {
+  const units = Function(`return ${literal}`)().split('').map((c) => c.charCodeAt(0));
+  const rows = [];
+  for (let i = 0; i < units.length; i += 20) rows.push('  ' + units.slice(i, i + 20).join(', '));
+  return `new Uint16Array([\n${rows.join(',\n')}\n])`;
+});
+// Minified or packed code is what a reviewer cannot read; fail before shipping it.
+const assertReadable = (rel, code) => {
+  const longest = Math.max(...code.split('\n').map((l) => l.length));
+  if (longest > 5000) throw new Error(`build-skill: ${rel} has a ${longest}-character line; vendor readable source, not minified or packed code.`);
+};
+for (const [lib, entry] of Object.entries(VENDOR_LIBS)) {
   let out = buildSync({
-    stdin: { contents: `export * from '${lib}';\n`, resolveDir: ROOT, sourcefile: `${lib}-entry.js` },
+    stdin: { contents: entry, resolveDir: ROOT, sourcefile: `${lib}-entry.js` },
     bundle: true, format: 'esm', platform: 'node', target: 'node18', write: false, legalComments: 'inline',
     banner: { js: `// ${lib} ${JSON.parse(read(`node_modules/${lib}/package.json`)).version} (MIT), bundled for scripts/preview.mjs. Generated; do not edit.` }
   }).outputFiles[0].text;
@@ -50,13 +68,14 @@ for (const lib of VENDOR_LIBS) {
   acornParse(out, { ecmaVersion: 'latest', sourceType: 'module', onComment: (_b, _t, s, e) => ranges.push([s, e]) });
   let stripped = out;
   for (const [s, e] of ranges.slice(1).reverse()) stripped = stripped.slice(0, s) + stripped.slice(e);
-  out = stripped.replace(/[ \t]+$/gm, '').replace(/\n{3,}/g, '\n\n');
+  out = unpackTables(stripped.replace(/[ \t]+$/gm, '').replace(/\n{3,}/g, '\n\n'));
+  assertReadable(`vendor/${lib}.mjs`, out);
   if (/https?:\/\//.test(out)) throw new Error(`build-skill: vendor/${lib}.mjs still contains a URL; check it before shipping.`);
   if (out.length > 250 * 1024) throw new Error(`build-skill: vendor/${lib}.mjs is ${Math.round(out.length / 1024)} KiB; keep each vendored file under 256 KiB.`);
   emit(`vendor/${lib}.mjs`, out);
 }
 const compilerBundle = buildSync({
-  external: VENDOR_LIBS,
+  external: Object.keys(VENDOR_LIBS),
   stdin: {
     contents: "export { compile } from './packages/compiler/src/index.js';\nexport { checkSource } from './packages/compiler/src/check.js';\n",
     resolveDir: ROOT,
@@ -74,27 +93,31 @@ const compilerBundle = buildSync({
 // such file, so the bundle gets the version as a literal instead.
 const versionRead = /(\w+)\(new URL\("\.\.\/package\.json", import\.meta\.url\), "utf8"\)/;
 let bundled = compilerBundle.outputFiles[0].text;
-for (const lib of VENDOR_LIBS) {
+for (const lib of Object.keys(VENDOR_LIBS)) {
   const bare = `from "${lib}";`;
   if (!bundled.includes(bare)) throw new Error(`build-skill: expected the compiler bundle to import ${lib}; update VENDOR_LIBS.`);
   bundled = bundled.replaceAll(bare, `from "./${lib}.mjs";`);
 }
 if (!versionRead.test(bundled)) throw new Error('build-skill: the compiler no longer reads ../package.json the expected way; update the version replacement.');
-emit('vendor/sola-compiler.mjs', bundled.replace(versionRead, () => JSON.stringify(JSON.stringify({ version: versions.compiler }))));
+bundled = bundled.replace(versionRead, () => JSON.stringify(JSON.stringify({ version: versions.compiler })));
+assertReadable('vendor/sola-compiler.mjs', bundled);
+emit('vendor/sola-compiler.mjs', bundled);
 
+// Unminified, same options as packages/core/build.js's sola-core.iife.js.
 const coreBundle = buildSync({
   entryPoints: [path.join(ROOT, 'packages/core/src/index.js')],
   bundle: true,
   format: 'iife',
   globalName: 'SolaCore',
-  minify: true,
+  minify: false,
   target: ['es2020'],
   write: false,
   banner: {
-    js: `/* @sola-air-ui/core v${versions.core} | MIT */`
+    js: `/* @sola-air-ui/core v${versions.core} — IIFE build for no-bundler environments */`
   }
-});
-emit('vendor/sola-core.iife.min.js', coreBundle.outputFiles[0].text);
+}).outputFiles[0].text;
+assertReadable('vendor/sola-core.iife.js', coreBundle);
+emit('vendor/sola-core.iife.js', coreBundle);
 emit('vendor/tokens.css', read('packages/tokens/src/tokens.css'));
 
 const ui = readUiManifest(ROOT);
