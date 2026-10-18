@@ -4,6 +4,17 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/relay`
+
+- **Fixed**: `$data('connection:table')`, the form every doc uses, works. The relay rejected any source that
+  wasn't a single name of letters, digits and `_`, so `$data('postgres-primary:customers')` always got a 400.
+  It now accepts `connection` or `connection:table` (`schema.table` too). Connection names may contain `-`,
+  and table names must be plain identifiers. A non-SQL connector gets the table as `table` unless its query
+  names one.
+- **Changed**: the README shows the real setup (`sola-relay.json`, `--port`, the endpoints, Google Sheets) in
+  place of a `--db` flag that never existed, and `{ refresh: '30s' }` in place of `{ sync: 'realtime' }`,
+  which `createData` ignores.
+
 ## 2026-10-18: ui 1.6.3, sola-vscode 0.3.1
 
 ### `@sola-air-ui/ui`

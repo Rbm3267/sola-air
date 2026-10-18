@@ -207,9 +207,11 @@ Per-call options (second argument, or globally through `configureIntent`):
 ### B. Remote Data Binding (`$data`)
 Transpiles to `createData(source, options)`, which POSTs `{ source, query, filters, sort, limit, offset }` to a local **Sola Relay** endpoint (`@sola-air-ui/relay`, default `http://localhost:4040/api/query`) and returns a signal of `{ loading, data, error }` — not a flat object with arbitrary named fields. The relay currently proxies **PostgreSQL and MySQL** (see `@sola-air-ui/relay`'s dependencies); treat any other source scheme as unverified until the relay itself documents it.
 
+The source is `connection:table`. `connection` is a name under `connections` in the relay's `sola-relay.json` (letters, digits, `_` and `-`). `table` is a plain identifier, optionally `schema.table`. With no `:table`, the connection name is used as the table name. Anything else gets a 400 from the relay.
+
 ```html
 <script>
-  let customers = $data('postgres-primary:customers', { sync: 'realtime' });
+  let customers = $data('postgres-primary:customers', { refresh: '30s' });
 </script>
 
 <div>
