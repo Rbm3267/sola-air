@@ -2,7 +2,7 @@
   "name": "sola-vscode",
   "displayName": "Sola AIR",
   "description": "Language support and file icons for Sola AIR (.sola) components",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "publisher": "SolaAIR",
   "license": "MIT",

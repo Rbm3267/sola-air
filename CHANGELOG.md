@@ -4,10 +4,17 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-18: ui 1.6.3, sola-vscode 0.3.1
+
 ### `@sola-air-ui/ui`
 
 - **Fixed**: activating a clickable `Table` row with `Enter` or `Space` passes the row index to `onRowClick`,
   as a mouse click does. It passed only the row.
+
+### VS Code extension (`sola-vscode` 0.3.1)
+
+- **Changed**: first release since Open VSX verified the `SolaAIR` namespace, so this version shows as
+  verified there. No changes to the extension itself.
 
 ## 2026-10-17: compiler 1.5.2, ui 1.6.2
 
