@@ -25,13 +25,13 @@ const args = process.argv.slice(2);
 const opt = (flag) => { const i = args.indexOf(flag); return i >= 0 ? args[i + 1] : undefined; };
 const input = args.find((a, i) => !a.startsWith('-') && !['-o', '--theme', '--preset', '--props'].includes(args[i - 1]));
 if (!input || args.includes('-h') || args.includes('--help')) {
-  console.log('usage: node preview.mjs <design.sola> [-o out.html] [--theme light|dark] [--preset sola|shadcn|enterprise|linear] [--props JSON] [--check]');
+  console.log('usage: node preview.mjs <design.sola> [-o out.html] [--theme light|dark] [--preset sola|zinc|compact|graphite] [--props JSON] [--check]');
   process.exit(input ? 0 : 2);
 }
 if (!existsSync(input)) { console.error(`preview: ${input} not found`); process.exit(2); }
 
 const theme = opt('--theme') === 'dark' ? 'dark' : 'light';
-const preset = ['sola', 'shadcn', 'enterprise', 'linear'].includes(opt('--preset')) ? opt('--preset') : 'sola';
+const preset = ['sola', 'zinc', 'compact', 'graphite'].includes(opt('--preset')) ? opt('--preset') : 'sola';
 let props = {};
 try { props = opt('--props') ? JSON.parse(opt('--props')) : {}; } catch { console.error('preview: --props must be JSON'); process.exit(2); }
 

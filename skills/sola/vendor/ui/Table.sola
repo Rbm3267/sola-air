@@ -68,7 +68,7 @@
   th {
     text-align: left;
     padding: var(--sola-table-cell-padding, 10px 14px);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--sola-text-secondary, #475569);
     text-transform: uppercase;

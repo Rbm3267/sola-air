@@ -48,7 +48,7 @@
 
   .sola-btn-primary {
     background: var(--sola-color-primary-500, #10b981);
-    color: var(--sola-btn-primary-fg, #ffffff);
+    color: var(--sola-btn-primary-fg, #090d19);
     font-weight: 600;
   }
   .sola-btn-primary:hover { background: var(--sola-color-primary-600, #059669); }

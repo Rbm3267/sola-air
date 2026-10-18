@@ -100,7 +100,7 @@
 
   .action-chip.primary {
     background: var(--sola-color-primary-500, #10b981);
-    color: var(--sola-btn-primary-fg, #ffffff);
+    color: var(--sola-btn-primary-fg, #090d19);
     border-color: var(--sola-color-primary-500, #10b981);
   }
   .action-chip.primary:hover:not(.disabled) {

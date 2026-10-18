@@ -192,7 +192,7 @@
   --sola-card-shadow:        0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
   --sola-control-radius:     var(--sola-radius-md);
   --sola-table-cell-padding: 10px 14px;
-  --sola-btn-primary-fg:     #ffffff;
+  --sola-btn-primary-fg:     #090d19;
 }
 
 /* ─── Dark mode — system default ─────────────────────────────────────────────
@@ -254,10 +254,10 @@
   --sola-card-shadow:        0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
-/* ─── Chameleon Preset 1: Shadcn / Zinc (`data-preset="shadcn"`) ─────────────
- * Crisp 1px zinc borders, 6px–8px radii, flat monochrome surfaces, subtle shadow.
+/* ─── Preset: zinc (`data-preset="zinc"`) ──────────────────────────────────
+ * Neutral grey surfaces, 1px borders, 6px–8px radii, monochrome primary actions.
  */
-:root[data-preset="shadcn"] {
+:root[data-preset="zinc"] {
   --sola-radius-md:          6px;
   --sola-radius-lg:          6px;
   --sola-radius-xl:          8px;
@@ -286,7 +286,7 @@
   --sola-border-strong:      #a1a1aa;
 }
 
-:root[data-preset="shadcn"][data-theme="dark"] {
+:root[data-preset="zinc"][data-theme="dark"] {
   --sola-color-primary-500:  #fafafa;
   --sola-color-primary-600:  #e4e4e7;
   --sola-color-brand-500:    #d4d4d8;
@@ -294,7 +294,7 @@
 
   --sola-text-primary:       #fafafa;
   --sola-text-secondary:     #a1a1aa;
-  --sola-text-tertiary:      #71717a;
+  --sola-text-tertiary:      #8b8b93;
 
   --sola-surface-0:          #09090b;
   --sola-surface-1:          #121215;
@@ -306,10 +306,10 @@
   --sola-card-shadow:        none;
 }
 
-/* ─── Chameleon Preset 2: Enterprise Workspace (`data-preset="enterprise"`) ──
- * High-density enterprise workspace geometry, navy/sky accent, compact rows.
+/* ─── Preset: compact (`data-preset="compact"`) ────────────────────────────
+ * Denser cards and table rows, 6px–8px radii, sky-blue accent.
  */
-:root[data-preset="enterprise"] {
+:root[data-preset="compact"] {
   --sola-radius-md:          6px;
   --sola-radius-lg:          8px;
   --sola-radius-xl:          8px;
@@ -320,9 +320,9 @@
   --sola-table-cell-padding: 8px 12px;
   --sola-card-shadow:        0 1px 2px rgba(15, 23, 42, 0.05);
 
-  --sola-color-primary-500:  #0284c7;
-  --sola-color-primary-600:  #0369a1;
-  --sola-color-brand-500:    #0284c7;
+  --sola-color-primary-500:  #0369a1;
+  --sola-color-primary-600:  #075985;
+  --sola-color-brand-500:    #0369a1;
   --sola-btn-primary-fg:     #ffffff;
 
   --sola-text-primary:       #0f172a;
@@ -338,15 +338,15 @@
   --sola-border-strong:      #94a3b8;
 }
 
-:root[data-preset="enterprise"][data-theme="dark"] {
-  --sola-color-primary-500:  #0ea5e9;
-  --sola-color-primary-600:  #0284c7;
+:root[data-preset="compact"][data-theme="dark"] {
+  --sola-color-primary-500:  #38bdf8;
+  --sola-color-primary-600:  #7dd3fc;
   --sola-color-brand-500:    #38bdf8;
-  --sola-btn-primary-fg:     #ffffff;
+  --sola-btn-primary-fg:     #082f49;
 
   --sola-text-primary:       #f1f5f9;
   --sola-text-secondary:     #94a3b8;
-  --sola-text-tertiary:      #64748b;
+  --sola-text-tertiary:      #8291a7;
 
   --sola-surface-0:          #0b1120;
   --sola-surface-1:          #111827;
@@ -358,10 +358,10 @@
   --sola-card-shadow:        0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
-/* ─── Chameleon Preset 3: Linear / Raycast (`data-preset="linear"`) ──────────
- * Precision graphite surfaces, indigo-violet accent, tight 8px cards & hairline borders.
+/* ─── Preset: graphite (`data-preset="graphite"`) ──────────────────────────
+ * Graphite surfaces, indigo accent, 8px cards and hairline borders.
  */
-:root[data-preset="linear"] {
+:root[data-preset="graphite"] {
   --sola-radius-md:          5px;
   --sola-radius-lg:          6px;
   --sola-radius-xl:          8px;
@@ -372,14 +372,14 @@
   --sola-table-cell-padding: 9px 12px;
   --sola-card-shadow:        0 1px 2px rgba(0, 0, 0, 0.04);
 
-  --sola-color-primary-500:  #5e6ad2;
-  --sola-color-primary-600:  #4f5bc4;
-  --sola-color-brand-500:    #5e6ad2;
+  --sola-color-primary-500:  #4f46e5;
+  --sola-color-primary-600:  #4338ca;
+  --sola-color-brand-500:    #4f46e5;
   --sola-btn-primary-fg:     #ffffff;
 
   --sola-text-primary:       #111318;
   --sola-text-secondary:     #4b505d;
-  --sola-text-tertiary:      #828795;
+  --sola-text-tertiary:      #646a78;
 
   --sola-surface-0:          #ffffff;
   --sola-surface-1:          #f7f8f9;
@@ -390,15 +390,15 @@
   --sola-border-strong:      #9ca1b0;
 }
 
-:root[data-preset="linear"][data-theme="dark"] {
-  --sola-color-primary-500:  #5e6ad2;
-  --sola-color-primary-600:  #6e7ae2;
-  --sola-color-brand-500:    #7c86ee;
-  --sola-btn-primary-fg:     #ffffff;
+:root[data-preset="graphite"][data-theme="dark"] {
+  --sola-color-primary-500:  #818cf8;
+  --sola-color-primary-600:  #a5b4fc;
+  --sola-color-brand-500:    #818cf8;
+  --sola-btn-primary-fg:     #0b0c0e;
 
   --sola-text-primary:       #f7f8f8;
   --sola-text-secondary:     #8a8f98;
-  --sola-text-tertiary:      #62666d;
+  --sola-text-tertiary:      #878c96;
 
   --sola-surface-0:          #08090a;
   --sola-surface-1:          #0f1012;

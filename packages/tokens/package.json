@@ -1,6 +1,6 @@
 {
   "name": "@sola-air-ui/tokens",
-  "version": "1.3.0",
+  "version": "1.2.0",
   "description": "Design tokens for Sola AIR — spacing, radius, type scale, color, and semantic palette",
   "type": "module",
   "main": "./src/index.js",

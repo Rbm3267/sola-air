@@ -98,7 +98,7 @@
   }
 
   .gauge-badge {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     background: var(--sola-surface-1, #f8fafc);
     border: 1px solid var(--sola-border-subtle, #e2e8f0);

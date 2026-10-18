@@ -117,8 +117,8 @@ export const tokens = {
     },
   },
 
-  /** Built-in Chameleon host design system presets (`data-preset`). */
-  presets: ['sola', 'shadcn', 'enterprise', 'linear'],
+  /** Built-in token presets, selected with `data-preset` on <html>. */
+  presets: ['sola', 'zinc', 'compact', 'graphite'],
 };
 
 export default tokens;

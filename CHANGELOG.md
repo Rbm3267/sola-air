@@ -4,25 +4,25 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
-## 2026-10-18: tokens 1.3.0, ui 1.7.0, sola-air 1.2.2
-
 ### `@sola-air-ui/tokens`
 
-- **Added**: Chameleon host design system presets (`data-preset="shadcn" | "enterprise" | "linear"`) with light and
-  dark mode support, plus preset-adaptable component geometry tokens (`--sola-card-radius`, `--sola-card-padding`,
-  `--sola-card-shadow`, `--sola-control-radius`, `--sola-table-cell-padding`, `--sola-btn-primary-fg`,
-  `--sola-color-brand-500`).
+- **Added**: three presets, picked with `data-preset="zinc" | "compact" | "graphite"` on `<html>`, each with a
+  light and a dark version. Each one sets radii, borders, surfaces, density and the accent colour.
+- **Added**: component geometry tokens the presets set and you can override: `--sola-card-radius`,
+  `--sola-card-padding`, `--sola-card-shadow`, `--sola-control-radius`, `--sola-table-cell-padding`,
+  `--sola-btn-primary-fg`, `--sola-color-brand-500`.
 
 ### `@sola-air-ui/ui`
 
-- **Changed**: signature telemetry, AI, and layout primitives (`DataCard`, `GaugeCard`, `Chart`, `Table`, `Button`,
-  `Select`, `Badge`, `Alert`, `Card`, `LauncherDock`, `ActionStrip`) now consume the preset-adaptable geometry,
-  elevation, and brand tokens and use `font-variant-numeric: tabular-nums` for metric alignment.
+- **Changed**: `DataCard`, `GaugeCard`, `Chart`, `Table`, `Button`, `Select`, `Badge`, `Alert`, `Card`,
+  `LauncherDock` and `ActionStrip` read those tokens, and numbers use `tabular-nums`. Buttons are a little smaller
+  (`8px 14px` padding, `8px` radius by default).
+- **Changed**: `Chart` follows the light and dark theme. It was always dark.
 
 ### Claude and Gemini skill (`skills/sola`)
 
-- **Added**: `--preset sola|shadcn|enterprise|linear` CLI flag in `scripts/preview.mjs` and deterministic
-  `absWorkingDir` bundling in `scripts/build-skill.mjs`.
+- **Added**: `--preset sola|zinc|compact|graphite` in `scripts/preview.mjs`. `scripts/build-skill.mjs` bundles from
+  the repo root, so its output no longer depends on where it is run.
 
 ## 2026-10-18: relay 1.0.4
 
