@@ -17,6 +17,7 @@ import { readUiManifest } from './ui-manifest.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'skills', 'sola');
 const CHECK = process.argv.includes('--check');
+process.chdir(ROOT);
 
 const lf = (s) => s.replace(/\r\n/g, '\n');
 const read = (rel) => lf(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -58,6 +59,7 @@ const assertReadable = (rel, code) => {
 };
 for (const [lib, entry] of Object.entries(VENDOR_LIBS)) {
   let out = buildSync({
+    absWorkingDir: ROOT,
     stdin: { contents: entry, resolveDir: ROOT, sourcefile: `${lib}-entry.js` },
     bundle: true, format: 'esm', platform: 'node', target: 'node18', write: false, legalComments: 'inline',
     banner: { js: `// ${lib} ${JSON.parse(read(`node_modules/${lib}/package.json`)).version} (MIT), bundled for scripts/preview.mjs. Generated; do not edit.` }
@@ -75,6 +77,7 @@ for (const [lib, entry] of Object.entries(VENDOR_LIBS)) {
   emit(`vendor/${lib}.mjs`, out);
 }
 const compilerBundle = buildSync({
+  absWorkingDir: ROOT,
   external: Object.keys(VENDOR_LIBS),
   stdin: {
     contents: "export { compile } from './packages/compiler/src/index.js';\nexport { checkSource } from './packages/compiler/src/check.js';\n",
@@ -105,6 +108,7 @@ emit('vendor/sola-compiler.mjs', bundled);
 
 // Unminified, same options as packages/core/build.js's sola-core.iife.js.
 const coreBundle = buildSync({
+  absWorkingDir: ROOT,
   entryPoints: [path.join(ROOT, 'packages/core/src/index.js')],
   bundle: true,
   format: 'iife',

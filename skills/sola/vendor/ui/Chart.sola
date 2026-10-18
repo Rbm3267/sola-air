@@ -22,51 +22,59 @@
 
 <style>
   .sola-chart-card {
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 18px;
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: var(--sola-card-radius, 12px);
+    padding: var(--sola-card-padding, 18px 20px);
+    box-shadow: var(--sola-card-shadow, 0 1px 3px rgba(15, 23, 42, 0.04));
     width: 100%;
+    box-sizing: border-box;
   }
   .sola-chart-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
   .sola-chart-title {
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--sola-text-secondary, #64748b);
-    font-family: monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .sola-chart-val {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--sola-color-neutral-0, #fff);
-    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--sola-text-primary, #0f172a);
     margin-top: 4px;
   }
   .sola-delta-badge {
-    background: rgba(16, 185, 129, 0.15);
-    color: var(--sola-color-primary-500, #10b981);
+    background: var(--sola-alert-positive-bg, #ecfdf5);
+    color: var(--sola-alert-positive-text, #047857);
+    border: 1px solid var(--sola-border-subtle, rgba(16, 185, 129, 0.2));
     font-size: 12px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-family: monospace;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    padding: 2px 7px;
+    border-radius: var(--sola-control-radius, 6px);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .sola-spark-bars {
     display: flex;
     align-items: flex-end;
-    gap: 4px;
+    gap: 5px;
     height: 60px;
+    padding-top: 6px;
   }
   .sola-bar {
     flex: 1;
-    background: rgba(16, 185, 129, 0.3);
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    background: color-mix(in srgb, var(--sola-color-primary-500, #10b981) 32%, var(--sola-surface-2, #e2e8f0));
+    border-radius: 3px 3px 0 0;
+    transition: background 0.16s ease;
   }
   .sola-bar:hover {
     background: var(--sola-color-primary-500, #10b981);

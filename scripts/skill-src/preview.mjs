@@ -23,14 +23,15 @@ const bySubpath = Object.fromEntries(Object.entries(manifest).map(([name, m]) =>
 
 const args = process.argv.slice(2);
 const opt = (flag) => { const i = args.indexOf(flag); return i >= 0 ? args[i + 1] : undefined; };
-const input = args.find((a, i) => !a.startsWith('-') && !['-o', '--theme', '--props'].includes(args[i - 1]));
+const input = args.find((a, i) => !a.startsWith('-') && !['-o', '--theme', '--preset', '--props'].includes(args[i - 1]));
 if (!input || args.includes('-h') || args.includes('--help')) {
-  console.log('usage: node preview.mjs <design.sola> [-o out.html] [--theme light|dark] [--props JSON] [--check]');
+  console.log('usage: node preview.mjs <design.sola> [-o out.html] [--theme light|dark] [--preset sola|zinc|compact|graphite] [--props JSON] [--check]');
   process.exit(input ? 0 : 2);
 }
 if (!existsSync(input)) { console.error(`preview: ${input} not found`); process.exit(2); }
 
 const theme = opt('--theme') === 'dark' ? 'dark' : 'light';
+const preset = ['sola', 'zinc', 'compact', 'graphite'].includes(opt('--preset')) ? opt('--preset') : 'sola';
 let props = {};
 try { props = opt('--props') ? JSON.parse(opt('--props')) : {}; } catch { console.error('preview: --props must be JSON'); process.exit(2); }
 
@@ -105,7 +106,7 @@ const out = opt('-o') || input.replace(/\.sola$/, '') + '.preview.html';
 const title = path.basename(input, '.sola').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const inline = (code) => code.replace(/<\/script/gi, '<\\/script');
 const html = `<!doctype html>
-<html lang="en" data-theme="${theme}">
+<html lang="en" data-theme="${theme}" data-preset="${preset}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

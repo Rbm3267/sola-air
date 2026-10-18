@@ -116,6 +116,9 @@ export const tokens = {
       base: '240ms',
     },
   },
+
+  /** Built-in token presets, selected with `data-preset` on <html>. */
+  presets: ['sola', 'zinc', 'compact', 'graphite'],
 };
 
 export default tokens;

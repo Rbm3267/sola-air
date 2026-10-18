@@ -185,6 +185,14 @@
   --sola-ease-standard:  cubic-bezier(0.16, 1, 0.3, 1);
   --sola-duration-fast:  160ms;
   --sola-duration-base:  240ms;
+
+  /* ─── Component geometry & elevation (preset-adaptable) ────────────────────*/
+  --sola-card-radius:        var(--sola-radius-xl);
+  --sola-card-padding:       18px 20px;
+  --sola-card-shadow:        0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --sola-control-radius:     var(--sola-radius-md);
+  --sola-table-cell-padding: 10px 14px;
+  --sola-btn-primary-fg:     #090d19;
 }
 
 /* ─── Dark mode — system default ─────────────────────────────────────────────
@@ -214,6 +222,8 @@
     --sola-alert-warning-bg:   #1c0c00;
     --sola-alert-high-bg:      #1c0000;
     --sola-alert-critical-bg:  #1a0030;
+
+    --sola-card-shadow:        0 1px 3px rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -240,4 +250,162 @@
   --sola-alert-warning-bg:   #1c0c00;
   --sola-alert-high-bg:      #1c0000;
   --sola-alert-critical-bg:  #1a0030;
+
+  --sola-card-shadow:        0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* ─── Preset: zinc (`data-preset="zinc"`) ──────────────────────────────────
+ * Neutral grey surfaces, 1px borders, 6px–8px radii, monochrome primary actions.
+ */
+:root[data-preset="zinc"] {
+  --sola-radius-md:          6px;
+  --sola-radius-lg:          6px;
+  --sola-radius-xl:          8px;
+  --sola-radius-2xl:         10px;
+  --sola-card-radius:        8px;
+  --sola-control-radius:     6px;
+  --sola-card-padding:       16px 18px;
+  --sola-table-cell-padding: 10px 12px;
+  --sola-card-shadow:        0 1px 2px 0 rgba(0, 0, 0, 0.04);
+
+  --sola-color-primary-500:  #18181b;
+  --sola-color-primary-600:  #27272a;
+  --sola-color-brand-500:    #18181b;
+  --sola-btn-primary-fg:     #fafafa;
+
+  --sola-text-primary:       #09090b;
+  --sola-text-secondary:     #52525b;
+  --sola-text-tertiary:      #71717a;
+
+  --sola-surface-0:          #ffffff;
+  --sola-surface-1:          #fafafa;
+  --sola-surface-2:          #f4f4f5;
+
+  --sola-border-subtle:      #e4e4e7;
+  --sola-border-default:     #d4d4d8;
+  --sola-border-strong:      #a1a1aa;
+}
+
+:root[data-preset="zinc"][data-theme="dark"] {
+  --sola-color-primary-500:  #fafafa;
+  --sola-color-primary-600:  #e4e4e7;
+  --sola-color-brand-500:    #d4d4d8;
+  --sola-btn-primary-fg:     #09090b;
+
+  --sola-text-primary:       #fafafa;
+  --sola-text-secondary:     #a1a1aa;
+  --sola-text-tertiary:      #8b8b93;
+
+  --sola-surface-0:          #09090b;
+  --sola-surface-1:          #121215;
+  --sola-surface-2:          #18181b;
+
+  --sola-border-subtle:      #27272a;
+  --sola-border-default:     #3f3f46;
+  --sola-border-strong:      #52525b;
+  --sola-card-shadow:        none;
+}
+
+/* ─── Preset: compact (`data-preset="compact"`) ────────────────────────────
+ * Denser cards and table rows, 6px–8px radii, sky-blue accent.
+ */
+:root[data-preset="compact"] {
+  --sola-radius-md:          6px;
+  --sola-radius-lg:          8px;
+  --sola-radius-xl:          8px;
+  --sola-radius-2xl:         10px;
+  --sola-card-radius:        8px;
+  --sola-control-radius:     6px;
+  --sola-card-padding:       14px 16px;
+  --sola-table-cell-padding: 8px 12px;
+  --sola-card-shadow:        0 1px 2px rgba(15, 23, 42, 0.05);
+
+  --sola-color-primary-500:  #0369a1;
+  --sola-color-primary-600:  #075985;
+  --sola-color-brand-500:    #0369a1;
+  --sola-btn-primary-fg:     #ffffff;
+
+  --sola-text-primary:       #0f172a;
+  --sola-text-secondary:     #334155;
+  --sola-text-tertiary:      #64748b;
+
+  --sola-surface-0:          #ffffff;
+  --sola-surface-1:          #f4f6f9;
+  --sola-surface-2:          #e8ecf2;
+
+  --sola-border-subtle:      #dce2ec;
+  --sola-border-default:     #cbd5e1;
+  --sola-border-strong:      #94a3b8;
+}
+
+:root[data-preset="compact"][data-theme="dark"] {
+  --sola-color-primary-500:  #38bdf8;
+  --sola-color-primary-600:  #7dd3fc;
+  --sola-color-brand-500:    #38bdf8;
+  --sola-btn-primary-fg:     #082f49;
+
+  --sola-text-primary:       #f1f5f9;
+  --sola-text-secondary:     #94a3b8;
+  --sola-text-tertiary:      #8291a7;
+
+  --sola-surface-0:          #0b1120;
+  --sola-surface-1:          #111827;
+  --sola-surface-2:          #1e293b;
+
+  --sola-border-subtle:      #1e293b;
+  --sola-border-default:     #334155;
+  --sola-border-strong:      #475569;
+  --sola-card-shadow:        0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* ─── Preset: graphite (`data-preset="graphite"`) ──────────────────────────
+ * Graphite surfaces, indigo accent, 8px cards and hairline borders.
+ */
+:root[data-preset="graphite"] {
+  --sola-radius-md:          5px;
+  --sola-radius-lg:          6px;
+  --sola-radius-xl:          8px;
+  --sola-radius-2xl:         10px;
+  --sola-card-radius:        8px;
+  --sola-control-radius:     5px;
+  --sola-card-padding:       16px 18px;
+  --sola-table-cell-padding: 9px 12px;
+  --sola-card-shadow:        0 1px 2px rgba(0, 0, 0, 0.04);
+
+  --sola-color-primary-500:  #4f46e5;
+  --sola-color-primary-600:  #4338ca;
+  --sola-color-brand-500:    #4f46e5;
+  --sola-btn-primary-fg:     #ffffff;
+
+  --sola-text-primary:       #111318;
+  --sola-text-secondary:     #4b505d;
+  --sola-text-tertiary:      #646a78;
+
+  --sola-surface-0:          #ffffff;
+  --sola-surface-1:          #f7f8f9;
+  --sola-surface-2:          #eeeff2;
+
+  --sola-border-subtle:      #e4e6eb;
+  --sola-border-default:     #d0d3dc;
+  --sola-border-strong:      #9ca1b0;
+}
+
+:root[data-preset="graphite"][data-theme="dark"] {
+  --sola-color-primary-500:  #818cf8;
+  --sola-color-primary-600:  #a5b4fc;
+  --sola-color-brand-500:    #818cf8;
+  --sola-btn-primary-fg:     #0b0c0e;
+
+  --sola-text-primary:       #f7f8f8;
+  --sola-text-secondary:     #8a8f98;
+  --sola-text-tertiary:      #878c96;
+
+  --sola-surface-0:          #08090a;
+  --sola-surface-1:          #0f1012;
+  --sola-surface-2:          #18191c;
+
+  --sola-border-subtle:      #222326;
+  --sola-border-default:     #2e3035;
+  --sola-border-strong:      #42454d;
+  --sola-card-shadow:        0 1px 0 0 rgba(255, 255, 255, 0.04) inset;
 }

@@ -77,9 +77,9 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 14px;
-    border-radius: 100px;
-    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: var(--sola-control-radius, 8px);
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     border: 1px solid transparent;
@@ -89,18 +89,18 @@
   }
 
   .action-chip.default {
-    background: var(--sola-surface-2, #f1f5f9);
+    background: var(--sola-surface-1, #f8fafc);
     color: var(--sola-text-primary, #334155);
     border-color: var(--sola-border-subtle, #e2e8f0);
   }
   .action-chip.default:hover:not(.disabled) {
-    background: var(--sola-color-neutral-200, #e2e8f0);
+    background: var(--sola-surface-2, #e2e8f0);
     border-color: var(--sola-border-default, #cbd5e1);
   }
 
   .action-chip.primary {
     background: var(--sola-color-primary-500, #10b981);
-    color: var(--sola-color-neutral-0, #fff);
+    color: var(--sola-btn-primary-fg, #090d19);
     border-color: var(--sola-color-primary-500, #10b981);
   }
   .action-chip.primary:hover:not(.disabled) {

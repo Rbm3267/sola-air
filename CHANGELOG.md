@@ -4,6 +4,26 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/tokens`
+
+- **Added**: three presets, picked with `data-preset="zinc" | "compact" | "graphite"` on `<html>`, each with a
+  light and a dark version. Each one sets radii, borders, surfaces, density and the accent colour.
+- **Added**: component geometry tokens the presets set and you can override: `--sola-card-radius`,
+  `--sola-card-padding`, `--sola-card-shadow`, `--sola-control-radius`, `--sola-table-cell-padding`,
+  `--sola-btn-primary-fg`, `--sola-color-brand-500`.
+
+### `@sola-air-ui/ui`
+
+- **Changed**: `DataCard`, `GaugeCard`, `Chart`, `Table`, `Button`, `Select`, `Badge`, `Alert`, `Card`,
+  `LauncherDock` and `ActionStrip` read those tokens, and numbers use `tabular-nums`. Buttons are a little smaller
+  (`8px 14px` padding, `8px` radius by default).
+- **Changed**: `Chart` follows the light and dark theme. It was always dark.
+
+### Claude and Gemini skill (`skills/sola`)
+
+- **Added**: `--preset sola|zinc|compact|graphite` in `scripts/preview.mjs`. `scripts/build-skill.mjs` bundles from
+  the repo root, so its output no longer depends on where it is run.
+
 ## 2026-10-18: relay 1.0.4
 
 ### `@sola-air-ui/relay`

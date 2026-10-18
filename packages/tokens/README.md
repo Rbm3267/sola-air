@@ -30,6 +30,20 @@ import tokens from '@sola-air-ui/tokens';
 console.log(tokens.space.lg, tokens.radius.lg, tokens.color.primary);
 ```
 
+## Presets (`data-preset`)
+
+Three built-in presets change radii, borders, surfaces, density and the accent colour. Each has a light and a dark version, picked with `data-theme="light" | "dark"`. Without `data-preset` you get the default Sola look.
+
+```html
+<html lang="en" data-preset="zinc" data-theme="dark">
+```
+
+- `zinc`: neutral grey surfaces, `6px–8px` radii, `1px` borders, monochrome primary buttons.
+- `compact`: denser cards (`14px 16px`) and table cells (`8px 12px`), `8px` card radius, sky-blue accent.
+- `graphite`: graphite surfaces, `5px` control radius, indigo accent, hairline borders.
+
+To match your own design system, override the same custom properties (`--sola-card-radius`, `--sola-control-radius`, `--sola-color-primary-500`, `--sola-btn-primary-fg` and so on) on `:root`.
+
 ## Scoping note for widget/iframe environments
 
 If you're embedding Sola output inside something that auto-scopes CSS to a container (e.g. a CMS widget sandbox), point the token stylesheet's root selector at your actual mount element rather than `:root` — a scoped `:root` selector matches nothing, since `:root` always resolves to `<html>` regardless of nesting.

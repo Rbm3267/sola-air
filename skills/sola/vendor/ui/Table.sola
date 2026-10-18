@@ -49,8 +49,10 @@
 <style>
   .table-wrapper {
     overflow-x: auto;
+    background: var(--sola-surface-0, #ffffff);
     border: 1px solid var(--sola-border-subtle, #e2e8f0);
-    border-radius: 12px;
+    border-radius: var(--sola-card-radius, 12px);
+    box-shadow: var(--sola-card-shadow, none);
     transition: border-color 0.2s ease;
   }
 
@@ -59,19 +61,21 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
   }
 
   th {
     text-align: left;
-    padding: 12px 16px;
+    padding: var(--sola-table-cell-padding, 10px 14px);
     font-size: 12px;
     font-weight: 600;
-    color: var(--sola-text-tertiary, #475569);
+    color: var(--sola-text-secondary, #475569);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     background: var(--sola-surface-1, #f8fafc);
     border-bottom: 1px solid var(--sola-border-subtle, #e2e8f0);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
   .table-wrapper.dark th {
@@ -81,9 +85,9 @@
   }
 
   td {
-    padding: 12px 16px;
+    padding: var(--sola-table-cell-padding, 10px 14px);
     color: var(--sola-text-primary, #334155);
-    border-bottom: 1px solid var(--sola-surface-2, #f1f5f9);
+    border-bottom: 1px solid var(--sola-border-subtle, #f1f5f9);
   }
 
   .table-wrapper.striped tbody tr:nth-child(even) td {

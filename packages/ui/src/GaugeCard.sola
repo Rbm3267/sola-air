@@ -66,75 +66,79 @@
   .sola-gauge {
     position: relative;
     background: var(--sola-surface-0, #ffffff);
-    border: 1px solid var(--sola-border-subtle, rgba(226, 232, 240, 0.9));
-    border-radius: 24px;
-    padding: 24px;
-    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.04);
-    transition: box-shadow var(--sola-duration-base, 240ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1)), border-color var(--sola-duration-base, 240ms) var(--sola-ease-standard, cubic-bezier(0.16, 1, 0.3, 1));
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: var(--sola-card-radius, 12px);
+    padding: var(--sola-card-padding, 18px 20px);
+    box-shadow: var(--sola-card-shadow, 0 1px 3px rgba(15, 23, 42, 0.04));
+    transition: border-color var(--sola-duration-fast, 160ms) var(--sola-ease-standard, ease),
+                box-shadow var(--sola-duration-fast, 160ms) var(--sola-ease-standard, ease);
     overflow: hidden;
   }
 
-  .sola-gauge:hover { box-shadow: 0 12px 36px -6px var(--gauge-ring-color, rgba(16,185,129,0.16)); }
+  .sola-gauge:hover { border-color: var(--sola-border-default, #cbd5e1); }
 
-  .sola-gauge-emerald { --gauge-ring-color: rgba(16,185,129,0.16); }
-  .sola-gauge-emerald:hover { border-color: rgba(16,185,129,0.4); }
-  .sola-gauge-sky { --gauge-ring-color: rgba(14,165,233,0.16); }
-  .sola-gauge-sky:hover { border-color: rgba(14,165,233,0.4); }
-  .sola-gauge-violet { --gauge-ring-color: rgba(139,92,246,0.16); }
-  .sola-gauge-violet:hover { border-color: rgba(139,92,246,0.4); }
-  .sola-gauge-amber { --gauge-ring-color: rgba(245,158,11,0.16); }
-  .sola-gauge-amber:hover { border-color: rgba(245,158,11,0.4); }
-  .sola-gauge-rose { --gauge-ring-color: rgba(244,63,94,0.16); }
-  .sola-gauge-rose:hover { border-color: rgba(244,63,94,0.4); }
+  .sola-gauge-emerald { --gauge-ring-color: #10b981; }
+  .sola-gauge-sky { --gauge-ring-color: #0ea5e9; }
+  .sola-gauge-violet { --gauge-ring-color: #8b5cf6; }
+  .sola-gauge-amber { --gauge-ring-color: #f59e0b; }
+  .sola-gauge-rose { --gauge-ring-color: #f43f5e; }
 
-  .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .gauge-title-wrap { display: flex; align-items: center; gap: 10px; }
+  .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .gauge-title-wrap { display: flex; align-items: center; gap: 8px; }
 
-  .gauge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; color: var(--gauge-ring-color, #10b981); }
+  .gauge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gauge-ring-color, #10b981); }
 
   .gauge-title {
     font-size: 12px;
-    font-weight: 700;
-    color: var(--sola-text-secondary, #64748b);
+    font-weight: 500;
+    color: var(--sola-text-secondary, #475569);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     font-family: ui-monospace, monospace;
   }
 
   .gauge-badge {
     font-size: 12px;
-    font-weight: 700;
-    background: var(--sola-surface-2, #f1f5f9);
+    font-weight: 600;
+    background: var(--sola-surface-1, #f8fafc);
     border: 1px solid var(--sola-border-subtle, #e2e8f0);
     color: var(--sola-text-secondary, #64748b);
-    padding: 2px 8px;
-    border-radius: 6px;
+    padding: 2px 7px;
+    border-radius: var(--sola-control-radius, 6px);
     font-family: ui-monospace, monospace;
   }
 
-  .gauge-body { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .gauge-body { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 
-  .gauge-value { font-size: 34px; font-weight: 900; color: var(--sola-text-primary, #020617); letter-spacing: -0.03em; font-family: ui-monospace, monospace; margin-bottom: 4px; }
-  .gauge-subtext { font-size: 12px; color: var(--sola-text-secondary, #64748b); font-weight: 500; }
+  .gauge-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--sola-text-primary, #0f172a);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .gauge-subtext { font-size: 12px; color: var(--sola-text-secondary, #64748b); font-weight: 400; }
 
-  .gauge-ring-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .gauge-ring-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .gauge-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .gauge-arc { transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1); }
-  .gauge-pct { position: absolute; font-size: 12px; font-weight: 900; font-family: ui-monospace, monospace; color: var(--gauge-ring-color, #10b981); filter: saturate(2) brightness(0.8); }
+  .gauge-arc { transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .gauge-pct { position: absolute; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; font-family: ui-monospace, monospace; color: var(--sola-text-primary, #0f172a); }
 
   .gauge-footer {
-    margin-top: 16px;
-    padding-top: 12px;
-    border-top: 1px solid var(--sola-surface-2, #f1f5f9);
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--sola-border-subtle, #f1f5f9);
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: 12px;
     font-family: ui-monospace, monospace;
-    color: var(--sola-text-tertiary, #94a3b8);
+    color: var(--sola-text-tertiary, #64748b);
   }
 
   .gauge-footer-left { display: flex; align-items: center; gap: 6px; }
   .gauge-footer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sola-color-primary-500, #10b981); }
-  .gauge-footer-right { font-weight: 700; color: var(--sola-text-secondary, #64748b); }
+  .gauge-footer-right { font-weight: 600; color: var(--sola-text-secondary, #64748b); }
 </style>

@@ -9,11 +9,13 @@
   .badge {
     display: inline-block;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 4px 10px;
-    border-radius: 6px;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: var(--sola-control-radius, 6px);
+    border: 1px solid var(--sola-border-subtle, transparent);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
   .default {
