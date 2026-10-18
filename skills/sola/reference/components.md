@@ -1,4 +1,4 @@
-# @sola-air-ui/ui 1.6.3: components
+# @sola-air-ui/ui 1.7.0: components
 
 Generated from the package by scripts/build-skill.mjs. Every component listed here exists, and every prop listed is one it declares with `export let`. Nothing else is accepted.
 

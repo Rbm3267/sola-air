@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-18: tokens 1.3.0, ui 1.7.0
+
 ### `@sola-air-ui/tokens`
 
 - **Added**: three presets, picked with `data-preset="zinc" | "compact" | "graphite"` on `<html>`, each with a
