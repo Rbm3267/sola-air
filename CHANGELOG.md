@@ -4,6 +4,11 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/ui`
+
+- **Fixed**: activating a clickable `Table` row with `Enter` or `Space` passes the row index to `onRowClick`,
+  as a mouse click does. It passed only the row.
+
 ## 2026-10-17: compiler 1.5.2, ui 1.6.2
 
 ### `@sola-air-ui/compiler`
