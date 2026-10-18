@@ -25,43 +25,35 @@
 <style>
   .sola-data-card {
     position: relative;
-    background: var(--sola-surface-0, rgba(255, 255, 255, 0.9));
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--sola-border-subtle, rgba(226, 232, 240, 0.8));
-    border-radius: 18px;
-    padding: 20px 24px;
-    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.04);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: var(--sola-card-radius, 12px);
+    padding: var(--sola-card-padding, 18px 20px);
+    box-shadow: var(--sola-card-shadow, 0 1px 3px rgba(15, 23, 42, 0.04));
+    transition: border-color var(--sola-duration-fast, 160ms) var(--sola-ease-standard, ease),
+                box-shadow var(--sola-duration-fast, 160ms) var(--sola-ease-standard, ease);
     overflow: hidden;
   }
 
   .sola-data-card:hover {
-    border-color: rgba(14, 165, 233, 0.6);
-    box-shadow: 0 8px 30px -6px rgba(14, 165, 233, 0.12);
-    transform: translateY(-1px);
+    border-color: var(--sola-border-default, #cbd5e1);
   }
 
   .card-glow {
-    position: absolute;
-    top: -30px;
-    right: -30px;
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, transparent 70%);
-    pointer-events: none;
+    display: none;
   }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .title-wrap {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
   }
 
   .status-dot {
@@ -73,21 +65,21 @@
 
   .card-title {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--sola-text-secondary, #475569);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
-
   .card-value {
-    font-size: 2.25rem;
-    font-weight: 900;
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
     color: var(--sola-text-primary, #0f172a);
-    letter-spacing: -0.03em;
-    line-height: 1;
-    margin-bottom: 14px;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 12px;
   }
 
   .card-footer {
@@ -95,25 +87,26 @@
     align-items: center;
     gap: 8px;
     padding-top: 10px;
-    border-top: 1px solid var(--sola-surface-2, #f1f5f9);
+    border-top: 1px solid var(--sola-border-subtle, #f1f5f9);
   }
 
   .trend-badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px 8px;
-    border-radius: 6px;
+    padding: 2px 7px;
+    border-radius: var(--sola-control-radius, 6px);
     font-size: 12px;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     background: var(--sola-alert-positive-bg, #ecfdf5);
     color: var(--sola-alert-positive-text, #047857);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid var(--sola-border-subtle, rgba(16, 185, 129, 0.2));
   }
 
   .period-label {
     font-size: 12px;
-    font-weight: 500;
-    color: var(--sola-text-tertiary, #475569);
+    font-weight: 400;
+    color: var(--sola-text-tertiary, #64748b);
   }
 </style>

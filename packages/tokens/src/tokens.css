@@ -185,6 +185,14 @@
   --sola-ease-standard:  cubic-bezier(0.16, 1, 0.3, 1);
   --sola-duration-fast:  160ms;
   --sola-duration-base:  240ms;
+
+  /* ─── Component geometry & elevation (preset-adaptable) ────────────────────*/
+  --sola-card-radius:        var(--sola-radius-xl);
+  --sola-card-padding:       18px 20px;
+  --sola-card-shadow:        0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --sola-control-radius:     var(--sola-radius-md);
+  --sola-table-cell-padding: 10px 14px;
+  --sola-btn-primary-fg:     #ffffff;
 }
 
 /* ─── Dark mode — system default ─────────────────────────────────────────────
@@ -214,6 +222,8 @@
     --sola-alert-warning-bg:   #1c0c00;
     --sola-alert-high-bg:      #1c0000;
     --sola-alert-critical-bg:  #1a0030;
+
+    --sola-card-shadow:        0 1px 3px rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -240,4 +250,162 @@
   --sola-alert-warning-bg:   #1c0c00;
   --sola-alert-high-bg:      #1c0000;
   --sola-alert-critical-bg:  #1a0030;
+
+  --sola-card-shadow:        0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+/* ─── Chameleon Preset 1: Shadcn / Zinc (`data-preset="shadcn"`) ─────────────
+ * Crisp 1px zinc borders, 6px–8px radii, flat monochrome surfaces, subtle shadow.
+ */
+:root[data-preset="shadcn"] {
+  --sola-radius-md:          6px;
+  --sola-radius-lg:          6px;
+  --sola-radius-xl:          8px;
+  --sola-radius-2xl:         10px;
+  --sola-card-radius:        8px;
+  --sola-control-radius:     6px;
+  --sola-card-padding:       16px 18px;
+  --sola-table-cell-padding: 10px 12px;
+  --sola-card-shadow:        0 1px 2px 0 rgba(0, 0, 0, 0.04);
+
+  --sola-color-primary-500:  #18181b;
+  --sola-color-primary-600:  #27272a;
+  --sola-color-brand-500:    #18181b;
+  --sola-btn-primary-fg:     #fafafa;
+
+  --sola-text-primary:       #09090b;
+  --sola-text-secondary:     #52525b;
+  --sola-text-tertiary:      #71717a;
+
+  --sola-surface-0:          #ffffff;
+  --sola-surface-1:          #fafafa;
+  --sola-surface-2:          #f4f4f5;
+
+  --sola-border-subtle:      #e4e4e7;
+  --sola-border-default:     #d4d4d8;
+  --sola-border-strong:      #a1a1aa;
+}
+
+:root[data-preset="shadcn"][data-theme="dark"] {
+  --sola-color-primary-500:  #fafafa;
+  --sola-color-primary-600:  #e4e4e7;
+  --sola-color-brand-500:    #d4d4d8;
+  --sola-btn-primary-fg:     #09090b;
+
+  --sola-text-primary:       #fafafa;
+  --sola-text-secondary:     #a1a1aa;
+  --sola-text-tertiary:      #71717a;
+
+  --sola-surface-0:          #09090b;
+  --sola-surface-1:          #121215;
+  --sola-surface-2:          #18181b;
+
+  --sola-border-subtle:      #27272a;
+  --sola-border-default:     #3f3f46;
+  --sola-border-strong:      #52525b;
+  --sola-card-shadow:        none;
+}
+
+/* ─── Chameleon Preset 2: Enterprise Workspace (`data-preset="enterprise"`) ──
+ * High-density enterprise workspace geometry, navy/sky accent, compact rows.
+ */
+:root[data-preset="enterprise"] {
+  --sola-radius-md:          6px;
+  --sola-radius-lg:          8px;
+  --sola-radius-xl:          8px;
+  --sola-radius-2xl:         10px;
+  --sola-card-radius:        8px;
+  --sola-control-radius:     6px;
+  --sola-card-padding:       14px 16px;
+  --sola-table-cell-padding: 8px 12px;
+  --sola-card-shadow:        0 1px 2px rgba(15, 23, 42, 0.05);
+
+  --sola-color-primary-500:  #0284c7;
+  --sola-color-primary-600:  #0369a1;
+  --sola-color-brand-500:    #0284c7;
+  --sola-btn-primary-fg:     #ffffff;
+
+  --sola-text-primary:       #0f172a;
+  --sola-text-secondary:     #334155;
+  --sola-text-tertiary:      #64748b;
+
+  --sola-surface-0:          #ffffff;
+  --sola-surface-1:          #f4f6f9;
+  --sola-surface-2:          #e8ecf2;
+
+  --sola-border-subtle:      #dce2ec;
+  --sola-border-default:     #cbd5e1;
+  --sola-border-strong:      #94a3b8;
+}
+
+:root[data-preset="enterprise"][data-theme="dark"] {
+  --sola-color-primary-500:  #0ea5e9;
+  --sola-color-primary-600:  #0284c7;
+  --sola-color-brand-500:    #38bdf8;
+  --sola-btn-primary-fg:     #ffffff;
+
+  --sola-text-primary:       #f1f5f9;
+  --sola-text-secondary:     #94a3b8;
+  --sola-text-tertiary:      #64748b;
+
+  --sola-surface-0:          #0b1120;
+  --sola-surface-1:          #111827;
+  --sola-surface-2:          #1e293b;
+
+  --sola-border-subtle:      #1e293b;
+  --sola-border-default:     #334155;
+  --sola-border-strong:      #475569;
+  --sola-card-shadow:        0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* ─── Chameleon Preset 3: Linear / Raycast (`data-preset="linear"`) ──────────
+ * Precision graphite surfaces, indigo-violet accent, tight 8px cards & hairline borders.
+ */
+:root[data-preset="linear"] {
+  --sola-radius-md:          5px;
+  --sola-radius-lg:          6px;
+  --sola-radius-xl:          8px;
+  --sola-radius-2xl:         10px;
+  --sola-card-radius:        8px;
+  --sola-control-radius:     5px;
+  --sola-card-padding:       16px 18px;
+  --sola-table-cell-padding: 9px 12px;
+  --sola-card-shadow:        0 1px 2px rgba(0, 0, 0, 0.04);
+
+  --sola-color-primary-500:  #5e6ad2;
+  --sola-color-primary-600:  #4f5bc4;
+  --sola-color-brand-500:    #5e6ad2;
+  --sola-btn-primary-fg:     #ffffff;
+
+  --sola-text-primary:       #111318;
+  --sola-text-secondary:     #4b505d;
+  --sola-text-tertiary:      #828795;
+
+  --sola-surface-0:          #ffffff;
+  --sola-surface-1:          #f7f8f9;
+  --sola-surface-2:          #eeeff2;
+
+  --sola-border-subtle:      #e4e6eb;
+  --sola-border-default:     #d0d3dc;
+  --sola-border-strong:      #9ca1b0;
+}
+
+:root[data-preset="linear"][data-theme="dark"] {
+  --sola-color-primary-500:  #5e6ad2;
+  --sola-color-primary-600:  #6e7ae2;
+  --sola-color-brand-500:    #7c86ee;
+  --sola-btn-primary-fg:     #ffffff;
+
+  --sola-text-primary:       #f7f8f8;
+  --sola-text-secondary:     #8a8f98;
+  --sola-text-tertiary:      #62666d;
+
+  --sola-surface-0:          #08090a;
+  --sola-surface-1:          #0f1012;
+  --sola-surface-2:          #18191c;
+
+  --sola-border-subtle:      #222326;
+  --sola-border-default:     #2e3035;
+  --sola-border-strong:      #42454d;
+  --sola-card-shadow:        0 1px 0 0 rgba(255, 255, 255, 0.04) inset;
 }

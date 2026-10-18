@@ -38,12 +38,12 @@
     position: fixed;
     z-index: var(--sola-z-nav, 100);
     display: flex;
-    gap: var(--sola-space-xs, 6px);
-    padding: var(--sola-space-xs, 6px);
+    gap: 4px;
+    padding: 6px;
     background: var(--sola-surface-1, #ffffff);
-    border: 1px solid var(--sola-border-default, #e2e8f0);
-    border-radius: var(--sola-radius-xl, 20px);
-    box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: var(--sola-card-radius, var(--sola-radius-xl, 14px));
+    box-shadow: var(--sola-card-shadow, 0 10px 30px -8px rgba(0, 0, 0, 0.25));
   }
 
   .sola-dock.bottom {
@@ -72,15 +72,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     padding: 0;
     border: 0;
-    border-radius: var(--sola-radius-lg, 14px);
+    border-radius: var(--sola-control-radius, var(--sola-radius-md, 8px));
     background: transparent;
     color: var(--sola-text-secondary, #475569);
-    font-size: var(--sola-font-size-lg, 16px);
-    font-weight: var(--sola-font-weight-semibold, 600);
+    font-size: 13px;
+    font-family: var(--sola-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-weight: 600;
     cursor: pointer;
     transition: background var(--sola-duration-fast, 120ms) var(--sola-ease-standard, ease),
       color var(--sola-duration-fast, 120ms) var(--sola-ease-standard, ease);
@@ -92,13 +93,13 @@
   }
 
   .dock-item:focus-visible {
-    outline: 2px solid var(--sola-color-primary-600, #059669);
+    outline: 2px solid var(--sola-color-brand-500, #38bdf8);
     outline-offset: 2px;
   }
 
   .dock-item.active {
-    background: var(--sola-color-primary-600, #059669);
-    color: var(--sola-color-neutral-0, #ffffff);
+    background: var(--sola-color-brand-500, #38bdf8);
+    color: var(--sola-btn-primary-fg, #090d19);
   }
 
   .dock-badge {

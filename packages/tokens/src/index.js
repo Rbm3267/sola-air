@@ -116,6 +116,9 @@ export const tokens = {
       base: '240ms',
     },
   },
+
+  /** Built-in Chameleon host design system presets (`data-preset`). */
+  presets: ['sola', 'shadcn', 'enterprise', 'linear'],
 };
 
 export default tokens;

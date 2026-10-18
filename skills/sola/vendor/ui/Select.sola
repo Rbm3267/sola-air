@@ -80,11 +80,11 @@
   .select-native {
     width: 100%;
     appearance: none;
-    background: var(--sola-surface-1, rgba(248, 250, 252, 0.9));
-    border: 1px solid var(--sola-border-default, rgba(203, 213, 225, 0.8));
-    border-radius: var(--sola-radius-lg, 12px);
-    padding: 12px 36px 12px 16px;
-    font-size: var(--sola-font-size-md, 14px);
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-default, #cbd5e1);
+    border-radius: var(--sola-control-radius, 8px);
+    padding: 8px 34px 8px 12px;
+    font-size: 13px;
     font-weight: var(--sola-font-weight-medium, 500);
     color: var(--sola-text-primary, #0f172a);
     outline: none;

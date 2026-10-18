@@ -18,41 +18,33 @@
 <style>
   .sola-card {
     position: relative;
-    background: var(--sola-surface-0, rgba(255, 255, 255, 0.85));
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--sola-border-subtle, rgba(226, 232, 240, 0.9));
-    border-radius: 24px;
-    padding: 28px;
-    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.05);
+    background: var(--sola-surface-0, #ffffff);
+    border: 1px solid var(--sola-border-subtle, #e2e8f0);
+    border-radius: var(--sola-card-radius, 12px);
+    padding: var(--sola-card-padding, 20px 22px);
+    box-shadow: var(--sola-card-shadow, 0 1px 3px rgba(15, 23, 42, 0.04));
     overflow: hidden;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .sola-card:hover {
-    border-color: var(--sola-border-default, rgba(203, 213, 225, 1));
-    box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.08);
+    border-color: var(--sola-border-default, #cbd5e1);
   }
 
   .card-glow {
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
-    pointer-events: none;
+    display: none;
   }
 
   .card-header {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--sola-surface-2, #f1f5f9);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--sola-border-subtle, #f1f5f9);
   }
 
   .card-title {
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 15px;
+    font-weight: 600;
     color: var(--sola-text-primary, #0f172a);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 </style>

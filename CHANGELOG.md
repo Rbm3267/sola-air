@@ -4,6 +4,26 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-18: tokens 1.3.0, ui 1.7.0, sola-air 1.2.2
+
+### `@sola-air-ui/tokens`
+
+- **Added**: Chameleon host design system presets (`data-preset="shadcn" | "enterprise" | "linear"`) with light and
+  dark mode support, plus preset-adaptable component geometry tokens (`--sola-card-radius`, `--sola-card-padding`,
+  `--sola-card-shadow`, `--sola-control-radius`, `--sola-table-cell-padding`, `--sola-btn-primary-fg`,
+  `--sola-color-brand-500`).
+
+### `@sola-air-ui/ui`
+
+- **Changed**: signature telemetry, AI, and layout primitives (`DataCard`, `GaugeCard`, `Chart`, `Table`, `Button`,
+  `Select`, `Badge`, `Alert`, `Card`, `LauncherDock`, `ActionStrip`) now consume the preset-adaptable geometry,
+  elevation, and brand tokens and use `font-variant-numeric: tabular-nums` for metric alignment.
+
+### Claude and Gemini skill (`skills/sola`)
+
+- **Added**: `--preset sola|shadcn|enterprise|linear` CLI flag in `scripts/preview.mjs` and deterministic
+  `absWorkingDir` bundling in `scripts/build-skill.mjs`.
+
 ## 2026-10-18: relay 1.0.4
 
 ### `@sola-air-ui/relay`

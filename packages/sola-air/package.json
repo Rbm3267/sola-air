@@ -1,6 +1,6 @@
 {
   "name": "sola-air",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Zero-VDOM intent runtime — install everything you need to build with Sola",
   "type": "module",
   "main": "./src/index.js",
@@ -25,13 +25,13 @@
   },
   "dependencies": {
     "@sola-air-ui/core": "^1.5.2",
-    "@sola-air-ui/compiler": "^1.5.0",
+    "@sola-air-ui/compiler": "^1.5.2",
     "@sola-air-ui/vite-plugin-sola": "^1.0.4",
-    "@sola-air-ui/relay": "^1.0.3",
+    "@sola-air-ui/relay": "^1.0.4",
     "@sola-air-ui/mcp": "^1.0.5",
-    "@sola-air-ui/ui": "^1.6.0",
+    "@sola-air-ui/ui": "^1.7.0",
     "@sola-air-ui/providers": "^1.0.3",
-    "@sola-air-ui/tokens": "^1.2.0"
+    "@sola-air-ui/tokens": "^1.3.0"
   },
   "publishConfig": {
     "access": "public",
