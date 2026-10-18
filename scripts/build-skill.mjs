@@ -181,9 +181,7 @@ description: Design and build user interfaces with Sola AIR (.sola single-file c
 
 ${body.replaceAll('<SKILL_DIR>', '<skill-dir>')}`);
 
-emit('GEMINI.md', `# Sola AIR design skill
-
-${body.replaceAll('<SKILL_DIR>', '~/.gemini/extensions/sola-ui')}`);
+emit('GEMINI.md', body.replaceAll('<SKILL_DIR>', '~/.gemini/extensions/sola-ui'));
 
 emit('gemini-extension.json', JSON.stringify({
   name: 'sola-ui',
@@ -236,7 +234,7 @@ if (repoDirArg) {
   for (const [rel, contents] of files) if (!rootOnly.has(rel)) put(`skills/sola-ui/${rel}`, contents);
 
   const description = 'Design with Sola AIR: write .sola components using the real @sola-air-ui/ui props, and render a self-contained HTML preview.';
-  put('GEMINI.md', `# Sola AIR design skill\n\n${body.replaceAll('<SKILL_DIR>', '~/.gemini/extensions/sola-ui/skills/sola-ui')}`);
+  put('GEMINI.md', body.replaceAll('<SKILL_DIR>', '~/.gemini/extensions/sola-ui/skills/sola-ui'));
   put('gemini-extension.json', files.get('gemini-extension.json'));
   put('.claude-plugin/plugin.json', JSON.stringify({
     name: 'sola-ui',

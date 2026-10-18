@@ -102,7 +102,7 @@ if (args.includes('--check')) {
 }
 
 const out = opt('-o') || input.replace(/\.sola$/, '') + '.preview.html';
-const title = path.basename(input, '.sola');
+const title = path.basename(input, '.sola').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const inline = (code) => code.replace(/<\/script/gi, '<\\/script');
 const html = `<!doctype html>
 <html lang="en" data-theme="${theme}">
