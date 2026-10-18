@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-18: relay 1.0.4
+
 ### `@sola-air-ui/relay`
 
 - **Fixed**: `$data('connection:table')`, the form every doc uses, works. The relay rejected any source that
