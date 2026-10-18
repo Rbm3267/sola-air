@@ -11,6 +11,10 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Added**: component geometry tokens the presets set and you can override: `--sola-card-radius`,
   `--sola-card-padding`, `--sola-card-shadow`, `--sola-control-radius`, `--sola-table-cell-padding`,
   `--sola-btn-primary-fg`, `--sola-color-brand-500`.
+- **Fixed**: tertiary text and warning text meet 4.5:1 contrast. `--sola-text-tertiary` is `#64748b` in light
+  (was `#94a3b8`, 2.6:1) and `#8492a6` in dark (was `#64748b`, 3.8:1). `--sola-alert-warning` is `#c2410c` in
+  light (was `#ea580c`, 3.4:1 on its background), and dark mode now sets it to `#fb923c`. This fixes
+  `DataCard`'s "vs last period" label and the warning `Badge`, among others.
 
 ### `@sola-air-ui/ui`
 

@@ -110,7 +110,7 @@
    */
   --sola-text-primary:   #0f172a;
   --sola-text-secondary: #475569;
-  --sola-text-tertiary:  #94a3b8;
+  --sola-text-tertiary:  #64748b;
 
   /* ─── Surface roles ─────────────────────────────────────────────────────────*/
   --sola-surface-0:       #ffffff;
@@ -149,7 +149,7 @@
   --sola-alert-moderate:     #ca8a04;
   --sola-alert-moderate-bg:  #fefce8;
 
-  --sola-alert-warning:      #ea580c;
+  --sola-alert-warning:      #c2410c;
   --sola-alert-warning-bg:   #fff7ed;
 
   --sola-alert-high:         #dc2626;
@@ -203,7 +203,7 @@
   :root:not([data-theme="light"]) {
     --sola-text-primary:   #f8fafc;
     --sola-text-secondary: #94a3b8;
-    --sola-text-tertiary:  #64748b;
+    --sola-text-tertiary:  #8492a6;
 
     --sola-surface-0:       #0f172a;
     --sola-surface-1:       #1e293b;
@@ -219,6 +219,7 @@
     --sola-alert-positive-text: #34d399;
     --sola-alert-info-bg:      #082f49;
     --sola-alert-moderate-bg:  #1c1400;
+    --sola-alert-warning:      #fb923c;
     --sola-alert-warning-bg:   #1c0c00;
     --sola-alert-high-bg:      #1c0000;
     --sola-alert-critical-bg:  #1a0030;
@@ -231,7 +232,7 @@
 :root[data-theme="dark"] {
   --sola-text-primary:   #f8fafc;
   --sola-text-secondary: #94a3b8;
-  --sola-text-tertiary:  #64748b;
+  --sola-text-tertiary:  #8492a6;
 
   --sola-surface-0:       #0f172a;
   --sola-surface-1:       #1e293b;
@@ -247,6 +248,7 @@
   --sola-alert-positive-text: #34d399;
   --sola-alert-info-bg:      #082f49;
   --sola-alert-moderate-bg:  #1c1400;
+  --sola-alert-warning:      #fb923c;
   --sola-alert-warning-bg:   #1c0c00;
   --sola-alert-high-bg:      #1c0000;
   --sola-alert-critical-bg:  #1a0030;
