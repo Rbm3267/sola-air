@@ -24,7 +24,7 @@
   }
 </script>
 
-<div class="{variant === 'separated' ? 'space-y-2' : ''}" role="region">
+<div class="{variant === 'separated' ? 'space-y-2' : ''}">
   {#each items as item}
     <div class="
       {variant === 'bordered' ? 'border border-slate-200 dark:border-white/10 rounded-xl mb-0 first:rounded-t-xl last:rounded-b-xl overflow-hidden' : ''}

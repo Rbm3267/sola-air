@@ -33,8 +33,8 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="relative inline-flex" onclick={(e) => e.stopPropagation()} onkeydown={handleKeydown}>
-  <button onclick={toggle} class="cursor-pointer" aria-haspopup="menu" aria-expanded={isOpen}>
-    <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
+  <button type="button" onclick={toggle} class="cursor-pointer" aria-label="More actions" aria-haspopup="menu" aria-expanded={isOpen}>
+    <svg aria-hidden="true" class="w-5 h-5 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
       <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
     </svg>
   </button>

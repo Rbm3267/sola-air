@@ -59,7 +59,7 @@
   });
 </script>
 
-<div class="w-full h-full min-h-[300px] bg-slate-950 dark:bg-white rounded-2xl overflow-hidden relative shadow-inner">
+<div class="w-full h-full min-h-[300px] bg-slate-950 dark:bg-black/40 rounded-2xl overflow-hidden relative shadow-inner">
   <svg bind:this={svgElement} class="absolute inset-0 w-full h-full">
     <defs>
       <filter id="quantum-glow" x="-20%" y="-20%" width="140%" height="140%">

@@ -80,13 +80,13 @@
         {nominalCount} Nominal
       </span>
       {#if warningCount > 0}
-        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20/80 text-amber-900 text-xs font-mono font-semibold">
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-900 dark:text-amber-300 text-xs font-mono font-semibold">
           <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
           {warningCount} Degraded
         </span>
       {/if}
       {#if criticalCount > 0}
-        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20/80 text-rose-900 text-xs font-mono font-semibold">
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-900 dark:text-rose-300 text-xs font-mono font-semibold">
           <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
           {criticalCount} Critical
         </span>

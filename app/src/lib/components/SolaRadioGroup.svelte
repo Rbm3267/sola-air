@@ -48,7 +48,7 @@
           <div>
             <span class="text-sm font-medium text-slate-900 dark:text-white">{opt.label}</span>
             {#if opt.description}
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 max-w-[68ch]">{opt.description}</p>
+              <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5 max-w-[68ch]">{opt.description}</p>
             {/if}
           </div>
         </div>

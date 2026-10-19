@@ -235,7 +235,7 @@
             <div class="absolute top-2.5 right-3 text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">
               {s.codeBlock.language}
             </div>
-            <pre class="p-4 rounded-2xl bg-slate-950 dark:bg-white text-sky-300 font-mono text-xs overflow-x-auto border border-slate-800 leading-relaxed"><code>{s.codeBlock.code}</code></pre>
+            <pre class="p-4 rounded-2xl bg-slate-950 dark:bg-black/40 text-sky-300 font-mono text-xs overflow-x-auto border border-slate-800 leading-relaxed"><code>{s.codeBlock.code}</code></pre>
           </div>
         {/if}
       </div>

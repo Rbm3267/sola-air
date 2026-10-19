@@ -179,7 +179,7 @@
   }
 </script>
 
-<div class="w-full h-full min-h-[400px] bg-slate-950 dark:bg-white rounded-2xl overflow-hidden shadow-inner relative">
+<div class="w-full h-full min-h-[400px] bg-slate-950 dark:bg-black/40 rounded-2xl overflow-hidden shadow-inner relative">
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <svg
     bind:this={svgElement}

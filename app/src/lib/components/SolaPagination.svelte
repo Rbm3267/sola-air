@@ -112,7 +112,7 @@
           {item.value}
         </button>
       {:else}
-        <span class="h-8 w-6 inline-flex items-center justify-center text-slate-400 dark:text-slate-600 text-xs tracking-wider">
+        <span aria-hidden="true" class="h-8 w-6 inline-flex items-center justify-center text-slate-500 dark:text-slate-400 text-xs tracking-wider">
           ···
         </span>
       {/if}

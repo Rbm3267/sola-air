@@ -104,12 +104,10 @@
 <svelte:window onclick={handleWindowClick} onkeydown={handleWindowKeydown} />
 
 <div class="relative inline-block" bind:this={containerRef}>
-  <!-- Trigger -->
+  <!-- Trigger: the snippet (or the default button) is the focusable control; this
+       wrapper only catches its click and Enter/Space, so it has no role of its own. -->
+  <!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
   <div
-    role="button"
-    tabindex="0"
-    aria-haspopup="dialog"
-    aria-expanded={open}
     onclick={toggle}
     onkeydown={handleTriggerKeydown}
     class="inline-flex cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 rounded-xl"
@@ -119,6 +117,8 @@
     {:else}
       <button
         type="button"
+        aria-haspopup="dialog"
+        aria-expanded={open}
         class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/15 transition-all"
       >
         Open Popover

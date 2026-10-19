@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { portal } from '$lib/actions/portal';
   import { fade, fly } from 'svelte/transition';
   import type { Snippet } from 'svelte';
 
@@ -37,6 +38,7 @@
 
 {#if open}
   <div
+    use:portal
     class="fixed inset-0 z-50 flex {position === 'left' ? 'justify-start' : position === 'bottom' ? 'items-end justify-center' : 'justify-end'}"
     role="dialog"
     aria-modal="true"

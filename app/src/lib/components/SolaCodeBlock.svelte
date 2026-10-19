@@ -52,10 +52,10 @@
 
       if (match[1]) {
         // Comments -> slate-500
-        result += `<span class="text-slate-400 dark:text-slate-500 italic">${escapeHtml(match[0])}</span>`;
+        result += `<span class="text-slate-500 dark:text-slate-400 italic">${escapeHtml(match[0])}</span>`;
       } else if (match[2]) {
         // Strings -> amber-300
-        result += `<span class="text-amber-600 dark:text-amber-300">${escapeHtml(match[0])}</span>`;
+        result += `<span class="text-amber-700 dark:text-amber-300">${escapeHtml(match[0])}</span>`;
       } else if (match[3]) {
         // Keywords -> emerald-400
         result += `<span class="text-blue-600 dark:text-blue-400 font-medium">${escapeHtml(match[0])}</span>`;
