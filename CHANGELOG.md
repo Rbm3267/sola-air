@@ -22,6 +22,11 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   `.sola` files: a counter, a task list and an incidents panel built from `@sola-air-ui/ui` components. Each step shows
   the file, the JavaScript the compiler emits for it (both read at build time) and the component running. It ends
   with how to start a project.
+- **Changed**: Studio arranges real `@sola-air-ui/ui` components (22 of them) instead of site-only mockup cards. The
+  canvas mounts the compiled component, the properties panel edits the props it really declares, and Export writes the
+  same components and props to a `.sola` file that compiles. Mockup cards such as sliders and feeds used to export as
+  components that do not exist. Five templates are built from real components. Arc's new `studio` mode is given only
+  these components and props, and its answer is filtered against the same list. The canvas is kept in `localStorage`.
 - **Fixed**: `.sola` files on the site can import `@sola-air-ui/ui` by subpath (`@sola-air-ui/ui/table`), as apps
   do. The site aliased the package to its `src` folder, so subpath imports did not resolve.
 - **Fixed**: on `/components`, the context menu opens at the pointer and stays on screen, and the dialog, drawer and
