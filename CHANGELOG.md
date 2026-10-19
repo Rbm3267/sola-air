@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-19: compiler 1.5.3, tokens 1.3.1
+
 ### `@sola-air-ui/compiler`
 
 - **Fixed**: a keyed `{#each}` row shows the new item when the list replaces it under the same key (an immutable
