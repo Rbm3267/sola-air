@@ -24,8 +24,12 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Fixed**: accessible names and roles. The dropdown trigger, file input, file remove buttons, date picker month
   buttons and command palette search now have names. Segmented tabs have a `tablist`. The `Select` clear button is no
   longer inside its trigger button, and the popover trigger no longer nests a button inside a button.
-- **Changed**: the 15 catalog entries with no implementation yet say "There is no live preview of this component
-  yet" instead of calling themselves a site preview.
+- **Removed**: 15 `/components` entries that had no implementation behind them (SparklineTile, ComparisonCard,
+  ProgressSteps, CounterTicker, ToggleSwitch, RangeSlider, TimelineLog, KeyValueGrid, AlertBanner, FunnelChart,
+  ToastStack, InlineCallout, NotificationBadge, Snackbar, NotificationCenter). The catalog lists 42 components, and
+  every count on the site follows it.
+- **Fixed**: the `/components` category filters come from the catalog. Buttons & Actions, Overlays & Dialogs,
+  Navigation and Data Display were missing, so their 22 entries could not be filtered to.
 
 ## 2026-10-18: tokens 1.3.0, ui 1.7.0
 

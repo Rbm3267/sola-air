@@ -165,16 +165,12 @@ export function studioCardToItem(card: StudioCardLike): ExportItem {
 export const PACKAGE_EQUIVALENT: Readonly<Record<string, string>> = {
   SolaButton: 'Button',
   SolaBadge: 'Badge',
-  NotificationBadge: 'Badge',
   SolaAlert: 'Alert',
-  AlertBanner: 'Alert',
-  InlineCallout: 'Alert',
   SolaModal: 'Modal',
   SolaDialog: 'Modal',
   SolaSelect: 'Select',
   SolaInput: 'TextInput',
   SolaSwitch: 'Toggle',
-  ToggleSwitch: 'Toggle',
   SolaTable: 'Table',
   SolaDataTable: 'Table',
   SolaDatePicker: 'DatePicker',
@@ -182,8 +178,6 @@ export const PACKAGE_EQUIVALENT: Readonly<Record<string, string>> = {
   SolaChart: 'Chart',
   SolaCommandPalette: 'CommandPalette',
   SolaDrawer: 'CompanionDrawer',
-  ToastStack: 'ToastHost',
-  Snackbar: 'Toast',
   SolaMarkdown: 'MarkdownViewer',
   SolaHtmlPreview: 'HtmlViewer'
   // Only components that do the same job. A tabs strip is not a Stack and an
@@ -191,9 +185,9 @@ export const PACKAGE_EQUIVALENT: Readonly<Record<string, string>> = {
 };
 
 /** What to show instead of code for a component the package does not ship. */
-export function previewNote(component: string, ui: UiManifest, built = true): string {
+export function previewNote(component: string, ui: UiManifest): string {
   const lines = [
-    built ? `// ${component} is a preview built for this site.` : `// ${component} is planned. There is no live preview of it yet.`,
+    `// ${component} is a preview built for this site.`,
     `// It is not part of @sola-air-ui/ui, so there is no code to install.`
   ];
   const equivalent = PACKAGE_EQUIVALENT[component];

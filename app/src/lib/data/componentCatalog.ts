@@ -326,428 +326,55 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
   },
 
   // ───────────────────────────────────────────
-  // 13. Sparkline Tile (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'sparkline-tile',
-    name: 'Sparkline Metric Tile',
-    category: 'Metrics & KPIs',
-    description: 'Compact metric tile with inline SVG sparkline trend chart, current value, and percentage delta badge.',
-    tagline: 'Mini trend charts, inline sparklines, and micro time-series',
-    badge: 'New',
-    componentName: 'SparklineTile',
-    defaultConfig: {
-      title: 'Active Sessions',
-      value: '12,847',
-      trend: '+8.3%',
-      trendDirection: 'up',
-      sparkData: [22, 28, 35, 31, 42, 38, 52, 48, 61, 55, 64, 72]
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Metric', description: 'Tile label' },
-      { name: 'value', type: 'string', defaultValue: '12,847', description: 'Primary display value' },
-      { name: 'trend', type: 'string', defaultValue: '+8.3%', description: 'Trend percentage' },
-      { name: 'trendDirection', type: 'string', defaultValue: 'up', description: 'Trend direction', options: ['up', 'down', 'flat'] },
-      { name: 'sparkData', type: 'number[]', defaultValue: [22, 28, 35, 31, 42], description: 'Array of numeric data points for sparkline' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 14. Comparison Card (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'comparison-card',
-    name: 'Side-by-Side Comparison',
-    category: 'Metrics & KPIs',
-    description: 'Dual-column metric comparison card showing before/after, plan vs actual, or A/B test results with delta highlighting.',
-    tagline: 'A/B comparisons, plan vs actual, and before/after deltas',
-    badge: 'New',
-    componentName: 'ComparisonCard',
-    defaultConfig: {
-      title: 'Plan vs Actual',
-      labelA: 'Target',
-      labelB: 'Actual',
-      valueA: '$240,000',
-      valueB: '$318,400',
-      delta: '+32.7%',
-      deltaType: 'positive'
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Comparison', description: 'Card heading' },
-      { name: 'labelA', type: 'string', defaultValue: 'Target', description: 'Left column label' },
-      { name: 'labelB', type: 'string', defaultValue: 'Actual', description: 'Right column label' },
-      { name: 'valueA', type: 'string', defaultValue: '$240,000', description: 'Left column value' },
-      { name: 'valueB', type: 'string', defaultValue: '$318,400', description: 'Right column value' },
-      { name: 'delta', type: 'string', defaultValue: '+32.7%', description: 'Delta between values' },
-      { name: 'deltaType', type: 'string', defaultValue: 'positive', description: 'Delta coloring', options: ['positive', 'negative', 'neutral'] }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 15. Progress Steps (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'progress-steps',
-    name: 'Multi-Step Progress Bar',
-    category: 'Status & HUD',
-    description: 'Horizontal multi-step progress indicator with labeled stages, completion states, and active step highlighting.',
-    tagline: 'Wizards, onboarding flows, and pipeline stage tracking',
-    badge: 'New',
-    componentName: 'ProgressSteps',
-    defaultConfig: {
-      title: 'Deployment Pipeline',
-      steps: [
-        { label: 'Build', status: 'completed' },
-        { label: 'Test', status: 'completed' },
-        { label: 'Staging', status: 'active' },
-        { label: 'Production', status: 'pending' }
-      ]
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Pipeline', description: 'Progress bar heading' },
-      { name: 'steps', type: 'Array<Step>', defaultValue: [], description: 'Array of steps with label and status (completed/active/pending)' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 16. Counter Ticker (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'counter-ticker',
-    name: 'Animated Counter Ticker',
-    category: 'Metrics & KPIs',
-    description: 'Spring-animated numerical counter with easing transitions, configurable formatting (currency, percent, integer), and suffix labels.',
-    tagline: 'Animated counters, live tickers, and real-time numerics',
-    badge: 'New',
-    componentName: 'CounterTicker',
-    defaultConfig: {
-      title: 'Total Revenue',
-      value: 1284930,
-      prefix: '$',
-      suffix: '',
-      format: 'currency',
-      animationDuration: 1200
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Counter', description: 'Counter label' },
-      { name: 'value', type: 'number', defaultValue: 1284930, description: 'Target numeric value to animate to' },
-      { name: 'prefix', type: 'string', defaultValue: '$', description: 'Prefix character (e.g. $, €)' },
-      { name: 'suffix', type: 'string', defaultValue: '', description: 'Suffix string (e.g. users, ms)' },
-      { name: 'format', type: 'string', defaultValue: 'currency', description: 'Number format', options: ['currency', 'percent', 'integer', 'decimal'] }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 17. Toggle Switch (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'toggle-switch',
-    name: 'Labeled Toggle Switch',
-    category: 'Controllers & Sliders',
-    description: 'Accessible on/off toggle with configurable labels, smooth spring transitions, and optional description text.',
-    tagline: 'Feature flags, preferences, and boolean state controls',
-    badge: 'New',
-    componentName: 'ToggleSwitch',
-    defaultConfig: {
-      label: 'Enable Dark Mode',
-      description: 'Switch between light and dark interface themes',
-      checked: true,
-      size: 'default'
-    },
-    props: [
-      { name: 'label', type: 'string', defaultValue: 'Enable Feature', description: 'Toggle label text' },
-      { name: 'description', type: 'string', defaultValue: '', description: 'Optional description below the label' },
-      { name: 'checked', type: 'boolean', defaultValue: false, description: 'Toggle state' },
-      { name: 'size', type: 'string', defaultValue: 'default', description: 'Toggle size variant', options: ['sm', 'default', 'lg'] }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 18. Range Slider (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'range-slider',
-    name: 'Dual-Thumb Range Slider',
-    category: 'Controllers & Sliders',
-    description: 'Range input with two thumbs for min and max, live value labels and a configurable step.',
-    tagline: 'Price ranges, date spans, and bounded numeric filters',
-    badge: 'New',
-    componentName: 'RangeSlider',
-    defaultConfig: {
-      title: 'Price Range Filter',
-      min: 0,
-      max: 1000,
-      valueLow: 150,
-      valueHigh: 750,
-      step: 10,
-      prefix: '$',
-      color: 'emerald'
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Range', description: 'Slider label' },
-      { name: 'min', type: 'number', defaultValue: 0, description: 'Minimum bound' },
-      { name: 'max', type: 'number', defaultValue: 1000, description: 'Maximum bound' },
-      { name: 'valueLow', type: 'number', defaultValue: 150, description: 'Lower thumb value' },
-      { name: 'valueHigh', type: 'number', defaultValue: 750, description: 'Upper thumb value' },
-      { name: 'step', type: 'number', defaultValue: 10, description: 'Step increment' },
-      { name: 'prefix', type: 'string', defaultValue: '$', description: 'Value prefix' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 19. Timeline Log (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'timeline-log',
-    name: 'Vertical Timeline',
-    category: 'Lists & Feeds',
-    description: 'Chronological vertical timeline with event nodes, timestamps, descriptions, and status-colored connectors.',
-    tagline: 'Activity history, changelog, and chronological milestones',
-    badge: 'New',
-    componentName: 'TimelineLog',
-    defaultConfig: {
-      title: 'Activity History',
-      entries: [
-        { time: '2 min ago', label: 'Deployment completed', description: 'v2.4.1 deployed to production', status: 'success' },
-        { time: '18 min ago', label: 'Tests passed', description: 'All 342 test suites green', status: 'success' },
-        { time: '45 min ago', label: 'Build started', description: 'Triggered by merge to main', status: 'info' },
-        { time: '1 hr ago', label: 'PR approved', description: 'Reviewed by 2 maintainers', status: 'info' }
-      ]
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Timeline', description: 'Timeline header' },
-      { name: 'entries', type: 'Array<Entry>', defaultValue: [], description: 'Array of timeline entries with time, label, description, and status' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 20. Key-Value Grid (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'key-value-grid',
-    name: 'Key-Value Property Grid',
-    category: 'Lists & Feeds',
-    description: 'Clean two-column property grid for displaying key-value metadata pairs with optional copy buttons and type badges.',
-    tagline: 'Metadata viewers, config panels, and property inspectors',
-    badge: 'New',
-    componentName: 'KeyValueGrid',
-    defaultConfig: {
-      title: 'Instance Metadata',
-      pairs: [
-        { key: 'Instance ID', value: 'i-0a1b2c3d4e5f67890' },
-        { key: 'Region', value: 'us-east-1' },
-        { key: 'Type', value: 'r6g.2xlarge' },
-        { key: 'State', value: 'Running', badge: 'success' },
-        { key: 'Launch Time', value: '2026-08-29T08:12:00Z' },
-        { key: 'Private IP', value: '10.0.4.217' }
-      ]
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Properties', description: 'Grid heading' },
-      { name: 'pairs', type: 'Array<Pair>', defaultValue: [], description: 'Array of key-value pairs with optional badge' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 21. Alert Banner (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'alert-banner',
-    name: 'Dismissible Alert Banner',
-    category: 'Status & HUD',
-    description: 'Full-width alert banner with severity variants (info, success, warning, error), icon, message, action button, and dismiss control.',
-    tagline: 'System notices, maintenance banners, and inline alerts',
-    badge: 'New',
-    componentName: 'AlertBanner',
-    defaultConfig: {
-      title: 'Scheduled Maintenance',
-      message: 'A maintenance window is planned for Sunday 02:00–04:00 UTC. Services may be briefly unavailable.',
-      severity: 'warning',
-      actionLabel: 'View Details',
-      dismissible: true
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Notice', description: 'Alert headline' },
-      { name: 'message', type: 'string', defaultValue: 'Something happened.', description: 'Alert body text' },
-      { name: 'severity', type: 'string', defaultValue: 'info', description: 'Alert severity level', options: ['info', 'success', 'warning', 'error'] },
-      { name: 'actionLabel', type: 'string', defaultValue: '', description: 'Optional action button text' },
-      { name: 'dismissible', type: 'boolean', defaultValue: true, description: 'Whether the banner can be dismissed' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 22. Funnel Chart (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'funnel-chart',
-    name: 'Conversion Funnel',
-    category: 'Flows & Cascades',
-    description: 'Tapered funnel visualization showing progressive stage-to-stage conversion rates, drop-off percentages, and absolute counts.',
-    tagline: 'Sales funnels, signup flows, and conversion rate analysis',
-    badge: 'New',
-    componentName: 'FunnelChart',
-    defaultConfig: {
-      title: 'Signup Conversion Funnel',
-      stages: [
-        { label: 'Page Views', value: 48200, color: 'sky' },
-        { label: 'Sign Up Started', value: 12400, color: 'emerald' },
-        { label: 'Email Verified', value: 8100, color: 'amber' },
-        { label: 'Onboarding Done', value: 4800, color: 'violet' },
-        { label: 'First Purchase', value: 2100, color: 'rose' }
-      ]
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Funnel', description: 'Chart title' },
-      { name: 'stages', type: 'Array<Stage>', defaultValue: [], description: 'Funnel stages with label, value, and optional color' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 23. Toast Stack (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'toast-stack',
-    name: 'Toast Notification Stack',
-    category: 'Status & HUD',
-    description: 'Auto-dismissing stacked notification toasts with severity icons, progress countdown bars, and configurable duration and position.',
-    tagline: 'Transient feedback, success confirmations, and error alerts',
-    badge: 'New',
-    componentName: 'ToastStack',
-    defaultConfig: {
-      position: 'bottom-right',
-      toasts: [
-        { id: 1, title: 'Changes saved', message: 'Your configuration has been applied.', severity: 'success', duration: 4000 },
-        { id: 2, title: 'New deployment', message: 'v2.4.1 is rolling out to production.', severity: 'info', duration: 5000 }
-      ]
-    },
-    props: [
-      { name: 'position', type: 'string', defaultValue: 'bottom-right', description: 'Screen anchor position', options: ['top-right', 'top-left', 'bottom-right', 'bottom-left', 'top-center', 'bottom-center'] },
-      { name: 'toasts', type: 'Array<Toast>', defaultValue: [], description: 'Array of toast objects with title, message, severity, and duration' },
-      { name: 'maxVisible', type: 'number', defaultValue: 5, description: 'Maximum toasts visible at once before stacking' },
-      { name: 'defaultDuration', type: 'number', defaultValue: 4000, description: 'Auto-dismiss duration in milliseconds (0 = persistent)' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 24. Inline Callout (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'inline-callout',
-    name: 'Inline Callout Block',
-    category: 'Status & HUD',
-    description: 'Contextual inline callout with left accent border, severity icon, rich text body, and optional action link — similar to GitHub-style alerts.',
-    tagline: 'Tips, warnings, notes, and contextual inline notices',
-    badge: 'New',
-    componentName: 'InlineCallout',
-    defaultConfig: {
-      variant: 'info',
-      title: 'Compiler Check',
-      message: 'Run sola-check in CI to catch unclosed template blocks and compile diagnostics before deployment. See the quickstart guide for details.',
-      actionLabel: 'View Quickstart Guide',
-      actionHref: '/docs#quickstart',
-      dismissible: false
-    },
-    props: [
-      { name: 'variant', type: 'string', defaultValue: 'info', description: 'Callout visual style', options: ['note', 'tip', 'info', 'warning', 'caution', 'success'] },
-      { name: 'title', type: 'string', defaultValue: '', description: 'Optional bold heading' },
-      { name: 'message', type: 'string', defaultValue: 'Callout message.', description: 'Body text content' },
-      { name: 'actionLabel', type: 'string', defaultValue: '', description: 'Optional inline action link text' },
-      { name: 'actionHref', type: 'string', defaultValue: '', description: 'Action link URL' },
-      { name: 'dismissible', type: 'boolean', defaultValue: false, description: 'Whether the callout can be dismissed' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 25. Notification Badge (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'notification-badge',
-    name: 'Counter Badge & Status Dot',
-    category: 'Status & HUD',
-    description: 'Compact notification counter badge or pulsing status dot that overlays any element — with configurable threshold, color, and animation.',
-    tagline: 'Unread counts, status indicators, and attention dots',
-    badge: 'New',
-    componentName: 'NotificationBadge',
-    defaultConfig: {
-      count: 12,
-      maxCount: 99,
-      color: 'rose',
-      showZero: false,
-      pulse: true,
-      variant: 'counter'
-    },
-    props: [
-      { name: 'count', type: 'number', defaultValue: 12, description: 'Notification count to display' },
-      { name: 'maxCount', type: 'number', defaultValue: 99, description: 'Threshold before showing "99+"' },
-      { name: 'color', type: 'string', defaultValue: 'rose', description: 'Badge accent color', options: ['rose', 'emerald', 'amber', 'sky', 'violet'] },
-      { name: 'showZero', type: 'boolean', defaultValue: false, description: 'Whether to show badge when count is 0' },
-      { name: 'pulse', type: 'boolean', defaultValue: false, description: 'Enable pulse animation for attention' },
-      { name: 'variant', type: 'string', defaultValue: 'counter', description: 'Badge variant', options: ['counter', 'dot', 'ping'] }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 26. Snackbar (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'snackbar',
-    name: 'Action Snackbar',
-    category: 'Status & HUD',
-    description: 'Bottom-anchored snackbar with message text, optional undo/action button, auto-dismiss timer, and swipe-to-dismiss gesture support.',
-    tagline: 'Undo confirmations, quick actions, and bottom-sheet notices',
-    badge: 'New',
-    componentName: 'Snackbar',
-    defaultConfig: {
-      message: '3 items moved to archive.',
-      actionLabel: 'Undo',
-      duration: 6000,
-      position: 'bottom-center',
-      icon: 'archive'
-    },
-    props: [
-      { name: 'message', type: 'string', defaultValue: 'Action completed.', description: 'Snackbar body text' },
-      { name: 'actionLabel', type: 'string', defaultValue: '', description: 'Optional action button text (e.g. "Undo")' },
-      { name: 'duration', type: 'number', defaultValue: 6000, description: 'Auto-dismiss in ms (0 = persistent)' },
-      { name: 'position', type: 'string', defaultValue: 'bottom-center', description: 'Anchor position', options: ['bottom-center', 'bottom-left', 'bottom-right'] },
-      { name: 'icon', type: 'string', defaultValue: '', description: 'Optional leading icon identifier' }
-    ],
-  },
 
   // ───────────────────────────────────────────
-  // 27. Notification Center (NEW)
   // ───────────────────────────────────────────
-  {
-    id: 'notification-center',
-    name: 'Notification Center Dropdown',
-    category: 'Status & HUD',
-    description: 'Dropdown panel listing recent notifications grouped by time, with read/unread states, action links, mark-all-read, and scroll pagination.',
-    tagline: 'Inbox feeds, notification history, and message centers',
-    badge: 'New',
-    componentName: 'NotificationCenter',
-    defaultConfig: {
-      title: 'Notifications',
-      unreadCount: 4,
-      notifications: [
-        { id: '1', title: 'Deployment succeeded', message: 'v2.4.1 is live on production.', time: '2 min ago', read: false, severity: 'success' },
-        { id: '2', title: 'PR review requested', message: 'Alex requested your review on #847.', time: '15 min ago', read: false, severity: 'info' },
-        { id: '3', title: 'Memory alert resolved', message: 'us-east-1a memory usage back to 62%.', time: '1 hr ago', read: true, severity: 'warning' },
-        { id: '4', title: 'Weekly report ready', message: 'Your performance summary is available.', time: '3 hrs ago', read: true, severity: 'info' }
-      ]
-    },
-    props: [
-      { name: 'title', type: 'string', defaultValue: 'Notifications', description: 'Panel heading' },
-      { name: 'notifications', type: 'Array<Notification>', defaultValue: [], description: 'Array of notification items' },
-      { name: 'unreadCount', type: 'number', defaultValue: 0, description: 'Count of unread notifications' },
-      { name: 'maxVisible', type: 'number', defaultValue: 10, description: 'Items visible before scroll pagination' },
-      { name: 'groupByTime', type: 'boolean', defaultValue: true, description: 'Group notifications by time period (Today, Earlier)' }
-    ],
-  },
 
   // ═══════════════════════════════════════════
   // PHASE 1: FOUNDATIONAL PRIMITIVES
   // ═══════════════════════════════════════════
 
-  // 28. Button
+  // 13. Button
   {
     id: 'sola-button',
     name: 'Button & Icon Button',
@@ -772,7 +399,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 29. Dialog
+  // 14. Dialog
   {
     id: 'sola-dialog',
     name: 'Modal Dialog',
@@ -793,7 +420,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 30. Tabs
+  // 15. Tabs
   {
     id: 'sola-tabs',
     name: 'Tabs & Segmented Control',
@@ -818,7 +445,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 31. Tooltip
+  // 16. Tooltip
   {
     id: 'sola-tooltip',
     name: 'Tooltip',
@@ -839,7 +466,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 32. Avatar
+  // 17. Avatar
   {
     id: 'sola-avatar',
     name: 'Avatar & Status Indicator',
@@ -864,7 +491,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 33. Skeleton Loader
+  // 18. Skeleton Loader
   {
     id: 'sola-skeleton',
     name: 'Skeleton Loader',
@@ -887,7 +514,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 34. Select / Combobox
+  // 19. Select / Combobox
   {
     id: 'sola-select',
     name: 'Select & Combobox',
@@ -916,7 +543,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 35. Dropdown Menu
+  // 20. Dropdown Menu
   {
     id: 'sola-dropdown',
     name: 'Dropdown Action Menu',
@@ -942,7 +569,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 36. Accordion
+  // 21. Accordion
   {
     id: 'sola-accordion',
     name: 'Accordion & Collapsible',
@@ -967,7 +594,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 37. Checkbox
+  // 22. Checkbox
   {
     id: 'sola-checkbox',
     name: 'Checkbox',
@@ -985,7 +612,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 38. Radio Group
+  // 23. Radio Group
   {
     id: 'sola-radio-group',
     name: 'Radio Group',
@@ -1010,7 +637,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 39. Text Input
+  // 24. Text Input
   {
     id: 'sola-input',
     name: 'Text Input',
@@ -1029,7 +656,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 40. Textarea
+  // 25. Textarea
   {
     id: 'sola-textarea',
     name: 'Textarea',
@@ -1048,7 +675,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 41. Data Table
+  // 26. Data Table
   {
     id: 'sola-data-table',
     name: 'Data Table',
@@ -1082,7 +709,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 42. Pagination
+  // 27. Pagination
   {
     id: 'sola-pagination',
     name: 'Pagination',
@@ -1099,7 +726,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 43. Empty State
+  // 28. Empty State
   {
     id: 'sola-empty-state',
     name: 'Empty State',
@@ -1117,7 +744,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 44. Popover
+  // 29. Popover
   {
     id: 'sola-popover',
     name: 'Popover',
@@ -1137,7 +764,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
   // PHASE 2: HIGH-VALUE COMPONENTS
   // ═══════════════════════════════════════════
 
-  // 45. Drawer / Sheet
+  // 30. Drawer / Sheet
   {
     id: 'sola-drawer',
     name: 'Drawer & Sheet',
@@ -1155,7 +782,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 46. Breadcrumb
+  // 31. Breadcrumb
   {
     id: 'sola-breadcrumb',
     name: 'Breadcrumb',
@@ -1177,7 +804,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 47. Command Palette
+  // 32. Command Palette
   {
     id: 'sola-command-palette',
     name: 'Command Palette',
@@ -1204,7 +831,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 48. Code Block
+  // 33. Code Block
   {
     id: 'sola-code-block',
     name: 'Code Block',
@@ -1229,7 +856,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 49. Date & Date-Range Picker
+  // 34. Date & Date-Range Picker
   {
     id: 'sola-date-picker',
     name: 'Date & Range Picker',
@@ -1246,7 +873,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 50. Sidebar Shell & Navigation Rail
+  // 35. Sidebar Shell & Navigation Rail
   {
     id: 'sola-sidebar',
     name: 'Sidebar Shell & Nav Rail',
@@ -1262,7 +889,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 51. Signal Area / Bar / Line Chart
+  // 36. Signal Area / Bar / Line Chart
   {
     id: 'sola-chart',
     name: 'Signal Telemetry Chart',
@@ -1288,7 +915,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 52. Resizable Multi-Pane Splitter
+  // 37. Resizable Multi-Pane Splitter
   {
     id: 'sola-splitter',
     name: 'Resizable Pane Splitter',
@@ -1304,7 +931,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 53. Context Menu
+  // 38. Context Menu
   {
     id: 'sola-context-menu',
     name: 'Right-Click Context Menu',
@@ -1319,7 +946,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 54. File Upload Dropzone
+  // 39. File Upload Dropzone
   {
     id: 'sola-file-upload',
     name: 'File Upload Dropzone',
@@ -1335,7 +962,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 55. Keyboard Shortcut Badge
+  // 40. Keyboard Shortcut Badge
   {
     id: 'sola-kbd',
     name: 'Keyboard Shortcut (Kbd)',
@@ -1351,7 +978,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 56. Hover Card Preview
+  // 41. Hover Card Preview
   {
     id: 'sola-hover-card',
     name: 'Hover Card Preview',
@@ -1373,7 +1000,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     ],
   },
 
-  // 57. SolaSafeHTML
+  // 42. SolaSafeHTML
   {
     id: 'sola-safe-html',
     name: 'Rich Text Renderer',

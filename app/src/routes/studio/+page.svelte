@@ -489,7 +489,7 @@
         Chart: 'chart', SolaChart: 'chart', FlowWaterfall: 'waterfall',
         Table: 'table', SolaDataTable: 'table', ListBlock: 'feed', StreamView: 'feed',
         DynamicForm: 'status', IncidentTriageMatrix: 'table',
-        TactileDialCard: 'radial_dial', ProgressSteps: 'progress',
+        TactileDialCard: 'radial_dial',
         SolaCodeBlock: 'code', MarkdownViewer: 'code'
       };
       const CARD_TYPES = new Set([
