@@ -120,3 +120,21 @@ test.describe('component catalog popups', () => {
     });
   }
 });
+
+test.describe('component catalog contents', () => {
+  test('every category has a filter, and every entry renders a component', async ({ page }) => {
+    test.setTimeout(180_000);
+    const { COMPONENT_CATALOG } = await import('../app/src/lib/data/componentCatalog');
+    await page.goto('/components');
+    await page.waitForLoadState('networkidle');
+    for (const category of new Set(COMPONENT_CATALOG.map((c) => c.category))) {
+      await expect(page.getByRole('button', { name: category, exact: true }), `filter for ${category}`).toBeVisible();
+    }
+    for (const c of COMPONENT_CATALOG) {
+      await page.goto(`/components?component=${c.id}`);
+      const stage = page.locator('div.min-h-\\[220px\\]').first();
+      // Element count, not text: the skeleton preview is boxes with no text.
+      await expect.poll(() => stage.locator('*').count(), { message: `${c.id} renders a component` }).toBeGreaterThan(1);
+    }
+  });
+});

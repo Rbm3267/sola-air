@@ -90,17 +90,8 @@
     }
   }
 
-  const categories = [
-    'All',
-    'Metrics & KPIs',
-    'Gauges & Rings',
-    'Controllers & Sliders',
-    'Flows & Cascades',
-    'Lists & Feeds',
-    'Matrices & Graphs',
-    'Forms & Inputs',
-    'Status & HUD'
-  ];
+  // From the catalog itself, in order of first appearance, so every entry has a filter.
+  const categories = ['All', ...new Set(COMPONENT_CATALOG.map((c) => c.category))];
 
   const filteredComponents = $derived(
     COMPONENT_CATALOG.filter(item => {
@@ -117,17 +108,9 @@
   // Generated from what @sola-air-ui/ui really exports, never hand-written:
   // a published component gets a real .sola file or mount call with only the
   // props it declares; a site preview says plainly that there is nothing to install.
-  // Catalog entries with no implementation yet: the stage says so instead of
-  // showing a component, and the code panel does not call them a preview.
-  const NOT_BUILT = new Set([
-    'SparklineTile', 'ComparisonCard', 'ProgressSteps', 'CounterTicker', 'ToggleSwitch',
-    'RangeSlider', 'TimelineLog', 'KeyValueGrid', 'AlertBanner', 'FunnelChart',
-    'ToastStack', 'InlineCallout', 'NotificationBadge', 'Snackbar', 'NotificationCenter'
-  ]);
-
   const activeCodeSnippet = $derived.by(() => {
     const name = selectedComponent.componentName;
-    if (!isPublished(selectedComponent)) return previewNote(name, UI_MANIFEST, !NOT_BUILT.has(name));
+    if (!isPublished(selectedComponent)) return previewNote(name, UI_MANIFEST);
     return codeTab === 'sola'
       ? toSolaFile([{ component: name, props: liveProps }], UI_MANIFEST)
       : mountComponentSnippet(name, liveProps, UI_MANIFEST);
@@ -544,33 +527,6 @@
                 {#key JSON.stringify(liveProps)}
                   <SolaMount component={SolaSafeHTMLSola} props={liveProps} />
                 {/key}
-              </div>
-            {:else}
-              <!-- New components show schema-driven preview card -->
-              <div class="w-full max-w-md flex flex-col items-center gap-5 py-6">
-                <div class="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 flex items-center justify-center">
-                  <svg class="w-7 h-7 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-                </div>
-                <div class="text-center">
-                  <h4 class="font-semibold text-sm text-slate-900 dark:text-white">{selectedComponent.name}</h4>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs leading-relaxed">{selectedComponent.description}</p>
-                </div>
-                <p class="text-xs text-slate-600 dark:text-slate-300 text-center max-w-xs leading-relaxed">
-                  There is no live preview of this component yet.
-                  {#if PACKAGE_EQUIVALENT[selectedComponent.componentName]}
-                    For the same job, the package ships <code class="font-mono text-slate-900 dark:text-white">{PACKAGE_EQUIVALENT[selectedComponent.componentName]}</code>.
-                  {/if}
-                </p>
-                <div class="flex items-center gap-2">
-                  <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 text-xs font-mono font-semibold border border-slate-200 dark:border-white/10">
-                    Planned
-                  </span>
-                  {#if PACKAGE_EQUIVALENT[selectedComponent.componentName]}
-                    <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-semibold border border-emerald-200 dark:border-emerald-500/20">
-                      Package has {PACKAGE_EQUIVALENT[selectedComponent.componentName]}
-                    </span>
-                  {/if}
-                </div>
               </div>
             {/if}
           </div>
