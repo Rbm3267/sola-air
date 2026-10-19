@@ -13,11 +13,12 @@ import {
   toSolaFile,
   mountComponentSnippet,
   previewNote,
-  studioCardToItem,
   PACKAGE_EQUIVALENT,
   type UiManifest
 } from '../app/src/lib/data/solaExport';
 import { readUiManifest } from '../scripts/ui-manifest.mjs';
+import { STUDIO_COMPONENTS, buildBlock } from '../app/src/lib/data/studioComponents';
+import { STUDIO_TEMPLATES } from '../app/src/lib/data/studioTemplates';
 
 const REPO_ROOT = join(__dirname, '..');
 const UI: UiManifest = readUiManifest(REPO_ROOT);
@@ -82,41 +83,44 @@ test.describe('generated .sola code', () => {
     }
   });
 
-  test('Studio cards map to published components, and the rest become comments', async () => {
-    const cards = [
-      { type: 'stat', title: 'Revenue', cols: 1, value: '$24,800', delta: '+22.4%', accentColor: 'emerald' },
-      { type: 'progress', title: 'Conversion', subtitle: 'Goal 3.5%', cols: 1, value: 82, delta: '4.1%', accentColor: 'indigo' },
-      { type: 'radial_dial', title: 'Dial', cols: 1, value: 40, accentColor: 'sky' },
-      { type: 'waterfall', title: 'Bridge', cols: 2, value: '$135k', accentColor: 'emerald',
-        config: { bars: [{ name: 'Gross', val: 120 }, { name: 'Refunds', val: -15 }, { name: 'Net', val: 105 }] } },
-      { type: 'slider', title: 'Discount "tier" -- test', cols: 1, value: 15 }
-    ];
-    const source = toSolaFile(cards.map(studioCardToItem), UI);
-    const used = await expectValidSola(source, 'Dashboard.sola');
-    expect(used.sort()).toEqual(['DataCard', 'FlowWaterfall', 'GaugeCard', 'TactileDialCard']);
-    expect(source).toContain('(slider card): a preview on this site, not in @sola-air-ui/ui');
-    expect(source).toContain('style="grid-column: span 2;"');
-    expect(source, 'a color GaugeCard does not support is left out').not.toContain('indigo');
-    expect(source).toContain('"type":"total"');
+  // Studio offers only real components, and a block is the component and props
+  // the canvas mounts, so every template must export a file that compiles and
+  // names only what the package ships.
+  const templateItems = (id: string) =>
+    STUDIO_TEMPLATES.find((t) => t.id === id)!.blocks
+      .map((b) => buildBlock(b.component, b.props, b.span, UI.props[b.component] ?? []))
+      .filter((b): b is NonNullable<typeof b> => !!b);
+
+  test('every Studio component is published, and its sample uses declared props only', async () => {
+    for (const c of STUDIO_COMPONENTS) {
+      expect(UI.subpaths[c.name], `${c.name} must ship in @sola-air-ui/ui`).toBeTruthy();
+      expect(UI.subpaths[c.name].endsWith(c.id), `${c.name} id matches its subpath`).toBe(true);
+      for (const k of Object.keys(c.sample)) expect(UI.props[c.name], `${c.name}.${k}`).toContain(k);
+    }
   });
 
-  test('an exported Studio dashboard mounts and renders in a browser', async ({ page }) => {
+  test('every Studio template exports a .sola file that compiles', async () => {
+    for (const t of STUDIO_TEMPLATES) {
+      const items = templateItems(t.id);
+      expect(items.length, `${t.id} keeps every block`).toBe(t.blocks.length);
+      const source = toSolaFile(items, UI);
+      await expectValidSola(source, `${t.id}.sola`);
+      expect(source).not.toContain('not in @sola-air-ui/ui');
+    }
+  });
+
+  test('an exported Studio template mounts and renders in a browser', async ({ page }) => {
     const { compile } = await getTools();
     const { readFileSync } = await import('node:fs');
-    const cards = [
-      { type: 'stat', title: 'Daily Revenue', cols: 1, value: '$24,800', delta: '+22.4%' },
-      { type: 'progress', title: 'Checkout Conversion', subtitle: 'Goal 3.5%', cols: 1, value: 82, delta: '4.1%', accentColor: 'emerald' },
-      { type: 'waterfall', title: 'Revenue Bridge', cols: 2, value: '', config: { bars: [{ name: 'Gross Sales', val: 120 }, { name: 'Refunds', val: -15 }, { name: 'Net Payout', val: 105 }] } },
-      { type: 'slider', title: 'Promo Tier', cols: 1, value: 15 }
-    ];
-    const source = toSolaFile(cards.map(studioCardToItem), UI);
+    const items = templateItems('revenue');
+    const source = toSolaFile(items, UI);
 
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
     await page.goto('about:blank');
     await page.addScriptTag({ content: readFileSync(join(REPO_ROOT, 'packages/core/dist/sola-core.iife.js'), 'utf8') });
     // The no-bundler build reads imported components from window, under their own names.
-    for (const name of ['DataCard', 'GaugeCard', 'FlowWaterfall']) {
+    for (const name of [...new Set(items.map((i) => i.component))]) {
       const file = join(REPO_ROOT, 'packages/ui/src', `${name}.sola`);
       const { code } = compile(readFileSync(file, 'utf8'), { target: 'iife', exportName: name, filename: name + '.sola' });
       await page.addScriptTag({ content: code });
@@ -131,10 +135,9 @@ test.describe('generated .sola code', () => {
     });
 
     const app = page.locator('#app');
-    for (const text of ['Daily Revenue', '$24,800', 'Checkout Conversion', 'Revenue Bridge', 'Gross Sales']) {
+    for (const text of ['Monthly revenue', '$48,500', 'Quarter target', 'Weekly revenue', 'Net margin']) {
       await expect(app).toContainText(text);
     }
-    await expect(app).not.toContainText('Promo Tier'); // a comment, not markup
     expect(errors).toEqual([]);
   });
 

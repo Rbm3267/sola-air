@@ -1,7 +1,8 @@
 import { json } from '@sveltejs/kit';
 import { GoogleGenAI } from '@google/genai';
 import { env } from '$env/dynamic/private';
-import { FACTS } from '$lib/data/site';
+import { FACTS, UI_MANIFEST } from '$lib/data/site';
+import { STUDIO_COMPONENTS, buildBlock } from '$lib/data/studioComponents';
 
 // In-Memory Sliding-Window IP Rate Limiter (15 requests/minute per client IP)
 const rateLimitMap = new Map<string, number[]>();
@@ -69,6 +70,9 @@ export async function POST({ request, getClientAddress }) {
 
     const apiKey = env.GEMINI_API_KEY;
 
+    if (!apiKey && data.mode === 'studio') {
+      return json({ error: 'Arc is offline: this server has no model key configured.' }, { status: 503 });
+    }
     if (!apiKey) {
       return json({ 
         reply: "Sola Arc is offline because no GEMINI_API_KEY is set on this server. Sola components compile to plain DOM updates with @sola-air-ui/compiler. Set the key to get live answers." 
@@ -127,6 +131,43 @@ Formatting:
     }
     if (prompt.length > 1000) {
       return json({ error: `Intent is too long (${prompt.length} characters). The maximum is 1000.` }, { status: 400 });
+    }
+
+    // Mode 3: Studio. The model may only use the components Studio offers, with
+    // the props they declare; the answer is filtered against the same list, so
+    // a block the canvas cannot mount or the export cannot write never reaches
+    // the client.
+    if (data.mode === 'studio') {
+      const catalog = STUDIO_COMPONENTS.map((c) => {
+        const props = (UI_MANIFEST.props[c.name] ?? []).filter((p) => !/^on[A-Za-z]/.test(p));
+        return `- ${c.name}: ${c.blurb} Props: ${props.join(', ')}. Example props: ${JSON.stringify(c.sample)}`;
+      }).join('\n');
+      const studioInstruction = `You lay out a dashboard or form from a fixed set of UI components.
+Use only these components and only the props listed for each. Follow the shape of the example props.
+${catalog}
+
+Return ONLY JSON: an array of 3 to 8 blocks, each { "component": string, "span": 1 | 2 | 3, "props": object }.
+The canvas is 3 columns wide. Fill props with realistic content for the request. Plain words, no lorem ipsum.`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: studioInstruction + '\n\nRequest: ' + prompt,
+        config: { responseMimeType: 'application/json', temperature: 0.3 }
+      });
+      let raw: unknown;
+      try {
+        raw = JSON.parse(response.text || '[]');
+      } catch {
+        return json({ error: 'Arc answered with something that was not JSON. Try again.' }, { status: 502 });
+      }
+      const list: any[] = Array.isArray(raw) ? raw : Array.isArray((raw as any)?.blocks) ? (raw as any).blocks : [raw];
+      const blocks = list
+        .map((b) => {
+          const name = String(b?.component ?? b?.type ?? '');
+          return buildBlock(name, b?.props ?? b?.config ?? {}, b?.span ?? b?.colSpan, UI_MANIFEST.props[name] ?? []);
+        })
+        .filter(Boolean);
+      return json({ blocks });
     }
 
     const systemInstruction = `You are Sola's generative UI intent compiler.

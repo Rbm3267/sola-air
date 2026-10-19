@@ -460,23 +460,18 @@ test('weight is not doing the work of hierarchy', async ({ page }) => {
 });
 
 test('a component dropped on the Studio canvas shows its sample data', async ({ page }) => {
-  // createCardFromCatalog emitted card types the renderer had no branch for —
-  // status, form, node_graph, table, code, datepicker — and `status` was the
-  // catch-all. Those all fell through to a placeholder sentence, so most of the
-  // palette looked empty once dropped.
+  // The canvas mounts the real @sola-air-ui/ui component with its sample props;
+  // every one Studio offers must render something, not an empty frame.
   await page.setViewportSize(DESKTOP);
-  const ids = ['dynamic-form', 'cluster-matrix', 'status-radar', 'sola-data-table', 'sola-code-block'];
+  const ids = ['data-card', 'table', 'incident-triage-matrix', 'stream-view', 'select', 'markdown-viewer', 'action-strip'];
 
   for (const id of ids) {
-    await page.goto(`/studio?add=${id}`);
+    await page.goto(`/studio?template=revenue&add=${id}`);
     await page.waitForLoadState('networkidle');
-    const text = await page.evaluate(() => {
-      const cards = Array.from(document.querySelectorAll('main [class*="col-span"]'));
-      return cards.length ? (cards[cards.length - 1] as HTMLElement).innerText : '';
-    });
-    expect(text, `${id} rendered the empty placeholder`)
-      .not.toContain('Direct fine-grained reactive component instance');
-    expect(text.replace(/\s/g, '').length, `${id} rendered almost nothing`).toBeGreaterThan(40);
+    const last = page.locator('main [data-block]').last();
+    await expect(last.locator('.studio-block *').first(), `${id} mounted`).toBeAttached();
+    const text = (await last.innerText()).replace(/\s/g, '');
+    expect(text.length, `${id} rendered almost nothing`).toBeGreaterThan(20);
   }
 });
 
