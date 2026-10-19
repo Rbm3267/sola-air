@@ -41,7 +41,7 @@
     xl: 'w-3.5 h-3.5 border-2'
   };
 
-  const bgColors = ['bg-sky-500', 'bg-blue-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500', 'bg-indigo-500'];
+  const bgColors = ['bg-sky-700', 'bg-blue-600', 'bg-violet-600', 'bg-amber-700', 'bg-rose-600', 'bg-indigo-600'];
 
   function hashColor(str: string): string {
     let hash = 0;

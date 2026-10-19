@@ -77,10 +77,10 @@
       {#if maxLength !== undefined}
         <span
           class="text-xs font-mono transition-colors duration-150 {isAtLimit
-            ? 'text-rose-500 font-semibold'
+            ? 'text-rose-700 dark:text-rose-400 font-semibold'
             : isNearLimit
-              ? 'text-amber-500 dark:text-amber-400'
-              : 'text-slate-400 dark:text-slate-500'}"
+              ? 'text-amber-700 dark:text-amber-400'
+              : 'text-slate-500 dark:text-slate-400'}"
         >
           {charCount}/{maxLength}
         </span>
@@ -139,7 +139,7 @@
           ? 'text-rose-500 font-semibold'
           : isNearLimit
             ? 'text-amber-500 dark:text-amber-400'
-            : 'text-slate-400 dark:text-slate-500'}"
+            : 'text-slate-500 dark:text-slate-400'}"
       >
         {charCount}/{maxLength}
       </span>

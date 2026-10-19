@@ -18,7 +18,7 @@
   let isExpanded = $state(false);
 </script>
 
-<div class="rounded-2xl bg-slate-950 dark:bg-white/90 border {isCircuitBreakerActive ? 'border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.15)]' : 'border-slate-800 shadow-lg'} p-3 sm:p-4 text-white font-sans backdrop-blur-xl transition-all">
+<div class="rounded-2xl bg-slate-950 dark:bg-black/40 border {isCircuitBreakerActive ? 'border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.15)]' : 'border-slate-800 shadow-lg'} p-3 sm:p-4 text-white font-sans backdrop-blur-xl transition-all">
   <div class="flex items-center justify-between gap-3">
     
     <!-- Left: Status & Flow Index -->
@@ -42,7 +42,7 @@
             {flowIndex}% Flow Index
           </span>
         </div>
-        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono flex items-center gap-2 mt-0.5">
+        <div class="text-xs text-slate-400 font-mono flex items-center gap-2 mt-0.5">
           <span>Telemetry Bus: Active</span>
           <span>•</span>
           <span>{frictionCount} Friction Events</span>

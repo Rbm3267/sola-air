@@ -1,6 +1,7 @@
 <script lang="ts">
   let {
     text = '',
+    children,
     position = 'top',
     delay = 300
   } = $props<{

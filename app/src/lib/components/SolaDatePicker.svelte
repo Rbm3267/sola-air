@@ -159,13 +159,13 @@
 
       <!-- Month / Year Header -->
       <div class="flex items-center justify-between mb-3">
-        <button onclick={prevMonth} class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 transition-colors">
+        <button type="button" aria-label="Previous month" onclick={prevMonth} class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 transition-colors">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
         </button>
         <span class="text-xs font-semibold text-slate-900 dark:text-white">
           {months[currentMonth]} {currentYear}
         </span>
-        <button onclick={nextMonth} class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 transition-colors">
+        <button type="button" aria-label="Next month" onclick={nextMonth} class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 transition-colors">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
         </button>
       </div>

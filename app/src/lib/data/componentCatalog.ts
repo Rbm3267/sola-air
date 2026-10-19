@@ -782,7 +782,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     badge: 'Foundation',
     componentName: 'SolaDialog',
     defaultConfig: {
-      open: true,
+      open: false,
       title: 'Confirm Action',
       description: 'Are you sure you want to proceed? This action cannot be undone.'
     },
@@ -1146,7 +1146,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     tagline: 'Side panels, mobile nav, detail views, and filter sheets',
     badge: 'Foundation',
     componentName: 'SolaDrawer',
-    defaultConfig: { open: true, position: 'right', title: 'Detail View', width: '400px' },
+    defaultConfig: { open: false, position: 'right', title: 'Detail View', width: '400px' },
     props: [
       { name: 'open', type: 'boolean', defaultValue: false, description: 'Whether the drawer is visible' },
       { name: 'position', type: 'string', defaultValue: 'right', description: 'Slide-in direction', options: ['left', 'right', 'bottom'] },
@@ -1187,7 +1187,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
     badge: 'Foundation',
     componentName: 'SolaCommandPalette',
     defaultConfig: {
-      open: true,
+      open: false,
       placeholder: 'Search commands...',
       commands: [
         { id: '1', label: 'Go to Dashboard', shortcut: 'G D', group: 'Navigation' },

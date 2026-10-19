@@ -143,7 +143,7 @@
   --sola-alert-positive-bg:  #ecfdf5;
   --sola-alert-positive-text: #047857;
 
-  --sola-alert-info:         #0284c7;
+  --sola-alert-info:         #0369a1;
   --sola-alert-info-bg:      #f0f9ff;
 
   --sola-alert-moderate:     #ca8a04;
@@ -217,6 +217,7 @@
     --sola-alert-low-bg:       #1e293b;
     --sola-alert-positive-bg:  #022c22;
     --sola-alert-positive-text: #34d399;
+    --sola-alert-info:         #38bdf8;
     --sola-alert-info-bg:      #082f49;
     --sola-alert-moderate-bg:  #1c1400;
     --sola-alert-warning:      #fb923c;
@@ -246,6 +247,7 @@
   --sola-alert-low-bg:       #1e293b;
   --sola-alert-positive-bg:  #022c22;
   --sola-alert-positive-text: #34d399;
+  --sola-alert-info:         #38bdf8;
   --sola-alert-info-bg:      #082f49;
   --sola-alert-moderate-bg:  #1c1400;
   --sola-alert-warning:      #fb923c;

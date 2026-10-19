@@ -117,9 +117,17 @@
   // Generated from what @sola-air-ui/ui really exports, never hand-written:
   // a published component gets a real .sola file or mount call with only the
   // props it declares; a site preview says plainly that there is nothing to install.
+  // Catalog entries with no implementation yet: the stage says so instead of
+  // showing a component, and the code panel does not call them a preview.
+  const NOT_BUILT = new Set([
+    'SparklineTile', 'ComparisonCard', 'ProgressSteps', 'CounterTicker', 'ToggleSwitch',
+    'RangeSlider', 'TimelineLog', 'KeyValueGrid', 'AlertBanner', 'FunnelChart',
+    'ToastStack', 'InlineCallout', 'NotificationBadge', 'Snackbar', 'NotificationCenter'
+  ]);
+
   const activeCodeSnippet = $derived.by(() => {
     const name = selectedComponent.componentName;
-    if (!isPublished(selectedComponent)) return previewNote(name, UI_MANIFEST);
+    if (!isPublished(selectedComponent)) return previewNote(name, UI_MANIFEST, !NOT_BUILT.has(name));
     return codeTab === 'sola'
       ? toSolaFile([{ component: name, props: liveProps }], UI_MANIFEST)
       : mountComponentSnippet(name, liveProps, UI_MANIFEST);
@@ -508,19 +516,19 @@
             {:else if selectedComponent.componentName === 'SolaKbd'}
               <div class="w-full flex flex-wrap items-center justify-center gap-4 py-8">
                 <div class="flex items-center gap-2">
-                  <span class="text-xs text-slate-500">Search:</span>
+                  <span class="text-xs text-slate-600 dark:text-slate-400">Search:</span>
                   <SolaKbd keys={['⌘', 'K']} size="md" />
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="text-xs text-slate-500">Save:</span>
+                  <span class="text-xs text-slate-600 dark:text-slate-400">Save:</span>
                   <SolaKbd keys={['Ctrl', 'S']} size="md" />
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="text-xs text-slate-500">Terminal:</span>
+                  <span class="text-xs text-slate-600 dark:text-slate-400">Terminal:</span>
                   <SolaKbd keys={['⌃', '`']} size="sm" />
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="text-xs text-slate-500">Reload:</span>
+                  <span class="text-xs text-slate-600 dark:text-slate-400">Reload:</span>
                   <SolaKbd keys={['⇧', '⌘', 'R']} size="lg" />
                 </div>
               </div>
@@ -547,12 +555,15 @@
                   <h4 class="font-semibold text-sm text-slate-900 dark:text-white">{selectedComponent.name}</h4>
                   <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs leading-relaxed">{selectedComponent.description}</p>
                 </div>
-                <div class="w-full bg-slate-950 rounded-xl p-4 text-xs font-mono text-blue-300 overflow-x-auto">
-                  <pre><code>{previewNote(selectedComponent.componentName, UI_MANIFEST)}</code></pre>
-                </div>
+                <p class="text-xs text-slate-600 dark:text-slate-300 text-center max-w-xs leading-relaxed">
+                  There is no live preview of this component yet.
+                  {#if PACKAGE_EQUIVALENT[selectedComponent.componentName]}
+                    For the same job, the package ships <code class="font-mono text-slate-900 dark:text-white">{PACKAGE_EQUIVALENT[selectedComponent.componentName]}</code>.
+                  {/if}
+                </p>
                 <div class="flex items-center gap-2">
                   <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 text-xs font-mono font-semibold border border-slate-200 dark:border-white/10">
-                    Site preview
+                    Planned
                   </span>
                   {#if PACKAGE_EQUIVALENT[selectedComponent.componentName]}
                     <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-semibold border border-emerald-200 dark:border-emerald-500/20">

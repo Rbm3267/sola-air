@@ -73,7 +73,7 @@
   let pathLow: SVGPathElement;
 </script>
 
-<div class="w-full h-full min-h-[300px] bg-slate-950 dark:bg-white rounded-2xl overflow-hidden relative shadow-inner p-2">
+<div class="w-full h-full min-h-[300px] bg-slate-950 dark:bg-black/40 rounded-2xl overflow-hidden relative shadow-inner p-2">
   <svg bind:this={svgElement} class="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)]">
     <!-- Base empty grid -->
     <rect width="100%" height="100%" fill="rgba(255,255,255,0.02)" />

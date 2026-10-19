@@ -84,7 +84,7 @@
             </td>
             <td class="py-2.5 text-center">
               {#if col.isPrimary}
-                <span class="px-1.5 py-0.5 rounded text-xs bg-amber-50 dark:bg-amber-500/10 text-amber-900 border border-amber-200 dark:border-amber-500/20 font-semibold">PK</span>
+                <span class="px-1.5 py-0.5 rounded text-xs bg-amber-50 dark:bg-amber-500/10 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-500/20 font-semibold">PK</span>
               {:else if !col.isNullable}
                 <span class="px-1.5 py-0.5 rounded text-xs bg-slate-100 dark:bg-white/[0.08] text-slate-600 dark:text-slate-400 font-semibold">NOT NULL</span>
               {:else}
@@ -93,7 +93,7 @@
             </td>
             <td class="py-2.5 text-right text-slate-500 dark:text-slate-400">
               {#if col.foreignKey}
-                <span class="inline-flex items-center gap-1 text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-400 dark:text-sky-400 cursor-pointer">
+                <span class="inline-flex items-center gap-1 text-sky-700 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 cursor-pointer">
                   <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   <span>{col.foreignKey}</span>
                 </span>

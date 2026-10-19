@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { portal } from '$lib/actions/portal';
   import { fade, scale } from 'svelte/transition';
 
   type Command = {
@@ -120,6 +121,7 @@
 
 {#if open}
   <div
+    use:portal
     class="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 sm:pt-24"
     role="dialog"
     aria-modal="true"
@@ -159,6 +161,7 @@
           bind:this={inputEl}
           bind:value={query}
           type="text"
+          aria-label="Search commands"
           {placeholder}
           class="w-full bg-transparent py-3.5 pl-3 pr-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-0 border-0"
           autocomplete="off"

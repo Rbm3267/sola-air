@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { portal } from '$lib/actions/portal';
   import { fade, scale } from 'svelte/transition';
 
   let {
@@ -29,6 +30,7 @@
 {#if open}
   <!-- Backdrop -->
   <div
+    use:portal
     class="fixed inset-0 z-50 flex items-center justify-center p-4"
     onclick={handleBackdropClick}
     role="dialog"

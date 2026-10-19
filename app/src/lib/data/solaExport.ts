@@ -191,9 +191,9 @@ export const PACKAGE_EQUIVALENT: Readonly<Record<string, string>> = {
 };
 
 /** What to show instead of code for a component the package does not ship. */
-export function previewNote(component: string, ui: UiManifest): string {
+export function previewNote(component: string, ui: UiManifest, built = true): string {
   const lines = [
-    `// ${component} is a preview built for this site.`,
+    built ? `// ${component} is a preview built for this site.` : `// ${component} is planned. There is no live preview of it yet.`,
     `// It is not part of @sola-air-ui/ui, so there is no code to install.`
   ];
   const equivalent = PACKAGE_EQUIVALENT[component];

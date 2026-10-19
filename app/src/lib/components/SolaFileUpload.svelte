@@ -55,6 +55,7 @@
   >
     <input
       type="file"
+      aria-label="Upload files"
       {accept}
       {multiple}
       class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
@@ -113,6 +114,7 @@
             <button
               type="button"
               onclick={() => removeFile(idx)}
+              aria-label="Remove {file.name}"
               class="p-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-rose-500 transition-colors"
             >
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

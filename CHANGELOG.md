@@ -4,6 +4,29 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/tokens`
+
+- **Fixed**: `--sola-alert-info` is `#0369a1` in light mode (was `#0284c7`, 3.9:1 on light surfaces), and dark mode
+  now sets it to `#38bdf8`. This fixes `FlowWaterfall`'s total value, among others.
+
+### Website (`app/`)
+
+- **Fixed**: on `/components`, the context menu opens at the pointer and stays on screen, and the dialog, drawer and
+  command palette cover the window. The stage card's `backdrop-blur` made it the containing block for
+  `position: fixed`, so they opened offset and clipped to the card. They now render into `<body>`. The three
+  overlays start closed, as their props tables already said.
+- **Fixed**: `SolaInput`'s floating label no longer sits on top of the placeholder, and it is now tied to its input.
+- **Fixed**: the `SolaTooltip` preview crashed (`children is not defined`).
+- **Fixed**: a dark-mode background of white behind light text in `DiffAudit`, `SentinelCapsule`,
+  `UserFrictionMatrix`, `ReportDocViewer` and three premium visuals. Also fixed: badge text in `ClusterMatrix`,
+  `DiffAudit` and `SchemaInspector`, plus low contrast in `SolaAvatar`, `SolaCodeBlock`, `SolaTabs`,
+  `SolaTextarea`, `SolaRadioGroup`, `SolaPagination` and the `SolaKbd` preview.
+- **Fixed**: accessible names and roles. The dropdown trigger, file input, file remove buttons, date picker month
+  buttons and command palette search now have names. Segmented tabs have a `tablist`. The `Select` clear button is no
+  longer inside its trigger button, and the popover trigger no longer nests a button inside a button.
+- **Changed**: the 15 catalog entries with no implementation yet say "There is no live preview of this component
+  yet" instead of calling themselves a site preview.
+
 ## 2026-10-18: tokens 1.3.0, ui 1.7.0
 
 ### `@sola-air-ui/tokens`

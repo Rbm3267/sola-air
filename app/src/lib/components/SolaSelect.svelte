@@ -71,18 +71,17 @@
     aria-expanded={isOpen}
     {disabled}
   >
-    <span class="{value ? '' : 'text-slate-400 dark:text-slate-500'} truncate">
+    <span class="{value ? '' : 'text-slate-500 dark:text-slate-400'} truncate {value ? 'pr-6' : ''}">
       {selectedLabel || placeholder}
     </span>
-    <span class="flex items-center gap-1 shrink-0">
-      {#if value}
-        <button onclick={clear} class="p-0.5 rounded hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400" aria-label="Clear selection">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        </button>
-      {/if}
-      <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform {isOpen ? 'rotate-180' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-    </span>
+    <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-slate-500 dark:text-slate-400 transition-transform {isOpen ? 'rotate-180' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
   </button>
+  <!-- The clear button sits beside the trigger, not inside it: a button inside a button is invalid. -->
+  {#if value && !disabled}
+    <button type="button" onclick={clear} class="absolute right-9 top-[0.8rem] p-0.5 rounded hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400" aria-label="Clear selection">
+      <svg aria-hidden="true" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  {/if}
 
   <!-- Dropdown -->
   {#if isOpen}
