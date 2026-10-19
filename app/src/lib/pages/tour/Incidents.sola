@@ -1,0 +1,42 @@
+<script>
+  import DataCard from '@sola-air-ui/ui/data-card';
+  import Table from '@sola-air-ui/ui/table';
+  import Toggle from '@sola-air-ui/ui/toggle';
+
+  let incidents = $state([
+    { id: 'INC-204', service: 'checkout', severity: 'high', open: true },
+    { id: 'INC-203', service: 'search', severity: 'low', open: true },
+    { id: 'INC-198', service: 'auth', severity: 'high', open: false },
+    { id: 'INC-191', service: 'billing', severity: 'medium', open: false }
+  ]);
+  let openOnly = $state(true);
+
+  let shown = $derived(openOnly ? incidents.filter((i) => i.open) : incidents);
+  let openCount = $derived(incidents.filter((i) => i.open).length);
+  let rows = $derived(shown.map((i) => ({ ID: i.id, Service: i.service, Severity: i.severity })));
+
+  function resolveFirst() {
+    const first = incidents.find((i) => i.open);
+    if (!first) return;
+    incidents = incidents.map((i) => (i.id === first.id ? { ...i, open: false } : i));
+  }
+</script>
+
+<div class="incidents">
+  <DataCard title="Open incidents" value={String(openCount)} />
+  <div class="controls">
+    <Toggle label="Open only" initialChecked={true} onChange={(v) => (openOnly = v)} />
+    <button onclick={resolveFirst}>Resolve oldest open</button>
+  </div>
+  <Table rows={rows} />
+</div>
+
+<style>
+  .incidents { width: 100%; max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  button {
+    padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px;
+    border: 1px solid var(--sola-border-default, #cbd5e1);
+    background: var(--sola-surface-1, #f8fafc); color: var(--sola-text-primary, #0f172a);
+  }
+</style>

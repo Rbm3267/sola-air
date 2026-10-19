@@ -1,0 +1,25 @@
+<script>
+  let count = $state(0);
+  let doubled = $derived(count * 2);
+
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<div class="counter">
+  <p class="value">{count}</p>
+  <p class="note">doubled: {doubled}</p>
+  <button onclick={increment}>Add one</button>
+</div>
+
+<style>
+  .counter { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .value { margin: 0; font: 700 40px/1 ui-monospace, monospace; color: var(--sola-text-primary, #0f172a); }
+  .note { margin: 0; font-size: 13px; color: var(--sola-text-secondary, #475569); }
+  button {
+    margin-top: 8px; padding: 8px 16px; border-radius: 10px; border: 0; cursor: pointer;
+    font-weight: 600; font-size: 14px;
+    background: var(--sola-color-primary-500, #10b981); color: var(--sola-btn-primary-fg, #090d19);
+  }
+</style>

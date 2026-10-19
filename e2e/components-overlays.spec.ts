@@ -4,6 +4,8 @@
 // tests open every popup on the page and check where it actually appears.
 
 import { test, expect, type Page, type Locator } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const open = async (page: Page, id: string) => {
   await page.goto(`/components?component=${id}`);
@@ -124,7 +126,12 @@ test.describe('component catalog popups', () => {
 test.describe('component catalog contents', () => {
   test('every category has a filter, and every entry renders a component', async ({ page }) => {
     test.setTimeout(180_000);
-    const { COMPONENT_CATALOG } = await import('../app/src/lib/data/componentCatalog');
+    // Read from the file rather than imported: a dynamic TS import fails when the
+    // whole suite runs together.
+    const src = readFileSync(join(__dirname, '..', 'app', 'src', 'lib', 'data', 'componentCatalog.ts'), 'utf8');
+    const COMPONENT_CATALOG = [...src.matchAll(/^ {4}id: '([a-z0-9-]+)',\r?\n {4}name: '[^']*',\r?\n {4}category: '([^']+)'/gm)]
+      .map((m) => ({ id: m[1], category: m[2] }));
+    expect(COMPONENT_CATALOG).toHaveLength(42);
     await page.goto('/components');
     await page.waitForLoadState('networkidle');
     for (const category of new Set(COMPONENT_CATALOG.map((c) => c.category))) {

@@ -1504,12 +1504,24 @@ export function compile(source, options = {}) {
         domCode += `      const _key = String(${keyExpr});\n`;
         domCode += `      _seen.add(_key);\n`;
         domCode += `      let _entry = ${eid}_keyMap.get(_key);\n`;
+        // A row's bindings read the item it was built with. When the list hands
+        // back a different object for the same key (an immutable update such as
+        // items.map(i => i.id === id ? { ...i, done: true } : i)), or the index the
+        // row shows has changed, rebuild that row; rows whose item is the same
+        // object are kept as they are.
+        domCode += `      if (_entry && (_entry.item !== ${node.attribs.item}${node.attribs.index ? ` || _entry.index !== _i` : ''})) {\n`;
+        domCode += `        __flush_destroys(_entry.ctx);\n`;
+        domCode += `        const _old = _entry.nodes;\n`;
+        domCode += `        if (_old.includes(_cursor)) _cursor = _old[_old.length - 1].nextSibling;\n`;
+        domCode += `        _old.forEach(n => n.remove());\n`;
+        domCode += `        _entry = null;\n`;
+        domCode += `      }\n`;
         domCode += `      if (!_entry) {\n`;
         domCode += `        const _kctx = pushContext();\n`;
         domCode += `        try {\n`;
         domCode += `        const f = document.createDocumentFragment();\n`;
         node.children.forEach(child => emitNode(child, 'f', eachLocals, inSvg));
-        domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx };\n`;
+        domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx, item: ${node.attribs.item}${node.attribs.index ? ', index: _i' : ''} };\n`;
         domCode += `        } finally { popContext(_kctx); }\n`;
         domCode += `        ${eid}_keyMap.set(_key, _entry);\n`;
         domCode += `      }\n`;

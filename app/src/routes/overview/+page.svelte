@@ -9,13 +9,13 @@
 
 <svelte:head>
   <title>Written in Sola — Sola AIR</title>
-  <meta name="description" content="A page of this site compiled from a single .sola component, with its source linked." />
+  <meta name="description" content="What Sola is, shown with three .sola components: their source, the JavaScript the compiler emits for them, and the components running." />
 </svelte:head>
 
 <div class="flex flex-col w-full min-h-screen bg-[#fafafa] dark:bg-[#090d19] text-slate-900 dark:text-slate-100">
   <Navbar />
   <main id="main-content" class="contents">
-  <SolaMount component={mount} props={{ primitiveCount: PUBLISHED_COUNT }} />
+  <SolaMount component={mount} props={{ tour: __SOLA_TOUR__, primitiveCount: PUBLISHED_COUNT, coreKb: __SOLA_CORE_SIZE_KB__ }} />
 
   <footer class="max-w-[1140px] w-full mx-auto px-6 pb-16 pt-4">
     <p class="text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">

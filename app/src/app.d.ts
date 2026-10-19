@@ -23,6 +23,7 @@ declare const __SOLA_UI_MANIFEST__: {
 declare const __SOLA_EXTENSION_VERSION__: string;
 /** ClusterCardDemo.sola and the compiler's output for it, captured at build time. */
 declare const __SOLA_XRAY__: { source: string; compiled: string };
+declare const __SOLA_TOUR__: { name: string; source: string; compiled: string }[];
 declare const __SOLA_CHANGELOG__: Array<{
 	id: string;
 	date: string;

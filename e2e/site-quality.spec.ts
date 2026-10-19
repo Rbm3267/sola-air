@@ -152,7 +152,7 @@ test('the page written in Sola is legible and links its own source', async ({ pa
   await page.goto('/overview');
   await page.waitForLoadState('networkidle');
 
-  const heading = page.getByRole('heading', { name: /This page is a Sola component/i });
+  const heading = page.getByRole('heading', { name: /Sola compiles your components into plain DOM code/i });
   await expect(heading).toBeVisible();
 
   // The original bug was white text on a white ground in the light theme.
@@ -181,10 +181,10 @@ test('the page written in Sola is legible and links its own source', async ({ pa
   await expect(source).toBeVisible();
   await expect(source).toHaveAttribute('href', /Overview\.sola$/);
 
-  // And the signal it renders must actually be live.
-  const value = page.locator('.proof-value');
+  // And the components it renders must actually be live.
+  const value = page.locator('section.step').first().locator('.result .value');
   const before = await value.innerText();
-  await page.getByRole('button', { name: /Emit signal/i }).click();
+  await page.getByRole('button', { name: 'Add one' }).click();
   await expect(value).not.toHaveText(before);
 });
 

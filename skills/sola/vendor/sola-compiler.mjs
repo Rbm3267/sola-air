@@ -1352,6 +1352,20 @@ function compile(source, options = {}) {
 `;
         domCode += `      let _entry = ${eid}_keyMap.get(_key);
 `;
+        domCode += `      if (_entry && (_entry.item !== ${node.attribs.item}${node.attribs.index ? ` || _entry.index !== _i` : ""})) {
+`;
+        domCode += `        __flush_destroys(_entry.ctx);
+`;
+        domCode += `        const _old = _entry.nodes;
+`;
+        domCode += `        if (_old.includes(_cursor)) _cursor = _old[_old.length - 1].nextSibling;
+`;
+        domCode += `        _old.forEach(n => n.remove());
+`;
+        domCode += `        _entry = null;
+`;
+        domCode += `      }
+`;
         domCode += `      if (!_entry) {
 `;
         domCode += `        const _kctx = pushContext();
@@ -1361,7 +1375,7 @@ function compile(source, options = {}) {
         domCode += `        const f = document.createDocumentFragment();
 `;
         node.children.forEach((child) => emitNode(child, "f", eachLocals, inSvg));
-        domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx };
+        domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx, item: ${node.attribs.item}${node.attribs.index ? ", index: _i" : ""} };
 `;
         domCode += `        } finally { popContext(_kctx); }
 `;
