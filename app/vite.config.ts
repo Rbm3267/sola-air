@@ -52,6 +52,26 @@ const xray = {
 	compiled: compile(xraySource, { filename: 'ClusterCardDemo.sola', sourcemap: false }).code
 };
 
+// The Written in Sola tour shows each example's file next to what the compiler
+// really emits for it and the component itself, running.
+const tour = ['Counter', 'Tasks', 'Incidents'].map((name) => {
+	const source = readFileSync(path.resolve(__dirname, `src/lib/pages/tour/${name}.sola`), 'utf-8');
+	return { name, source, compiled: compile(source, { filename: `${name}.sola`, sourcemap: false }).code };
+});
+
+// @sola-air-ui/ui subpaths (data-card, table, ...) resolve through the package's
+// own exports map, so .sola files on the site import components exactly as an
+// app does. Subpaths are lowercase names, so they need no regex escaping.
+const uiPackageExports: Record<string, unknown> = JSON.parse(
+	readFileSync(path.resolve(__dirname, '../packages/ui/package.json'), 'utf-8')
+).exports;
+const uiSubpathAliases = Object.entries(uiPackageExports)
+	.filter(([sub, target]) => sub !== '.' && typeof target === 'string' && target.endsWith('.sola'))
+	.map(([sub, target]) => ({
+		find: new RegExp(`^@sola-air-ui/ui/${sub.slice(2)}$`),
+		replacement: path.resolve(__dirname, '../packages/ui', target as string)
+	}));
+
 // Banner only — compilation itself is the published plugin, so the site and a
 // scaffolded project run the same code path.
 function solaBanner() {
@@ -88,10 +108,15 @@ export default defineConfig({
 		__SOLA_UI_MANIFEST__: JSON.stringify(uiManifest),
 		__SOLA_EXTENSION_VERSION__: JSON.stringify(extensionVersion),
 		__SOLA_CHANGELOG__: JSON.stringify(changelogSections),
-		__SOLA_XRAY__: JSON.stringify(xray)
+		__SOLA_XRAY__: JSON.stringify(xray),
+		__SOLA_TOUR__: JSON.stringify(tour)
 	},
 	resolve: {
-		alias: {
+		// Exact subpath matches first; the package-level aliases below would
+		// otherwise turn @sola-air-ui/ui/table into packages/ui/src/table.
+		alias: [
+			...uiSubpathAliases,
+			...Object.entries({
 			'@sola/core': path.resolve(__dirname, '../packages/core/src/index.js'),
 			'@sola/compiler': path.resolve(__dirname, '../packages/compiler/src/index.js'),
 			'@sola/ui': path.resolve(__dirname, '../packages/ui/src'),
@@ -102,7 +127,8 @@ export default defineConfig({
 			// tokens was missing here, so its bare specifier fell through to node
 			// resolution and broke the production build.
 			'@sola-air-ui/tokens': path.resolve(__dirname, '../packages/tokens/src')
-		}
+			}).map(([find, replacement]) => ({ find, replacement }))
+		]
 	},
 	plugins: [
 		solaPlugin({ compile }),

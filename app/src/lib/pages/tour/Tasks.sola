@@ -1,0 +1,58 @@
+<script>
+  let draft = $state('');
+  let tasks = $state([
+    { id: 1, text: 'Write a .sola file', done: true },
+    { id: 2, text: 'Run the compiler', done: false }
+  ]);
+  let left = $derived(tasks.filter((t) => !t.done).length);
+
+  function add() {
+    if (!draft.trim()) return;
+    tasks = [...tasks, { id: Date.now(), text: draft.trim(), done: false }];
+    draft = '';
+  }
+
+  function toggle(id) {
+    tasks = tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  }
+</script>
+
+<form class="tasks" onsubmit={(e) => { e.preventDefault(); add(); }}>
+  <div class="row">
+    <input bind:value={draft} placeholder="Add a task" aria-label="New task" />
+    <button type="submit">Add</button>
+  </div>
+  <ul>
+    {#each tasks as task (task.id)}
+      <li>
+        <label>
+          <input type="checkbox" checked={task.done} onchange={() => toggle(task.id)} />
+          <span class={task.done ? 'done' : ''}>{task.text}</span>
+        </label>
+      </li>
+    {/each}
+  </ul>
+  {#if left === 0}
+    <p class="note">All done.</p>
+  {:else}
+    <p class="note">{left} left</p>
+  {/if}
+</form>
+
+<style>
+  .tasks { width: 100%; max-width: 320px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  .row { display: flex; gap: 8px; }
+  .row input {
+    flex: 1; min-width: 0; padding: 8px 10px; border-radius: 10px; font-size: 14px;
+    border: 1px solid var(--sola-border-default, #cbd5e1);
+    background: var(--sola-surface-0, #ffffff); color: var(--sola-text-primary, #0f172a);
+  }
+  button {
+    padding: 8px 14px; border-radius: 10px; border: 0; cursor: pointer; font-weight: 600; font-size: 14px;
+    background: var(--sola-color-primary-500, #10b981); color: var(--sola-btn-primary-fg, #090d19);
+  }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--sola-text-primary, #0f172a); cursor: pointer; }
+  .done { text-decoration: line-through; color: var(--sola-text-tertiary, #64748b); }
+  .note { margin: 0; font-size: 13px; color: var(--sola-text-secondary, #475569); }
+</style>

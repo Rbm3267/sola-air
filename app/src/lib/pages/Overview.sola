@@ -1,76 +1,157 @@
 <script>
-  export let primitiveCount = 26;
+  // The Written in Sola page. The route passes each tour example's source and
+  // the compiler's real output for it (read at build time in vite.config.ts), so
+  // the panes cannot drift from the components running beside them.
+  import Counter from './tour/Counter.sola';
+  import Tasks from './tour/Tasks.sola';
+  import Incidents from './tour/Incidents.sola';
 
-  let signalTick = $state(148200);
-  let ticks = $state(0);
+  export let tour = [];
+  export let primitiveCount = 37;
+  export let coreKb = 7.5;
 
-  function triggerTick() {
-    signalTick += 1200;
-    ticks++;
+  const STEPS = {
+    Counter: {
+      title: 'State that updates one text node',
+      notes: [
+        '`let count = $state(0)` declares a signal. `count += 1` compiles to a setter call.',
+        '`{count}` and `{doubled}` each compile to one effect that writes one text node. A click re-runs those two effects and nothing else.',
+        'There is no re-render and no diff. Open the compiled output to see the effects.'
+      ]
+    },
+    Tasks: {
+      title: 'Lists, inputs and conditions',
+      notes: [
+        '`bind:value` keeps the input and `draft` in sync in both directions.',
+        '`{#each tasks as task (task.id)}` keeps one row per id. When a task changes, only its row is rebuilt.',
+        '`{#if}` and `{:else}` swap the summary line when the count reaches zero.'
+      ]
+    },
+    Incidents: {
+      title: 'Real components from @sola-air-ui/ui',
+      notes: [
+        'Components are imported like any module and used as tags.',
+        '`rows={rows}` passes the live signal, so the table updates in place. `value={String(openCount)}` is an expression, so the card re-mounts with the new value.',
+        'These are the same components the catalog lists and Studio exports.'
+      ]
+    }
+  };
+
+  // Which pane each step shows: its .sola source or the compiled JavaScript.
+  let views = $state({});
+
+  function show(name, view) {
+    views = { ...views, [name]: view };
+  }
+
+  // Inline `code` in the notes, without innerHTML: split on backticks.
+  function parts(text) {
+    return text.split('`').map((t, i) => ({ t, code: i % 2 === 1 }));
   }
 </script>
 
 <div class="sola-overview-root">
-  <!-- Hero Section -->
-  <div class="hero-section">
-    <div class="hero-badge">
-      <span>@sola-air-ui/core • ZERO-VDOM REACTIVE RUNTIME</span>
-    </div>
-    <h1 class="hero-heading">
-      This page is a Sola component
-    </h1>
-    <p class="hero-subtext">
-      Everything below compiled from a single <code>.sola</code> file into direct DOM
-      calls — no virtual DOM, no diffing, no framework runtime around it. The counter
-      is live: each click writes to exactly one text node.
+  <header class="hero">
+    <p class="badge">Written in Sola</p>
+    <h1>Sola compiles your components into plain DOM code</h1>
+    <p class="lede">
+      You write a <code>.sola</code> file: a script, some markup and scoped styles. The compiler turns it
+      into a small JavaScript module that updates the page directly when your data changes. There is no
+      virtual DOM and no framework running alongside it, only a {coreKb} kB runtime for signals.
     </p>
-
-    <div class="hero-ctas">
-      <a href="/docs" class="cta-primary">Get started →</a>
-      <a href="/components" class="cta-secondary">Browse {primitiveCount} primitives</a>
+    <p class="lede">This page is a <code>.sola</code> component, and so are the three examples below.</p>
+    <div class="ctas">
+      <a href="#start" class="cta-primary">Start a project</a>
+      <a href="/components" class="cta-secondary">Browse {primitiveCount} components</a>
     </div>
-  </div>
+    <ul class="facts">
+      <li><strong>{coreKb} kB</strong><span>runtime, gzipped</span></li>
+      <li><strong>{primitiveCount}</strong><span>ready-made components</span></li>
+      <li><strong>No virtual DOM</strong><span>signals write to the DOM</span></li>
+      <li><strong>Any framework</strong><span>a component is a mount function</span></li>
+    </ul>
+  </header>
 
-  <!-- Live proof: a real signal, updating a real text node -->
-  <div class="proof-card">
-    <div class="proof-label">Live signal</div>
-    <div class="proof-value">{signalTick}</div>
-    <div class="proof-meta">{ticks} updates · one text node mutated per click</div>
-    <button class="proof-btn" onclick={triggerTick}>Emit signal</button>
-  </div>
+  {#each tour as step, i (step.name)}
+    <section class="step" aria-labelledby="step-{step.name}">
+      <div class="step-head">
+        <span class="step-num">0{i + 1}</span>
+        <h2 id="step-{step.name}">{STEPS[step.name].title}</h2>
+      </div>
+      <div class="step-body">
+        <div class="code-panel">
+          <div class="tabs" role="group" aria-label="View for {step.name}.sola">
+            <button type="button" aria-pressed={views[step.name] !== 'compiled'} class={views[step.name] !== 'compiled' ? 'tab on' : 'tab'} onclick={() => show(step.name, 'source')}>{step.name}.sola</button>
+            <button type="button" aria-pressed={views[step.name] === 'compiled'} class={views[step.name] === 'compiled' ? 'tab on' : 'tab'} onclick={() => show(step.name, 'compiled')}>Compiled JavaScript</button>
+            <span class="lines">{(views[step.name] === 'compiled' ? step.compiled : step.source).split('\n').length} lines</span>
+          </div>
+          {#if views[step.name] === 'compiled'}
+            <pre tabindex="0" aria-label="Compiled output of {step.name}.sola"><code>{step.compiled}</code></pre>
+          {:else}
+            <pre tabindex="0" aria-label="Source of {step.name}.sola"><code>{step.source}</code></pre>
+          {/if}
+        </div>
+        <div class="side">
+          <div class="result" aria-label="{step.name} running">
+            <span class="result-label">Running</span>
+            {#if step.name === 'Counter'}
+              <Counter />
+            {/if}
+            {#if step.name === 'Tasks'}
+              <Tasks />
+            {/if}
+            {#if step.name === 'Incidents'}
+              <Incidents />
+            {/if}
+          </div>
+          <ul class="notes">
+            {#each STEPS[step.name].notes as note}
+              <li>
+                {#each parts(note) as p}
+                  {#if p.code}
+                    <code>{p.t}</code>
+                  {:else}
+                    <span>{p.t}</span>
+                  {/if}
+                {/each}
+              </li>
+            {/each}
+          </ul>
+        </div>
+      </div>
+    </section>
+  {/each}
 
-  <!-- Grid Pillars -->
-  <div class="pillars-grid">
-    <div class="pillar-card">
-      <div class="pillar-icon">01</div>
-      <h3 class="pillar-title">Zero-VDOM signals</h3>
-      <p class="pillar-desc">A signal write reaches the text node or attribute it owns directly. There is no diff pass and no reconciler in between.</p>
+  <section class="start" id="start" aria-labelledby="start-title">
+    <h2 id="start-title">Start a project</h2>
+    <p class="lede">The scaffold gives you Vite, the compiler plugin and an <code>App.sola</code> with a working counter.</p>
+    <pre tabindex="0" aria-label="Commands to start a project"><code>npm create sola@latest my-app
+cd my-app
+npm install
+npm run dev</code></pre>
+    <div class="links">
+      <a href="/docs">Read the docs</a>
+      <a href="/components">Browse components</a>
+      <a href="/studio">Arrange components in Studio</a>
+      <a href="https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode" target="_blank" rel="noreferrer">VS Code extension</a>
+      <a href="https://github.com/Rbm3267/sola-ui-skill" target="_blank" rel="noreferrer">Claude and Gemini skill</a>
     </div>
-
-    <div class="pillar-card">
-      <div class="pillar-icon">02</div>
-      <h3 class="pillar-title">Tactile controls</h3>
-      <p class="pillar-desc">Rotary dials, range sliders, and rolling counters driven by drag and wheel input with eased, momentum-style motion.</p>
-    </div>
-
-    <div class="pillar-card">
-      <div class="pillar-icon">03</div>
-      <h3 class="pillar-title">Compiles to plain DOM</h3>
-      <p class="pillar-desc">One signal core, compiled from <code>.sola</code> single-file components into ordinary DOM calls you can read.</p>
-    </div>
-  </div>
+  </section>
 </div>
 
 <style>
   /* Themed through tokens so the page is legible on both grounds. The light
-     values are the defaults; the dark block only redefines the tokens. */
+     values are the defaults; the dark blocks only redefine the tokens. An
+     explicit data-theme wins; without one, the OS preference decides. */
   .sola-overview-root {
     --ov-ink: #0f172a;
     --ov-ink-2: #475569;
     --ov-surface: #ffffff;
     --ov-surface-2: #f8fafc;
+    --ov-code-bg: #0b1120;
+    --ov-code-ink: #e2e8f0;
     --ov-line: rgba(15, 23, 42, 0.1);
-    --ov-accent: #1d4ed8; /* blue-700: 4.5:1 on --ov-accent-soft */
+    --ov-accent: #1d4ed8;
     --ov-accent-soft: rgba(59, 130, 246, 0.1);
     --ov-accent-line: rgba(59, 130, 246, 0.3);
     --ov-on-accent: #ffffff;
@@ -82,72 +163,33 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: var(--ov-ink);
   }
-
-  /* Three states, not two. An explicit choice stamps data-theme on the root;
-     with nothing stamped the OS preference decides. Keying only on the media
-     query — as this did — meant the site's own theme toggle never reached this
-     page, so a dark-OS visitor viewing the site in light mode got dark tokens
-     on a light ground. */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .sola-overview-root {
       --ov-ink: #f8fafc;
       --ov-ink-2: #94a3b8;
       --ov-surface: rgba(15, 23, 42, 0.8);
       --ov-surface-2: rgba(255, 255, 255, 0.04);
+      --ov-code-bg: #050814;
       --ov-line: rgba(255, 255, 255, 0.1);
-      --ov-accent: #60a5fa; /* blue-400 on the dark page */
+      --ov-accent: #60a5fa;
       --ov-accent-soft: rgba(59, 130, 246, 0.12);
       --ov-accent-line: rgba(59, 130, 246, 0.3);
       --ov-on-accent: #090d19;
     }
   }
-
   :root[data-theme="dark"] .sola-overview-root {
-      --ov-ink: #f8fafc;
-      --ov-ink-2: #94a3b8;
-      --ov-surface: rgba(15, 23, 42, 0.8);
-      --ov-surface-2: rgba(255, 255, 255, 0.04);
-      --ov-line: rgba(255, 255, 255, 0.1);
-      --ov-accent: #60a5fa; /* blue-400 on the dark page */
-      --ov-accent-soft: rgba(59, 130, 246, 0.12);
-      --ov-accent-line: rgba(59, 130, 246, 0.3);
-      --ov-on-accent: #090d19;
+    --ov-ink: #f8fafc;
+    --ov-ink-2: #94a3b8;
+    --ov-surface: rgba(15, 23, 42, 0.8);
+    --ov-surface-2: rgba(255, 255, 255, 0.04);
+    --ov-code-bg: #050814;
+    --ov-line: rgba(255, 255, 255, 0.1);
+    --ov-accent: #60a5fa;
+    --ov-accent-soft: rgba(59, 130, 246, 0.12);
+    --ov-accent-line: rgba(59, 130, 246, 0.3);
+    --ov-on-accent: #090d19;
   }
 
-  .hero-section {
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto 40px auto;
-  }
-  .hero-badge {
-    display: inline-flex;
-    padding: 4px 12px;
-    border-radius: 9999px;
-    background: var(--ov-accent-soft);
-    border: 1px solid var(--ov-accent-line);
-    color: var(--ov-accent);
-    font-size: 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-  .hero-heading {
-    font-size: 48px;
-    font-weight: 900;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    color: var(--ov-ink);
-    margin-bottom: 16px;
-  }
-  @media (max-width: 640px) {
-    .hero-heading { font-size: 32px; }
-  }
-  .hero-subtext {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--ov-ink-2);
-    margin-bottom: 32px;
-  }
   code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.9em;
@@ -156,130 +198,82 @@
     padding: 1px 5px;
     border-radius: 5px;
   }
-  .hero-ctas {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .cta-primary {
-    display: inline-flex;
-    align-items: center;
-    padding: 12px 24px;
-    border-radius: 12px;
-    background: var(--ov-accent);
-    color: var(--ov-on-accent);
-    font-weight: 800;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all 0.15s ease;
-  }
-  .cta-primary:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
-  }
-  .cta-secondary {
-    display: inline-flex;
-    align-items: center;
-    padding: 12px 24px;
-    border-radius: 12px;
-    background: var(--ov-surface-2);
-    border: 1px solid var(--ov-line);
-    color: var(--ov-ink);
-    font-weight: 700;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all 0.15s ease;
-  }
-  .cta-secondary:hover {
-    border-color: var(--ov-accent-line);
-  }
 
-  .proof-card {
-    max-width: 420px;
-    margin: 0 auto 56px auto;
-    padding: 24px;
-    border-radius: 20px;
-    background: var(--ov-surface-2);
-    border: 1px solid var(--ov-line);
-    text-align: center;
+  .hero { max-width: 820px; margin: 0 auto 64px; text-align: center; }
+  .badge {
+    display: inline-flex; margin: 0 0 20px; padding: 4px 12px; border-radius: 9999px;
+    background: var(--ov-accent-soft); border: 1px solid var(--ov-accent-line); color: var(--ov-accent);
+    font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace;
   }
-  .proof-label {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ov-ink-2);
+  h1 { font-size: 44px; font-weight: 900; line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 16px; }
+  @media (max-width: 640px) { h1 { font-size: 30px; } }
+  .lede { font-size: 16px; line-height: 1.65; color: var(--ov-ink-2); margin: 0 auto 12px; max-width: 68ch; }
+  .ctas { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 28px 0 32px; }
+  .cta-primary, .cta-secondary {
+    display: inline-flex; align-items: center; padding: 12px 22px; border-radius: 12px;
+    font-weight: 700; font-size: 14px; text-decoration: none;
   }
-  .proof-value {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: 40px;
-    font-weight: 800;
-    color: var(--ov-ink);
-    margin: 8px 0 4px;
+  .cta-primary { background: var(--ov-accent); color: var(--ov-on-accent); }
+  .cta-primary:hover { filter: brightness(1.08); }
+  .cta-secondary { background: var(--ov-surface-2); border: 1px solid var(--ov-line); color: var(--ov-ink); }
+  .cta-secondary:hover { border-color: var(--ov-accent-line); }
+  .facts {
+    list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
   }
-  .proof-meta {
-    font-size: 13px;
-    color: var(--ov-ink-2);
-    margin-bottom: 16px;
+  @media (max-width: 760px) { .facts { grid-template-columns: repeat(2, 1fr); } }
+  .facts li {
+    display: flex; flex-direction: column; gap: 2px; padding: 14px; border-radius: 14px;
+    background: var(--ov-surface); border: 1px solid var(--ov-line);
   }
-  .proof-btn {
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: 1px solid var(--ov-accent-line);
-    background: var(--ov-accent-soft);
-    color: var(--ov-accent);
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .proof-btn:hover {
-    background: var(--ov-accent);
-    color: var(--ov-on-accent);
-  }
-  .proof-btn:focus-visible {
-    outline: 2px solid var(--ov-accent);
-    outline-offset: 2px;
-  }
+  .facts strong { font-size: 15px; font-weight: 800; }
+  .facts span { font-size: 13px; color: var(--ov-ink-2); }
 
-  .pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+  .step { margin: 0 0 56px; }
+  .step-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+  .step-num { font: 800 14px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ov-accent); }
+  h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+  .step-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .step-body { grid-template-columns: minmax(0, 1fr); } }
+
+  .code-panel { border-radius: 16px; overflow: hidden; border: 1px solid var(--ov-line); background: var(--ov-code-bg); }
+  .tabs { display: flex; align-items: center; gap: 4px; padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  .tab {
+    padding: 6px 10px; border-radius: 8px; border: 0; cursor: pointer; background: transparent;
+    font: 600 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: #94a3b8;
   }
-  @media (max-width: 800px) {
-    .pillars-grid { grid-template-columns: 1fr; }
+  .tab:hover { color: #e2e8f0; }
+  .tab.on { background: rgba(255, 255, 255, 0.1); color: #f8fafc; }
+  .tab:focus-visible { outline: 2px solid #60a5fa; outline-offset: 1px; }
+  .lines { margin-left: auto; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: #94a3b8; padding-right: 6px; }
+  pre {
+    margin: 0; padding: 16px; max-height: 440px; overflow: auto;
+    font: 12.5px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ov-code-ink); background: var(--ov-code-bg);
   }
-  .pillar-card {
-    background: var(--ov-surface);
-    border: 1px solid var(--ov-line);
-    border-radius: 20px;
-    padding: 24px;
-    transition: all 0.2s ease;
+  pre code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
+  pre:focus-visible { outline: 2px solid #60a5fa; outline-offset: -2px; }
+
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .result {
+    /* Grid, not flex: a mounted child sits in a wrapper element, and a centred
+       flex item would shrink that wrapper to its content. */
+    position: relative; display: grid; align-items: center; min-height: 200px;
+    padding: 36px 20px 24px; border-radius: 16px; background: var(--ov-surface); border: 1px solid var(--ov-line);
   }
-  .pillar-card:hover {
-    border-color: var(--ov-accent-line);
-  }
-  .pillar-icon {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--ov-accent);
-    margin-bottom: 12px;
-  }
-  .pillar-title {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--ov-ink);
-    margin-bottom: 8px;
-  }
-  .pillar-desc {
-    font-size: 14px;
-    line-height: 1.6;
+  .result-label {
+    position: absolute; top: 12px; left: 14px;
+    font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--ov-ink-2);
   }
+  .notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .notes li { font-size: 14px; line-height: 1.6; color: var(--ov-ink-2); }
+
+  .start {
+    padding: 28px; border-radius: 20px; background: var(--ov-surface); border: 1px solid var(--ov-line);
+  }
+  .start h2 { margin-bottom: 8px; }
+  .start .lede { margin: 0 0 16px; text-align: left; max-width: none; }
+  .start pre { border-radius: 12px; max-width: 520px; }
+  .links { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 18px; }
+  .links a { font-weight: 700; font-size: 14px; color: var(--ov-accent); text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
 </style>

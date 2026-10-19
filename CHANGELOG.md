@@ -4,6 +4,13 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/compiler`
+
+- **Fixed**: a keyed `{#each}` row shows the new item when the list replaces it under the same key (an immutable
+  update such as `items.map(i => i.id === id ? { ...i, done: true } : i)`), and shows its new index after a reorder
+  when the template uses the index. Rows kept the item they were first built with, so the data changed but the row
+  did not. Only the replaced rows are rebuilt; rows whose item is the same object are kept.
+
 ### `@sola-air-ui/tokens`
 
 - **Fixed**: `--sola-alert-info` is `#0369a1` in light mode (was `#0284c7`, 3.9:1 on light surfaces), and dark mode
@@ -11,6 +18,12 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ### Website (`app/`)
 
+- **Changed**: `/overview` (Written in Sola) is a guided tour. It says what Sola is, then walks through three
+  `.sola` files: a counter, a task list and an incidents panel built from `@sola-air-ui/ui` components. Each step shows
+  the file, the JavaScript the compiler emits for it (both read at build time) and the component running. It ends
+  with how to start a project.
+- **Fixed**: `.sola` files on the site can import `@sola-air-ui/ui` by subpath (`@sola-air-ui/ui/table`), as apps
+  do. The site aliased the package to its `src` folder, so subpath imports did not resolve.
 - **Fixed**: on `/components`, the context menu opens at the pointer and stays on screen, and the dialog, drawer and
   command palette cover the window. The stage card's `backdrop-blur` made it the containing block for
   `position: fixed`, so they opened offset and clipped to the card. They now render into `<body>`. The three

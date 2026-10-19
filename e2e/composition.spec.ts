@@ -194,3 +194,32 @@ test.describe('parent after a child', () => {
     expect(errors).toEqual([]);
   });
 });
+
+test.describe('keyed each', () => {
+  // A row used to keep the item object it was first built with, so an immutable
+  // update (a new object under the same key) changed the data but not the row.
+  test('a row shows the new item when the list replaces it under the same key', async ({ page }) => {
+    const errors = await mountParent(page, `<script>
+  let items = $state([{ id: 1, label: 'one', done: false }, { id: 2, label: 'two', done: false }]);
+  function finish(id) { items = items.map((i) => (i.id === id ? { ...i, done: true, label: i.label + '!' } : i)); }
+  function reverse() { items = [...items].reverse(); }
+</script>
+<ul>
+  {#each items as item, idx (item.id)}
+    <li class={item.done ? 'done' : ''}>{idx}:{item.label}</li>
+  {/each}
+</ul>
+<button id="finish" onclick={() => finish(2)}>finish</button>
+<button id="reverse" onclick={reverse}>reverse</button>`);
+    const firstLi = await page.locator('li').first().elementHandle();
+    await click(page, 'finish');
+    await expect(page.locator('li')).toHaveText(['0:one', '1:two!']);
+    await expect(page.locator('li').nth(1)).toHaveClass('done');
+    // The unchanged row is the same element: only the replaced row was rebuilt.
+    expect(await page.evaluate((el) => el === document.querySelector('li'), firstLi)).toBe(true);
+    // Reordering moves rows, and rows whose index changed show their new index.
+    await click(page, 'reverse');
+    await expect(page.locator('li')).toHaveText(['0:two!', '1:one']);
+    expect(errors).toEqual([]);
+  });
+});
