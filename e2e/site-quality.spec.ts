@@ -3,7 +3,8 @@
 // counts, dead repository links, unproven performance claims, and Studio
 // rendering as a 60px sliver on a phone.
 
-import { test, expect, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
