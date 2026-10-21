@@ -25,6 +25,9 @@
   let isNumeric = $derived(typeof size === 'number');
   let dimensionStyle = $derived(isNumeric ? `width: ${size}px; height: ${size}px;` : '');
   let resolvedClass = $derived(!isNumeric ? (sizeClasses[size as string] || 'w-8 h-8') : '');
+  // Rendered width in CSS px, so the browser picks the smallest resized logo that is sharp at this size.
+  const sizePx: Record<string, string> = { xs: '24px', sm: '32px', md: '40px', lg: '56px', xl: '80px', hero: '(min-width: 768px) 144px, 112px' };
+  let sizes = $derived(isNumeric ? `${size}px` : (sizePx[size as string] || '32px'));
 </script>
 
 <div class="relative inline-flex items-center justify-center select-none shrink-0 group/logo {interactive ? 'cursor-pointer' : ''} {className}">
@@ -39,8 +42,12 @@
     class="relative z-10 flex items-center justify-center transition-transform duration-500 ease-out transform-gpu {spinning ? 'animate-sola-spin' : ''} group-hover/logo:scale-105"
   >
     <img 
-      src="/logo.png" 
-      alt="Sola Sun Logo" 
+      src="/logo-128.webp"
+      srcset="/logo-64.webp 64w, /logo-128.webp 128w, /logo-288.webp 288w"
+      {sizes}
+      width="128"
+      height="128"
+      alt="Sola Sun Logo"
       style={dimensionStyle}
       class="{resolvedClass} object-contain drop-shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
     />
