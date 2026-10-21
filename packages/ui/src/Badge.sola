@@ -1,6 +1,6 @@
 <script>
   export let label = '';
-  export let variant = 'default';
+  export let variant = 'default'; // default | success | warning | error
 </script>
 
 <span class="badge {variant}">{label}</span>

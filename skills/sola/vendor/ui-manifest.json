@@ -70,7 +70,8 @@
       "title",
       "value",
       "delta",
-      "data"
+      "data",
+      "max"
     ]
   },
   "CommandPalette": {
@@ -136,7 +137,8 @@
     "props": [
       "title",
       "value",
-      "trend"
+      "trend",
+      "period"
     ]
   },
   "DatePicker": {

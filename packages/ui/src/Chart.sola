@@ -3,6 +3,12 @@
   export let value = "94.2 req/s";
   export let delta = "+14.8%";
   export let data = [35, 55, 40, 80, 65, 95, 70, 88];
+  export let max = null; // value of a full-height bar; null scales to the largest value
+
+  function barHeight(v) {
+    const top = max ?? Math.max(0, ...data);
+    return top > 0 ? Math.max(0, Math.min(100, (v / top) * 100)) : 0;
+  }
 </script>
 
 <div class="sola-chart-card">
@@ -14,8 +20,8 @@
     <span class="sola-delta-badge">{delta}</span>
   </div>
   <div class="sola-spark-bars">
-    {#each data as barHeight}
-      <div class="sola-bar" style="height: {barHeight}%;"></div>
+    {#each data as v}
+      <div class="sola-bar" style="height: {barHeight(v)}%;"></div>
     {/each}
   </div>
 </div>

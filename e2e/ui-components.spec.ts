@@ -174,6 +174,31 @@ test.describe('DataCard', () => {
     await expect(card).not.toContainText('+0.0%');
     await expect(card).not.toContainText('vs last period');
   });
+
+  test('names the comparison only when given one', async ({ page }) => {
+    await mount(page, 'DataCard.sola', { title: 'First reply', value: '14 min', trend: 'target 30 min' });
+    const card = page.locator('.sola-data-card');
+    await expect(card).toContainText('target 30 min');
+    await expect(card.locator('.period-label')).toHaveCount(0);
+
+    await mount(page, 'DataCard.sola', { title: 'Solved', value: '52', trend: '+18%', period: 'vs yesterday' });
+    await expect(page.locator('.sola-data-card .period-label')).toHaveText('vs yesterday');
+  });
+});
+
+test.describe('Chart', () => {
+  const heights = (page: Page) =>
+    page.locator('.sola-bar').evaluateAll((bars) => bars.map((b) => Math.round(parseFloat((b as HTMLElement).style.height))));
+
+  test('scales the bars to the largest value, whatever the unit', async ({ page }) => {
+    await mount(page, 'Chart.sola', { data: [10, 20, 40] });
+    expect(await heights(page)).toEqual([25, 50, 100]);
+  });
+
+  test('scales to max when one is given', async ({ page }) => {
+    await mount(page, 'Chart.sola', { data: [10, 20, 40], max: 80 });
+    expect(await heights(page)).toEqual([13, 25, 50]);
+  });
 });
 
 test.describe('Modal', () => {

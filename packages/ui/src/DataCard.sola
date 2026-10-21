@@ -3,6 +3,7 @@
   export let value = "$0.00";
   // Leave trend empty to hide the footer rather than show a made-up one.
   export let trend = "";
+  export let period = ""; // shown after the trend, e.g. "vs last week"; empty shows nothing
 </script>
 
 <div class="sola-data-card">
@@ -17,7 +18,9 @@
   {#if trend}
     <div class="card-footer">
       <span class="trend-badge">{trend}</span>
-      <span class="period-label">vs last period</span>
+      {#if period}
+        <span class="period-label">{period}</span>
+      {/if}
     </div>
   {/if}
 </div>
