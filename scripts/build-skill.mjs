@@ -62,7 +62,7 @@ for (const [lib, entry] of Object.entries(VENDOR_LIBS)) {
     absWorkingDir: ROOT,
     stdin: { contents: entry, resolveDir: ROOT, sourcefile: `${lib}-entry.js` },
     bundle: true, format: 'esm', platform: 'node', target: 'node18', write: false, legalComments: 'inline',
-    banner: { js: `// ${lib} ${JSON.parse(read(`node_modules/${lib}/package.json`)).version} (MIT), bundled for scripts/preview.mjs. Generated; do not edit.` }
+    banner: { js: `// ${lib} ${JSON.parse(read(`node_modules/${lib}/package.json`)).version} (MIT${lib === 'htmlparser2' ? '; includes entities, BSD-2-Clause' : ''}), bundled for scripts/preview.mjs. Licenses: THIRD_PARTY_LICENSES.md. Generated; do not edit.` }
   }).outputFiles[0].text;
   // Drop comments (keeping the banner): the plugin directory's scanner reads the
   // spec and bug-tracker links in them as places data could be sent.
@@ -76,6 +76,19 @@ for (const [lib, entry] of Object.entries(VENDOR_LIBS)) {
   if (out.length > 250 * 1024) throw new Error(`build-skill: vendor/${lib}.mjs is ${Math.round(out.length / 1024)} KiB; keep each vendored file under 256 KiB.`);
   emit(`vendor/${lib}.mjs`, out);
 }
+// The vendored files carry third-party code, so ship each library's license with
+// them. htmlparser2's bundle includes the entities decoder, which is BSD-2-Clause.
+const entitiesDir = ['node_modules/htmlparser2/node_modules/entities', 'node_modules/entities'].find((d) => existsSync(path.join(ROOT, d, 'LICENSE')));
+if (!entitiesDir) throw new Error('build-skill: cannot find the entities package htmlparser2 bundles; update THIRD_PARTY_LICENSES.');
+const thirdParty = [
+  ['acorn', 'node_modules/acorn', 'vendor/acorn.mjs'],
+  ['htmlparser2', 'node_modules/htmlparser2', 'vendor/htmlparser2.mjs'],
+  ['entities', entitiesDir, 'vendor/htmlparser2.mjs (the entity decoder)']
+].map(([name, dir, usedIn]) => {
+  const pkg = JSON.parse(read(`${dir}/package.json`));
+  return `## ${name} ${pkg.version} (${pkg.license})\n\nUsed in ${usedIn}.\n\n\`\`\`\n${read(`${dir}/LICENSE`).trim()}\n\`\`\``;
+});
+emit('vendor/THIRD_PARTY_LICENSES.md', `# Third-party licenses\n\nThe files in this folder bundle the libraries below. Their code is unchanged except that comments are removed and the entity tables are written out as plain number arrays.\n\n${thirdParty.join('\n\n')}\n`);
 const compilerBundle = buildSync({
   absWorkingDir: ROOT,
   external: Object.keys(VENDOR_LIBS),

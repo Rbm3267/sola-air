@@ -1,4 +1,4 @@
-// htmlparser2 9.1.0 (MIT), bundled for scripts/preview.mjs. Generated; do not edit.
+// htmlparser2 9.1.0 (MIT; includes entities, BSD-2-Clause), bundled for scripts/preview.mjs. Licenses: THIRD_PARTY_LICENSES.md. Generated; do not edit.
 
 var decode_data_html_default = new Uint16Array([
   7489, 60, 213, 305, 650, 1181, 1403, 1488, 1653, 1758, 1954, 2006, 2063, 2634, 2705, 3489, 3693, 3849, 3878, 4298,
