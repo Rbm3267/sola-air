@@ -4,6 +4,16 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/ui`
+
+- **Fixed**: `Chart` scales its bars to the largest value in `data`, so counts such as tickets per hour show their
+  real differences. It used each value as a percentage of the bar height, so `[18, 22, 15]` drew three nearly flat
+  bars. New `max` prop sets the value of a full-height bar; pass `max={100}` to keep the old percentage behaviour.
+- **Changed**: `DataCard` no longer appends "vs last period" to every trend. New `period` prop names the comparison
+  (`period="vs yesterday"`); leave it empty when the trend already says it, e.g. `trend="target 30 min"`.
+- **Docs**: the component reference lists `Badge` and `Alert` variants (`default | success | warning | error` and
+  `info | success | warning | error`).
+
 ### Website (`app/`)
 
 - **Changed**: the homepage is prerendered, so its HTML carries the content and the demos mount on top. It was

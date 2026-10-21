@@ -1,6 +1,6 @@
 <script>
   export let message = '';
-  export let variant = 'info';
+  export let variant = 'info'; // info | success | warning | error
 </script>
 
 <div class="alert {variant}" role={variant === 'error' || variant === 'warning' ? 'alert' : 'status'}>
