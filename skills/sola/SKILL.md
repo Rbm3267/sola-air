@@ -5,7 +5,7 @@ description: Design and build user interfaces with Sola AIR (.sola single-file c
 
 # Designing with Sola AIR
 
-Sola AIR is a compiler-first UI framework. A `.sola` file holds a component's script, markup and scoped styles; the compiler turns it into plain DOM code driven by signals. `@sola-air-ui/ui` 1.7.0 ships 37 components. This skill vendors core 1.5.2, compiler 1.5.3 and those components, so you can check a design and render it to HTML with no install.
+Sola AIR is a compiler-first UI framework. A `.sola` file holds a component's script, markup and scoped styles; the compiler turns it into plain DOM code driven by signals. `@sola-air-ui/ui` 1.8.0 ships 37 components. This skill vendors core 1.5.2, compiler 1.5.3 and those components, so you can check a design and render it to HTML with no install.
 
 `<skill-dir>` below means the folder this file is in.
 

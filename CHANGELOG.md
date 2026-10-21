@@ -4,6 +4,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+## 2026-10-21: ui 1.8.0
+
 ### `@sola-air-ui/ui`
 
 - **Fixed**: `Chart` scales its bars to the largest value in `data`, so counts such as tickets per hour show their
