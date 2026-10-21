@@ -103,6 +103,10 @@ for (const lib of Object.keys(VENDOR_LIBS)) {
 }
 if (!versionRead.test(bundled)) throw new Error('build-skill: the compiler no longer reads ../package.json the expected way; update the version replacement.');
 bundled = bundled.replace(versionRead, () => JSON.stringify(JSON.stringify({ version: versions.compiler })));
+// That was the compiler's only file read, so its fs import is now dead. Drop it:
+// the vendored compiler should not import file access it never uses.
+const fsImport = 'import { readFileSync } from "node:fs";\n';
+if (bundled.includes(fsImport) && bundled.split('readFileSync').length === 2) bundled = bundled.replace(fsImport, '');
 assertReadable('vendor/sola-compiler.mjs', bundled);
 emit('vendor/sola-compiler.mjs', bundled);
 
