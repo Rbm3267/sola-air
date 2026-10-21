@@ -4,6 +4,12 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### Claude and Gemini skill (`skills/sola`)
+
+- **Fixed**: `vendor/THIRD_PARTY_LICENSES.md` ships the license texts of acorn, htmlparser2 and entities (the entity
+  decoder inside the htmlparser2 bundle, BSD-2-Clause). The vendored files named their licenses but did not include
+  the notices those licenses require.
+
 ## 2026-10-19: compiler 1.5.3, tokens 1.3.1
 
 ### `@sola-air-ui/compiler`
