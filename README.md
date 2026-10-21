@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Ambient · Intent · Runtime</b><br>
-  Compile <code>.sola</code> components into zero-dependency vanilla DOM with native <code>$intent</code> signals that resolve AI state at the framework level.
+  Compile <code>.sola</code> components to plain DOM code. With <code>$intent</code>, a component can offer a suggestion before the user asks.
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@ npm install @sola-air-ui/core @sola-air-ui/compiler @sola-air-ui/vite-plugin-sol
 
 ## What is Sola AIR?
 
-Sola AIR is a compiler-first JavaScript framework where AI isn't bolted on — it's a first-class reactive primitive. Write `.sola` files with familiar syntax, and the compiler turns them into plain DOM instructions. There is no virtual DOM and no framework runtime beyond the small core.
+Sola AIR is a compiler-first JavaScript framework. AI suggestions are a reactive value, like any other piece of state. Write `.sola` files with familiar syntax, and the compiler turns them into plain DOM instructions. There is no virtual DOM and no framework runtime beyond the small core.
 
 ```html
 <script>
