@@ -3,7 +3,7 @@
 // drive it the way a visitor would, so the claims in the copy beside it are
 // checked rather than asserted.
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('homepage: $persist + event bus demo', () => {
   test.beforeEach(async ({ page }) => {

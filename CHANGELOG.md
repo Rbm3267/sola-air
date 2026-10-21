@@ -4,6 +4,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### Website (`app/`)
+
+- **Changed**: the homepage is prerendered, so its HTML carries the content and the demos mount on top. It was
+  rendered only in the browser, which held the first meaningful paint until every script had run. Lighthouse mobile on
+  a local build: largest contentful paint 5.9 s to 2.7 s.
+- **Fixed**: the logo is served as 64, 128 and 288 px WebP files (3 to 18 kB) and the favicon as a 48 px PNG. Both
+  were the same 1024 px, 830 kB PNG.
+
 ### Claude and Gemini skill (`skills/sola`)
 
 - **Fixed**: `vendor/THIRD_PARTY_LICENSES.md` ships the license texts of acorn, htmlparser2 and entities (the entity

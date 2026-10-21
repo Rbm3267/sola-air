@@ -1,7 +1,7 @@
 // The homepage's Compiler X-Ray and shell stage claim specific things about
 // the framework. These checks hold them to what the code really does.
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 

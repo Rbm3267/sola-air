@@ -3,7 +3,7 @@
 // rows arrive through the real code path, the button fetches again, switching
 // source swaps the file, and the old source stops polling.
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('homepage: $data demo', () => {
   test('shows the source it runs and the rows it fetched', async ({ page }) => {

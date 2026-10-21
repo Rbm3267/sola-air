@@ -29,6 +29,10 @@
 		theme.init();
 		injectAnalytics();
 		injectSpeedInsights();
+		// Prerendered pages show their buttons before the scripts attach handlers.
+		// Children mount first, so this marks the point where the whole page is live
+		// (the browser tests wait for it before clicking).
+		document.documentElement.dataset.hydrated = '';
 	});
 </script>
 
