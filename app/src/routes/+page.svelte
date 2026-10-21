@@ -11,7 +11,8 @@
   import TactileDialCard from '@sola-air-ui/ui/TactileDialCard.sola';
   import FlowWaterfall from '@sola-air-ui/ui/FlowWaterfall.sola';
   import IncidentTriageMatrix from '@sola-air-ui/ui/IncidentTriageMatrix.sola';
-  import { CATALOG_COUNT, PUBLISHED_COUNT } from '$lib/data/site';
+  import { PUBLISHED_COUNT } from '$lib/data/site';
+  import { STUDIO_COMPONENTS } from '$lib/data/studioComponents';
 </script>
 
 <svelte:head>
@@ -64,7 +65,7 @@
                 Sola Design Studio
               </h3>
               <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-                A drag-and-drop canvas with {CATALOG_COUNT} components and live signal simulators.
+                Arrange {STUDIO_COMPONENTS.length} real <code class="font-mono text-xs">@sola-air-ui/ui</code> components on a grid, edit their props, and export the result as a <code class="font-mono text-xs">.sola</code> file. Arc can draft a layout from one sentence.
               </p>
             </div>
             <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all whitespace-nowrap leading-none">
@@ -102,11 +103,11 @@
                 Written in Sola
               </h3>
               <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-                One page of this site is compiled from a single <code class="font-mono text-xs">.sola</code> file, with a live signal and its source linked. Read the source and compare it with what your browser is running.
+                A three-step tour: a counter, a task list and an incident feed, each shown as its <code class="font-mono text-xs">.sola</code> source, the code the compiler writes, and the running result.
               </p>
             </div>
             <a href="/overview" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all whitespace-nowrap leading-none">
-              <span>See the output</span>
+              <span>Take the tour</span>
               <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
           </div>
