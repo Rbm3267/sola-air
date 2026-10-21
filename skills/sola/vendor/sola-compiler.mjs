@@ -3,7 +3,6 @@
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
-import { readFileSync } from "node:fs";
 var { version: COMPILER_VERSION } = JSON.parse(
   "{\"version\":\"1.5.3\"}"
 );
