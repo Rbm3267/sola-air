@@ -7,7 +7,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 ### `@sola-air-ui/relay`
 
 - **Changed (breaking)**: the product-specific table connector is now the generic `rest-table`
-  connector. A connection of type `servicenow` or `now` must become `rest-table`. Its host is a
+  connector. A connection that uses the old vendor-named connector type (or its short alias) must change its type to `rest-table`. Its host is a
   hostname or full URL (`records.example.com` or `https://records.example.com`); a bare instance
   name no longer gets a vendor domain added. The environment variables `SN_INSTANCE`,
   `SN_USERNAME`, `SN_PASSWORD` and `SN_BEARER_TOKEN` are now `REST_TABLE_HOST`,
@@ -16,7 +16,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ### `@sola-air-ui/behavior`
 
-- **Changed (breaking)**: `ServiceNowMajorIncidentContract` is now `MajorIncidentContract`, and its
+- **Changed (breaking)**: the vendor-prefixed major-incident contract export is now `MajorIncidentContract`, and its
   action id is `major_incident_bridge`.
 
 ## 2026-10-21: ui 1.8.0
