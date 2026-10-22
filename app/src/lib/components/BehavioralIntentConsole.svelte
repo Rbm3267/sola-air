@@ -1,7 +1,7 @@
 <script lang="ts">
   import { behavioralObserver, type BehavioralMetrics } from '../../../../packages/behavior/src/index';
   import { 
-    ServiceNowMajorIncidentContract, 
+    MajorIncidentContract, 
     AwsDrainNodeContract, 
     StripeDunningNoticeContract, 
     PostgresKillLocksContract 
@@ -182,7 +182,7 @@
         <!-- DUAL-DRIVER ACTION CONTRACT TRIGGER -->
         <div class="mt-2 flex justify-end">
           <AdaptiveActionTrigger 
-            action={ServiceNowMajorIncidentContract} 
+            action={MajorIncidentContract} 
             data={{ severity: "P1 - Critical", incidentId: "INC009481" }}
             recordId="INC009481"
             onExecute={handleActionExecuted}

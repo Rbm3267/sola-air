@@ -34,7 +34,7 @@ describe('RelayServer HTTP query guard & connectors', () => {
   let server;
   let baseUrl;
   const sqlCalls = [];
-  const snCalls = [];
+  const restCalls = [];
 
   before(async () => {
     connections.clear();
@@ -60,13 +60,13 @@ describe('RelayServer HTTP query guard & connectors', () => {
         }
       }
     });
-    connections.set('sn_prod', {
-      type: 'servicenow',
+    connections.set('rest_prod', {
+      type: 'rest-table',
       status: 'connected',
       connector: {
         async connect() {},
         async query(options) {
-          snCalls.push(options);
+          restCalls.push(options);
           return { rows: [{ number: 'INC001' }], rowCount: 1 };
         }
       }
@@ -128,20 +128,20 @@ describe('RelayServer HTTP query guard & connectors', () => {
     assert.deepStrictEqual(sqlCalls[0].params, [42]);
   });
 
-  it('passes an options object with limit to ServiceNow/GoogleSheets connectors', async () => {
-    snCalls.length = 0;
+  it('passes an options object with limit to REST table / GoogleSheets connectors', async () => {
+    restCalls.length = 0;
     const res = await fetch(`${baseUrl}/api/query`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        source: 'sn_prod',
+        source: 'rest_prod',
         query: { table: 'change_request', query: 'active=true' },
         limit: 15
       })
     });
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(snCalls.length, 1);
-    assert.deepStrictEqual(snCalls[0], {
+    assert.strictEqual(restCalls.length, 1);
+    assert.deepStrictEqual(restCalls[0], {
       table: 'change_request',
       query: 'active=true',
       limit: 15
@@ -184,10 +184,10 @@ describe('RelayServer HTTP query guard & connectors', () => {
   });
 
   it('passes the table to non-SQL connectors when the query does not name one', async () => {
-    snCalls.length = 0;
-    const res = await post({ source: 'sn_prod:incident', query: { query: 'active=true' }, limit: 5 });
+    restCalls.length = 0;
+    const res = await post({ source: 'rest_prod:incident', query: { query: 'active=true' }, limit: 5 });
     assert.strictEqual(res.status, 200);
-    assert.deepStrictEqual(snCalls[0], { table: 'incident', query: 'active=true', limit: 5 });
+    assert.deepStrictEqual(restCalls[0], { table: 'incident', query: 'active=true', limit: 5 });
   });
 
   it('rejects malformed sources and table names that are not plain identifiers', async () => {

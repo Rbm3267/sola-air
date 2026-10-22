@@ -21,8 +21,8 @@ function createMockIntent(actionId, recordId, data, payload, tier) {
   return record;
 }
 
-export const ServiceNowMajorIncidentContract = {
-  id: 'sn_major_incident_bridge',
+export const MajorIncidentContract = {
+  id: 'major_incident_bridge',
   title: 'Open Major Incident War Room',
   description: 'Escalate to P1 Major Incident, page Tier 3 SRE via PagerDuty, and trigger Route53 traffic failover.',
   category: 'mitigation',
@@ -50,7 +50,7 @@ export const ServiceNowMajorIncidentContract = {
   },
 
   stage: async (payload, ctx) => {
-    return createMockIntent('sn_major_incident_bridge', ctx.recordId, ctx.data, payload, 2);
+    return createMockIntent('major_incident_bridge', ctx.recordId, ctx.data, payload, 2);
   },
 
   commit: async (intentId) => {
@@ -58,7 +58,7 @@ export const ServiceNowMajorIncidentContract = {
     if (intent) intent.status = 'committed';
     return {
       success: true,
-      actionId: 'sn_major_incident_bridge',
+      actionId: 'major_incident_bridge',
       transactionId: intentId,
       timestamp: Date.now(),
       message: `Major Incident bridge opened for ${intent?.recordId || 'INC009481'}. Secondary SRE paged.`

@@ -4,6 +4,21 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/relay`
+
+- **Changed (breaking)**: the product-specific table connector is now the generic `rest-table`
+  connector. A connection of type `servicenow` or `now` must become `rest-table`. Its host is a
+  hostname or full URL (`records.example.com` or `https://records.example.com`); a bare instance
+  name no longer gets a vendor domain added. The environment variables `SN_INSTANCE`,
+  `SN_USERNAME`, `SN_PASSWORD` and `SN_BEARER_TOKEN` are now `REST_TABLE_HOST`,
+  `REST_TABLE_USERNAME`, `REST_TABLE_PASSWORD` and `REST_TABLE_BEARER_TOKEN`. Error messages no
+  longer name a product.
+
+### `@sola-air-ui/behavior`
+
+- **Changed (breaking)**: `ServiceNowMajorIncidentContract` is now `MajorIncidentContract`, and its
+  action id is `major_incident_bridge`.
+
 ## 2026-10-21: ui 1.8.0
 
 ### `@sola-air-ui/ui`
@@ -198,7 +213,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ### `@sola-air-ui/relay`
 
-- **Fixed**: `RelayServer` enforces single-statement read-only `SELECT` on both string and `{ text, params }` object queries and forwards `limit` options to `sheet` / `servicenow` connectors.
+- **Fixed**: `RelayServer` enforces single-statement read-only `SELECT` on both string and `{ text, params }` object queries and forwards `limit` options to `sheet` / `rest-table` connectors.
 - **Changed**: `SELECT ... INTO` is rejected too: it creates a table in PostgreSQL and can write a
   file in MySQL (`INTO OUTFILE`). The check is defence in depth; give the relay a read-only database role.
 

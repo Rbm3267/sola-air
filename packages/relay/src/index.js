@@ -149,18 +149,18 @@ class GoogleSheetsConnector {
   async disconnect() {}
 }
 
-class ServiceNowConnector {
+class RestTableConnector {
   constructor(config) {
-    this.instance = config.instance || config.host || process.env.SN_INSTANCE || '';
-    this.username = config.username || config.user || process.env.SN_USERNAME || '';
-    this.password = config.password || process.env.SN_PASSWORD || '';
-    this.token = config.token || config.bearerToken || process.env.SN_BEARER_TOKEN || '';
+    this.instance = config.instance || config.host || process.env.REST_TABLE_HOST || '';
+    this.username = config.username || config.user || process.env.REST_TABLE_USERNAME || '';
+    this.password = config.password || process.env.REST_TABLE_PASSWORD || '';
+    this.token = config.token || config.bearerToken || process.env.REST_TABLE_BEARER_TOKEN || '';
     this.defaultTable = config.table || 'incident';
   }
 
   async connect() {
     if (!this.instance) {
-      throw new Error("ServiceNow instance URL or domain is required (e.g. 'dev12345.service-now.com')");
+      throw new Error("REST table host (a hostname or full URL) is required (e.g. 'records.example.com')");
     }
   }
 
@@ -170,7 +170,7 @@ class ServiceNowConnector {
     const limit = options.limit || options.sysparm_limit || 20;
     const fields = options.fields || 'number,short_description,priority,state,assigned_to,assignment_group,sys_created_on';
 
-    const baseUrl = this.instance.startsWith('http') ? this.instance : `https://${this.instance}.service-now.com`;
+    const baseUrl = this.instance.startsWith('http') ? this.instance : `https://${this.instance}`;
     const endpoint = `${baseUrl}/api/now/table/${table}?sysparm_query=${encodeURIComponent(query)}&sysparm_limit=${limit}&sysparm_display_value=true&sysparm_fields=${encodeURIComponent(fields)}`;
 
     const headers = {
@@ -188,7 +188,7 @@ class ServiceNowConnector {
     const res = await fetch(endpoint, { headers });
     if (!res.ok) {
       const errText = await res.text();
-      throw new Error(`ServiceNow API error (${res.status} ${res.statusText}): ${errText}`);
+      throw new Error(`Table API error (${res.status} ${res.statusText}): ${errText}`);
     }
 
     const data = await res.json();
@@ -199,9 +199,9 @@ class ServiceNowConnector {
   async mutate(action, payload = {}) {
     const table = payload.table || this.defaultTable;
     const sysId = payload.sys_id || payload.id;
-    if (!sysId) throw new Error("sys_id is required to mutate ServiceNow record");
+    if (!sysId) throw new Error("sys_id is required to mutate record");
 
-    const baseUrl = this.instance.startsWith('http') ? this.instance : `https://${this.instance}.service-now.com`;
+    const baseUrl = this.instance.startsWith('http') ? this.instance : `https://${this.instance}`;
     const endpoint = `${baseUrl}/api/now/table/${table}/${sysId}`;
 
     const headers = {
@@ -225,7 +225,7 @@ class ServiceNowConnector {
 
     if (!res.ok) {
       const errText = await res.text();
-      throw new Error(`ServiceNow mutation error (${res.status} ${res.statusText}): ${errText}`);
+      throw new Error(`Table mutation error (${res.status} ${res.statusText}): ${errText}`);
     }
 
     const data = await res.json();
@@ -326,9 +326,8 @@ export function addConnection(name, type, config) {
     case 'googlesheets':
       connector = new GoogleSheetsConnector(config);
       break;
-    case 'servicenow':
-    case 'now':
-      connector = new ServiceNowConnector(config);
+    case 'rest-table':
+      connector = new RestTableConnector(config);
       break;
     default:
       throw new Error(`Unsupported connector type: ${type}`);
@@ -488,8 +487,7 @@ export class RelayServer {
           const isNonSql =
             conn.type === 'sheet' ||
             conn.type === 'googlesheets' ||
-            conn.type === 'servicenow' ||
-            conn.type === 'now';
+            conn.type === 'rest-table';
 
           let result;
           if (isNonSql) {
