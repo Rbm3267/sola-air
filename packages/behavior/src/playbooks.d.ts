@@ -43,7 +43,7 @@ export interface PlaybookContract<TData = any, TPayload = any> {
   rollback?: (intentId: string) => Promise<PlaybookResult>;
 }
 
-export const ServiceNowMajorIncidentContract: PlaybookContract;
+export const MajorIncidentContract: PlaybookContract;
 export const AwsDrainNodeContract: PlaybookContract;
 export const StripeDunningNoticeContract: PlaybookContract;
 export const PostgresKillLocksContract: PlaybookContract;
