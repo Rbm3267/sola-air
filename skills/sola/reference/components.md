@@ -68,6 +68,7 @@ Import each one by its subpath, for example `import DataCard from '@sola-air-ui/
 | `value` | `"$0.00"` |  |
 | `trend` | `""` |  |
 | `period` | `""` | shown after the trend, e.g. "vs last week"; empty shows nothing |
+| `tone` | `"positive"` | positive \| negative \| neutral: whether the change is good news |
 
 ### Table
 
@@ -92,6 +93,7 @@ Import each one by its subpath, for example `import DataCard from '@sola-air-ui/
 | `delta` | `"+14.8%"` |  |
 | `data` | `[35, 55, 40, 80, 65, 95, 70, 88]` |  |
 | `max` | `null` | value of a full-height bar; null scales to the largest value |
+| `tone` | `"positive"` | positive \| negative \| neutral: whether the change is good news |
 
 ### GaugeCard
 

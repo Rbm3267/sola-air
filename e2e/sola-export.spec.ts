@@ -59,7 +59,7 @@ test.describe('generated .sola code', () => {
   test('the manifest lists every shipped component with its props', () => {
     expect(Object.keys(UI.subpaths).length).toBeGreaterThanOrEqual(37);
     expect(UI.subpaths.DataCard).toBe('@sola-air-ui/ui/data-card');
-    expect(UI.props.DataCard).toEqual(['title', 'value', 'trend', 'period']);
+    expect(UI.props.DataCard).toEqual(['title', 'value', 'trend', 'period', 'tone']);
   });
 
   for (const entry of COMPONENT_CATALOG.filter((c) => c.componentName in UI.subpaths)) {

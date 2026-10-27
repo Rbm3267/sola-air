@@ -4,6 +4,7 @@
   // Leave trend empty to hide the footer rather than show a made-up one.
   export let trend = "";
   export let period = ""; // shown after the trend, e.g. "vs last week"; empty shows nothing
+  export let tone = "positive"; // positive | negative | neutral: whether the change is good news
 </script>
 
 <div class="sola-data-card">
@@ -17,7 +18,7 @@
   <div class="card-value">{value}</div>
   {#if trend}
     <div class="card-footer">
-      <span class="trend-badge">{trend}</span>
+      <span class="trend-badge tone-{tone}">{trend}</span>
       {#if period}
         <span class="period-label">{period}</span>
       {/if}
@@ -111,5 +112,14 @@
     font-size: 12px;
     font-weight: 400;
     color: var(--sola-text-tertiary, #64748b);
+  }
+
+  .tone-negative {
+    background: var(--sola-alert-high-bg, #fef2f2);
+    color: var(--sola-alert-high-text, #b91c1c);
+  }
+  .tone-neutral {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-secondary, #475569);
   }
 </style>
