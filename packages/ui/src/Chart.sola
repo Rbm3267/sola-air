@@ -4,6 +4,7 @@
   export let delta = "+14.8%";
   export let data = [35, 55, 40, 80, 65, 95, 70, 88];
   export let max = null; // value of a full-height bar; null scales to the largest value
+  export let tone = "positive"; // positive | negative | neutral: whether the change is good news
 
   function barHeight(v) {
     const top = max ?? Math.max(0, ...data);
@@ -17,7 +18,7 @@
       <div class="sola-chart-title">{title}</div>
       <div class="sola-chart-val">{value}</div>
     </div>
-    <span class="sola-delta-badge">{delta}</span>
+    <span class="sola-delta-badge tone-{tone}">{delta}</span>
   </div>
   <div class="sola-spark-bars">
     {#each data as v}
@@ -84,5 +85,14 @@
   }
   .sola-bar:hover {
     background: var(--sola-color-primary-500, #10b981);
+  }
+
+  .tone-negative {
+    background: var(--sola-alert-high-bg, #fef2f2);
+    color: var(--sola-alert-high-text, #b91c1c);
+  }
+  .tone-neutral {
+    background: var(--sola-surface-2, #f1f5f9);
+    color: var(--sola-text-secondary, #475569);
   }
 </style>

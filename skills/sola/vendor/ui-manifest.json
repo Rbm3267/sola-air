@@ -71,7 +71,8 @@
       "value",
       "delta",
       "data",
-      "max"
+      "max",
+      "tone"
     ]
   },
   "CommandPalette": {
@@ -138,7 +139,8 @@
       "title",
       "value",
       "trend",
-      "period"
+      "period",
+      "tone"
     ]
   },
   "DatePicker": {

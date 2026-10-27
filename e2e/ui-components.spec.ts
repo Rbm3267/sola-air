@@ -184,6 +184,12 @@ test.describe('DataCard', () => {
     await mount(page, 'DataCard.sola', { title: 'Solved', value: '52', trend: '+18%', period: 'vs yesterday' });
     await expect(page.locator('.sola-data-card .period-label')).toHaveText('vs yesterday');
   });
+
+  test('a negative tone shows the trend in red', async ({ page }) => {
+    await mount(page, 'DataCard.sola', { title: 'Wait time', value: '9 min', trend: '+4 min', tone: 'negative' });
+    const color = await page.locator('.trend-badge').evaluate((el) => getComputedStyle(el).color);
+    expect(color).toBe('rgb(185, 28, 28)');
+  });
 });
 
 test.describe('Chart', () => {
@@ -193,6 +199,18 @@ test.describe('Chart', () => {
   test('scales the bars to the largest value, whatever the unit', async ({ page }) => {
     await mount(page, 'Chart.sola', { data: [10, 20, 40] });
     expect(await heights(page)).toEqual([25, 50, 100]);
+  });
+
+  test('colours the delta by the tone it is given, not by its sign', async ({ page }) => {
+    const color = () => page.locator('.sola-delta-badge').evaluate((el) => getComputedStyle(el).color);
+    await mount(page, 'Chart.sola', { delta: '-9%' });
+    const positive = await color();
+    await mount(page, 'Chart.sola', { delta: '-9%', tone: 'negative' });
+    const negative = await color();
+    await mount(page, 'Chart.sola', { delta: '-9%', tone: 'neutral' });
+    const neutral = await color();
+    expect(new Set([positive, negative, neutral]).size).toBe(3);
+    expect(negative).toBe('rgb(185, 28, 28)');
   });
 
   test('scales to max when one is given', async ({ page }) => {

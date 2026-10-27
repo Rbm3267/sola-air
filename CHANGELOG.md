@@ -19,6 +19,17 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Changed (breaking)**: the vendor-prefixed major-incident contract export is now `MajorIncidentContract`, and its
   action id is `major_incident_bridge`.
 
+### `@sola-air-ui/ui`
+
+- **Added**: `tone` on `DataCard` and `Chart` (`positive | negative | neutral`, default `positive`) sets the colour of
+  the trend or delta badge. Both badges were always green, so "-9%" or "+4 min wait" read as good news. The sign
+  can't decide it: a falling wait time is good, a falling revenue is not.
+
+### `@sola-air-ui/tokens`
+
+- **Added**: `--sola-alert-high-text` (`#b91c1c` light, `#f87171` dark), readable red text on `--sola-alert-high-bg`.
+  `--sola-alert-high` itself is under 4:1 on the dark background.
+
 ## 2026-10-21: ui 1.8.0
 
 ### `@sola-air-ui/ui`
