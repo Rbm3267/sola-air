@@ -32,6 +32,19 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Added**: `--sola-alert-high-text` (`#b91c1c` light, `#f87171` dark), readable red text on `--sola-alert-high-bg`.
   `--sola-alert-high` itself is under 4:1 on the dark background.
 
+## 2026-11-05: compiler 1.5.4, ui 1.8.2
+
+### `@sola-air-ui/compiler`
+
+- **Changed**: the selector scoper's internal `tokens` array is now `pieces`, and the `sola-check`
+  message for a `{:else}` with extra text now reads "has extra text after it" instead of
+  "unexpected token". No behavior change.
+
+### `@sola-air-ui/ui`
+
+- **Changed**: no component changes. The version moves with the `sola-ui` skill, which is built
+  from the compiler and ui packages, so the skill can be resubmitted to the plugin directory.
+
 ## 2026-11-05: ui 1.8.1
 
 ### `@sola-air-ui/ui`
