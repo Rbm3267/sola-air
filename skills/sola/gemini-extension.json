@@ -8,7 +8,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@sola-air-ui/mcp@1.0.5"
+        "@sola-air-ui/mcp@1.0.6"
       ]
     }
   }
