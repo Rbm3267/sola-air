@@ -252,7 +252,9 @@ Everything the preview needs is in \`vendor/\` (Node 18+, no install, no network
 // Two public repos, generated from the same files:
 //   --repo <dir>         Rbm3267/sola-ui-skill: the Claude Code plugin marketplace.
 //                        It holds the skill and nothing that launches a process.
-//   --gemini-repo <dir>  Rbm3267/sola-ui-gemini: the Gemini CLI extension. The Gemini
+//   --gemini-repo <dir>  The Gemini CLI extension layout, for a repo of its own. Nothing
+//                        publishes it today (no sola-ui-gemini repo exists); it is kept
+//                        so a Gemini extension can be released later. The Gemini
 //                        gallery needs gemini-extension.json at the repo root, and that
 //                        file starts the @sola-air-ui/mcp server through npx. Keeping it
 //                        out of the Claude plugin's repo means the plugin directory
@@ -338,7 +340,7 @@ claude plugin install sola-ui@sola-air
 
 **Claude.ai** (code execution on): zip the \`skills/sola-ui\` folder and upload it under Settings → Capabilities → Skills.
 
-**Gemini CLI** has its own extension: ${GEMINI_REPO_URL}
+**Gemini CLI**: this repo does not package an extension. \`GEMINI.md\` and the \`@sola-air-ui/mcp\` server are described at https://sola-air.dev/docs.
 
 ## What's inside
 

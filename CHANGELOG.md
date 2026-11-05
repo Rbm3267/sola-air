@@ -8,9 +8,9 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 - **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill
   alone, with no `gemini-extension.json` or anything else that launches a process. The Gemini CLI
-  extension is generated into its own repo (`Rbm3267/sola-ui-gemini`) with `--gemini-repo`. The
-  publish workflow pushes it when a `GEMINI_REPO_TOKEN` secret exists. Install Gemini from
-  `gemini extensions install https://github.com/Rbm3267/sola-ui-gemini`.
+  extension is no longer published from it. `build-skill.mjs --gemini-repo` can still generate
+  the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
+  `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
 ### `@sola-air-ui/relay`
 

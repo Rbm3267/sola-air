@@ -25,7 +25,7 @@
         Privacy Policy
       </h1>
       <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-mono mt-2 max-w-[68ch]">
-        Last updated: October 17, 2026 • Applicable to Sola Platform, the Sola AIR Chrome extension and the sola-ui Claude plugin and Gemini CLI extension
+        Last updated: November 5, 2026 • Applicable to Sola Platform, the Sola AIR Chrome extension and the sola-ui Claude plugin
       </p>
     </div>
 
@@ -125,7 +125,7 @@
 
       <!-- 5. Claude and Gemini skill -->
       <section id="sola-ui-skill" class="space-y-3 scroll-mt-24">
-        <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">5. Claude Plugin and Gemini CLI Extension (sola-ui)</h2>
+        <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">5. Claude Plugin (sola-ui)</h2>
         <p>
           The <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs text-slate-800 dark:text-slate-200">sola-ui</code> skill, published at <a href="https://github.com/Rbm3267/sola-ui-skill" class="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">Rbm3267/sola-ui-skill</a>, is instructions, reference files and a preview script. It has no server and no account.
         </p>
@@ -133,8 +133,7 @@
           <li>It does not collect, store or send personal data, and it has no analytics or telemetry. We receive nothing when you use it.</li>
           <li>The preview script runs on your machine or in the assistant's code sandbox. It reads the <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">.sola</code> file you give it and writes one HTML file next to it. It makes no network requests and does not read environment variables or credentials.</li>
           <li>The generated HTML page makes network requests only if your design uses <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">$data</code> or <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">$intent</code>, and then only to the endpoint the design sets (a local relay at <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">localhost:4040</code> by default).</li>
-          <li>The Gemini CLI extension also starts the <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs">@sola-air-ui/mcp</code> server on your machine. npx downloads it from the npm registry the first time it runs. The server compiles and checks components locally and makes no network requests.</li>
-          <li>What you type into Claude or Gemini is handled by Anthropic or Google under their own privacy policies, not this one.</li>
+          <li>What you type into Claude is handled by Anthropic under their own privacy policies, not this one.</li>
         </ul>
       </section>
 
