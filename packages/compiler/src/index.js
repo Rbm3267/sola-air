@@ -73,9 +73,9 @@ function addScopeToCompound(compound, scopeHash) {
 //   :global(body)        →  body
 // The scope class always goes on the last compound that is not global.
 function scopeSelector(selector, scopeHash) {
-  const tokens = [];       // alternating compounds and combinators
+  const pieces = [];       // alternating compounds and combinators
   let depth = 0, cur = '', comb = '';
-  const flushCompound = () => { if (cur) { tokens.push({ compound: cur }); cur = ''; } };
+  const flushCompound = () => { if (cur) { pieces.push({ compound: cur }); cur = ''; } };
   for (let i = 0; i < selector.length; i++) {
     const c = selector[i];
     if (c === '(' || c === '[') depth++;
@@ -85,15 +85,15 @@ function scopeSelector(selector, scopeHash) {
       comb += c;
       continue;
     }
-    if (comb) { tokens.push({ comb }); comb = ''; }
+    if (comb) { pieces.push({ comb }); comb = ''; }
     cur += c;
   }
   flushCompound();
-  if (comb) tokens.push({ comb });
+  if (comb) pieces.push({ comb });
 
   let last = -1;
-  for (let i = 0; i < tokens.length; i++) {
-    const t = tokens[i];
+  for (let i = 0; i < pieces.length; i++) {
+    const t = pieces[i];
     if (t.compound === undefined) continue;
     const m = t.compound.match(/^:global\(([\s\S]*)\)$/);
     // A comma list must stay grouped, or `.a :global(.x, .y)` would turn into
@@ -105,8 +105,8 @@ function scopeSelector(selector, scopeHash) {
       t.global = true;
     } else { last = i; }
   }
-  if (last >= 0) tokens[last].compound = addScopeToCompound(tokens[last].compound, scopeHash);
-  return tokens.map(t => t.compound ?? t.comb).join('');
+  if (last >= 0) pieces[last].compound = addScopeToCompound(pieces[last].compound, scopeHash);
+  return pieces.map(t => t.compound ?? t.comb).join('');
 }
 
 function scopeSelectorList(selector, scopeHash) {

@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.5.3, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.5.4, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.5.3\"}"
+  "{\"version\":\"1.5.4\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -80,11 +80,11 @@ function addScopeToCompound(compound, scopeHash) {
   return `${compound}.${scopeHash}`;
 }
 function scopeSelector(selector, scopeHash) {
-  const tokens = [];
+  const pieces = [];
   let depth = 0, cur = "", comb = "";
   const flushCompound = () => {
     if (cur) {
-      tokens.push({ compound: cur });
+      pieces.push({ compound: cur });
       cur = "";
     }
   };
@@ -98,16 +98,16 @@ function scopeSelector(selector, scopeHash) {
       continue;
     }
     if (comb) {
-      tokens.push({ comb });
+      pieces.push({ comb });
       comb = "";
     }
     cur += c;
   }
   flushCompound();
-  if (comb) tokens.push({ comb });
+  if (comb) pieces.push({ comb });
   let last = -1;
-  for (let i = 0; i < tokens.length; i++) {
-    const t = tokens[i];
+  for (let i = 0; i < pieces.length; i++) {
+    const t = pieces[i];
     if (t.compound === void 0) continue;
     const m = t.compound.match(/^:global\(([\s\S]*)\)$/);
     const group = (inner) => splitTopLevel(inner, (c) => c === ",").length > 1 ? `:is(${inner})` : inner;
@@ -121,8 +121,8 @@ function scopeSelector(selector, scopeHash) {
       last = i;
     }
   }
-  if (last >= 0) tokens[last].compound = addScopeToCompound(tokens[last].compound, scopeHash);
-  return tokens.map((t) => t.compound ?? t.comb).join("");
+  if (last >= 0) pieces[last].compound = addScopeToCompound(pieces[last].compound, scopeHash);
+  return pieces.map((t) => t.compound ?? t.comb).join("");
 }
 function scopeSelectorList(selector, scopeHash) {
   return splitTopLevel(selector, (c) => c === ",").map((part) => {
@@ -1772,7 +1772,7 @@ function checkSource(source, filename = "component.sola") {
               add(at, "error", "SOLA001", "`{:else if}` is missing a condition. It renders as literal text.");
             }
           } else {
-            add(at, "error", "SOLA001", "`{:else}` unexpected token (use `{:else}` or `{:else if <condition>}`). It renders as literal text.");
+            add(at, "error", "SOLA001", "`{:else}` has extra text after it (use `{:else}` or `{:else if <condition>}`). It renders as literal text.");
           }
         }
       }

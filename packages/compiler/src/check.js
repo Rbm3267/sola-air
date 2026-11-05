@@ -105,7 +105,7 @@ export function checkSource(source, filename = 'component.sola') {
               add(at, 'error', 'SOLA001', '`{:else if}` is missing a condition. It renders as literal text.');
             }
           } else {
-            add(at, 'error', 'SOLA001', '`{:else}` unexpected token (use `{:else}` or `{:else if <condition>}`). It renders as literal text.');
+            add(at, 'error', 'SOLA001', '`{:else}` has extra text after it (use `{:else}` or `{:else if <condition>}`). It renders as literal text.');
           }
         }
       }
