@@ -22,6 +22,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Added**: `--sola-alert-high-text` (`#b91c1c` light, `#f87171` dark), readable red text on `--sola-alert-high-bg`.
   `--sola-alert-high` itself is under 4:1 on the dark background.
 
+## 2026-11-05: sola-air 2.0.0
+
+### `sola-air`
+
+- **Changed (breaking)**: depends on `@sola-air-ui/relay` `^2.0.0`. Relay 2.0.0 renames the table
+  connector to `rest-table`; see the relay entry below and its README for the upgrade steps.
+  Projects that only use the PostgreSQL, MySQL or Google Sheets connections are not affected.
+
 ## 2026-11-05: relay 2.0.0
 
 ### `@sola-air-ui/relay`
