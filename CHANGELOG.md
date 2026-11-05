@@ -12,6 +12,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
   `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
+## 2026-11-05: ui 1.8.3
+
+### Skill (`sola-ui`)
+
+- **Changed**: the skill no longer mentions the `sola-mcp` tools or the `sola://docs` resource, and the plugin repo's
+  README no longer mentions the MCP server. Neither was needed to use the skill. `@sola-air-ui/ui` moves to
+  1.8.3 with no component change, because the skill's version follows the ui package.
+
 ## 2026-11-05: behavior 0.2.0, tokens 1.4.0
 
 ### `@sola-air-ui/behavior`
