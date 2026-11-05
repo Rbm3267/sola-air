@@ -36,6 +36,11 @@ npx sola-relay --port 4040
 - **PostgreSQL** (via `pg`)
 - **MySQL** (via `mysql2`)
 - **Google Sheets** (`type: "sheet"` with a `sheetId`): reads a sheet that is shared publicly, as CSV.
+- **REST table API** (`type: "rest-table"`): reads, and can update, records through a table-style JSON API. Settings: `host` (a hostname such as `records.example.com`, or a full URL), `table` (default table name), and either `token` or `username` and `password`. Each can come from the environment instead: `REST_TABLE_HOST`, `REST_TABLE_BEARER_TOKEN`, `REST_TABLE_USERNAME`, `REST_TABLE_PASSWORD`. Queries pass `table`, `query`, `fields` and `limit` options.
+
+### Upgrading from 1.x
+
+2.0.0 renames the table connector. Change `type` from the old vendor-named type (or its short alias) to `rest-table`, put a full hostname or URL in `host`, and rename the `SN_*` environment variables to the `REST_TABLE_*` names above. A bare instance name no longer gets a vendor domain added. SQL and Google Sheets connections are unchanged.
 
 ## Usage from a component
 
