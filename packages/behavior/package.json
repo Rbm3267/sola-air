@@ -1,6 +1,6 @@
 {
   "name": "@sola-air-ui/behavior",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Sola Behavioral Intent Engine: Real-time implicit generative UI adaptation based on human interaction telemetry.",
   "type": "module",
   "main": "src/index.js",

@@ -12,6 +12,8 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
   `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
+## 2026-11-05: behavior 0.2.0, tokens 1.4.0
+
 ### `@sola-air-ui/behavior`
 
 - **Changed (breaking)**: the vendor-prefixed major-incident contract export is now `MajorIncidentContract`, and its
