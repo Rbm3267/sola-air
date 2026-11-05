@@ -21,7 +21,7 @@
     "url": "git+https://github.com/Rbm3267/sola-air.git"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@sola-air-ui/compiler": "^1.5.0",
     "zod": "^3.23.0"
   },
