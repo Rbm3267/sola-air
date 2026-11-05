@@ -4,6 +4,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### Skill (`sola-ui`)
+
+- **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill
+  alone, with no `gemini-extension.json` or anything else that launches a process. The Gemini CLI
+  extension is no longer published from it. `build-skill.mjs --gemini-repo` can still generate
+  the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
+  `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
+
 ### `@sola-air-ui/relay`
 
 - **Changed (breaking)**: the product-specific table connector is now the generic `rest-table`

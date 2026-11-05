@@ -1,7 +1,8 @@
 name: Publish skill repo
 
-# Regenerates Rbm3267/sola-ui-skill (the Claude plugin marketplace and Gemini
-# CLI extension) from this repo after each npm publish, or by hand. It pushes
+# Regenerates Rbm3267/sola-ui-skill (the Claude plugin marketplace) from this repo
+# after each npm publish, or by hand. The plugin is the skill alone: nothing in it
+# launches a process. It pushes
 # only when the generated content changed, and tags a release when the skill's
 # version (the @sola-air-ui/ui version) is new. Needs a SKILL_REPO_TOKEN secret:
 # a fine-grained token for Rbm3267/sola-ui-skill with Contents: read and write.
