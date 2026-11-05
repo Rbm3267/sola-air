@@ -340,8 +340,6 @@ claude plugin install sola-ui@sola-air
 
 **Claude.ai** (code execution on): zip the \`skills/sola-ui\` folder and upload it under Settings → Capabilities → Skills.
 
-**Gemini CLI**: this repo does not package an extension. \`GEMINI.md\` and the \`@sola-air-ui/mcp\` server are described at https://sola-air.dev/docs.
-
 ## What's inside
 
 - \`skills/sola-ui/SKILL.md\`: instructions
