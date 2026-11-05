@@ -12,16 +12,6 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
   `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
-### `@sola-air-ui/relay`
-
-- **Changed (breaking)**: the product-specific table connector is now the generic `rest-table`
-  connector. A connection that uses the old vendor-named connector type (or its short alias) must change its type to `rest-table`. Its host is a
-  hostname or full URL (`records.example.com` or `https://records.example.com`); a bare instance
-  name no longer gets a vendor domain added. The environment variables `SN_INSTANCE`,
-  `SN_USERNAME`, `SN_PASSWORD` and `SN_BEARER_TOKEN` are now `REST_TABLE_HOST`,
-  `REST_TABLE_USERNAME`, `REST_TABLE_PASSWORD` and `REST_TABLE_BEARER_TOKEN`. Error messages no
-  longer name a product.
-
 ### `@sola-air-ui/behavior`
 
 - **Changed (breaking)**: the vendor-prefixed major-incident contract export is now `MajorIncidentContract`, and its
@@ -31,6 +21,18 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 - **Added**: `--sola-alert-high-text` (`#b91c1c` light, `#f87171` dark), readable red text on `--sola-alert-high-bg`.
   `--sola-alert-high` itself is under 4:1 on the dark background.
+
+## 2026-11-05: relay 2.0.0
+
+### `@sola-air-ui/relay`
+
+- **Changed (breaking)**: the product-specific table connector is now the generic `rest-table`
+  connector. A connection that uses the old vendor-named connector type (or its short alias) must change its type to `rest-table`. Its host is a
+  hostname or full URL (`records.example.com` or `https://records.example.com`); a bare instance
+  name no longer gets a vendor domain added. The environment variables `SN_INSTANCE`,
+  `SN_USERNAME`, `SN_PASSWORD` and `SN_BEARER_TOKEN` are now `REST_TABLE_HOST`,
+  `REST_TABLE_USERNAME`, `REST_TABLE_PASSWORD` and `REST_TABLE_BEARER_TOKEN`. Error messages no
+  longer name a product.
 
 ## 2026-11-05: compiler 1.5.4, ui 1.8.2
 
