@@ -12,6 +12,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
   `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
+## 2026-11-05: mcp 1.0.6
+
+### `@sola-air-ui/mcp`
+
+- **Security**: depends on `zod` 4.6.7 (was 3.x), which fixes a memory-exhaustion advisory for oversized
+  constrained collections. The MCP SDK accepts zod 3.25 or 4, and the server's tool schemas did not change.
+  The lockfile also moves the SDK's own dependencies (`hono`, `body-parser`, `qs`, `proxy-addr`) to patched versions.
+
 ## 2026-11-05: ui 1.8.3
 
 ### Skill (`sola-ui`)
