@@ -83,8 +83,8 @@
     <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full blur-3xl opacity-15 pointer-events-none {metrics.persona === 'sre_commander' ? 'bg-rose-500' : metrics.persona === 'finops_auditor' ? 'bg-violet-500' : 'bg-blue-500'}"></div>
 
     <div class="flex items-center gap-4 relative z-10">
-      <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-sm {metrics.persona === 'sre_commander' ? 'bg-gradient-to-br from-rose-500 to-amber-600' : metrics.persona === 'finops_auditor' ? 'bg-gradient-to-br from-violet-600 to-indigo-600' : 'bg-gradient-to-br from-blue-500 to-cyan-600'}">
-        <SolaIcons name="sentinel" size={24} gradient={false} />
+      <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-2xs {metrics.persona === 'sre_commander' ? 'text-white bg-gradient-to-br from-rose-500 to-amber-600' : metrics.persona === 'finops_auditor' ? 'text-white bg-gradient-to-br from-violet-600 to-indigo-600' : 'bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-700 dark:text-blue-400'}">
+        <SolaIcons name="sentinel" size={20} gradient={metrics.persona !== 'sre_commander' && metrics.persona !== 'finops_auditor'} />
       </div>
       <div>
         <div class="flex items-center gap-2">
