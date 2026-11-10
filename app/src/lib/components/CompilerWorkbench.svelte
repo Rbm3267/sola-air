@@ -61,6 +61,10 @@
       </span>
     </div>
 
+    <p class="px-5 sm:px-6 py-3 border-b border-slate-200/70 dark:border-white/10 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[80ch]">
+      This is what a companion is made of: a component compiles to plain DOM updates, with no virtual DOM to diff, so there is little code to add to the page. The whole core runtime is {FACTS.coreSizeKb}.
+    </p>
+
     <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
       <!-- Pane 1: the real .sola file -->
       <div class="lg:col-span-4 p-5 sm:p-6 border-b lg:border-b-0 lg:border-r border-slate-200/70 dark:border-white/10 bg-white dark:bg-[#0c1222] flex flex-col gap-4 min-w-0">

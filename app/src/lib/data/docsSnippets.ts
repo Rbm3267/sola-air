@@ -222,6 +222,26 @@ ${STYLE_OPEN}
   .dock { font-family: system-ui, sans-serif; display: grid; gap: 8px; max-width: 280px; }
 ${STYLE_CLOSE}`;
 
+/**
+ * The homepage's "add it to an app you already have" sample. Run by
+ * e2e/docs-snippets.spec.ts against the real core and sentinel packages, with
+ * './Companion.sola' compiled from a small stand-in component.
+ */
+export const overlayExample = `import { observe } from '@sola-air-ui/sentinel';
+import { mountShell } from '@sola-air-ui/core';
+import Companion from './Companion.sola';
+
+// Mount once, in a closed shadow root.
+const shell = mountShell(Companion, {}, { id: 'companion' });
+
+// Watch a form that is already on the page. No per-field wiring.
+observe(document.querySelector('#target-form'), {
+  onSuggest(prompt) {
+    // Send the prompt to your endpoint, then show the answer.
+    console.log(prompt);
+  }
+});`;
+
 /** Shown in the docs, not executed as a snippet: it needs a real multi-page site. */
 export const shellBootstrapExample = `// portal-shell.js — load this file on EVERY page of the portal.
 import Dock from './Dock.sola';

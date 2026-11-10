@@ -71,7 +71,7 @@
           Drop an ambient companion into any existing web app.
         </h2>
         <p class="text-slate-600 dark:text-slate-400 text-base max-w-2xl mt-2 leading-relaxed">
-          You don't have to rewrite your portal to adopt Sola AIR. <code class="font-mono text-[0.9em] text-blue-700 dark:text-blue-400">mountShell()</code> mounts any compiled component inside a closed shadow root, so host CSS can't reach it. On the right, it is mounting a real <code class="font-mono text-[0.9em] text-violet-700 dark:text-violet-400">IntentCard</code> next to this page's own markup.
+          You don't have to rewrite your portal to adopt Sola AIR. <code class="font-mono text-[0.9em] text-blue-700 dark:text-blue-400">mountShell()</code> mounts any compiled component inside a closed shadow root, so host CSS can't reach it and its CSS can't leak out. Keep its state in <code class="font-mono text-[0.9em] text-blue-700 dark:text-blue-400">$persist</code> and the same bootstrap rebuilds it on every page of a portal. On the right, it is mounting a real <code class="font-mono text-[0.9em] text-violet-700 dark:text-violet-400">IntentCard</code> next to this page's own markup.
         </p>
       </div>
 

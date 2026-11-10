@@ -160,6 +160,7 @@
     <div class="grid grid-cols-1 md:grid-cols-5" bind:this={root}>
       <!-- The form a person actually fills in -->
       <div class="md:col-span-3 p-6 sm:p-7 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-slate-100 dark:border-white/5">
+        <p class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-400">Watches a form with no per-field wiring</p>
         <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
           Type into a field, then stop for a moment. The observation and the
           gate are the real Sentinel from
