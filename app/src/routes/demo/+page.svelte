@@ -155,7 +155,10 @@
 
   async function submitIntent() {
     if (!intentQuery.trim() || isLoading) return;
-    
+
+    // Generated cards, the loading state and errors are drawn in the Custom
+    // Grid view only. From any other tab nothing seemed to happen.
+    viewMode = 'custom';
     isLoading = true;
     errorMsg = '';
 
@@ -167,7 +170,11 @@
       });
 
       const rawText = await res.text();
-      if (!res.ok) throw new Error('Intent generation failed');
+      if (!res.ok) {
+        let detail = '';
+        try { detail = JSON.parse(rawText)?.error ?? ''; } catch { /* not JSON */ }
+        throw new Error(detail || 'Could not generate that. Try again in a moment.');
+      }
 
       let cleanText = rawText.trim();
       if (cleanText.startsWith('```json')) {
@@ -175,6 +182,10 @@
       }
 
       const generated = JSON.parse(cleanText);
+      // The server answers 200 with a plain reply when it has no model key.
+      if (!Array.isArray(generated) && !generated?.component && typeof generated?.reply === 'string') {
+        throw new Error(generated.reply);
+      }
       const newItems = Array.isArray(generated) ? generated : [generated];
 
       // Append new generated widgets to the top of the canvas
@@ -372,6 +383,11 @@
       </form>
     </div>
 
+    <!-- Errors were set but never shown, so a failed request looked like nothing happened. -->
+    {#if errorMsg}
+      <p role="alert" class="max-w-3xl mx-auto text-center text-xs sm:text-sm text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 rounded-2xl px-4 py-2.5">{errorMsg}</p>
+    {/if}
+
     <!-- Suggestions Row -->
     <div class="flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto">
       <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Suggestions:</span>
@@ -496,7 +512,7 @@
           transition:fly={{ y: 20, duration: 250 }}
         >
           <!-- Floating Card Action Toolbar (Reorder, Span, Edit, Delete) -->
-          <div class="absolute -top-3.5 right-4 z-20 opacity-0 group-hover/widget:opacity-100 transition-all duration-150 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md text-white px-3 py-1 rounded-2xl shadow-xl border border-slate-700/80 text-xs font-mono">
+          <div class="widget-toolbar absolute -top-3.5 right-4 z-20 opacity-0 group-hover/widget:opacity-100 group-focus-within/widget:opacity-100 transition-all duration-150 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md text-white px-3 py-1 rounded-2xl shadow-xl border border-slate-700/80 text-xs font-mono">
             
             <!-- Move Left / Up -->
             <button 
@@ -667,3 +683,13 @@
     </div>
   </div>
 {/if}
+
+<style>
+  /* A touch screen never hovers, so the width, move, edit and delete controls
+     would stay hidden. Show them whenever hover isn't available. */
+  @media (hover: none) {
+    .widget-toolbar {
+      opacity: 1;
+    }
+  }
+</style>
