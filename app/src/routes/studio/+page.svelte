@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import Navbar from '$lib/components/Navbar.svelte';
+  import IntentBar from '$lib/components/IntentBar.svelte';
   import SolaMount from '$lib/components/SolaMount.svelte';
   import { STUDIO_COMPONENTS, STUDIO_BY_NAME, buildBlock, type StudioComponent } from '$lib/data/studioComponents';
   import { STUDIO_MOUNTS } from '$lib/data/studioMounts';
@@ -291,11 +292,16 @@
     </div>
 
     <!-- Arc -->
-    <form class="max-w-[1500px] mx-auto px-4 pb-3 flex flex-col sm:flex-row gap-2" onsubmit={(e) => { e.preventDefault(); generate(); }}>
-      <label class="sr-only" for="arc-prompt">Describe a layout for Arc</label>
-      <input id="arc-prompt" bind:value={arcPrompt} placeholder="Describe a layout, e.g. 'support desk with open tickets, SLA gauge and a ticket table'" class="flex-1 min-w-0 px-3 py-2 rounded-lg text-sm border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 placeholder:text-slate-500 dark:placeholder:text-slate-400" />
-      <button type="submit" disabled={arcBusy || !arcPrompt.trim()} class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white disabled:opacity-50">{arcBusy ? 'Generating…' : 'Generate with Arc'}</button>
-    </form>
+    <div class="max-w-[1500px] mx-auto px-4 pb-3">
+      <IntentBar
+        bind:value={arcPrompt}
+        busy={arcBusy}
+        placeholder="Describe a layout, e.g. 'a support desk with tickets'"
+        inputLabel="Describe a layout for Arc"
+        submitLabel="Generate with Arc"
+        onsubmit={() => generate()}
+      />
+    </div>
     {#if arcError}
       <p role="alert" class="max-w-[1500px] mx-auto px-4 pb-3 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
     {/if}

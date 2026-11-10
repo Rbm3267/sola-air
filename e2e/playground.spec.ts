@@ -205,3 +205,22 @@ test('Generate shows the reason when the model fails', async ({ page }) => {
   await page.getByRole('button', { name: 'Generate', exact: true }).last().click();
   await expect(page.getByRole('alert')).toContainText('offline');
 });
+
+test("Studio's AI field is the same bar as the playground's", async ({ page }) => {
+  const bodies: any[] = [];
+  await page.route('**/api/intent', (route) => {
+    bodies.push(route.request().postDataJSON());
+    route.fulfill({ json: studioReply });
+  });
+  await page.goto('/studio');
+  await page.waitForLoadState('networkidle');
+  // The same pieces as the playground: a labelled field, a microphone, a send button.
+  const field = page.getByLabel('Describe a layout for Arc');
+  await expect(field).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Voice intent recognition' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Generate with Arc' })).toBeDisabled();
+  await field.fill('a probe dashboard');
+  await field.press('Enter');
+  await expect(page.getByText('Probe metric').first()).toBeVisible();
+  expect(bodies[0]).toMatchObject({ mode: 'studio', intent: 'a probe dashboard' });
+});
