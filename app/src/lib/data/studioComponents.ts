@@ -221,3 +221,25 @@ export function buildBlock(
   const s = Math.min(3, Math.max(1, Math.round(Number(span) || def.span))) as 1 | 2 | 3;
   return { component: name, props: clean, span: s };
 }
+
+/**
+ * Clean up props a model wrote before they reach the canvas.
+ *
+ * A gauge prints a "Live Gauge" badge and a "Telemetry Synchronized / zero-vdom"
+ * footer unless told otherwise. Those are demo defaults that claim a live feed,
+ * so a generated gauge starts without them. A dial readout with no digit in it
+ * is a unit ("kHz") that the model put in the wrong field, so it is dropped and
+ * the dial shows its value.
+ */
+export function tidyGeneratedProps(name: string, props: unknown): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...(props && typeof props === 'object' ? (props as Record<string, unknown>) : {}) };
+  if (name === 'GaugeCard') {
+    for (const key of ['badge', 'footerLeft', 'footerRight']) {
+      if (out[key] === undefined) out[key] = '';
+    }
+  }
+  if (name === 'TactileDialCard' && typeof out.metric === 'string' && !/\d/.test(out.metric)) {
+    delete out.metric;
+  }
+  return out;
+}

@@ -20,7 +20,7 @@ import {
   type UiManifest
 } from '../app/src/lib/data/solaExport';
 import { readUiManifest } from '../scripts/ui-manifest.mjs';
-import { STUDIO_COMPONENTS, buildBlock } from '../app/src/lib/data/studioComponents';
+import { STUDIO_COMPONENTS, buildBlock, tidyGeneratedProps } from '../app/src/lib/data/studioComponents';
 import { STUDIO_TEMPLATES } from '../app/src/lib/data/studioTemplates';
 
 const REPO_ROOT = join(__dirname, '..');
@@ -157,5 +157,28 @@ test.describe('generated .sola code', () => {
     expect(source, 'icon is not a DataCard prop').not.toContain('icon=');
     expect(source).toContain('"Clusters" (ListBlock): a preview on this site');
     expect(source).not.toContain('config=');
+  });
+});
+
+test.describe('generated Studio props', () => {
+  test('a generated gauge drops the demo badge and live-feed footer', () => {
+    const p = tidyGeneratedProps('GaugeCard', { title: 'Uptime', value: '99%' });
+    expect(p.badge).toBe('');
+    expect(p.footerLeft).toBe('');
+    expect(p.footerRight).toBe('');
+  });
+
+  test('a footer the model wrote on purpose is kept', () => {
+    expect(tidyGeneratedProps('GaugeCard', { footerLeft: 'Updated daily' }).footerLeft).toBe('Updated daily');
+  });
+
+  test('a dial readout that is only a unit is dropped, a number is kept', () => {
+    expect(tidyGeneratedProps('TactileDialCard', { metric: 'kHz', unit: 'kHz' })).not.toHaveProperty('metric');
+    expect(tidyGeneratedProps('TactileDialCard', { metric: '250 kHz' }).metric).toBe('250 kHz');
+  });
+
+  test('other components and bad input pass through', () => {
+    expect(tidyGeneratedProps('DataCard', { title: 'x' })).toEqual({ title: 'x' });
+    expect(tidyGeneratedProps('DataCard', null)).toEqual({});
   });
 });
