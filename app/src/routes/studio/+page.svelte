@@ -4,7 +4,7 @@
   import Navbar from '$lib/components/Navbar.svelte';
   import IntentBar from '$lib/components/IntentBar.svelte';
   import SolaMount from '$lib/components/SolaMount.svelte';
-  import { STUDIO_COMPONENTS, STUDIO_BY_NAME, buildBlock, type StudioComponent } from '$lib/data/studioComponents';
+  import { STUDIO_COMPONENTS, STUDIO_BY_NAME, buildBlock, tidyGeneratedProps, type StudioComponent } from '$lib/data/studioComponents';
   import { STUDIO_MOUNTS } from '$lib/data/studioMounts';
   import { STUDIO_TEMPLATES } from '$lib/data/studioTemplates';
   import { UI_MANIFEST } from '$lib/data/site';
@@ -66,7 +66,8 @@
   }
 
   function add(def: StudioComponent) {
-    const b = makeBlock(def.name);
+    // A gauge added here starts without the demo "Live Gauge" badge and footer.
+    const b = makeBlock(def.name, tidyGeneratedProps(def.name, {}));
     if (!b) return;
     blocks = [...blocks, b];
     selectedId = b.id;
@@ -76,7 +77,7 @@
   function loadTemplate(id: string) {
     const t = STUDIO_TEMPLATES.find((x) => x.id === id);
     if (!t) return;
-    blocks = t.blocks.map((b) => makeBlock(b.component, b.props, b.span)).filter((b): b is Block => !!b);
+    blocks = t.blocks.map((b) => makeBlock(b.component, tidyGeneratedProps(b.component, b.props), b.span)).filter((b): b is Block => !!b);
     selectedId = null;
     templatesOpen = false;
   }
@@ -112,6 +113,76 @@
   function remove(id: string) {
     blocks = blocks.filter((b) => b.id !== id);
     if (selectedId === id) selectedId = null;
+  }
+
+  // --- Moving and resizing on the canvas -----------------------------------
+  // Pointer events, so a finger on an iPad works as well as a mouse. The canvas
+  // list holds the pointer for the whole gesture: a block that is mid-move is
+  // re-inserted in the DOM, which would drop a capture held on the block itself.
+  let canvasEl = $state<HTMLOListElement | null>(null);
+  let gesture = $state<{ kind: 'move' | 'resize'; id: string } | null>(null);
+
+  function startGesture(e: PointerEvent, kind: 'move' | 'resize', id: string) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (!canvasEl) return;
+    e.preventDefault();
+    canvasEl.setPointerCapture(e.pointerId);
+    gesture = { kind, id };
+    selectedId = id;
+  }
+
+  function onGestureMove(e: PointerEvent) {
+    if (!gesture || !canvasEl) return;
+    if (gesture.kind === 'move') {
+      const over = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>('[data-block-id]');
+      const overId = over?.dataset.blockId;
+      if (!over || !overId || overId === gesture.id) return;
+      // Swap only once the pointer is well inside the other block, so two blocks of
+      // different sizes do not trade places back and forth under a still pointer.
+      const r = over.getBoundingClientRect();
+      const inside =
+        Math.abs(e.clientX - (r.left + r.width / 2)) < r.width * 0.3 &&
+        Math.abs(e.clientY - (r.top + r.height / 2)) < r.height * 0.3;
+      if (!inside) return;
+      const from = blocks.findIndex((b) => b.id === gesture!.id);
+      const to = blocks.findIndex((b) => b.id === overId);
+      if (from < 0 || to < 0) return;
+      const next = [...blocks];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      blocks = next;
+    } else {
+      const el = canvasEl.querySelector<HTMLElement>(`[data-block-id="${gesture.id}"]`);
+      if (!el) return;
+      const cols = getComputedStyle(canvasEl).gridTemplateColumns.split(' ').length;
+      const gap = parseFloat(getComputedStyle(canvasEl).columnGap) || 0;
+      const colWidth = (canvasEl.clientWidth + gap) / cols;
+      const want = Math.min(cols, Math.max(1, Math.round((e.clientX - el.getBoundingClientRect().left + gap / 2) / colWidth)));
+      // On a two-column canvas, "all columns" is stored as 3 like everywhere else.
+      const span = (want === cols ? 3 : want) as 1 | 2 | 3;
+      const current = blocks.find((b) => b.id === gesture!.id);
+      if (current && current.span !== span) update(gesture.id, { span });
+    }
+  }
+
+  function endGesture() {
+    gesture = null;
+  }
+
+  function handleKey(e: KeyboardEvent, block: Block, i: number) {
+    const d = e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    move(block.id, d as -1 | 1);
+    // The block is re-inserted in the list, so give the grip focus back.
+    queueMicrotask(() => canvasEl?.querySelector<HTMLElement>(`[data-block-id="${block.id}"] button[aria-label^="Drag"]`)?.focus());
+  }
+
+  function resizeKey(e: KeyboardEvent, block: Block) {
+    const d = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    update(block.id, { span: Math.min(3, Math.max(1, block.span + d)) as 1 | 2 | 3 });
   }
 
   // --- Prop editing -------------------------------------------------------
@@ -253,7 +324,7 @@
     }
   });
 
-  const spanClass = (s: number) => (s === 3 ? 'sm:col-span-2 lg:col-span-3' : s === 2 ? 'sm:col-span-2' : '');
+  const spanClass = (s: number) => `studio-span-${s}`;
 </script>
 
 <svelte:head>
@@ -268,7 +339,7 @@
 
   <!-- Toolbar -->
   <div class="border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#0b1120]/80">
-    <div class="max-w-[1500px] mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center gap-3">
       <div class="mr-auto min-w-0">
         <h1 class="text-base font-bold">Studio</h1>
         <p class="text-xs text-slate-600 dark:text-slate-400">Arrange real <code class="font-mono">@sola-air-ui/ui</code> components, edit their props, and export a <code class="font-mono">.sola</code> file that runs.</p>
@@ -292,7 +363,7 @@
     </div>
 
     <!-- Arc -->
-    <div class="max-w-[1500px] mx-auto px-4 pb-3">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 pb-5">
       <IntentBar
         bind:value={arcPrompt}
         busy={arcBusy}
@@ -303,14 +374,14 @@
       />
     </div>
     {#if arcError}
-      <p role="alert" class="max-w-[1500px] mx-auto px-4 pb-3 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
+      <p role="alert" class="max-w-[1600px] mx-auto px-4 sm:px-6 pb-4 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
     {/if}
   </div>
 
-  <div class="flex-1 w-full max-w-[1500px] mx-auto px-4 py-4 grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)_300px]">
+  <div class="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 py-6 grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)_300px]">
     <!-- Palette -->
     <aside class="{paletteOpen ? 'block' : 'hidden'} lg:block" aria-label="Components">
-      <div class="lg:sticky lg:top-4 space-y-3">
+      <div class="lg:sticky lg:top-6 space-y-5 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-1">
         <label class="sr-only" for="palette-search">Search components</label>
         <input id="palette-search" bind:value={search} placeholder="Search {STUDIO_COMPONENTS.length} components" class="w-full px-3 py-2 rounded-lg text-sm border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 placeholder:text-slate-500 dark:placeholder:text-slate-400" />
         {#each GROUPS as group}
@@ -318,7 +389,7 @@
           {#if items.length}
             <div>
               <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">{group}</h2>
-              <ul class="space-y-1">
+              <ul class="space-y-1.5">
                 {#each items as c}
                   <li>
                     <button type="button" class="w-full text-left px-3 py-2 rounded-lg border border-transparent hover:border-slate-200 dark:hover:border-white/10 hover:bg-white dark:hover:bg-white/5" onclick={() => add(c)}>
@@ -336,40 +407,77 @@
 
     <!-- Canvas -->
     <main id="main-content" aria-label="Canvas" class="min-w-0">
-      {#if blocks.length === 0}
-        <div class="h-64 rounded-2xl border-2 border-dashed border-slate-300 dark:border-white/15 flex flex-col items-center justify-center text-center p-6 gap-2">
-          <p class="text-sm font-semibold">The canvas is empty.</p>
-          <p class="text-sm text-slate-600 dark:text-slate-400">Add a component, pick a template, or describe a layout to Arc.</p>
-        </div>
-      {:else}
-        <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 list-none p-0 m-0">
-          {#each blocks as block, i (block.id)}
-            <li data-block={block.component} class="{spanClass(block.span)} min-w-0">
-              <div class="h-full rounded-2xl border bg-white dark:bg-[#0f172a] {selectedId === block.id ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-slate-200 dark:border-white/10'}">
-                <div class="flex items-center gap-1 px-3 py-2 border-b border-slate-100 dark:border-white/5">
-                  <button type="button" class="mr-auto text-left min-w-0" onclick={() => (selectedId = block.id)} aria-pressed={selectedId === block.id}>
-                    <span class="block text-xs font-semibold font-mono truncate">{block.component}</span>
-                  </button>
-                  <button type="button" class="px-1.5 py-1 rounded text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30" aria-label="Move {block.component} earlier" disabled={i === 0} onclick={() => move(block.id, -1)}>↑</button>
-                  <button type="button" class="px-1.5 py-1 rounded text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30" aria-label="Move {block.component} later" disabled={i === blocks.length - 1} onclick={() => move(block.id, 1)}>↓</button>
-                  <button type="button" class="px-1.5 py-1 rounded text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10" aria-label="Edit {block.component}" onclick={() => (selectedId = block.id)}>Edit</button>
-                  <button type="button" class="px-1.5 py-1 rounded text-xs text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10" aria-label="Remove {block.component}" onclick={() => remove(block.id)}>✕</button>
+      <div class="studio-canvas rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#070a13] p-5 sm:p-8 min-h-[70vh]">
+        {#if blocks.length === 0}
+          <div class="min-h-[50vh] rounded-2xl border-2 border-dashed border-slate-300 dark:border-white/15 flex flex-col items-center justify-center text-center p-8 gap-2">
+            <p class="text-base font-semibold">The canvas is empty.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400 max-w-sm">Add a component from the left, pick a template, or describe a layout to Arc.</p>
+          </div>
+        {:else}
+          <ol
+            bind:this={canvasEl}
+            class="studio-grid list-none p-0 m-0"
+            onpointermove={onGestureMove}
+            onpointerup={endGesture}
+            onpointercancel={endGesture}
+          >
+            {#each blocks as block, i (block.id)}
+              {@const active = gesture?.id === block.id}
+              <li data-block={block.component} data-block-id={block.id} class="{spanClass(block.span)} group min-w-0 relative self-start">
+                <div class="h-full flex flex-col rounded-2xl border bg-white dark:bg-[#0f172a] shadow-sm transition-shadow {active ? 'shadow-xl opacity-90 ring-2 ring-blue-500/50' : ''} {selectedId === block.id ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-slate-200 dark:border-white/10'}">
+                  <div class="flex items-center gap-1 pl-1 pr-2 py-1.5 border-b border-slate-100 dark:border-white/5">
+                    <button
+                      type="button"
+                      class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 cursor-grab active:cursor-grabbing touch-none select-none"
+                      aria-label="Drag {block.component} to move it"
+                      title="Drag to move. With the keyboard, use the arrow keys."
+                      onpointerdown={(e) => startGesture(e, 'move', block.id)}
+                      onkeydown={(e) => handleKey(e, block, i)}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><circle cx="4" cy="3" r="1.3"/><circle cx="10" cy="3" r="1.3"/><circle cx="4" cy="7" r="1.3"/><circle cx="10" cy="7" r="1.3"/><circle cx="4" cy="11" r="1.3"/><circle cx="10" cy="11" r="1.3"/></svg>
+                    </button>
+                    <button type="button" class="mr-auto text-left min-w-0 py-1" onclick={() => (selectedId = block.id)} aria-pressed={selectedId === block.id}>
+                      <span class="block text-xs font-semibold font-mono truncate">{block.component}</span>
+                    </button>
+                    {#if selectedId === block.id}
+                      <button type="button" class="px-2 py-1.5 rounded text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30" aria-label="Move {block.component} earlier" disabled={i === 0} onclick={() => move(block.id, -1)}>↑</button>
+                      <button type="button" class="px-2 py-1.5 rounded text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 disabled:opacity-30" aria-label="Move {block.component} later" disabled={i === blocks.length - 1} onclick={() => move(block.id, 1)}>↓</button>
+                    {/if}
+                    <button type="button" class="px-2 py-1.5 rounded text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10" aria-label="Edit {block.component}" onclick={() => (selectedId = block.id)}>Edit</button>
+                    <button type="button" class="px-2 py-1.5 rounded text-xs text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10" aria-label="Remove {block.component}" onclick={() => remove(block.id)}>✕</button>
+                  </div>
+                  <div class="flex-1 p-5 studio-block overflow-x-auto">
+                    {#key JSON.stringify(block.props)}
+                      <SolaMount component={STUDIO_MOUNTS[block.component]} props={block.props} />
+                    {/key}
+                  </div>
                 </div>
-                <div class="p-4 studio-block overflow-x-auto">
-                  {#key JSON.stringify(block.props)}
-                    <SolaMount component={STUDIO_MOUNTS[block.component]} props={block.props} />
-                  {/key}
+                <!-- Drag the right edge to change how many columns it spans. -->
+                <div
+                  role="slider"
+                  tabindex="0"
+                  aria-label="Width of {block.component}"
+                  aria-orientation="horizontal"
+                  aria-valuemin="1"
+                  aria-valuemax="3"
+                  aria-valuenow={block.span}
+                  aria-valuetext="{block.span} {block.span === 1 ? 'column' : 'columns'}"
+                  class="studio-resize touch-none absolute top-1/2 -right-3 -translate-y-1/2 h-12 w-6 flex items-center justify-center cursor-ew-resize rounded-full transition-opacity {selectedId === block.id || active ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'}"
+                  onpointerdown={(e) => startGesture(e, 'resize', block.id)}
+                  onkeydown={(e) => resizeKey(e, block)}
+                >
+                  <span class="block h-8 w-1.5 rounded-full {active && gesture?.kind === 'resize' ? 'bg-blue-500' : 'bg-slate-300 dark:bg-white/25'}"></span>
                 </div>
-              </div>
-            </li>
-          {/each}
-        </ol>
-      {/if}
+              </li>
+            {/each}
+          </ol>
+        {/if}
+      </div>
     </main>
 
     <!-- Properties -->
     <aside aria-label="Properties" class="min-w-0">
-      <div class="lg:sticky lg:top-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0f172a] p-4">
+      <div class="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0f172a] p-5">
         {#if selected}
           <div class="flex items-center justify-between gap-2 mb-1">
             <h2 class="text-sm font-bold font-mono">{selected.component}</h2>
@@ -449,6 +557,38 @@
 </div>
 
 <style>
+  /* A dotted workspace, so the canvas reads as a place to arrange things. */
+  .studio-canvas {
+    background-image: radial-gradient(circle, rgb(148 163 184 / 0.45) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+  }
+  /* The canvas decides its own column count from the room it has, so blocks are
+     never squeezed into a sliver: one column on a phone, two, then three. A block
+     that spans "all columns" always fills the row. */
+  .studio-canvas {
+    container-type: inline-size;
+    container-name: studio;
+  }
+  .studio-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .studio-span-2,
+  .studio-span-3 {
+    grid-column: 1 / -1;
+  }
+  @container studio (min-width: 520px) {
+    .studio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @container studio (min-width: 800px) {
+    .studio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .studio-span-2 { grid-column: span 2; }
+  }
+  .studio-resize:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 1px;
+  }
   /* Components size themselves to their block. */
   .studio-block :global(.sola-component-root) {
     width: 100%;
