@@ -17,6 +17,7 @@
     persistDockExample,
     shellBootstrapExample,
     scriptTagOverlayExample,
+    scriptTagSentinelExample,
     shellComponentsExample,
     solaCheckExample,
     solaCheckOutput,
@@ -915,10 +916,17 @@ export function SolaWidget({ title, value }) {
             <div class="space-y-1">
               <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">As an overlay, from a script tag</h3>
               <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">To keep the widget's styles apart from the host page, mount it with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.mountShell</code> instead of calling it directly. The compile step happens once, on your machine or in CI. The host page only loads two files.</p>
-              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]"><code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">observe()</code> comes from <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/sentinel</code>, which is only on npm for now. From a script tag, use <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.createSentinel</code> and record field events yourself.</p>
             </div>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{scriptTagOverlayExample}</code></pre>
+            </div>
+
+            <div class="space-y-1">
+              <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Watching a form, from a script tag</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]"><code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/sentinel</code> ships <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">dist/sola-sentinel.iife.min.js</code> (2.7 kB gzipped, version 1.1.0 and later). It exposes the same API as one global, <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaSentinelKit</code>, so a form already on the page is watched with no per-field wiring.</p>
+            </div>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{scriptTagSentinelExample}</code></pre>
             </div>
           </section>
         </article>
