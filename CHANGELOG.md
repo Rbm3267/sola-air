@@ -12,6 +12,14 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
   `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
+## 2026-11-10: vite-plugin-sola 1.0.5
+
+### `@sola-air-ui/vite-plugin-sola`
+
+- **Changed**: the `vite` peer range is now `^5.4.21 || ^6.0.0 || ^7.0.0 || ^8.0.0` (was `^5.4.21`). Projects on
+  Vite 6, 7 or 8 no longer pull in a second, vulnerable Vite 5 to satisfy the peer. No code change; the
+  plugin already runs under Vite 8 in the Sola AIR site.
+
 ## 2026-11-05: mcp 1.0.6
 
 ### `@sola-air-ui/mcp`
