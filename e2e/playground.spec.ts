@@ -218,7 +218,7 @@ test("Studio's AI field is the same bar as the playground's", async ({ page }) =
   const field = page.getByLabel('Describe a layout for Arc');
   await expect(field).toBeVisible();
   await expect(page.getByRole('button', { name: 'Voice intent recognition' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Generate with Arc' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Arrange with Arc' })).toBeDisabled();
   await field.fill('a probe dashboard');
   await field.press('Enter');
   await expect(page.getByText('Probe metric').first()).toBeVisible();

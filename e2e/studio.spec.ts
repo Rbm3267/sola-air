@@ -106,7 +106,7 @@ test('Arc fills the canvas with real components and drops anything else', async 
   });
   await open(page);
   await page.getByLabel('Describe a layout for Arc').fill('signups today with a status badge');
-  await page.getByRole('button', { name: 'Generate with Arc' }).click();
+  await page.getByRole('button', { name: 'Arrange with Arc' }).click();
   await expect(blocks(page)).toHaveCount(2);
   await expect(blocks(page).first()).toContainText('312');
   await expect(blocks(page).last()).toContainText('On track');
@@ -195,4 +195,26 @@ test('Studio says what it does not do and links to Generate, which opens on its 
   // The tab is selected and its own form is showing, with no model call made.
   await expect(page.getByRole('button', { name: 'Generate', exact: true }).first()).toHaveAttribute('class', /bg-white/);
   await expect(page.locator('button[type="submit"]').filter({ hasText: /^Generate$/ })).toBeVisible();
+});
+
+test('HTML a model writes cannot restyle the page around it', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const hostile = '<div style="position:fixed;inset:0;background:#fff;z-index:9999"><h2>Notes</h2></div><p>Kept text</p><style>body{background:#fff}</style><link rel="stylesheet" href="https://example.com/x.css">';
+  await page.addInitScript((content) => {
+    if (!localStorage.getItem('sola-studio-v2')) {
+      localStorage.setItem('sola-studio-v2', JSON.stringify([{ component: 'SolaSafeHTML', span: 2, props: { title: 'Notes', content } }]));
+    }
+  }, hostile);
+  await page.goto('/studio');
+  await page.waitForLoadState('networkidle');
+  await page.evaluate(() => document.documentElement.classList.add('dark'));
+  const box = page.locator('.sola-safe-html');
+  await expect(box).toContainText('Kept text');
+  // Nothing from the content reached the page: no style or link element, and none of
+  // the content's inline style (the component's own wrapper has one, for display).
+  await expect(box.locator('style, link')).toHaveCount(0);
+  const html = await box.innerHTML();
+  expect(html).not.toMatch(/position\s*:\s*fixed|inset|z-index/);
+  const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  expect(bg).not.toBe('rgb(255, 255, 255)');
 });

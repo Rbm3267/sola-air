@@ -316,7 +316,7 @@ test('Studio Arc surfaces failure instead of silently doing nothing', async ({ p
   const input = page.locator('input[placeholder*="Describe"], textarea[placeholder*="Describe"]').first();
   const prompt = 'Realtime revenue waterfall and p99 latency gauge';
   await input.fill(prompt);
-  await page.getByRole('button', { name: /Generate with Arc/i }).click();
+  await page.getByRole('button', { name: /Arrange with Arc/i }).click();
 
   const alert = page.getByRole('alert');
   await expect(alert, 'a failed generation must say so').toBeVisible({ timeout: 15000 });
@@ -496,7 +496,7 @@ test('Arc renders cards whichever key the model uses for the component name', as
     await page.waitForLoadState('networkidle');
     const input = page.locator('input[placeholder*="Describe"], textarea[placeholder*="Describe"]').first();
     await input.fill('q3 revenue');
-    await page.getByRole('button', { name: /Generate with Arc/i }).click();
+    await page.getByRole('button', { name: /Arrange with Arc/i }).click();
 
     const canvas = page.locator('main');
     // The title is uppercased by CSS, so match the text as authored.
