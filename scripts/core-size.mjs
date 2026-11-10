@@ -28,7 +28,8 @@ function workspaceAliases() {
   return alias;
 }
 
-export function measureCore() {
+/** The minified no-bundler build of the core runtime, as text. */
+export function bundleCore() {
   const { outputFiles } = buildSync({
     entryPoints: [ENTRY],
     bundle: true,
@@ -39,7 +40,11 @@ export function measureCore() {
     write: false,
     alias: workspaceAliases(),
   });
-  const bytes = Buffer.from(outputFiles[0].contents);
+  return Buffer.from(outputFiles[0].contents);
+}
+
+export function measureCore() {
+  const bytes = bundleCore();
   const gzipBytes = gzipSync(bytes, { level: 9 }).length;
   return {
     minBytes: bytes.length,

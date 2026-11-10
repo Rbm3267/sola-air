@@ -9,7 +9,7 @@ import solaPlugin from '../packages/vite-plugin-sola/src/index.js';
 // how the installer hoisted the workspace.
 import { compile } from '../packages/compiler/src/index.js';
 // The size the site states for the core runtime is measured from the real bundle.
-import { measureCore } from '../scripts/core-size.mjs';
+import { measureCore, bundleCore } from '../scripts/core-size.mjs';
 import { readUiManifest } from '../scripts/ui-manifest.mjs';
 import { readChangelog } from '../scripts/changelog-parse.mjs';
 
@@ -72,6 +72,31 @@ const uiSubpathAliases = Object.entries(uiPackageExports)
 		replacement: path.resolve(__dirname, '../packages/ui', target as string)
 	}));
 
+
+// The Generate tab compiles a model-written .sola file in the browser and runs
+// it in a sandboxed frame that has no access to the page. Two things it needs
+// at build time: the core runtime as text to put inside that frame, and a stand
+// in for node:fs, which the compiler only uses to read its own version.
+function solaGenerate() {
+	const CORE = '\0virtual:sola-core-iife';
+	const FS = '\0virtual:sola-compiler-fs';
+	return {
+		name: 'sola-generate',
+		enforce: 'pre' as const,
+		resolveId(id: string, importer: string | undefined, options: { ssr?: boolean }) {
+			if (id === 'virtual:sola-core-iife') return CORE;
+			if (id === 'node:fs' && !options?.ssr && importer && importer.includes('/packages/compiler/')) return FS;
+		},
+		load(id: string) {
+			if (id === CORE) return `export default ${JSON.stringify(bundleCore().toString('utf8'))};`;
+			if (id === FS) {
+				const stub = JSON.stringify(JSON.stringify({ version: compilerVersion }));
+				return `export const readFileSync = () => ${stub}; export default { readFileSync };`;
+			}
+		}
+	};
+}
+
 // Banner only — compilation itself is the published plugin, so the site and a
 // scaffolded project run the same code path.
 function solaBanner() {
@@ -132,6 +157,7 @@ export default defineConfig({
 	},
 	plugins: [
 		solaPlugin({ compile }),
+		solaGenerate(),
 		solaBanner(),
 		UnoCSS(),
 		sveltekit()
