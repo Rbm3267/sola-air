@@ -10,6 +10,15 @@
     out = out.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
     out = out.replace(/<(iframe|object|embed)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
     out = out.replace(/<(iframe|object|embed)\b[^>]*\/?>/gi, '');
+    // A <style> block is global CSS, so "body{background:#fff}" in the content turned
+    // the whole page white. <link> pulls in a stylesheet the same way. A style
+    // attribute can pin an element over the page (position:fixed). The component
+    // styles its own content with the theme tokens instead.
+    out = out.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
+    out = out.replace(/<(style|link)\b[^>]*\/?>/gi, '');
+    out = out.replace(/\sstyle\s*=\s*"[^"]*"/gi, '');
+    out = out.replace(/\sstyle\s*=\s*'[^']*'/gi, '');
+    out = out.replace(/\sstyle\s*=\s*[^\s>]+/gi, '');
     out = out.replace(/\son\w+\s*=\s*"[^"]*"/gi, '');
     out = out.replace(/\son\w+\s*=\s*'[^']*'/gi, '');
     out = out.replace(/\son\w+\s*=\s*[^\s>]+/gi, '');
