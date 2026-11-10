@@ -46,10 +46,10 @@
             <span>What's here</span>
           </div>
           <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
-            From idea to a live preview
+            Build and try a companion
           </h2>
           <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-            Three tools for designing, previewing and reading Sola components.
+            Lay one out, see it running on a page, and read how it is made.
           </p>
         </div>
 
@@ -65,7 +65,7 @@
                 Sola Design Studio
               </h3>
               <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-                Arrange {STUDIO_COMPONENTS.length} real <code class="font-mono text-xs">@sola-air-ui/ui</code> components on a grid, edit their props, and export the result as a <code class="font-mono text-xs">.sola</code> file. Arc can draft a layout from one sentence.
+                Arrange {STUDIO_COMPONENTS.length} of the {PUBLISHED_COUNT} <code class="font-mono text-xs">@sola-air-ui/ui</code> components on a grid, edit their props, and export the result as a <code class="font-mono text-xs">.sola</code> file you can mount as a companion. Arc can draft a layout from one sentence.
               </p>
             </div>
             <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all whitespace-nowrap leading-none">

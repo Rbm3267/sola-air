@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PUBLISHED_COUNT, CATALOG_COUNT } from '$lib/data/site';
+  import { PUBLISHED_COUNT, CATALOG_COUNT, PREVIEW_COUNT } from '$lib/data/site';
   import SolaMount from './SolaMount.svelte';
   import SolaIcons from './SolaIcons.svelte';
   import SolaKbd from './SolaKbd.svelte';
@@ -256,12 +256,12 @@
 
           <!-- Bottom Actions -->
           <div class="pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
-            <span class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">Zero virtual DOM overhead</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400">{PUBLISHED_COUNT} install from npm; the catalog also shows {PREVIEW_COUNT} site-only previews ({CATALOG_COUNT} in all)</span>
             <div class="flex items-center gap-2 w-full sm:w-auto">
               <a
                 href="/components"
                 class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition-all shadow-xs whitespace-nowrap leading-none">
-                <span>View all {CATALOG_COUNT} components</span>
+                <span>Browse the catalog</span>
                 <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </a>
             </div>
