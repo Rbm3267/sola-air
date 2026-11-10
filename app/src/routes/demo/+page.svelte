@@ -1,5 +1,6 @@
 <script lang="ts">
   import SolaIcons from '$lib/components/SolaIcons.svelte';
+  import IntentBar from '$lib/components/IntentBar.svelte';
   import SheetDemo from '$lib/components/SheetDemo.svelte';
   import GenerateDemo from '$lib/components/GenerateDemo.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
@@ -14,9 +15,6 @@
   let intentQuery = $state('');
   let isLoading = $state(false);
   let errorMsg = $state('');
-  let isListening = $state(false);
-  let speechSupported = $state(false);
-  let recognition: any = null;
 
   const sampleIntents = [
     "Add a CPU temperature gauge with 72% load",
@@ -29,49 +27,8 @@
     if (typeof window !== 'undefined') {
       // The Custom Grid kept its layout here. It is gone, so drop what it left.
       try { localStorage.removeItem('sola_dashboard_layout'); } catch { /* storage blocked */ }
-
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        speechSupported = true;
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        recognition.onstart = () => { isListening = true; };
-        recognition.onresult = (event: any) => {
-          intentQuery = Array.from(event.results).map((result: any) => result[0].transcript).join('');
-        };
-        recognition.onerror = (event: any) => {
-          console.warn('Speech recognition error:', event.error);
-          isListening = false;
-        };
-        recognition.onend = () => {
-          isListening = false;
-          if (intentQuery.trim()) submitIntent();
-        };
-      }
     }
   });
-
-  function toggleSpeech() {
-    if (!speechSupported || !recognition) {
-      errorMsg = "Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari.";
-      return;
-    }
-    if (isListening) {
-      recognition.stop();
-      isListening = false;
-    } else {
-      errorMsg = '';
-      intentQuery = '';
-      try {
-        recognition.start();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
 
   function pickSample(prompt: string) {
     intentQuery = prompt;
@@ -134,62 +91,14 @@
       </p>
     </div>
 
-    <!-- Luxury Command & Voice Input Bar -->
-    <div class="max-w-2xl mx-auto w-full bg-white dark:bg-white/[0.02] backdrop-blur-3xl border {isListening ? 'border-rose-400 shadow-[0_0_30px_rgba(244,63,94,0.25)]' : 'border-slate-200 dark:border-white/[0.04] shadow-[0_12px_40px_rgba(15,23,42,0.06)]'} rounded-2xl p-2 transition-all duration-300 relative">
-      <form class="flex items-center gap-2 sm:gap-3 w-full relative z-10" onsubmit={(e) => { e.preventDefault(); submitIntent(); }}>
-        
-        <!-- Left Status / Command Prompt -->
-        <div class="pl-3 sm:pl-4 shrink-0 text-slate-500 dark:text-slate-400">
-          {#if isLoading}
-            <svg class="w-5 h-5 animate-spin text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4m-3.93 7.07l-2.83-2.83M7.76 7.76L4.93 4.93"/></svg>
-          {:else if isListening}
-            <div class="flex items-center gap-1">
-              <span class="w-1.5 h-4 bg-rose-500 rounded-full animate-bounce"></span>
-              <span class="w-1.5 h-6 bg-rose-500 rounded-full animate-bounce [animation-delay:0.15s]"></span>
-              <span class="w-1.5 h-3 bg-rose-500 rounded-full animate-bounce [animation-delay:0.3s]"></span>
-            </div>
-          {:else}
-            <svg class="w-5 h-5 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
-          {/if}
-        </div>
-        
-        <!-- Clean Input Box with Zero Default Focus Border/Outline -->
-        <input 
-          type="text" 
-          bind:value={intentQuery}
-          placeholder={isListening ? "Listening... speak now" : "Speak or type intent (e.g. 'Add CPU gauge at 84%')"} 
-          style="outline: none !important; box-shadow: none !important; border: none !important;"
-          class="flex-1 bg-transparent py-4 px-2 text-slate-900 dark:text-white text-sm sm:text-base font-medium placeholder-slate-400 border-0 outline-none focus:outline-none focus:ring-0 appearance-none"
-        />
-        
-        <!-- Voice Input Microphone Button -->
-        <button 
-          type="button"
-          onclick={toggleSpeech}
-          aria-label="Voice intent recognition"
-          class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl transition-all flex items-center justify-center cursor-pointer {isListening ? 'bg-rose-500 text-white shadow-md animate-pulse' : 'bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200'}"
-          title={isListening ? "Stop listening" : "Speak intent via microphone"}
-        >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" x2="12" y1="19" y2="22"/>
-          </svg>
-        </button>
-
-        <!-- Submit Button (High Contrast & Always Visible) -->
-        <!-- Submit Button (Fluid Luminous Amber Gradient) -->
-        <button 
-          type="submit" 
-          disabled={isLoading || !intentQuery.trim()}
-          aria-label="Build it in Studio" title="Build it in Studio"
-          style={!isLoading && intentQuery.trim() ? "background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;" : ""}
-          class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl font-bold transition-all active:scale-[0.97] disabled:bg-slate-100 dark:bg-white/[0.08] disabled:text-slate-500 dark:text-slate-400 disabled:cursor-not-allowed flex items-center justify-center shadow-md shrink-0 cursor-pointer"
-        >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </button>
-      </form>
-    </div>
+    <IntentBar
+      bind:value={intentQuery}
+      busy={isLoading}
+      placeholder="Speak or type intent (e.g. 'Add CPU gauge at 84%')"
+      inputLabel="What do you want to build?"
+      submitLabel="Build it in Studio"
+      onsubmit={() => submitIntent()}
+    />
 
     <!-- Errors were set but never shown, so a failed request looked like nothing happened. -->
     {#if errorMsg}
