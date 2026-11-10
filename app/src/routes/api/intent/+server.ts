@@ -1,42 +1,26 @@
 import { json } from '@sveltejs/kit';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { GEMINI_API_KEY } from '$app/env/private';
 import { FACTS, UI_MANIFEST } from '$lib/data/site';
 import { STUDIO_COMPONENTS, buildBlock, tidyGeneratedProps } from '$lib/data/studioComponents';
+import { usageRecord } from '$lib/data/usage';
+import { createLimiter, MINUTE_LIMIT, DAY_LIMIT } from '$lib/data/rateLimit';
 
-// In-Memory Sliding-Window IP Rate Limiter (15 requests/minute per client IP)
-const rateLimitMap = new Map<string, number[]>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = 15;
+// Two in-memory limits per visitor address: a short burst limit and a daily limit.
+// See rateLimit.ts for what "in-memory" means on Vercel.
+const perMinute = createLimiter({ windowMs: 60 * 1000, max: MINUTE_LIMIT });
+const perDay = createLimiter({ windowMs: 24 * 60 * 60 * 1000, max: DAY_LIMIT });
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const timestamps = rateLimitMap.get(ip) || [];
-  const validTimestamps = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  
-  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    rateLimitMap.set(ip, validTimestamps);
-    return true;
-  }
-  
-  validTimestamps.push(now);
-  rateLimitMap.set(ip, validTimestamps);
-  return false;
-}
-
-// Cleanup stale rate limit entries periodically
 if (typeof setInterval !== 'undefined') {
   setInterval(() => {
-    const now = Date.now();
-    for (const [ip, times] of rateLimitMap.entries()) {
-      const valid = times.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-      if (valid.length === 0) {
-        rateLimitMap.delete(ip);
-      } else {
-        rateLimitMap.set(ip, valid);
-      }
-    }
+    perMinute.sweep();
+    perDay.sweep();
   }, 5 * 60 * 1000);
+}
+
+function hoursText(seconds: number) {
+  const h = Math.ceil(seconds / 3600);
+  return h <= 1 ? 'about an hour' : `about ${h} hours`;
 }
 
 export async function POST({ request, getClientAddress }) {
@@ -49,10 +33,18 @@ export async function POST({ request, getClientAddress }) {
       clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
     }
 
-    if (isRateLimited(clientIp)) {
+    const waitMinute = perMinute.hit(clientIp);
+    if (waitMinute) {
       return json(
         { error: 'Too many requests. Please wait a moment before sending another query.' },
-        { status: 429, headers: { 'Retry-After': '60' } }
+        { status: 429, headers: { 'Retry-After': String(waitMinute) } }
+      );
+    }
+    const waitDay = perDay.hit(clientIp);
+    if (waitDay) {
+      return json(
+        { error: `You have reached today's limit for Sola AI. It opens up again in ${hoursText(waitDay)}.` },
+        { status: 429, headers: { 'Retry-After': String(waitDay) } }
       );
     }
 
@@ -80,6 +72,23 @@ export async function POST({ request, getClientAddress }) {
     }
 
     const ai = new GoogleGenAI({ apiKey });
+    // Every model call goes through here. It logs token use, and it asks the model
+    // to think briefly: hidden reasoning is billed as output and was most of the
+    // cost of a call. If the model rejects the setting, the call runs once without it.
+    const generate = async (mode: string, args: Parameters<typeof ai.models.generateContent>[0]) => {
+      let res;
+      try {
+        res = await ai.models.generateContent({
+          ...args,
+          config: { ...args.config, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } }
+        });
+      } catch (err) {
+        if (!/think/i.test(String((err as Error)?.message ?? err))) throw err;
+        res = await ai.models.generateContent(args);
+      }
+      console.info(JSON.stringify(usageRecord(mode, String(args.model), res.usageMetadata)));
+      return res;
+    };
 
     // Mode 0: write a .sola component. The page compiles it in the browser and
     // runs it in a sandboxed frame; nothing here executes the answer.
@@ -144,7 +153,7 @@ Return only the contents of the file. No code fences, no commentary.`;
         ? `\n\nYour previous attempt did not work.\nError: ${problem || 'it did not compile'}\n\nPrevious file:\n${previous}\n\nReturn the corrected whole file.`
         : '';
 
-      const response = await ai.models.generateContent({
+      const response = await generate('sola', {
         model: 'gemini-3.6-flash',
         contents: writer + '\n\nBuild this: ' + ask + fix,
         config: { temperature: 0.4 }
@@ -191,7 +200,7 @@ How to answer:
 - Avoid stock phrases: "it's important to note", "it's worth noting", "moving forward", "at the end of the day", "delve into", "robust", "comprehensive", "transformative", "game-changing", "leverage" or "utilize" (say "use"), and "furthermore", "moreover", "additionally".
 - Use periods, commas or parentheses instead of em-dashes.`;
 
-      const response = await ai.models.generateContent({
+      const response = await generate('architect', {
         model: 'gemini-3.6-flash',
         contents: architectSystemPrompt + "\n\nUser Question: " + query,
         config: {
@@ -238,7 +247,7 @@ The canvas is 3 columns wide. Fill props with realistic content for the request.
 Do not invent measurements. If the request gives no figure, use an obvious placeholder such as "--" or example values labelled as examples. Never claim live, synced or real-time data.
 A dial's "metric" is its centre readout and must contain a number. Put the unit in "unit".`;
 
-      const response = await ai.models.generateContent({
+      const response = await generate('studio', {
         model: 'gemini-3.6-flash',
         contents: studioInstruction + '\n\nRequest: ' + prompt,
         config: { responseMimeType: 'application/json', temperature: 0.3 }
@@ -292,7 +301,7 @@ Available Primitives:
 
 Output format: Return ONLY a JSON Array of component objects with an optional colSpan (1, 2, or 3).`;
 
-    const response = await ai.models.generateContent({
+    const response = await generate('layout', {
       model: 'gemini-3.6-flash',
       contents: systemInstruction + "\n\nUser Intent: " + prompt,
       config: {
