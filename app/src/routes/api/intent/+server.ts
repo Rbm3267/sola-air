@@ -70,7 +70,7 @@ export async function POST({ request, getClientAddress }) {
 
     const apiKey = env.GEMINI_API_KEY;
 
-    if (!apiKey && data.mode === 'studio') {
+    if (!apiKey && (data.mode === 'studio' || data.mode === 'sola')) {
       return json({ error: 'Arc is offline: this server has no model key configured.' }, { status: 503 });
     }
     if (!apiKey) {
@@ -80,6 +80,86 @@ export async function POST({ request, getClientAddress }) {
     }
 
     const ai = new GoogleGenAI({ apiKey });
+
+    // Mode 0: write a .sola component. The page compiles it in the browser and
+    // runs it in a sandboxed frame; nothing here executes the answer.
+    if (data.mode === 'sola') {
+      const ask = typeof data.prompt === 'string' ? data.prompt.trim() : '';
+      if (!ask) return json({ error: 'Describe what you want to build.' }, { status: 400 });
+      if (ask.length > 500) {
+        return json({ error: `That description is too long (${ask.length} characters). The maximum is 500.` }, { status: 400 });
+      }
+      const previous = typeof data.previousSource === 'string' ? data.previousSource.slice(0, 14000) : '';
+      const problem = typeof data.error === 'string' ? data.error.slice(0, 600) : '';
+
+      const writer = `You write one Sola component file (.sola) for a small interactive page.
+
+The file has three parts, in this order: a <script> block, the HTML markup, and a <style> block.
+
+Rules:
+- Declare state with: let x = $state(0);  Computed values: let y = $derived(x * 2);  Side effects: $effect(() => { ... });
+- Read state by its plain name in the script and in the markup: {x}. Change it by assigning: x += 1. For arrays and objects, assign a new value: items = [...items, item].
+- Events: onclick={fn}, oninput={fn}, onchange={fn}, onsubmit={fn}. Two-way inputs: <input bind:value={name} />.
+- Conditions: {#if a}...{:else if b}...{:else}...{/if}. Lists: {#each items as item, i (item.id)}...{/each}. Close every block you open.
+- No imports, no network requests, no localStorage, no timers that never stop, no external images, fonts or scripts, no iframes, no eval. The component runs in a sealed frame with none of those.
+- Draw charts with inline SVG or CSS. Use real, believable sample data. Plain words in all labels. No lorem ipsum.
+- Make it work from 320px to 900px wide. Use system fonts. Keep the styling in <style>, with a light background, and give interactive controls visible focus.
+- Keep it under 200 lines.
+
+Here is a complete example of the format:
+
+<script>
+  let draft = $state('');
+  let tasks = $state([{ id: 1, text: 'Write a .sola file', done: true }]);
+  let left = $derived(tasks.filter((t) => !t.done).length);
+
+  function add() {
+    if (!draft.trim()) return;
+    tasks = [...tasks, { id: Date.now(), text: draft.trim(), done: false }];
+    draft = '';
+  }
+  function toggle(id) {
+    tasks = tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  }
+</script>
+
+<form class="tasks" onsubmit={(e) => { e.preventDefault(); add(); }}>
+  <input bind:value={draft} placeholder="Add a task" aria-label="New task" />
+  <ul>
+    {#each tasks as task (task.id)}
+      <li><label><input type="checkbox" checked={task.done} onchange={() => toggle(task.id)} /> {task.text}</label></li>
+    {/each}
+  </ul>
+  {#if left === 0}<p>All done.</p>{:else}<p>{left} left</p>{/if}
+</form>
+
+<style>
+  .tasks { max-width: 320px; display: flex; flex-direction: column; gap: 10px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+</style>
+
+Return only the contents of the file. No code fences, no commentary.`;
+
+      const fix = previous
+        ? `\n\nYour previous attempt did not work.\nError: ${problem || 'it did not compile'}\n\nPrevious file:\n${previous}\n\nReturn the corrected whole file.`
+        : '';
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: writer + '\n\nBuild this: ' + ask + fix,
+        config: { temperature: 0.4 }
+      });
+      let source = (response.text || '').trim();
+      const fenced = source.match(/^```[a-z]*\n([\s\S]*?)\n```$/i);
+      if (fenced) source = fenced[1].trim();
+      if (!source.includes('<script') && !source.includes('<')) {
+        return json({ error: 'The model did not return a component. Try rewording the request.' }, { status: 502 });
+      }
+      if (source.length > 14000) {
+        return json({ error: 'The component came back too long to run. Try a smaller request.' }, { status: 502 });
+      }
+      return json({ source });
+    }
 
     // Mode 1: Sola Arc (Solutions Architect & Framework Consultant)
     if (data.mode === 'architect' || data.query) {

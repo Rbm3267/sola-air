@@ -1,6 +1,7 @@
 <script lang="ts">
   import SolaIcons from '$lib/components/SolaIcons.svelte';
   import SheetDemo from '$lib/components/SheetDemo.svelte';
+  import GenerateDemo from '$lib/components/GenerateDemo.svelte';
   import DynamicRenderer from '$lib/components/DynamicRenderer.svelte';
   import SolaLogo from '$lib/components/SolaLogo.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
@@ -21,7 +22,7 @@
     config: any;
   }
   
-  let viewMode = $state<'native' | 'behavior' | 'mesh' | 'sheet' | 'custom'>('native');
+  let viewMode = $state<'native' | 'behavior' | 'mesh' | 'sheet' | 'generate' | 'custom'>('native');
   let intentQuery = $state('');
   let isLoading = $state(false);
   let errorMsg = $state('');
@@ -433,6 +434,12 @@
             <span>Mock Sheet</span>
           </button>
           <button 
+            onclick={() => viewMode = 'generate'}
+            class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'generate' ? 'bg-white dark:bg-white/[0.02] text-slate-950 dark:text-white shadow-sm border border-slate-200 dark:border-white/[0.04]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+            <SolaIcons name="spark" size={16} />
+            <span>Generate</span>
+          </button>
+          <button 
             onclick={() => viewMode = 'custom'}
             class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'custom' ? 'bg-white dark:bg-white/[0.02] text-slate-950 dark:text-white shadow-sm border border-slate-200 dark:border-white/[0.04]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
             <SolaIcons name="layers" size={16} />
@@ -493,6 +500,8 @@
     {:else if viewMode === 'behavior'}
       <!-- LIVE BEHAVIORAL INTENT & ADAPTIVE PERSONA CONSOLE -->
       <BehavioralIntentConsole />
+    {:else if viewMode === 'generate'}
+      <GenerateDemo />
     {:else if viewMode === 'sheet'}
       <!-- A sheet the visitor can edit, with cards computed from it -->
       <SheetDemo />

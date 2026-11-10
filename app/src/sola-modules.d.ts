@@ -7,3 +7,9 @@ declare module '*.sola' {
 	const mount: (target: HTMLElement, props?: Record<string, any>) => (() => void) | void;
 	export default mount;
 }
+
+// The core runtime as text, produced at build time by solaGenerate() in vite.config.ts.
+declare module 'virtual:sola-core-iife' {
+  const code: string;
+  export default code;
+}
