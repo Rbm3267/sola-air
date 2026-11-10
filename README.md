@@ -69,6 +69,17 @@ The compiler transforms this into a self-contained ES module with:
 
 ---
 
+## Try it in the browser
+
+Everything below runs at [sola-air.dev](https://sola-air.dev), with nothing to install.
+
+- **[Playground](https://sola-air.dev/demo)**: tabs for the compiled `.sola` dashboard, behavior-driven personas, linked widgets that react to each other, a **Mock Sheet** (edit a spreadsheet and watch the cards recalculate, with the Relay config for a real sheet), **Generate**, and a custom grid you can fill by typing what you want.
+- **Generate** asks a model to write a `.sola` file. Your browser compiles it with the real compiler and runs it in a sandboxed frame with no network and no access to the page. The design and its limits are in [RFC 0003](docs/rfcs/0003-generate-sandbox.md).
+- **[Studio](https://sola-air.dev/studio)**: arrange the package components, change their props and export the `.sola` file.
+- **[Components](https://sola-air.dev/components)**: every `@sola-air-ui/ui` component with a live preview where one is possible, and the site-only previews marked separately.
+
+---
+
 ## Why Sola AIR?
 
 | Feature | Sola AIR | React | Svelte | Vue |
