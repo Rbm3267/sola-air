@@ -163,6 +163,11 @@ test.describe('generated .sola code', () => {
 });
 
 test.describe('generated Studio props', () => {
+  test('a card the model gave no trend shows none, and a trend it wrote is kept', () => {
+    expect(tidyGeneratedProps('DataCard', { title: 'To do', value: '3' }).trend).toBe('');
+    expect(tidyGeneratedProps('DataCard', { trend: '+2 today' }).trend).toBe('+2 today');
+  });
+
   test('a generated gauge drops the demo badge and live-feed footer', () => {
     const p = tidyGeneratedProps('GaugeCard', { title: 'Uptime', value: '99%' });
     expect(p.badge).toBe('');
@@ -180,8 +185,8 @@ test.describe('generated Studio props', () => {
   });
 
   test('other components and bad input pass through', () => {
-    expect(tidyGeneratedProps('DataCard', { title: 'x' })).toEqual({ title: 'x' });
-    expect(tidyGeneratedProps('DataCard', null)).toEqual({});
+    expect(tidyGeneratedProps('Alert', { message: 'x' })).toEqual({ message: 'x' });
+    expect(tidyGeneratedProps('Alert', null)).toEqual({});
   });
 });
 

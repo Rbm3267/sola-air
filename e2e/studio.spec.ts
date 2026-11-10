@@ -174,3 +174,14 @@ test('the heading matches the other pages', async ({ page }) => {
   await expect(h1).toHaveClass(/tracking-tight/);
   expect(await h1.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(36);
 });
+
+test('hiding the component list gives the canvas the room', async ({ page }) => {
+  await open(page, '?template=revenue');
+  const canvas = page.getByRole('main', { name: 'Canvas' });
+  const before = (await canvas.boundingBox())!.width;
+  await page.getByRole('button', { name: 'Hide components' }).click();
+  await expect(page.getByRole('complementary', { name: 'Components' })).toBeHidden();
+  expect((await canvas.boundingBox())!.width).toBeGreaterThan(before + 150);
+  await page.getByRole('button', { name: 'Show components' }).click();
+  await expect(page.getByRole('complementary', { name: 'Components' })).toBeVisible();
+});

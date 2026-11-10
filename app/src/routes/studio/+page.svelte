@@ -39,6 +39,7 @@
   let selectedId = $state<string | null>(null);
   let search = $state('');
   let paletteOpen = $state(false); // phones: the palette is a sheet
+  let paletteShown = $state(true); // wide screens: hide it to give the canvas the room
   let templatesOpen = $state(false);
   let exportOpen = $state(false);
   let exportTab = $state<'sola' | 'mount'>('sola');
@@ -339,7 +340,7 @@
 
   <!-- Toolbar -->
   <div class="border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#0b1120]/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4 flex flex-wrap items-end gap-3">
+    <div class="w-full px-4 sm:px-6 lg:px-8 pt-8 pb-4 flex flex-wrap items-end gap-3">
       <div class="mr-auto min-w-0">
         <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-800 dark:text-blue-400 text-xs font-mono font-semibold mb-2 shadow-2xs">
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -348,6 +349,7 @@
         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Studio</h1>
         <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl mt-1 leading-relaxed">Arrange real <code class="font-mono">@sola-air-ui/ui</code> components, edit their props, and export a <code class="font-mono">.sola</code> file that runs.</p>
       </div>
+      <button type="button" class="hidden lg:inline-flex px-3 py-2 rounded-lg text-sm font-semibold border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5" aria-pressed={paletteShown} onclick={() => (paletteShown = !paletteShown)}>{paletteShown ? 'Hide components' : 'Show components'}</button>
       <button type="button" class="lg:hidden px-3 py-2 rounded-lg text-sm font-semibold border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5" onclick={() => (paletteOpen = !paletteOpen)} aria-expanded={paletteOpen}>Add component</button>
       <div class="relative">
         <button type="button" class="px-3 py-2 rounded-lg text-sm font-semibold border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5" aria-expanded={templatesOpen} aria-haspopup="menu" onclick={() => (templatesOpen = !templatesOpen)}>Templates</button>
@@ -367,7 +369,7 @@
     </div>
 
     <!-- Arc -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-5">
+    <div class="w-full px-4 sm:px-6 lg:px-8 pb-5">
       <IntentBar
         bind:value={arcPrompt}
         busy={arcBusy}
@@ -378,13 +380,13 @@
       />
     </div>
     {#if arcError}
-      <p role="alert" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
+      <p role="alert" class="w-full px-4 sm:px-6 lg:px-8 pb-4 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
     {/if}
   </div>
 
-  <div class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)_300px]">
+  <div class="flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 grid gap-6 {paletteShown ? 'lg:grid-cols-[200px_minmax(0,1fr)_260px] xl:grid-cols-[240px_minmax(0,1fr)_300px]' : 'lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_300px]'}">
     <!-- Palette -->
-    <aside class="{paletteOpen ? 'block' : 'hidden'} lg:block" aria-label="Components">
+    <aside class="{paletteOpen ? 'block' : 'hidden'} {paletteShown ? 'lg:block' : 'lg:hidden'}" aria-label="Components">
       <div class="lg:sticky lg:top-6 space-y-5 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-1">
         <label class="sr-only" for="palette-search">Search components</label>
         <input id="palette-search" bind:value={search} placeholder="Search {STUDIO_COMPONENTS.length} components" class="w-full px-3 py-2 rounded-lg text-sm border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 placeholder:text-slate-500 dark:placeholder:text-slate-400" />
@@ -411,7 +413,7 @@
 
     <!-- Canvas -->
     <main id="main-content" aria-label="Canvas" class="min-w-0">
-      <div class="studio-canvas rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#070a13] p-5 sm:p-8 min-h-[70vh]">
+      <div class="studio-canvas rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#070a13] p-4 sm:p-6 min-h-[70vh]">
         {#if blocks.length === 0}
           <div class="min-h-[50vh] rounded-2xl border-2 border-dashed border-slate-300 dark:border-white/15 flex flex-col items-center justify-center text-center p-8 gap-2">
             <p class="text-base font-semibold">The canvas is empty.</p>
@@ -582,10 +584,10 @@
   .studio-span-3 {
     grid-column: 1 / -1;
   }
-  @container studio (min-width: 520px) {
+  @container studio (min-width: 440px) {
     .studio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  @container studio (min-width: 800px) {
+  @container studio (min-width: 760px) {
     .studio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .studio-span-2 { grid-column: span 2; }
   }
