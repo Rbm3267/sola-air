@@ -1,4 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import adapter from '@sveltejs/adapter-auto';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 import UnoCSS from 'unocss/vite';
 import { readFileSync } from 'fs';
@@ -160,6 +162,13 @@ export default defineConfig({
 		solaGenerate(),
 		solaBanner(),
 		UnoCSS(),
-		sveltekit()
+		// SvelteKit 3 reads its options here. svelte.config.js is no longer supported.
+		sveltekit({
+			adapter: adapter(),
+			preprocess: vitePreprocess(),
+			// $lib was removed in SvelteKit 3 in favor of #lib subpath imports. The
+			// alias keeps the existing imports working; moving to #lib is separate work.
+			alias: { $lib: 'src/lib' }
+		})
 	]
 });

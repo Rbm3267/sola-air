@@ -45,7 +45,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          # SvelteKit 3, which the site is built with, needs Node 22.17 or newer.
+          node-version: 22
           cache: npm
       - run: npm ci
       - name: Build core IIFE bundle
