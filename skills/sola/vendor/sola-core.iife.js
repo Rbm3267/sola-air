@@ -19,8 +19,8 @@ var SolaCore = (() => {
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
   // packages/core/src/index.js
-  var src_exports = {};
-  __export(src_exports, {
+  var index_exports = {};
+  __export(index_exports, {
     SolaSentinel: () => SolaSentinel,
     __flush_destroys: () => __flush_destroys,
     __flush_mounts: () => __flush_mounts,
@@ -1250,5 +1250,5 @@ var SolaCore = (() => {
   };
   var signalMesh = new SignalMeshEngine();
   var createTopicSignal = (topic, initialVal) => signalMesh.topic(topic, initialVal);
-  return __toCommonJS(src_exports);
+  return __toCommonJS(index_exports);
 })();

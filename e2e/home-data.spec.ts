@@ -81,7 +81,11 @@ test.describe('demo relay endpoint', () => {
     expect(unknown.status()).toBe(404);
     expect((await unknown.json()).error).toContain('Unknown demo source');
 
-    const bad = await request.post('/api/demo-relay', { data: 'not json', headers: { 'content-type': 'text/plain' } });
+    // A raw Buffer keeps the body as invalid JSON. A string would be JSON-encoded
+    // by Playwright under a JSON content type and reach the handler as a valid
+    // value with no source. A text/plain POST is refused by SvelteKit's CSRF guard
+    // (403) before the handler runs, so the test uses a JSON content type.
+    const bad = await request.post('/api/demo-relay', { data: Buffer.from('not json'), headers: { 'content-type': 'application/json' } });
     expect(bad.status()).toBe(400);
   });
 });

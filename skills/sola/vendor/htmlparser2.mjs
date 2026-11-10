@@ -1044,6 +1044,7 @@ var EntityDecoder = class {
       case EntityDecoderState.NamedEntity: {
         return this.result !== 0 && (this.decodeMode !== DecodingMode.Attribute || this.result === this.treeIndex) ? this.emitNotTerminatedNamedEntity() : 0;
       }
+
       case EntityDecoderState.NumericDecimal: {
         return this.emitNumericEntity(0, 2);
       }
