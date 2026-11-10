@@ -2,6 +2,7 @@
   import { fade, fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { onMount } from 'svelte';
+  import SolaIcons from '$lib/components/SolaIcons.svelte';
 
   let { isOpen = $bindable(false) } = $props<{ isOpen?: boolean }>();
 
@@ -9,7 +10,7 @@
   let messages = $state<Array<{ role: 'user' | 'assistant'; text: string; timestamp?: string }>>([
     {
       role: 'assistant',
-      text: "I'm the **Sola AIR** assistant.\n\nAsk me how to mount a compiled Sola component inside your app (**React, Vue, Svelte or plain JS**), bind data through the Sola Relay (**PostgreSQL, MySQL or Google Sheets**), or how the compiler works.",
+      text: "I answer questions about **Sola AIR**.\n\nAsk how to put a compiled component in a React, Vue, Svelte or plain JavaScript page, how to load data from PostgreSQL or MySQL through the Relay, or how the compiler works.",
       timestamp: 'Just now'
     }
   ]);
@@ -19,12 +20,12 @@
   let inputEl = $state<HTMLInputElement | null>(null);
 
   const quickPrompts = [
-    "How do I embed Sola in React 19?",
-    "Zero-VDOM vs React State",
-    "Show a .sola component",
-    "Connect a WebSocket signal",
-    "How does signal tracking work?",
-    "Sola in an existing codebase"
+    "How do I use Sola in React?",
+    "How is Sola different from React state?",
+    "Show me a .sola component",
+    "How do I load data from Postgres?",
+    "How do signals work?",
+    "How do I add Sola to an existing app?"
   ];
 
   function formatTimestamp(): string {
@@ -66,12 +67,13 @@
       if (data.reply) reply = data.reply;
       else if (typeof data === 'string') reply = data;
       else if (data.components) reply = "```typescript\n// Generated Sola Architecture Specification\n" + JSON.stringify(data.components, null, 2) + "\n```";
+      else if (data.error) reply = "The assistant couldn't answer that: " + data.error;
       else reply = JSON.stringify(data, null, 2);
       messages = [...messages, { role: 'assistant', text: reply, timestamp: formatTimestamp() }];
     } catch {
       messages = [...messages, {
         role: 'assistant',
-        text: "Sola primitives compile directly into native DOM nodes via `@sola-air-ui/compiler`. Use `createSignal()` for local state and import from `@sola-air-ui/ui` for zero-VDOM mounting inside any host framework.",
+        text: "I couldn't reach the assistant just now. Until it's back: `@sola-air-ui/compiler` turns a `.sola` file into plain DOM code. State is `$state(...)`. A compiled component's default export is a function you call with an element, so it works inside any framework.",
         timestamp: formatTimestamp()
       }];
     } finally {
@@ -173,10 +175,7 @@
         <div class="flex items-center gap-3">
           <!-- Logo mark -->
           <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-500 flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
-            <svg class="w-4.5 h-4.5" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
-              <circle cx="12" cy="12" r="3" fill="white" stroke="none"/>
-              <path d="M12 2v4M12 18v4M2 12h4M18 12h4M5.64 5.64l2.83 2.83M15.54 15.54l2.83 2.83M5.64 18.36l2.83-2.83M15.54 8.46l2.83-2.83"/>
-            </svg>
+            <SolaIcons name="spark" size={18} gradient={false} class="text-white" />
           </div>
 
           <div>
@@ -190,7 +189,7 @@
             </div>
             <div class="flex items-center gap-1.5 mt-0.5">
               <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-              <p class="text-xs text-slate-500 dark:text-slate-400 font-mono max-w-[68ch]">Active · Ambient Intent Runtime</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-mono max-w-[68ch]">Online · answers questions about Sola</p>
             </div>
           </div>
         </div>
@@ -244,7 +243,7 @@
         {#if isLoading}
           <div class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-[#0f1628] border border-slate-200/80 dark:border-white/[0.07] rounded-2xl max-w-xs text-xs font-mono text-slate-500 dark:text-slate-400 shadow-2xs">
             <div class="w-3.5 h-3.5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin shrink-0"></div>
-            Synthesizing response…
+            Thinking…
           </div>
         {/if}
       </div>

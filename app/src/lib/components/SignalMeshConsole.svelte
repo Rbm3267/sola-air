@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SolaIcons from './SolaIcons.svelte';
   import TactileDialCard from './TactileDialCard.svelte';
   import GaugeCard from './GaugeCard.svelte';
   import FlowWaterfall from './FlowWaterfall.svelte';
@@ -59,7 +60,7 @@
   <div class="bg-white/90 dark:bg-white/[0.02] border border-slate-200/90 dark:border-white/[0.04] rounded-3xl p-5 sm:p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
     <div class="flex items-center gap-3.5">
       <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0 shadow-2xs">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <SolaIcons name="bus" size={20} />
       </div>
       <div>
         <div class="flex items-center gap-2">
