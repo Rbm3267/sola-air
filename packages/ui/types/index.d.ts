@@ -55,14 +55,28 @@ export interface DataCardProps {
   trend?: string;
 }
 
-export interface TableColumn {
+/** A pill cell returned from TableColumn.render. */
+export interface TableCellPill {
+  text: string;
+  tone?: 'ok' | 'warn' | 'neutral';
+}
+
+export interface TableColumn<T = Record<string, unknown>> {
   key: string;
   label?: string;
+  /** Render this column's cells as <th scope="row">. */
+  rowHeader?: boolean;
+  /** Cell content: plain text, or a { text, tone } pill. */
+  render?: (row: T, index: number) => string | number | TableCellPill | null | undefined;
 }
 
 export interface TableProps<T = Record<string, unknown>> {
-  columns?: Array<string | TableColumn> | (() => Array<string | TableColumn>);
+  columns?: Array<string | TableColumn<T>> | (() => Array<string | TableColumn<T>>);
   rows?: T[] | (() => T[]);
+  /** Table caption. Announced by screen readers. */
+  caption?: string | (() => string);
+  /** Keep the caption for screen readers but hide it on screen. */
+  captionHidden?: boolean;
   striped?: boolean;
   dark?: boolean;
   onRowClick?: (row: T, index: number) => void;
@@ -75,12 +89,25 @@ export interface ChartProps {
   data?: number[];
 }
 
+type MaybeAccessor<T> = T | (() => T);
+
 export interface GaugeCardProps {
-  title?: string;
-  value?: string;
-  percentage?: number;
-  subtext?: string;
-  color?: 'emerald' | 'sky' | 'violet' | 'amber' | 'rose';
+  title?: MaybeAccessor<string>;
+  value?: MaybeAccessor<string>;
+  /** Amount shown on the ring, out of `max`. */
+  percentage?: MaybeAccessor<number>;
+  /** Full-scale value for the ring. Default 100. */
+  max?: MaybeAccessor<number>;
+  /** "" shows the default line; false or null hides it. */
+  subtext?: MaybeAccessor<string | false | null>;
+  color?: MaybeAccessor<'emerald' | 'sky' | 'violet' | 'amber' | 'rose'>;
+  /** Header badge. Default "Live Gauge"; "" hides it. */
+  badge?: MaybeAccessor<string>;
+  /** Footer text. Defaults "Telemetry Synchronized" / "zero-vdom"; "" for both hides the footer. */
+  footerLeft?: MaybeAccessor<string>;
+  footerRight?: MaybeAccessor<string>;
+  /** Spoken label for the ring. Default "<percentage> out of <max>". */
+  ringLabel?: MaybeAccessor<string>;
 }
 
 export interface FlowWaterfallStep {
