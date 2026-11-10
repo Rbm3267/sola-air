@@ -105,7 +105,11 @@ How to answer:
 - Answer the question that was asked. Use short sentences and plain words.
 - Give a short, correct code sample when code helps. Use markdown code blocks.
 - If you are not sure something is supported, say you are not sure.
-- Do not use marketing language, and do not claim performance or savings you can't point to.`;
+- Do not use marketing language, and do not claim performance or savings you can't point to.
+- Never write "not X, but Y" contrasts. State the point directly.
+- End on the last concrete fact or next step. No one-line summary closers.
+- Avoid stock phrases: "it's important to note", "it's worth noting", "moving forward", "at the end of the day", "delve into", "robust", "comprehensive", "transformative", "game-changing", "leverage" or "utilize" (say "use"), and "furthermore", "moreover", "additionally".
+- Use periods, commas or parentheses instead of em-dashes.`;
 
       const response = await ai.models.generateContent({
         model: 'gemini-3.6-flash',
