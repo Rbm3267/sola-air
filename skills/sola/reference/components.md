@@ -1,4 +1,4 @@
-# @sola-air-ui/ui 1.8.3: components
+# @sola-air-ui/ui 1.9.0: components
 
 Generated from the package by scripts/build-skill.mjs. Every component listed here exists, and every prop listed is one it declares with `export let`. Nothing else is accepted.
 
@@ -76,8 +76,10 @@ Import each one by its subpath, for example `import DataCard from '@sola-air-ui/
 
 | Prop | Default | Note |
 |---|---|---|
-| `columns` | `[]` | value or getter |
-| `rows` | `[]` | value or getter |
+| `columns` | `[]` |  |
+| `rows` | `[]` |  |
+| `caption` | `""` |  |
+| `captionHidden` | `false` |  |
 | `striped` | `false` |  |
 | `onRowClick` | `null` |  |
 | `dark` | `false` |  |
@@ -104,8 +106,13 @@ Import each one by its subpath, for example `import DataCard from '@sola-air-ui/
 | `title` | `"Utilization"` |  |
 | `value` | `"75%"` |  |
 | `percentage` | `75` |  |
-| `subtext` | `""` |  |
+| `max` | `100` |  |
+| `subtext` | `""` | "" = default line, false/null = hidden |
 | `color` | `"emerald"` | emerald \| sky \| violet \| amber \| rose |
+| `badge` | `"Live Gauge"` |  |
+| `footerLeft` | `"Telemetry Synchronized"` |  |
+| `footerRight` | `"zero-vdom"` |  |
+| `ringLabel` | `""` |  |
 
 ### FlowWaterfall
 

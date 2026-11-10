@@ -4,6 +4,20 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### `@sola-air-ui/ui` 1.9.0
+
+- **Added**: `GaugeCard` props `badge`, `footerLeft`, `footerRight`, `max` and `ringLabel`. Pass `""` to hide the
+  "Live Gauge" badge or the "Telemetry Synchronized" / "zero-vdom" footer, and `subtext={false}` to hide the
+  subtext line. The defaults are unchanged, so existing gauges look the same.
+- **Added**: the `GaugeCard` ring now has `role="img"` and a spoken label ("88 out of 100" by default). It fills
+  `percentage / max`, clamped to 0–100%. Every prop accepts a plain value or a signal accessor, so a gauge
+  driven by state (`percentage={score}`) updates in place.
+- **Added**: `Table` gets `caption` / `captionHidden`, `scope="col"` on header cells, a column option
+  `rowHeader: true` (renders `<th scope="row">`), and a per-column `render(row, i)` that returns text or a
+  `{ text, tone }` pill (`ok` | `warn` | `neutral`). Plain string columns work as before.
+- **Fixed**: the `Spinner` ring colour was hard-coded sky blue. It now follows `--sola-color-primary-500`, with the
+  same fallback.
+
 ### Skill (`sola-ui`)
 
 - **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill

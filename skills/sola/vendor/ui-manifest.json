@@ -169,8 +169,13 @@
       "title",
       "value",
       "percentage",
+      "max",
       "subtext",
-      "color"
+      "color",
+      "badge",
+      "footerLeft",
+      "footerRight",
+      "ringLabel"
     ]
   },
   "HtmlViewer": {
@@ -315,6 +320,8 @@
     "props": [
       "columns",
       "rows",
+      "caption",
+      "captionHidden",
       "striped",
       "onRowClick",
       "dark"

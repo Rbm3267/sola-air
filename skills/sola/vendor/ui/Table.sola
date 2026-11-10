@@ -1,15 +1,25 @@
 <script>
   // Both columns and rows accept either a plain array or a getter function
   // (const rows = () => signal()), matching StreamView/IntentCard/Modal's convention.
+  //
+  // A column is a string (the row key) or an object:
+  //   { key, label, rowHeader?: true, render?: (row, i) => string | { text, tone } }
+  // rowHeader renders that cell as <th scope="row">. render returns the cell text,
+  // or a pill: { text, tone: 'ok' | 'warn' | 'neutral' }.
   export let columns = [];
   export let rows = [];
+  export let caption = "";
+  // Hide the caption visually but keep it for screen readers.
+  export let captionHidden = false;
   export let striped = false;
   export let onRowClick = null;
   export let dark = false;
 
-  let resolvedRows = $derived(() => (typeof rows === 'function' ? rows() : rows) || []);
+  const read = (v) => (typeof v === 'function' ? v() : v);
+
+  let resolvedRows = $derived(() => read(rows) || []);
   let resolvedColumns = $derived(() => {
-    const c = typeof columns === 'function' ? columns() : columns;
+    const c = read(columns);
     if (Array.isArray(c) && c.length > 0) return c;
     const r = resolvedRows();
     if (Array.isArray(r) && r.length > 0 && r[0] && typeof r[0] === 'object') {
@@ -17,6 +27,33 @@
     }
     return [];
   });
+  let captionText = $derived(() => read(caption) || '');
+
+  const TONES = ['ok', 'warn', 'neutral'];
+
+  function columnKey(col) {
+    return typeof col === 'string' ? col : col.key;
+  }
+
+  function columnLabel(col) {
+    return typeof col === 'string' ? col : (col.label ?? col.key ?? '');
+  }
+
+  // Normalise a cell to { text, tone }; tone is '' for plain text.
+  function cellOf(row, col, i) {
+    let out = typeof col === 'object' && col && typeof col.render === 'function'
+      ? col.render(row, i)
+      : row == null ? '' : row[columnKey(col)];
+    if (out && typeof out === 'object') {
+      const tone = TONES.includes(out.tone) ? out.tone : 'neutral';
+      return { text: out.text == null ? '' : String(out.text), tone };
+    }
+    return { text: out == null ? '' : String(out), tone: '' };
+  }
+
+  function isRowHeader(col) {
+    return typeof col === 'object' && col !== null && col.rowHeader === true;
+  }
 
   function handleRowClick(row, i) {
     if (typeof onRowClick === 'function') {
@@ -27,10 +64,13 @@
 
 <div class="table-wrapper {dark ? 'dark' : ''} {striped ? 'striped' : ''}">
   <table>
+    {#if captionText()}
+      <caption class={captionHidden ? 'visually-hidden' : ''}>{captionText()}</caption>
+    {/if}
     <thead>
       <tr>
         {#each resolvedColumns() as col}
-          <th>{col.label || col}</th>
+          <th scope="col">{columnLabel(col)}</th>
         {/each}
       </tr>
     </thead>
@@ -38,7 +78,23 @@
       {#each resolvedRows() as row, i}
         <tr class="{typeof onRowClick === 'function' ? 'clickable' : ''}" tabindex={typeof onRowClick === 'function' ? '0' : '-1'} onclick={() => handleRowClick(row, i)} onkeydown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && typeof onRowClick === 'function') { e.preventDefault(); handleRowClick(row, i); } }}>
           {#each resolvedColumns() as col}
-            <td>{row[col.key || col]}</td>
+            {#if isRowHeader(col)}
+              <th scope="row" class="row-header">
+                {#if cellOf(row, col, i).tone}
+                  <span class="pill pill-{cellOf(row, col, i).tone}">{cellOf(row, col, i).text}</span>
+                {:else}
+                  {cellOf(row, col, i).text}
+                {/if}
+              </th>
+            {:else}
+              <td>
+                {#if cellOf(row, col, i).tone}
+                  <span class="pill pill-{cellOf(row, col, i).tone}">{cellOf(row, col, i).text}</span>
+                {:else}
+                  {cellOf(row, col, i).text}
+                {/if}
+              </td>
+            {/if}
           {/each}
         </tr>
       {/each}
@@ -114,5 +170,76 @@
 
   tr.clickable {
     cursor: pointer;
+  }
+
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding: var(--sola-table-cell-padding, 10px 14px);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sola-text-primary, #0f172a);
+  }
+
+  caption.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Row headers read like body cells, not like the uppercase column headers. */
+  tbody th.row-header {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--sola-text-primary, #0f172a);
+    background: transparent;
+    border-bottom: 1px solid var(--sola-border-subtle, #f1f5f9);
+  }
+
+  .table-wrapper.dark tbody th.row-header {
+    color: #e2e8f0;
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+
+  tr:last-child th.row-header {
+    border-bottom: none;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--sola-radius-full, 999px);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+
+  .pill-ok {
+    color: var(--sola-alert-positive-text, #047857);
+    background: var(--sola-alert-positive-bg, #ecfdf5);
+    border-color: var(--sola-alert-positive-border, #a7f3d0);
+  }
+
+  .pill-warn {
+    color: var(--sola-alert-warning, #b45309);
+    background: var(--sola-alert-warning-bg, #fffbeb);
+    border-color: var(--sola-alert-warning-border, #fde68a);
+  }
+
+  .pill-neutral {
+    color: var(--sola-text-secondary, #475569);
+    background: var(--sola-surface-1, #f8fafc);
+    border-color: var(--sola-border-subtle, #e2e8f0);
   }
 </style>
