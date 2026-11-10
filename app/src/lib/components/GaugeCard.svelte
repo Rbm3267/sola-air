@@ -5,7 +5,7 @@
       value: string;
       percentage?: number;
       subtext?: string;
-      color?: 'emerald' | 'sky' | 'violet' | 'amber';
+      color?: 'emerald' | 'sky' | 'violet' | 'amber' | 'indigo';
     }
   }>();
 
@@ -23,10 +23,13 @@
     emerald: { stroke: '#10b981', glow: 'rgba(16,185,129,0.15)', text: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-500' },
     sky: { stroke: '#0ea5e9', glow: 'rgba(14,165,233,0.15)', text: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-500' },
     violet: { stroke: '#8b5cf6', glow: 'rgba(139,92,246,0.15)', text: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-500' },
-    amber: { stroke: '#f59e0b', glow: 'rgba(245,158,11,0.15)', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500' }
+    amber: { stroke: '#f59e0b', glow: 'rgba(245,158,11,0.15)', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500' },
+    indigo: { stroke: '#6366f1', glow: 'rgba(99,102,241,0.15)', text: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-500' }
   };
 
-  const activeColor = $derived(colorMap[config.color || 'emerald']);
+  // An unknown color (a model can return any word) falls back to emerald
+  // instead of throwing, which used to blank the whole Custom Grid view.
+  const activeColor = $derived(colorMap[(config.color ?? 'emerald') as keyof typeof colorMap] ?? colorMap.emerald);
 </script>
 
 <div class="group relative bg-white/95 dark:bg-white/[0.02] border border-slate-200/90 dark:border-white/[0.04] rounded-3xl p-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_36px_-6px_rgba(14,165,233,0.14)] hover:border-sky-300 dark:border-sky-500/30 transition-all duration-300 overflow-hidden">
