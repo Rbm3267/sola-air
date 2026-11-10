@@ -394,25 +394,25 @@
           <button 
             onclick={() => viewMode = 'native'}
             class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'native' ? 'bg-blue-600 text-white font-semibold shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
-            <SolaIcons name="code" size={14} gradient={viewMode !== 'native'} />
+            <SolaIcons name="code" size={16} gradient={viewMode !== 'native'} />
             <span>Native .sola</span>
           </button>
           <button 
             onclick={() => viewMode = 'behavior'}
             class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'behavior' ? 'bg-white dark:bg-white/[0.02] text-slate-950 dark:text-white shadow-sm border border-slate-200 dark:border-white/[0.04]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
-            <SolaIcons name="sentinel" size={14} />
+            <SolaIcons name="sentinel" size={16} />
             <span>Behavioral Intent</span>
           </button>
           <button 
             onclick={() => viewMode = 'mesh'}
             class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'mesh' ? 'bg-white dark:bg-white/[0.02] text-slate-950 dark:text-white shadow-sm border border-slate-200 dark:border-white/[0.04]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
-            <SolaIcons name="bus" size={14} />
+            <SolaIcons name="bus" size={16} />
             <span>Signal Mesh</span>
           </button>
           <button 
             onclick={() => viewMode = 'custom'}
             class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'custom' ? 'bg-white dark:bg-white/[0.02] text-slate-950 dark:text-white shadow-sm border border-slate-200 dark:border-white/[0.04]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
-            <SolaIcons name="layers" size={14} />
+            <SolaIcons name="layers" size={16} />
             <span>Custom Grid ({widgets.length})</span>
           </button>
         </div>
