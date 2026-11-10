@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { GoogleGenAI } from '@google/genai';
 import { GEMINI_API_KEY } from '$app/env/private';
 import { FACTS, UI_MANIFEST } from '$lib/data/site';
-import { STUDIO_COMPONENTS, buildBlock } from '$lib/data/studioComponents';
+import { STUDIO_COMPONENTS, buildBlock, tidyGeneratedProps } from '$lib/data/studioComponents';
 
 // In-Memory Sliding-Window IP Rate Limiter (15 requests/minute per client IP)
 const rateLimitMap = new Map<string, number[]>();
@@ -234,7 +234,9 @@ Use only these components and only the props listed for each. Follow the shape o
 ${catalog}
 
 Return ONLY JSON: an array of 3 to 8 blocks, each { "component": string, "span": 1 | 2 | 3, "props": object }.
-The canvas is 3 columns wide. Fill props with realistic content for the request. Plain words, no lorem ipsum.`;
+The canvas is 3 columns wide. Fill props with realistic content for the request. Plain words, no lorem ipsum.
+Do not invent measurements. If the request gives no figure, use an obvious placeholder such as "--" or example values labelled as examples. Never claim live, synced or real-time data.
+A dial's "metric" is its centre readout and must contain a number. Put the unit in "unit".`;
 
       const response = await ai.models.generateContent({
         model: 'gemini-3.6-flash',
@@ -251,7 +253,8 @@ The canvas is 3 columns wide. Fill props with realistic content for the request.
       const blocks = list
         .map((b) => {
           const name = String(b?.component ?? b?.type ?? '');
-          return buildBlock(name, b?.props ?? b?.config ?? {}, b?.span ?? b?.colSpan, UI_MANIFEST.props[name] ?? []);
+          const props = tidyGeneratedProps(name, b?.props ?? b?.config ?? {});
+          return buildBlock(name, props, b?.span ?? b?.colSpan, UI_MANIFEST.props[name] ?? []);
         })
         .filter(Boolean);
       return json({ blocks });
