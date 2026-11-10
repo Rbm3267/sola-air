@@ -1,15 +1,24 @@
 <script lang="ts">
   import SentinelHeroDemo from './SentinelHeroDemo.svelte';
   import SolaLogo from './SolaLogo.svelte';
-  import { VERSIONS, PUBLISHED_COUNT, FACTS } from '$lib/data/site';
+  import SolaCodeBlock from './SolaCodeBlock.svelte';
+  import { VERSIONS, PUBLISHED_COUNT, FACTS, POSTBUILD_URL } from '$lib/data/site';
+  import { overlayExample } from '$lib/data/docsSnippets';
 
   const version = VERSIONS.solaAir;
 
+  // Two ways in: add Sola to an app that already exists, or start a new one.
+  const COMMANDS = {
+    add: 'npm i @sola-air-ui/core @sola-air-ui/sentinel',
+    create: 'npm create sola@latest'
+  } as const;
+
+  let mode = $state<keyof typeof COMMANDS>('add');
   let copied = $state(false);
 
   function copyCliCommand() {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText('npm create sola@latest');
+      navigator.clipboard.writeText(COMMANDS[mode]);
       copied = true;
       setTimeout(() => { copied = false; }, 2000);
     }
@@ -50,7 +59,7 @@
     <SolaLogo size={16} />
     <span>Sola AIR v{version} • Ambient Intent Runtime</span>
     <span class="text-blue-400/80">/</span>
-    <span class="text-slate-600 dark:text-slate-300 font-normal">{PUBLISHED_COUNT} Primitives</span>
+    <span class="text-slate-600 dark:text-slate-300 font-normal">{PUBLISHED_COUNT} Components</span>
   </div>
 
   <!-- Main Headline -->
@@ -60,11 +69,11 @@
 
   <!-- Subheadline -->
   <p class="sola-beat-enter sola-beat-delay-2 text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mb-8 sm:mb-10 leading-relaxed font-normal">
-    Sola Sentinel watches what people do on the page and <code class="font-mono text-[0.85em] font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-1.5 py-0.5 rounded-md">$intent</code> can offer a suggestion before they ask. Compile <code class="font-mono text-[0.85em] font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-1.5 py-0.5 rounded-md">.sola</code> components to plain DOM calls, or mount a persistent Shadow DOM shell across any existing app or multi-page portal.
+    Add a companion panel to an app you already have. Sola Sentinel notices when someone hesitates on a form, and the companion mounts in its own closed Shadow DOM, so your styles and ours stay apart. No rewrite of the host page.
   </p>
 
-  <!-- Clean Action Bar (CTAs + CLI) with Strict Single-Line Matched Height Alignment -->
-  <div class="sola-beat-enter sola-beat-delay-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10 w-full sm:w-auto justify-center">
+  <!-- Action Bar (CTAs) -->
+  <div class="sola-beat-enter sola-beat-delay-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6 w-full sm:w-auto justify-center">
     <!-- Primary CTA -->
     <a
       href="/docs"
@@ -79,16 +88,36 @@
       class="h-11 px-6 rounded-2xl font-semibold transition-all duration-200 bg-white hover:bg-slate-50 dark:bg-white/5 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-200/90 dark:border-white/10 shadow-xs hover:-translate-y-0.5 text-sm inline-flex items-center justify-center gap-2 whitespace-nowrap shrink-0 leading-none cursor-pointer">
       <span>Browse components</span>
     </a>
+  </div>
 
-    <!-- Inline CLI Pill -->
-    <div class="h-11 px-4 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-slate-50/90 dark:bg-white/5 backdrop-blur-md text-slate-800 dark:text-slate-200 font-mono text-xs inline-flex items-center justify-between gap-3 shadow-2xs whitespace-nowrap shrink-0 leading-none">
-      <div class="inline-flex items-center gap-2 select-all">
+  <!-- Install command: add to an existing app, or start a new one -->
+  <div class="sola-beat-enter sola-beat-delay-3 flex flex-col items-center gap-2 mb-8 w-full">
+    <div class="inline-flex items-center gap-1 p-1 rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-semibold" role="group" aria-label="Install command">
+      <button
+        type="button"
+        aria-pressed={mode === 'add'}
+        onclick={() => (mode = 'add')}
+        class="px-3 py-1.5 rounded-lg leading-none cursor-pointer transition-colors {mode === 'add' ? 'bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+        Add to an existing app
+      </button>
+      <button
+        type="button"
+        aria-pressed={mode === 'create'}
+        onclick={() => (mode = 'create')}
+        class="px-3 py-1.5 rounded-lg leading-none cursor-pointer transition-colors {mode === 'create' ? 'bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+        Start a new app
+      </button>
+    </div>
+    <div class="h-11 w-full max-w-md px-4 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-slate-50/90 dark:bg-white/5 backdrop-blur-md text-slate-800 dark:text-slate-200 font-mono text-xs inline-flex items-center justify-between gap-3 shadow-2xs whitespace-nowrap leading-none">
+      <!-- Focusable so keyboard users can scroll the command on narrow screens. -->
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+      <div class="inline-flex items-center gap-2 select-all overflow-x-auto" role="region" aria-label="Install command text" tabindex="0">
         <span class="text-blue-600 dark:text-blue-400 font-semibold select-none">$</span>
-        <span>npm create sola@latest</span>
+        <span>{COMMANDS[mode]}</span>
       </div>
       <button
         onclick={copyCliCommand}
-        aria-label="Copy CLI command"
+        aria-label="Copy install command"
         class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white p-1.5 rounded-lg hover:bg-slate-200/60 dark:hover:bg-white/10 transition-all cursor-pointer inline-flex items-center justify-center shrink-0">
         {#if copied}
           <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -97,15 +126,30 @@
         {/if}
       </button>
     </div>
+    <p class="text-xs text-slate-600 dark:text-slate-400 max-w-md leading-relaxed min-h-[2.5rem]">
+      {#if mode === 'add'}
+        Companion components are written in <code class="font-mono">.sola</code> and built with <code class="font-mono">@sola-air-ui/vite-plugin-sola</code>.
+      {:else}
+        Scaffolds a project with the compiler, the component library and a dev server.
+      {/if}
+    </p>
   </div>
 
   <!-- Micro Technical Attributes Line -->
   <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-medium text-slate-600 dark:text-slate-400 mb-12">
     <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> {FACTS.coreSizeKb} core runtime</span>
-    <span>•</span>
+    <span class="hidden sm:inline">•</span>
     <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> Compiles to plain DOM calls</span>
-    <span>•</span>
-    <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Drops into any page via Shadow DOM</span>
+    <span class="hidden sm:inline">•</span>
+    <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Styles and DOM isolated in a closed shadow root</span>
+    <span class="hidden sm:inline">•</span>
+    <span class="inline-flex items-center gap-1.5 whitespace-nowrap">Used to build <a href={POSTBUILD_URL} rel="noopener" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300">postbuild.dev</a></span>
+  </div>
+
+  <!-- Add it to a page you already have -->
+  <div class="sola-beat-enter sola-beat-delay-3 w-full max-w-2xl text-left mb-12">
+    <p class="text-xs font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Add it to a page you already have</p>
+    <SolaCodeBlock code={overlayExample} language="typescript" title="companion.js" showLineNumbers={false} />
   </div>
 
   <!-- Sentinel Hero Stage -->

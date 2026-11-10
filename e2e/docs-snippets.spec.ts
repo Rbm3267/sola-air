@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { solaSnippets, jsSnippets, dataSnippets, shellComponentsExample } from '../app/src/lib/data/docsSnippets';
+import { solaSnippets, jsSnippets, dataSnippets, shellComponentsExample, overlayExample } from '../app/src/lib/data/docsSnippets';
 
 const REPO_ROOT = join(__dirname, '..');
 
@@ -105,6 +105,62 @@ test.describe('published docs snippets', () => {
       expect(logs).toEqual(snippet.expectLogs);
     });
   }
+});
+
+// The homepage tells people they can add a companion to a page they already have.
+// This bundles that exact sample against the real core and sentinel sources
+// (./Companion.sola is a small compiled stand-in) and runs it in a browser.
+test.describe('homepage overlay snippet', () => {
+  test('mounts a closed shadow shell and reports a suggestion for a form already on the page', async ({ page }) => {
+    const compile = await getCompiler();
+    const { build } = await import('esbuild');
+
+    const result = await build({
+      stdin: { contents: overlayExample, resolveDir: REPO_ROOT, sourcefile: 'overlay.js' },
+      bundle: true,
+      write: false,
+      format: 'iife',
+      platform: 'browser',
+      logLevel: 'silent',
+      alias: {
+        '@sola-air-ui/core': join(REPO_ROOT, 'packages/core/src/index.js'),
+        '@sola-air-ui/sentinel': join(REPO_ROOT, 'packages/sentinel/src/index.js')
+      },
+      plugins: [
+        {
+          name: 'companion-stand-in',
+          setup(b) {
+            b.onResolve({ filter: /Companion\.sola$/ }, () => ({ path: 'Companion.sola', namespace: 'sola' }));
+            b.onLoad({ filter: /.*/, namespace: 'sola' }, () => ({
+              contents: compile('<p class="companion">companion</p>', { filename: 'Companion.sola' }).code,
+              loader: 'js',
+              resolveDir: REPO_ROOT
+            }));
+          }
+        }
+      ]
+    });
+
+    const errors: string[] = [];
+    const logs: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('console', (m) => logs.push(m.text()));
+
+    await page.goto('about:blank');
+    await page.setContent('<form id="target-form"><input name="email" autocomplete="off"></form>');
+    await page.addScriptTag({ content: result.outputFiles[0].text });
+
+    // The shell is on the page, and its shadow root is closed.
+    expect(await page.evaluate(() => !!document.getElementById('companion'))).toBe(true);
+    expect(await page.evaluate(() => document.getElementById('companion')!.shadowRoot)).toBeNull();
+
+    // Typing and then pausing in the existing form is enough: no per-field wiring.
+    await page.focus('#target-form input');
+    await page.keyboard.type('hello');
+    await page.focus('body');
+    await expect.poll(() => logs.some((l) => l.includes('email')), { timeout: 8000 }).toBe(true);
+    expect(errors).toEqual([]);
+  });
 });
 
 // The Persistent Shell guide promises state that survives a full page load, a

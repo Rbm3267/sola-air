@@ -79,7 +79,7 @@ The compiler transforms this into a self-contained ES module with:
 | **Scoped Styles** | **Native AST** | CSS Modules | Native | Scoped |
 | **Compiler Architecture** | **Acorn AST Transformer** | Babel / SWC | Custom | Template |
 
-The core runtime is about 7.5 kB gzipped. `scripts/core-size.mjs` measures it, and a test checks that `AGENTS.md` states the same number.
+The core runtime is about 7.8 kB gzipped. `scripts/core-size.mjs` measures it, and a test checks that `AGENTS.md` states the same number.
 
 ---
 

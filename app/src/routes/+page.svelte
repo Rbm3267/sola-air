@@ -17,7 +17,7 @@
 
 <svelte:head>
   <title>Sola AIR — UI that suggests before it is asked</title>
-  <meta name="description" content="A zero-VDOM reactive runtime whose UI observes behaviour and resolves suggestions before the user asks." />
+  <meta name="description" content="Add an ambient companion to an app you already have. Sola Sentinel notices when someone hesitates on a form, and a closed Shadow DOM shell keeps its styles apart from yours." />
 </svelte:head>
 
 <div class="flex flex-col w-full bg-white dark:bg-[#090d19] text-slate-900 dark:text-white transition-colors duration-300 min-h-screen">
@@ -130,13 +130,13 @@
           <div class="text-center mb-12">
             <div class="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 dark:bg-white/[0.08] border border-sky-200/80 dark:border-white/[0.08] text-sky-800 dark:text-slate-300 text-xs font-mono font-semibold mb-3 whitespace-nowrap leading-none">
               <SolaIcons name="dial" size={14} />
-              <span>@sola-air-ui/ui • {PUBLISHED_COUNT} Shipped .sola Primitives</span>
+              <span>@sola-air-ui/ui • {PUBLISHED_COUNT} components</span>
             </div>
             <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-3">
-              Compiled .sola primitives, running live
+              Components that fit inside a companion
             </h2>
             <p class="text-base text-slate-600 dark:text-slate-400 font-normal max-w-2xl mx-auto leading-relaxed">
-              Every card below is compiled directly from <code class="font-mono text-[0.9em] text-blue-700 dark:text-blue-400">@sola-air-ui/ui/*.sola</code> into reactive vanilla DOM nodes with scoped styles and zero virtual DOM diffing. Drag the rotary ring, hover the waterfall bars, or trigger a mitigation playbook.
+              Cards, dials, gauges and triage tables from <code class="font-mono text-[0.9em] text-blue-700 dark:text-blue-400">@sola-air-ui/ui</code>. They compile to plain DOM calls with scoped styles and no virtual DOM, and they mount inside a shadow-root companion or straight into your own pages. Drag the rotary ring, hover the waterfall bars, or trigger a mitigation playbook.
             </p>
           </div>
 

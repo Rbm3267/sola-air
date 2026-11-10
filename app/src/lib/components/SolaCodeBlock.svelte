@@ -134,7 +134,9 @@
   </div>
 
   <!-- Code Block Body with Horizontal Scroll -->
-  <div class="p-4 overflow-x-auto flex font-mono text-xs sm:text-sm leading-6">
+  <!-- Focusable so keyboard users can scroll long lines. -->
+  <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+  <div class="p-4 overflow-x-auto flex font-mono text-xs sm:text-sm leading-6" role="region" aria-label={title ? `${title} source` : 'Code'} tabindex="0">
     <!-- Optional Line Numbers -->
     {#if showLineNumbers}
       <div
