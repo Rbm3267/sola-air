@@ -229,7 +229,7 @@ export function buildBlock(
  * footer unless told otherwise. Those are demo defaults that claim a live feed,
  * so a generated gauge starts without them. A dial readout with no digit in it
  * is a unit ("kHz") that the model put in the wrong field, so it is dropped and
- * the dial shows its value.
+ * the dial shows its value. A card the model gave no trend for shows none.
  */
 export function tidyGeneratedProps(name: string, props: unknown): Record<string, unknown> {
   const out: Record<string, unknown> = { ...(props && typeof props === 'object' ? (props as Record<string, unknown>) : {}) };
@@ -238,6 +238,9 @@ export function tidyGeneratedProps(name: string, props: unknown): Record<string,
       if (out[key] === undefined) out[key] = '';
     }
   }
+  // The sample's "+14.2%" fills in when the model gives no trend, which reads as a
+  // real change in a number the model never measured. An empty trend hides the footer.
+  if (name === 'DataCard' && out.trend === undefined) out.trend = '';
   if (name === 'TactileDialCard' && typeof out.metric === 'string' && !/\d/.test(out.metric)) {
     delete out.metric;
   }
