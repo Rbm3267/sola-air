@@ -12,12 +12,18 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { solaSnippets, jsSnippets, dataSnippets, shellComponentsExample, overlayExample, scriptTagOverlayExample } from '../app/src/lib/data/docsSnippets';
+import { solaSnippets, jsSnippets, dataSnippets, shellComponentsExample, overlayExample, scriptTagOverlayExample, scriptTagSentinelExample } from '../app/src/lib/data/docsSnippets';
 
 const REPO_ROOT = join(__dirname, '..');
 
 const CORE_IIFE = readFileSync(
   join(REPO_ROOT, 'packages/core/dist/sola-core.iife.js'),
+  'utf8'
+);
+
+// Built by `npm run build -w @sola-air-ui/sentinel` (CI does this before the specs run).
+const SENTINEL_IIFE = readFileSync(
+  join(REPO_ROOT, 'packages/sentinel/dist/sola-sentinel.iife.min.js'),
   'utf8'
 );
 
@@ -192,6 +198,36 @@ test.describe('script-tag overlay', () => {
 
     await page.evaluate(() => (window as any).shell.teardown());
     expect(await page.evaluate(() => !!document.getElementById('my-companion'))).toBe(false);
+    expect(errors).toEqual([]);
+  });
+});
+
+// The script-tag Sentinel build: one global, observe() works on a form already on
+// the page, and the sample from the docs runs verbatim.
+test.describe('script-tag sentinel', () => {
+  test('SolaSentinelKit.observe reports a suggestion for a form with no per-field wiring', async ({ page }) => {
+    const errors: string[] = [];
+    const logs: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    page.on('console', (m) => logs.push(m.text()));
+
+    await page.goto('about:blank');
+    await page.setContent('<form id="target-form"><input name="email" autocomplete="off"><input name="password" type="password"></form>');
+    await page.addScriptTag({ content: SENTINEL_IIFE });
+    expect(await page.evaluate(() => Object.keys((window as any).SolaSentinelKit).sort())).toEqual([
+      'SolaSentinel', 'createSentinel', 'fieldNameOf', 'isSensitive', 'observe'
+    ]);
+    await page.addScriptTag({ content: scriptTagSentinelExample });
+
+    await page.focus('#target-form input[name=email]');
+    await page.keyboard.type('hello');
+    await page.focus('#target-form input[name=password]');
+    await page.keyboard.type('hunter2');
+    await page.focus('body');
+
+    await expect.poll(() => logs.some((l) => l.includes('email')), { timeout: 8000 }).toBe(true);
+    // A password field is never recorded.
+    expect(logs.join('\n')).not.toContain('hunter2');
     expect(errors).toEqual([]);
   });
 });

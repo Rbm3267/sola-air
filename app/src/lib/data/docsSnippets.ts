@@ -254,6 +254,18 @@ var shell = SolaCore.mountShell(window.MyWidget, { title: 'My Widget' }, { id: '
 // page's CSS can't reach it. Run the same line on every page of a portal: the
 // id keeps it to one shell. shell.teardown() removes it.`;
 
+/**
+ * Watching a form from a plain script tag. Run verbatim by e2e/docs-snippets.spec.ts
+ * after loading dist/sola-sentinel.iife.min.js from @sola-air-ui/sentinel.
+ */
+export const scriptTagSentinelExample = `// After sola-sentinel.iife.min.js has loaded:
+SolaSentinelKit.observe(document.querySelector('#target-form'), {
+  onSuggest: function (prompt) {
+    // Send the prompt to your endpoint, then show the answer.
+    console.log(prompt);
+  }
+});`;
+
 /** Shown in the docs, not executed as a snippet: it needs a real multi-page site. */
 export const shellBootstrapExample = `// portal-shell.js — load this file on EVERY page of the portal.
 import Dock from './Dock.sola';

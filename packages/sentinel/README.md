@@ -20,6 +20,27 @@ The gate is the interesting part. Naive versions fire on every change; this one
 requires a real quiet period after real activity, rate-limits itself, and needs
 more than one event before it will say anything.
 
+## Without a bundler
+
+For a portal, a CMS template, or any page that loads plain `<script>` tags, use
+the script-tag build (version 1.1.0 and later). It exposes the same API as one
+global, `SolaSentinelKit`, and is 2.7 kB gzipped.
+
+```html
+<script src="/scripts/sola-sentinel.iife.min.js"></script>
+<script>
+  SolaSentinelKit.observe(document.querySelector('#target-form'), {
+    onSuggest: function (prompt) {
+      // Send the prompt to your endpoint, then show the answer.
+      console.log(prompt);
+    }
+  });
+</script>
+```
+
+The file is `node_modules/@sola-air-ui/sentinel/dist/sola-sentinel.iife.min.js`
+once the package is installed.
+
 ## React
 
 ```jsx
