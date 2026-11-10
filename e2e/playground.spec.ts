@@ -66,3 +66,35 @@ test('a failed request shows a message instead of nothing', async ({ page }) => 
   await page.getByPlaceholder(/Speak or type intent/).press('Enter');
   await expect(page.getByRole('alert')).toContainText('Unable to process AI request');
 });
+
+test('the mock sheet recalculates its cards when a cell changes', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/demo');
+  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: 'Mock Sheet' }).click();
+  await expect(page.getByText('$184,200').first()).toBeVisible();
+  await expect(page.getByText('24.0 months')).toBeVisible();
+
+  await page.getByLabel('MRR for Nov').fill('200000');
+  await expect(page.getByText('$200,000').first()).toBeVisible();
+  await expect(page.getByText('+14.3% vs Oct')).toBeVisible();
+
+  await page.getByLabel('Burn for Nov').fill('0');
+  await expect(page.getByText('—').first()).toBeVisible();
+
+  await page.getByRole('button', { name: 'Reset sample data' }).click();
+  await expect(page.getByText('$184,200').first()).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('each preset replaces the cards on the Custom Grid', async ({ page }) => {
+  await page.goto('/demo');
+  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: /Custom Grid/ }).click();
+  await page.getByRole('button', { name: /Finance/ }).click();
+  await expect(page.getByText('Monthly Recurring Revenue')).toBeVisible();
+  await page.getByRole('button', { name: /SaaS Cloud/ }).click();
+  await expect(page.getByText('Enterprise ARR').first()).toBeVisible();
+  await expect(page.getByText('Monthly Recurring Revenue')).toHaveCount(0);
+});

@@ -5,7 +5,7 @@
     gradient = true,
     class: className = ''
   } = $props<{
-    name?: 'sentinel' | 'bus' | 'shell' | 'dial' | 'spark' | 'code' | 'layers';
+    name?: 'sheet' | 'sentinel' | 'bus' | 'shell' | 'dial' | 'spark' | 'code' | 'layers';
     size?: number;
     /** false draws in the current text colour, for use on a coloured tile. */
     gradient?: boolean;
@@ -33,6 +33,9 @@
   {#if name === 'sentinel'}
     <path d="M2.5 12C5 7.5 8.3 5.5 12 5.5C15.7 5.5 19 7.5 21.5 12C19 16.5 15.7 18.5 12 18.5C8.3 18.5 5 16.5 2.5 12Z" fill="rgba(56,189,248,0.14)" stroke={ink} stroke-width="1.8" stroke-linejoin="round" />
     <circle cx="12" cy="12" r="3.2" fill={ink} />
+  {:else if name === 'sheet'}
+    <rect x="3.5" y="4.5" width="17" height="15" rx="2.6" fill="rgba(56,189,248,0.14)" stroke={ink} stroke-width="1.8" />
+    <path d="M3.5 10h17M3.5 14.8h17M9.5 10v9.5" stroke={ink} stroke-width="1.6" stroke-linecap="round" />
   {:else if name === 'bus'}
     <rect x="3" y="4" width="7.5" height="7.5" rx="2.2" fill="rgba(56,189,248,0.14)" stroke={ink} stroke-width="1.8" />
     <rect x="13.5" y="12.5" width="7.5" height="7.5" rx="2.2" fill="rgba(147,51,234,0.14)" stroke={ink} stroke-width="1.8" />
