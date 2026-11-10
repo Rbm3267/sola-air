@@ -21,6 +21,7 @@ import {
 } from '../app/src/lib/data/solaExport';
 import { readUiManifest } from '../scripts/ui-manifest.mjs';
 import { STUDIO_COMPONENTS, buildBlock, tidyGeneratedProps } from '../app/src/lib/data/studioComponents';
+import { usageRecord } from '../app/src/lib/data/usage';
 import { STUDIO_TEMPLATES } from '../app/src/lib/data/studioTemplates';
 
 const REPO_ROOT = join(__dirname, '..');
@@ -180,5 +181,16 @@ test.describe('generated Studio props', () => {
   test('other components and bad input pass through', () => {
     expect(tidyGeneratedProps('DataCard', { title: 'x' })).toEqual({ title: 'x' });
     expect(tidyGeneratedProps('DataCard', null)).toEqual({});
+  });
+});
+
+test.describe('AI usage log line', () => {
+  test('carries the counts and nothing else', () => {
+    const r = usageRecord('studio', 'gemini-x', { promptTokenCount: 2100, candidatesTokenCount: 800, thoughtsTokenCount: 50, totalTokenCount: 2950 });
+    expect(r).toEqual({ event: 'ai_usage', mode: 'studio', model: 'gemini-x', inputTokens: 2100, outputTokens: 800, thinkingTokens: 50, totalTokens: 2950 });
+  });
+  test('adds the parts when the API gives no total, and tolerates missing data', () => {
+    expect(usageRecord('sola', 'm', { promptTokenCount: 10, candidatesTokenCount: 5 }).totalTokens).toBe(15);
+    expect(usageRecord('sola', 'm', undefined)).toMatchObject({ inputTokens: 0, outputTokens: 0, totalTokens: 0 });
   });
 });
