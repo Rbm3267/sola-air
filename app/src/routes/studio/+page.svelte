@@ -382,6 +382,9 @@
     {#if arcError}
       <p role="alert" class="w-full px-4 sm:px-6 lg:px-8 pb-4 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
     {/if}
+    <p class="w-full px-4 sm:px-6 lg:px-8 pb-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400" data-studio-note>
+      Studio lays out library components with the text you give them. A timer, a board that moves cards or a form that submits needs behavior, so build those in <a href="/demo?tab=generate" class="underline font-semibold text-blue-700 dark:text-blue-400">Generate</a>.
+    </p>
   </div>
 
   <div class="flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 grid gap-6 {paletteShown ? 'lg:grid-cols-[200px_minmax(0,1fr)_260px] xl:grid-cols-[240px_minmax(0,1fr)_300px]' : 'lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_300px]'}">
