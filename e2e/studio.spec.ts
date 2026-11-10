@@ -164,3 +164,13 @@ test('dragging the right edge of a block changes how many columns it spans', asy
   await page.keyboard.press('ArrowLeft');
   await expect(slider).toHaveAttribute('aria-valuenow', '1');
 });
+
+test('the heading matches the other pages', async ({ page }) => {
+  await open(page);
+  const h1 = page.getByRole('heading', { level: 1, name: 'Studio' });
+  await expect(h1).toBeVisible();
+  // Same type treatment as the other pages' titles: extra-bold, tight tracking.
+  await expect(h1).toHaveClass(/font-extrabold/);
+  await expect(h1).toHaveClass(/tracking-tight/);
+  expect(await h1.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(36);
+});

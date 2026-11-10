@@ -339,10 +339,14 @@
 
   <!-- Toolbar -->
   <div class="border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#0b1120]/80">
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center gap-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4 flex flex-wrap items-end gap-3">
       <div class="mr-auto min-w-0">
-        <h1 class="text-base font-bold">Studio</h1>
-        <p class="text-xs text-slate-600 dark:text-slate-400">Arrange real <code class="font-mono">@sola-air-ui/ui</code> components, edit their props, and export a <code class="font-mono">.sola</code> file that runs.</p>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-800 dark:text-blue-400 text-xs font-mono font-semibold mb-2 shadow-2xs">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Sola Studio</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Studio</h1>
+        <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl mt-1 leading-relaxed">Arrange real <code class="font-mono">@sola-air-ui/ui</code> components, edit their props, and export a <code class="font-mono">.sola</code> file that runs.</p>
       </div>
       <button type="button" class="lg:hidden px-3 py-2 rounded-lg text-sm font-semibold border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5" onclick={() => (paletteOpen = !paletteOpen)} aria-expanded={paletteOpen}>Add component</button>
       <div class="relative">
@@ -363,7 +367,7 @@
     </div>
 
     <!-- Arc -->
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 pb-5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-5">
       <IntentBar
         bind:value={arcPrompt}
         busy={arcBusy}
@@ -374,11 +378,11 @@
       />
     </div>
     {#if arcError}
-      <p role="alert" class="max-w-[1600px] mx-auto px-4 sm:px-6 pb-4 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
+      <p role="alert" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 text-sm text-rose-700 dark:text-rose-400">{arcError}</p>
     {/if}
   </div>
 
-  <div class="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 py-6 grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)_300px]">
+  <div class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)_300px]">
     <!-- Palette -->
     <aside class="{paletteOpen ? 'block' : 'hidden'} lg:block" aria-label="Components">
       <div class="lg:sticky lg:top-6 space-y-5 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-1">
