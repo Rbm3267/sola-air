@@ -131,7 +131,12 @@ test.describe('component catalog contents', () => {
     const src = readFileSync(join(__dirname, '..', 'app', 'src', 'lib', 'data', 'componentCatalog.ts'), 'utf8');
     const COMPONENT_CATALOG = [...src.matchAll(/^ {4}id: '([a-z0-9-]+)',\r?\n {4}name: '[^']*',\r?\n {4}category: '([^']+)'/gm)]
       .map((m) => ({ id: m[1], category: m[2] }));
+    // The 30 package components the catalog added live in packageCatalog.ts.
+    const pkgSrc = readFileSync(join(__dirname, '..', 'app', 'src', 'lib', 'data', 'packageCatalog.ts'), 'utf8');
+    const added = [...pkgSrc.matchAll(/^ {2}entry\('\w+', '([a-z0-9-]+)', '([^']+)'/gm)].map((m) => ({ id: m[1], category: m[2] }));
     expect(COMPONENT_CATALOG).toHaveLength(42);
+    expect(added).toHaveLength(30);
+    COMPONENT_CATALOG.push(...added);
     await page.goto('/components');
     await page.waitForLoadState('networkidle');
     for (const category of new Set(COMPONENT_CATALOG.map((c) => c.category))) {
@@ -143,5 +148,17 @@ test.describe('component catalog contents', () => {
       // Element count, not text: the skeleton preview is boxes with no text.
       await expect.poll(() => stage.locator('*').count(), { message: `${c.id} renders a component` }).toBeGreaterThan(1);
     }
+  });
+
+  test('lists all 37 package components and marks the previews separately', async ({ page }) => {
+    await page.goto('/components');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText('37 of 37 package components shown')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Package 37' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Site previews 35' })).toBeVisible();
+    await page.getByRole('button', { name: 'Site previews 35' }).click();
+    await expect(page.getByText('CATALOG (35)')).toBeVisible();
+    await page.getByRole('button', { name: 'Package 37' }).click();
+    await expect(page.getByText('CATALOG (37)')).toBeVisible();
   });
 });

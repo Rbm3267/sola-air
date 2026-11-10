@@ -43,7 +43,10 @@
   import SolaFileUpload from '$lib/components/SolaFileUpload.svelte';
   import SolaKbd from '$lib/components/SolaKbd.svelte';
   import SolaHoverCard from '$lib/components/SolaHoverCard.svelte';
-  import { COMPONENT_CATALOG, type CatalogComponent } from '$lib/data/componentCatalog';
+  import { COMPONENT_CATALOG as PREVIEW_AND_CORE, type CatalogComponent } from '$lib/data/componentCatalog';
+  import { PACKAGE_CATALOG_ADDITIONS } from '$lib/data/packageCatalog';
+  import { STUDIO_MOUNTS } from '$lib/data/studioMounts';
+  import { STUDIO_COMPONENTS } from '$lib/data/studioComponents';
   import { isPublished, PUBLISHED_COUNT, CATALOG_COUNT, VERSIONS, UI_MANIFEST } from '$lib/data/site';
   import { toSolaFile, mountComponentSnippet, previewNote, PACKAGE_EQUIVALENT } from '$lib/data/solaExport';
   import { fade, fly } from 'svelte/transition';
@@ -51,13 +54,20 @@
   import { onMount } from 'svelte';
   import { page } from '$app/state';
 
+  // Every @sola-air-ui/ui component first, then the previews built for this site.
+  const COMPONENT_CATALOG: CatalogComponent[] = [...PREVIEW_AND_CORE, ...PACKAGE_CATALOG_ADDITIONS].sort(
+    (a, b) => Number(isPublished(b)) - Number(isPublished(a))
+  );
+  const studioIds = new Set(STUDIO_COMPONENTS.map((c) => c.name));
+
+  let kind = $state<'all' | 'package' | 'preview'>('all');
   let activeCategory = $state<string>('All');
   let searchQuery = $state<string>('');
-  let selectedComponent = $state<CatalogComponent>(COMPONENT_CATALOG[0]);
+  let selectedComponent = $state<CatalogComponent>(PREVIEW_AND_CORE[0]);
   let codeTab = $state<'sola' | 'mount'>('sola');
 
   // Interactive Live Playground State
-  let liveProps = $state<Record<string, any>>({ ...COMPONENT_CATALOG[0].defaultConfig });
+  let liveProps = $state<Record<string, any>>({ ...PREVIEW_AND_CORE[0].defaultConfig });
 
   // Update liveProps whenever selected component changes and sync URL parameter
   function selectComponent(comp: CatalogComponent) {
@@ -96,12 +106,13 @@
   const filteredComponents = $derived(
     COMPONENT_CATALOG.filter(item => {
       const matchCat = activeCategory === 'All' || item.category === activeCategory;
+      const matchKind = kind === 'all' || (kind === 'package') === isPublished(item);
       const matchQuery =
         searchQuery.trim() === '' ||
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.category.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchCat && matchQuery;
+      return matchCat && matchKind && matchQuery;
     })
   );
 
@@ -117,6 +128,7 @@
   });
 
   const catalogPublishedCount = COMPONENT_CATALOG.filter(isPublished).length;
+  const previewCount = COMPONENT_CATALOG.length - catalogPublishedCount;
 </script>
 
 <svelte:head>
@@ -158,6 +170,18 @@
         </div>
       </div>
 
+      <!-- Package components install from npm; previews exist only on this site. -->
+      <div class="flex items-center gap-2 pt-2" role="group" aria-label="Show">
+        {#each [['all', `All ${COMPONENT_CATALOG.length}`], ['package', `Package ${catalogPublishedCount}`], ['preview', `Site previews ${previewCount}`]] as [value, label]}
+          <button
+            onclick={() => (kind = value as typeof kind)}
+            aria-pressed={kind === value}
+            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shadow-2xs {kind === value ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' : 'bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/10'}">
+            {label}
+          </button>
+        {/each}
+      </div>
+
       <!-- Category Filter Pills -->
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2">
         {#each categories as category}
@@ -177,7 +201,7 @@
       <div class="lg:col-span-4 flex flex-col gap-3">
         <div class="flex items-center justify-between px-1 text-xs font-mono font-semibold text-slate-500 dark:text-slate-400">
           <span>CATALOG ({filteredComponents.length})</span>
-          <span>{catalogPublishedCount} of {PUBLISHED_COUNT} package components shown</span>
+          <span>{filteredComponents.filter(isPublished).length} of {PUBLISHED_COUNT} package components shown</span>
         </div>
 
         <div class="flex flex-col gap-2.5 max-h-[750px] overflow-y-auto pr-1">
@@ -258,12 +282,14 @@
           </div>
 
           <!-- Open in Studio Action Button -->
+          {#if studioIds.has(selectedComponent.componentName) || !isPublished(selectedComponent)}
           <a 
             href="/studio?add={selectedComponent.id}" 
             class="px-5 py-2.5 rounded-xl bg-slate-950 dark:bg-blue-600 text-white dark:text-white hover:bg-slate-800 dark:hover:bg-blue-500 font-semibold text-xs flex items-center gap-2 transition-all shadow-md cursor-pointer shrink-0">
             <span>Drop in Studio</span>
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
+          {/if}
         </div>
 
         <!-- Live Interactive Stage Container -->
@@ -527,6 +553,19 @@
                 {#key JSON.stringify(liveProps)}
                   <SolaMount component={SolaSafeHTMLSola} props={liveProps} />
                 {/key}
+              </div>
+            {:else if STUDIO_MOUNTS[selectedComponent.componentName]}
+              <div class="w-full max-w-md">
+                {#key JSON.stringify(liveProps)}
+                  <SolaMount component={STUDIO_MOUNTS[selectedComponent.componentName]} props={liveProps} />
+                {/key}
+              </div>
+            {:else}
+              <div class="w-full max-w-md text-center flex flex-col gap-2 py-6">
+                <p class="text-sm font-semibold text-slate-900 dark:text-white">No live stage for {selectedComponent.name}</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  This package component needs children or a page around it, or a running service. The code below shows how to use it, and its props are listed under the stage.
+                </p>
               </div>
             {/if}
           </div>
