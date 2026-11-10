@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { GoogleGenAI } from '@google/genai';
-import { env } from '$env/dynamic/private';
+import { GEMINI_API_KEY } from '$app/env/private';
 import { FACTS, UI_MANIFEST } from '$lib/data/site';
 import { STUDIO_COMPONENTS, buildBlock } from '$lib/data/studioComponents';
 
@@ -68,7 +68,7 @@ export async function POST({ request, getClientAddress }) {
       return json({ error: 'Payload must be a JSON object.' }, { status: 400 });
     }
 
-    const apiKey = env.GEMINI_API_KEY;
+    const apiKey = GEMINI_API_KEY;
 
     if (!apiKey && (data.mode === 'studio' || data.mode === 'sola')) {
       return json({ error: 'Arc is offline: this server has no model key configured.' }, { status: 503 });

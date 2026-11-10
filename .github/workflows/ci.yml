@@ -64,9 +64,10 @@ jobs:
         run: npm run build
       - name: Site quality and audit
         run: |
-          npm run dev -w app -- --port 5174 --strictPort &
+          # Any value works: e2e/model-key.spec.ts checks that the server sees it.
+          GEMINI_API_KEY=ci-placeholder npm run dev -w app -- --port 5174 --strictPort &
           npx wait-on http://localhost:5174 --timeout 60000
-          npx playwright test e2e/site-quality.spec.ts e2e/site-audit.spec.ts e2e/a11y.spec.ts e2e/home-bus.spec.ts e2e/home-data.spec.ts e2e/home-flagship.spec.ts e2e/components-overlays.spec.ts e2e/written-in-sola.spec.ts e2e/studio.spec.ts e2e/playground.spec.ts
+          EXPECT_MODEL_KEY=1 npx playwright test e2e/site-quality.spec.ts e2e/site-audit.spec.ts e2e/a11y.spec.ts e2e/home-bus.spec.ts e2e/home-data.spec.ts e2e/home-flagship.spec.ts e2e/components-overlays.spec.ts e2e/written-in-sola.spec.ts e2e/studio.spec.ts e2e/playground.spec.ts e2e/model-key.spec.ts
 
   scaffold:
     name: Scaffold installs and builds
