@@ -31,9 +31,8 @@
   </defs>
 
   {#if name === 'sentinel'}
-    <path d="M3 12C5.5 7.5 8.5 7.5 12 12C15.5 16.5 18.5 16.5 21 12" stroke={ink} stroke-width="2" stroke-linecap="round" />
-    <path d="M3 16C6.5 12.5 9.5 12.5 12 15.5C14.5 18.5 17.5 18.5 21 15" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 3" />
-    <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke={ink} stroke-width="2" />
+    <path d="M2.5 12C5 7.5 8.3 5.5 12 5.5C15.7 5.5 19 7.5 21.5 12C19 16.5 15.7 18.5 12 18.5C8.3 18.5 5 16.5 2.5 12Z" fill="rgba(56,189,248,0.14)" stroke={ink} stroke-width="1.8" stroke-linejoin="round" />
+    <circle cx="12" cy="12" r="3.2" fill={ink} />
   {:else if name === 'bus'}
     <rect x="3" y="4" width="7.5" height="7.5" rx="2.2" fill="rgba(56,189,248,0.14)" stroke={ink} stroke-width="1.8" />
     <rect x="13.5" y="12.5" width="7.5" height="7.5" rx="2.2" fill="rgba(147,51,234,0.14)" stroke={ink} stroke-width="1.8" />
