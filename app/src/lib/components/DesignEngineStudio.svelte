@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PUBLISHED_COUNT, CATALOG_COUNT, PREVIEW_COUNT } from '$lib/data/site';
+  import { PUBLISHED_COUNT } from '$lib/data/site';
   import SolaMount from './SolaMount.svelte';
   import SolaIcons from './SolaIcons.svelte';
   import SolaKbd from './SolaKbd.svelte';
@@ -256,7 +256,7 @@
 
           <!-- Bottom Actions -->
           <div class="pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
-            <span class="text-xs text-slate-500 dark:text-slate-400">{PUBLISHED_COUNT} install from npm; the catalog also shows {PREVIEW_COUNT} site-only previews ({CATALOG_COUNT} in all)</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400">{PUBLISHED_COUNT} components install from npm. The catalog also lists previews built for this site.</span>
             <div class="flex items-center gap-2 w-full sm:w-auto">
               <a
                 href="/components"

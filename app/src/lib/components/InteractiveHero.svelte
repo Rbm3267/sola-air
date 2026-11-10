@@ -126,9 +126,10 @@
         {/if}
       </button>
     </div>
-    <p class="text-xs text-slate-600 dark:text-slate-400 max-w-md leading-relaxed min-h-[2.5rem]">
+    <p class="text-xs text-slate-600 dark:text-slate-400 max-w-md leading-relaxed min-h-[4rem]">
       {#if mode === 'add'}
-        Companion components are written in <code class="font-mono">.sola</code> and built with <code class="font-mono">@sola-air-ui/vite-plugin-sola</code>.
+        Companions are written in <code class="font-mono">.sola</code> and compiled once, with the Vite plugin or the <code class="font-mono">sola compile</code> command. The host page then needs only a bundler import or two script tags.
+        <a href="/docs#host-embedding" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2">Details</a>
       {:else}
         Scaffolds a project with the compiler, the component library and a dev server.
       {/if}
