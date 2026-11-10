@@ -10,7 +10,7 @@
   let messages = $state<Array<{ role: 'user' | 'assistant'; text: string; timestamp?: string }>>([
     {
       role: 'assistant',
-      text: "I answer questions about **Sola AIR**.\n\nAsk how to put a compiled component in a React, Vue, Svelte or plain JavaScript page, how to load data from PostgreSQL or MySQL through the Relay, or how the compiler works.",
+      text: "I answer questions about **Sola AIR**.\n\nAsk how to put a compiled component in a React, Vue, Svelte or plain JavaScript page, how to load data from PostgreSQL, MySQL or a Google Sheet through the Relay, or how the compiler works.",
       timestamp: 'Just now'
     }
   ]);
@@ -23,7 +23,7 @@
     "How do I use Sola in React?",
     "How is Sola different from React state?",
     "Show me a .sola component",
-    "How do I load data from Postgres?",
+    "How do I load data from a database or sheet?",
     "How do signals work?",
     "How do I add Sola to an existing app?"
   ];

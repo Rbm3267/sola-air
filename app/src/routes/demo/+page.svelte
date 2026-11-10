@@ -78,7 +78,7 @@
     "Add a CPU temperature gauge with 72% load",
     "Show Q3 revenue and churn rate for enterprise tier",
     "List all active deployments with their status",
-    "Connect live Google Sheets relay for cash runway & MRR"
+    "Show cash runway and MRR for a SaaS company"
   ];
 
   onMount(() => {
@@ -222,7 +222,7 @@
         { id: 'fn-1', component: 'DataCard', colSpan: 1, config: { title: 'Monthly Recurring Revenue', value: '$184,200', trend: '+$14,800 this month', icon: 'trending-up' } },
         { id: 'fn-2', component: 'GaugeCard', colSpan: 1, config: { title: 'Gross Margin Rate', value: '88%', percentage: 88, subtext: 'LTV/CAC Ratio: 4.8x', color: 'indigo' } },
         { id: 'fn-3', component: 'DataCard', colSpan: 1, config: { title: 'Cash Runway', value: '24 Months', trend: 'Net Burn: $18.5k/mo', icon: 'activity' } },
-        { id: 'fn-4', component: 'ListBlock', colSpan: 3, config: { title: 'Google Sheet Live Transactions (sheet://finance-ops)', items: [
+        { id: 'fn-4', component: 'ListBlock', colSpan: 3, config: { title: 'Recent transactions (sample data)', items: [
           { label: 'Enterprise Contract Renewal • Acme Corp', description: '+$48,000 ARR • Net-30 Invoiced', status: 'Completed' },
           { label: 'AWS Cloud Infrastructure Tier 2', description: '-$3,420 • Monthly Auto-settle', status: 'Completed' },
           { label: 'Stripe Merchant Payout Batch #904', description: '+$12,840 • Clearing to SVB Treasury', status: 'Active' }
