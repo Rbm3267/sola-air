@@ -10,7 +10,7 @@ cd sola-air
 npm install
 ```
 
-CI runs Node 20, so use Node 20 or newer.
+The packages run on Node 20 or newer, and the unit tests run on Node 20 in CI. The site in `app` is built with SvelteKit 3, which needs Node 22.17 or newer, so use Node 22 if you work on it.
 
 ## Layout
 

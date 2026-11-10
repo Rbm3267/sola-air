@@ -45,7 +45,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          # SvelteKit 3, which the site is built with, needs Node 22.17 or newer.
+          node-version: 22
           cache: npm
       - run: npm ci
       - name: Build core IIFE bundle
@@ -65,7 +66,7 @@ jobs:
         run: |
           npm run dev -w app -- --port 5174 --strictPort &
           npx wait-on http://localhost:5174 --timeout 60000
-          npx playwright test e2e/site-quality.spec.ts e2e/site-audit.spec.ts e2e/a11y.spec.ts e2e/home-bus.spec.ts e2e/home-data.spec.ts e2e/home-flagship.spec.ts e2e/components-overlays.spec.ts e2e/written-in-sola.spec.ts e2e/studio.spec.ts
+          npx playwright test e2e/site-quality.spec.ts e2e/site-audit.spec.ts e2e/a11y.spec.ts e2e/home-bus.spec.ts e2e/home-data.spec.ts e2e/home-flagship.spec.ts e2e/components-overlays.spec.ts e2e/written-in-sola.spec.ts e2e/studio.spec.ts e2e/playground.spec.ts
 
   scaffold:
     name: Scaffold installs and builds

@@ -12,8 +12,6 @@
 	import { page } from '$app/state';
 	import { theme } from '$lib/stores/theme.svelte';
 	import SiteFooter from '$lib/components/SiteFooter.svelte';
-	import { injectAnalytics } from '@vercel/analytics/sveltekit';
-	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 
 	let { children } = $props();
 
@@ -27,8 +25,6 @@
 		// The static defaults in app.html were for crawlers that don't run this app.
 		document.querySelectorAll('[data-default-meta]').forEach((el) => el.remove());
 		theme.init();
-		injectAnalytics();
-		injectSpeedInsights();
 		// Prerendered pages show their buttons before the scripts attach handlers.
 		// Children mount first, so this marks the point where the whole page is live
 		// (the browser tests wait for it before clicking).
