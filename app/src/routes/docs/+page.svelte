@@ -16,6 +16,7 @@
     dataMacroExample,
     persistDockExample,
     shellBootstrapExample,
+    scriptTagOverlayExample,
     shellComponentsExample,
     solaCheckExample,
     solaCheckOutput,
@@ -442,6 +443,18 @@ export function SolaWidget({ title, value }) {
               Get started with Sola by creating a new standalone project or integrating the compiler into your existing Vite setup.
             </p>
           </header>
+
+          <!-- Already have an app? -->
+          <div class="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-slate-50/70 dark:bg-white/[0.03] p-4 space-y-2">
+            <h4 class="text-xs font-semibold text-slate-900 dark:text-white font-mono">Already have an app?</h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              You don't need a new project. Compile a component once, then add it to a page you already have, either from a bundler or with two script tags and no build step on the host.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <button type="button" onclick={() => selectSection('host-embedding')} class="h-8 px-3 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white cursor-pointer">React &amp; portal embeds</button>
+              <button type="button" onclick={() => selectSection('persistent-shell')} class="h-8 px-3 rounded-lg text-xs font-semibold bg-white dark:bg-white/5 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10 cursor-pointer">Persistent shell across pages</button>
+            </div>
+          </div>
 
           <!-- Tailwind Style Callout Note -->
           <div class="border-l-4 border-blue-500 bg-blue-50/50 dark:bg-blue-500/10 p-4 rounded-r-2xl space-y-1">
@@ -897,6 +910,15 @@ export function SolaWidget({ title, value }) {
             </div>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{noBundlerEmbedCode}</code></pre>
+            </div>
+
+            <div class="space-y-1">
+              <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">As an overlay, from a script tag</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">To keep the widget's styles apart from the host page, mount it with <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.mountShell</code> instead of calling it directly. The compile step happens once, on your machine or in CI. The host page only loads two files.</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]"><code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">observe()</code> comes from <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/sentinel</code>, which is only on npm for now. From a script tag, use <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">SolaCore.createSentinel</code> and record field events yourself.</p>
+            </div>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
+              <pre><code>{scriptTagOverlayExample}</code></pre>
             </div>
           </section>
         </article>

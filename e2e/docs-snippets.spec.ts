@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { solaSnippets, jsSnippets, dataSnippets, shellComponentsExample, overlayExample } from '../app/src/lib/data/docsSnippets';
+import { solaSnippets, jsSnippets, dataSnippets, shellComponentsExample, overlayExample, scriptTagOverlayExample } from '../app/src/lib/data/docsSnippets';
 
 const REPO_ROOT = join(__dirname, '..');
 
@@ -159,6 +159,39 @@ test.describe('homepage overlay snippet', () => {
     await page.keyboard.type('hello');
     await page.focus('body');
     await expect.poll(() => logs.some((l) => l.includes('email')), { timeout: 8000 }).toBe(true);
+    expect(errors).toEqual([]);
+  });
+});
+
+// The Host Embedding page shows a plain-script-tag overlay: the core IIFE, a
+// component compiled with --target iife, and one mountShell call. No bundler on
+// the host page. This loads exactly that and runs the documented line verbatim.
+test.describe('script-tag overlay', () => {
+  test('a component compiled to an IIFE mounts in a closed shadow root from SolaCore.mountShell', async ({ page }) => {
+    const compile = await getCompiler();
+    const { code } = compile('<p class="widget">hello from the widget</p>', {
+      target: 'iife',
+      exportName: 'MyWidget',
+      filename: 'MyWidget.sola'
+    });
+
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+
+    await page.goto('about:blank');
+    await page.setContent('<h1>Existing host page</h1><div id="host-content">untouched</div>');
+    await page.addScriptTag({ content: CORE_IIFE });
+    await page.addScriptTag({ content: code });
+    await page.addScriptTag({ content: scriptTagOverlayExample });
+
+    expect(await page.evaluate(() => document.getElementById('my-companion')!.shadowRoot)).toBeNull();
+    expect(await page.evaluate(() => (window as any).shell.root.textContent)).toContain('hello from the widget');
+    // The host page is left as it was, and the page's own query can't see into the shell.
+    expect(await page.evaluate(() => document.getElementById('host-content')!.textContent)).toBe('untouched');
+    expect(await page.evaluate(() => document.querySelector('.widget'))).toBeNull();
+
+    await page.evaluate(() => (window as any).shell.teardown());
+    expect(await page.evaluate(() => !!document.getElementById('my-companion'))).toBe(false);
     expect(errors).toEqual([]);
   });
 });

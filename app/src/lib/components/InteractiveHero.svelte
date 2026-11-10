@@ -146,12 +146,12 @@
     <span class="inline-flex items-center gap-1.5 whitespace-nowrap">Used to build <a href={POSTBUILD_URL} rel="noopener" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300">postbuild.dev</a></span>
   </div>
 
+  <!-- Sentinel Hero Stage -->
+  <SentinelHeroDemo />
+
   <!-- Add it to a page you already have -->
-  <div class="sola-beat-enter sola-beat-delay-3 w-full max-w-2xl text-left mb-12">
+  <div class="sola-beat-enter sola-beat-delay-3 w-full max-w-2xl text-left mt-12">
     <p class="text-xs font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Add it to a page you already have</p>
     <SolaCodeBlock code={overlayExample} language="typescript" title="companion.js" showLineNumbers={false} />
   </div>
-
-  <!-- Sentinel Hero Stage -->
-  <SentinelHeroDemo />
 </div>
