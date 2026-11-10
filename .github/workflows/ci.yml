@@ -50,6 +50,8 @@ jobs:
       - run: npm ci
       - name: Build core IIFE bundle
         run: npm run build -w @sola-air-ui/core
+      - name: Build sentinel IIFE bundle
+        run: npm run build -w @sola-air-ui/sentinel
       - run: npx playwright install --with-deps chromium
 
       # No dev server needed: these compile components and mount them directly.

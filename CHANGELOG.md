@@ -20,6 +20,15 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   Vite 6, 7 or 8 no longer pull in a second, vulnerable Vite 5 to satisfy the peer. No code change; the
   plugin already runs under Vite 8 in the Sola AIR site.
 
+## 2026-11-10: sentinel 1.1.0
+
+### `@sola-air-ui/sentinel`
+
+- **Added**: a script-tag build, `dist/sola-sentinel.iife.min.js` (2.7 kB gzipped), for pages with no bundler.
+  It exposes the same API as one global, `SolaSentinelKit` (`observe`, `createSentinel`, `SolaSentinel`,
+  `fieldNameOf`, `isSensitive`), so `SolaSentinelKit.observe(form, { onSuggest })` works from a plain
+  `<script>`. Also available as `@sola-air-ui/sentinel/iife`. The ES module entry is unchanged.
+
 ## 2026-11-05: mcp 1.0.6
 
 ### `@sola-air-ui/mcp`

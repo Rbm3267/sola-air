@@ -1,6 +1,6 @@
 {
   "name": "@sola-air-ui/sentinel",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Ambient behaviour observation: notice when someone hesitates on a form, and describe what you saw. Framework-agnostic, zero dependencies.",
   "type": "module",
   "main": "./src/index.js",
@@ -17,13 +17,17 @@
     "./svelte": {
       "types": "./types/svelte.d.ts",
       "default": "./src/svelte.js"
-    }
+    },
+    "./iife": "./dist/sola-sentinel.iife.js"
   },
   "files": [
     "src",
-    "types"
+    "types",
+    "dist"
   ],
   "scripts": {
+    "build": "node build.js",
+    "prepack": "node build.js",
     "test": "node --test test/sentinel.test.js"
   },
   "peerDependencies": {
