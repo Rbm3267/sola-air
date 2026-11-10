@@ -55,26 +55,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <!-- Pillar 1: Sola Design Studio -->
-          <div class="sola-spring-card p-8 rounded-3xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.06] shadow-xs hover:shadow-xl hover:border-blue-500/40 flex flex-col justify-between gap-6 group">
-            <div class="flex flex-col gap-3.5">
-              <div class="w-11 h-11 rounded-2xl bg-white dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 flex items-center justify-center shadow-2xs">
-                <SolaIcons name="spark" size={22} />
-              </div>
-              <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                Sola Design Studio
-              </h3>
-              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-                Arrange {STUDIO_COMPONENTS.length} of the {PUBLISHED_COUNT} <code class="font-mono text-xs">@sola-air-ui/ui</code> components on a grid, edit their props, and export the result as a <code class="font-mono text-xs">.sola</code> file you can mount as a companion. Arc can draft a layout from one sentence.
-              </p>
-            </div>
-            <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all whitespace-nowrap leading-none">
-              <span>Launch Studio</span>
-              <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </a>
-          </div>
-
-          <!-- Pillar 2: Chrome Browser Extension -->
+          <!-- Pillar 1: Chrome extension (try it on your own page) -->
           <div class="sola-spring-card p-8 rounded-3xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.06] shadow-xs hover:shadow-xl hover:border-blue-500/40 flex flex-col justify-between gap-6 group">
             <div class="flex flex-col gap-3.5">
               <div class="w-11 h-11 rounded-2xl bg-white dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 flex items-center justify-center shadow-2xs">
@@ -89,6 +70,25 @@
             </div>
             <a href="/preview" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all whitespace-nowrap leading-none">
               <span>Try in Simulator</span>
+              <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+
+          <!-- Pillar 2: Sola Design Studio -->
+          <div class="sola-spring-card p-8 rounded-3xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.06] shadow-xs hover:shadow-xl hover:border-blue-500/40 flex flex-col justify-between gap-6 group">
+            <div class="flex flex-col gap-3.5">
+              <div class="w-11 h-11 rounded-2xl bg-white dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 flex items-center justify-center shadow-2xs">
+                <SolaIcons name="spark" size={22} />
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                Sola Design Studio
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+                Arrange {STUDIO_COMPONENTS.length} of the {PUBLISHED_COUNT} <code class="font-mono text-xs">@sola-air-ui/ui</code> components on a grid, edit their props, and export the result as a <code class="font-mono text-xs">.sola</code> file you can mount as a companion. Arc can draft a layout from one sentence.
+              </p>
+            </div>
+            <a href="/studio" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all whitespace-nowrap leading-none">
+              <span>Launch Studio</span>
               <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
           </div>
