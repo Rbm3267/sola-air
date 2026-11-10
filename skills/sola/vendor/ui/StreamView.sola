@@ -47,15 +47,17 @@
 
 <style>
   .sola-stream-view {
-    background: var(--sola-color-neutral-900, #0f172a);
-    color: var(--sola-color-neutral-50, #f8fafc);
+    /* Theme tokens, so the panel is light in light mode and dark in dark mode.
+       The fallbacks are the old always-dark look, for pages without the token sheet. */
+    background: var(--sola-surface-0, #0f172a);
+    color: var(--sola-text-primary, #f8fafc);
     border-radius: 18px;
     padding: 20px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 13px;
     line-height: 1.6;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--sola-border-default, rgba(255, 255, 255, 0.1));
+    box-shadow: 0 10px 30px -14px rgba(15, 23, 42, 0.35);
   }
 
   .stream-header {
@@ -72,8 +74,8 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 700;
-    color: #38bdf8;
-    background: rgba(56, 189, 248, 0.1);
+    color: var(--sola-alert-info, #38bdf8);
+    background: var(--sola-alert-info-bg, rgba(56, 189, 248, 0.1));
     padding: 3px 8px;
     border-radius: 6px;
   }
@@ -82,8 +84,8 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #38bdf8;
-    box-shadow: 0 0 6px #38bdf8;
+    background: var(--sola-alert-info, #38bdf8);
+    box-shadow: 0 0 6px var(--sola-alert-info, #38bdf8);
   }
 
   .stream-content {
@@ -104,19 +106,19 @@
   }
 
   .event-time {
-    color: var(--sola-color-neutral-400, #94a3b8);
+    color: var(--sola-text-tertiary, #94a3b8);
     flex-shrink: 0;
   }
 
-  .stream-event-success .event-msg { color: #34d399; }
-  .stream-event-warning .event-msg { color: #fbbf24; }
-  .stream-event-error .event-msg { color: #f87171; }
+  .stream-event-success .event-msg { color: var(--sola-alert-positive-text, #34d399); }
+  .stream-event-warning .event-msg { color: var(--sola-alert-warning, #fbbf24); }
+  .stream-event-error .event-msg { color: var(--sola-alert-high-text, #f87171); }
 
   .stream-cursor {
     display: inline-block;
     width: 8px;
     height: 15px;
-    background: #38bdf8;
+    background: var(--sola-alert-info, #38bdf8);
     vertical-align: middle;
     margin-left: 2px;
     animation: blink 0.8s infinite;

@@ -4,13 +4,6 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
-### UI (`@sola-air-ui/ui`)
-
-- **Fixed**: `SolaSafeHTML` now removes `<style>` and `<link>` tags and `style` attributes from the
-  content it renders. A `<style>` block in the content was global CSS, so `body{background:#fff}`
-  turned the whole page white, and a `style="position:fixed"` element could cover it. Content is
-  styled by the component's own theme tokens. Not yet released.
-
 ### Skill (`sola-ui`)
 
 - **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill
@@ -18,6 +11,19 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   extension is no longer published from it. `build-skill.mjs --gemini-repo` can still generate
   the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
   `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
+
+## 2026-11-10: ui 1.9.1
+
+### `@sola-air-ui/ui`
+
+- **Fixed**: `SolaSafeHTML` now removes `<style>` and `<link>` tags and `style` attributes from the
+  content it renders. A `<style>` block in the content was global CSS, so `body{background:#fff}`
+  turned the whole page white, and a `style="position:fixed"` element could cover it. Content is
+  styled by the component's own theme tokens.
+- **Fixed**: `StreamView` ignored light mode. It was always a dark panel. It now uses the theme
+  tokens (surface, text, border, and the alert colours for success, warning and error lines), so it
+  is light in light mode and dark in dark mode. Without the token stylesheet it keeps the old dark
+  look.
 
 ## 2026-11-10: ui 1.9.0
 

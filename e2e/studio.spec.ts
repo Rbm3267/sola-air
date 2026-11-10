@@ -218,3 +218,25 @@ test('HTML a model writes cannot restyle the page around it', async ({ page }) =
   const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(bg).not.toBe('rgb(255, 255, 255)');
 });
+
+test('StreamView follows the theme: light panel in light mode, dark in dark mode', async ({ page }) => {
+  await open(page, '?add=stream-view');
+  const lum = (css: string) => {
+    const m = css.match(/\d+(\.\d+)?/g)!.map(Number);
+    return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255;
+  };
+  const panel = page.locator('.sola-stream-view').first();
+  await expect(panel).toBeVisible();
+  const read = async () => ({
+    bg: await panel.evaluate((e) => getComputedStyle(e).backgroundColor),
+    fg: await panel.evaluate((e) => getComputedStyle(e).color)
+  });
+  await page.evaluate(() => document.documentElement.classList.remove('dark'));
+  const light = await read();
+  expect(lum(light.bg)).toBeGreaterThan(0.8);
+  expect(lum(light.fg)).toBeLessThan(0.3);
+  await page.evaluate(() => document.documentElement.classList.add('dark'));
+  const dark = await read();
+  expect(lum(dark.bg)).toBeLessThan(0.2);
+  expect(lum(dark.fg)).toBeGreaterThan(0.8);
+});
