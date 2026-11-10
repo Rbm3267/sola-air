@@ -27,6 +27,9 @@
     if (typeof window !== 'undefined') {
       // The Custom Grid kept its layout here. It is gone, so drop what it left.
       try { localStorage.removeItem('sola_dashboard_layout'); } catch { /* storage blocked */ }
+      // Studio links here with ?tab=generate. It only picks a tab; nothing runs.
+      const tab = new URLSearchParams(window.location.search).get('tab');
+      if (tab === 'generate' || tab === 'sheet' || tab === 'mesh' || tab === 'behavior' || tab === 'native') viewMode = tab;
     }
   });
 

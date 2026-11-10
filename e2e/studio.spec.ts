@@ -185,3 +185,14 @@ test('hiding the component list gives the canvas the room', async ({ page }) => 
   await page.getByRole('button', { name: 'Show components' }).click();
   await expect(page.getByRole('complementary', { name: 'Components' })).toBeVisible();
 });
+
+test('Studio says what it does not do and links to Generate, which opens on its tab', async ({ page }) => {
+  await open(page);
+  const link = page.locator('[data-studio-note]').getByRole('link', { name: 'Generate' });
+  await expect(link).toBeVisible();
+  await link.click();
+  await expect(page).toHaveURL(/\/demo\?tab=generate/);
+  // The tab is selected and its own form is showing, with no model call made.
+  await expect(page.getByRole('button', { name: 'Generate', exact: true }).first()).toHaveAttribute('class', /bg-white/);
+  await expect(page.locator('button[type="submit"]').filter({ hasText: /^Generate$/ })).toBeVisible();
+});
