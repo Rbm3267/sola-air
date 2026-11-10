@@ -57,4 +57,4 @@ export function createLimiter(opts: { windowMs: number; max: number; maxKeys?: n
 }
 
 export const MINUTE_LIMIT = 15;
-export const DAY_LIMIT = 100;
+export const DAY_LIMIT = 40;

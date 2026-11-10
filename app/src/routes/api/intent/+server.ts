@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { GEMINI_API_KEY } from '$app/env/private';
 import { FACTS, UI_MANIFEST } from '$lib/data/site';
 import { STUDIO_COMPONENTS, buildBlock, tidyGeneratedProps } from '$lib/data/studioComponents';
@@ -72,9 +72,20 @@ export async function POST({ request, getClientAddress }) {
     }
 
     const ai = new GoogleGenAI({ apiKey });
-    // Every model call goes through here so its token use is logged.
+    // Every model call goes through here. It logs token use, and it asks the model
+    // to think briefly: hidden reasoning is billed as output and was most of the
+    // cost of a call. If the model rejects the setting, the call runs once without it.
     const generate = async (mode: string, args: Parameters<typeof ai.models.generateContent>[0]) => {
-      const res = await ai.models.generateContent(args);
+      let res;
+      try {
+        res = await ai.models.generateContent({
+          ...args,
+          config: { ...args.config, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } }
+        });
+      } catch (err) {
+        if (!/think/i.test(String((err as Error)?.message ?? err))) throw err;
+        res = await ai.models.generateContent(args);
+      }
       console.info(JSON.stringify(usageRecord(mode, String(args.model), res.usageMetadata)));
       return res;
     };
