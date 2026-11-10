@@ -22,6 +22,7 @@ import {
 import { readUiManifest } from '../scripts/ui-manifest.mjs';
 import { STUDIO_COMPONENTS, buildBlock, tidyGeneratedProps } from '../app/src/lib/data/studioComponents';
 import { usageRecord } from '../app/src/lib/data/usage';
+import { createLimiter } from '../app/src/lib/data/rateLimit';
 import { STUDIO_TEMPLATES } from '../app/src/lib/data/studioTemplates';
 
 const REPO_ROOT = join(__dirname, '..');
@@ -192,5 +193,36 @@ test.describe('AI usage log line', () => {
   test('adds the parts when the API gives no total, and tolerates missing data', () => {
     expect(usageRecord('sola', 'm', { promptTokenCount: 10, candidatesTokenCount: 5 }).totalTokens).toBe(15);
     expect(usageRecord('sola', 'm', undefined)).toMatchObject({ inputTokens: 0, outputTokens: 0, totalTokens: 0 });
+  });
+});
+
+test.describe('per-visitor limit', () => {
+  test('allows up to the limit, then says how long to wait', () => {
+    const l = createLimiter({ windowMs: 1000 * 60 * 60 * 24, max: 3 });
+    const t0 = 1_000_000;
+    expect([l.hit('a', t0), l.hit('a', t0 + 1000), l.hit('a', t0 + 2000)]).toEqual([0, 0, 0]);
+    const wait = l.hit('a', t0 + 3000);
+    // The oldest hit leaves the window a day after it was made.
+    expect(wait).toBe(24 * 60 * 60 - 3);
+  });
+
+  test('one visitor at the limit does not block another', () => {
+    const l = createLimiter({ windowMs: 60_000, max: 1 });
+    l.hit('a', 0);
+    expect(l.hit('a', 1)).toBeGreaterThan(0);
+    expect(l.hit('b', 1)).toBe(0);
+  });
+
+  test('frees up once the window has passed', () => {
+    const l = createLimiter({ windowMs: 60_000, max: 1 });
+    l.hit('a', 0);
+    expect(l.hit('a', 30_000)).toBeGreaterThan(0);
+    expect(l.hit('a', 60_001)).toBe(0);
+  });
+
+  test('a flood of different addresses cannot grow memory without bound', () => {
+    const l = createLimiter({ windowMs: 60_000, max: 1, maxKeys: 50 });
+    for (let i = 0; i < 500; i++) l.hit('ip' + i, i);
+    expect(l.size).toBeLessThanOrEqual(50);
   });
 });

@@ -4,40 +4,23 @@ import { GEMINI_API_KEY } from '$app/env/private';
 import { FACTS, UI_MANIFEST } from '$lib/data/site';
 import { STUDIO_COMPONENTS, buildBlock, tidyGeneratedProps } from '$lib/data/studioComponents';
 import { usageRecord } from '$lib/data/usage';
+import { createLimiter, MINUTE_LIMIT, DAY_LIMIT } from '$lib/data/rateLimit';
 
-// In-Memory Sliding-Window IP Rate Limiter (15 requests/minute per client IP)
-const rateLimitMap = new Map<string, number[]>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = 15;
+// Two in-memory limits per visitor address: a short burst limit and a daily limit.
+// See rateLimit.ts for what "in-memory" means on Vercel.
+const perMinute = createLimiter({ windowMs: 60 * 1000, max: MINUTE_LIMIT });
+const perDay = createLimiter({ windowMs: 24 * 60 * 60 * 1000, max: DAY_LIMIT });
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const timestamps = rateLimitMap.get(ip) || [];
-  const validTimestamps = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  
-  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    rateLimitMap.set(ip, validTimestamps);
-    return true;
-  }
-  
-  validTimestamps.push(now);
-  rateLimitMap.set(ip, validTimestamps);
-  return false;
-}
-
-// Cleanup stale rate limit entries periodically
 if (typeof setInterval !== 'undefined') {
   setInterval(() => {
-    const now = Date.now();
-    for (const [ip, times] of rateLimitMap.entries()) {
-      const valid = times.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-      if (valid.length === 0) {
-        rateLimitMap.delete(ip);
-      } else {
-        rateLimitMap.set(ip, valid);
-      }
-    }
+    perMinute.sweep();
+    perDay.sweep();
   }, 5 * 60 * 1000);
+}
+
+function hoursText(seconds: number) {
+  const h = Math.ceil(seconds / 3600);
+  return h <= 1 ? 'about an hour' : `about ${h} hours`;
 }
 
 export async function POST({ request, getClientAddress }) {
@@ -50,10 +33,18 @@ export async function POST({ request, getClientAddress }) {
       clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '127.0.0.1';
     }
 
-    if (isRateLimited(clientIp)) {
+    const waitMinute = perMinute.hit(clientIp);
+    if (waitMinute) {
       return json(
         { error: 'Too many requests. Please wait a moment before sending another query.' },
-        { status: 429, headers: { 'Retry-After': '60' } }
+        { status: 429, headers: { 'Retry-After': String(waitMinute) } }
+      );
+    }
+    const waitDay = perDay.hit(clientIp);
+    if (waitDay) {
+      return json(
+        { error: `You have reached today's limit for Sola AI. It opens up again in ${hoursText(waitDay)}.` },
+        { status: 429, headers: { 'Retry-After': String(waitDay) } }
       );
     }
 
