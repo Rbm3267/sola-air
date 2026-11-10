@@ -18,7 +18,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          # `npm run build` also builds the site, and SvelteKit 3 needs Node 22.17 or
+          # newer. On Node 20 it fails with "Promise.withResolvers is not a function"
+          # before anything is published.
+          node-version: 22
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install Monorepo Dependencies
