@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SolaIcons from './SolaIcons.svelte';
   import { behavioralObserver, type BehavioralMetrics } from '../../../../packages/behavior/src/index';
   import { 
     MajorIncidentContract, 
@@ -83,7 +84,7 @@
 
     <div class="flex items-center gap-4 relative z-10">
       <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-sm {metrics.persona === 'sre_commander' ? 'bg-gradient-to-br from-rose-500 to-amber-600' : metrics.persona === 'finops_auditor' ? 'bg-gradient-to-br from-violet-600 to-indigo-600' : 'bg-gradient-to-br from-blue-500 to-cyan-600'}">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <SolaIcons name="sentinel" size={24} />
       </div>
       <div>
         <div class="flex items-center gap-2">
