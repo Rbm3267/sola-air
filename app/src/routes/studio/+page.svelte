@@ -375,7 +375,7 @@
         busy={arcBusy}
         placeholder="Describe a layout, e.g. 'a support desk with tickets'"
         inputLabel="Describe a layout for Arc"
-        submitLabel="Generate with Arc"
+        submitLabel="Arrange with Arc"
         onsubmit={() => generate()}
       />
     </div>

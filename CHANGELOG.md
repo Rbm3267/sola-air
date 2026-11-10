@@ -4,6 +4,13 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### UI (`@sola-air-ui/ui`)
+
+- **Fixed**: `SolaSafeHTML` now removes `<style>` and `<link>` tags and `style` attributes from the
+  content it renders. A `<style>` block in the content was global CSS, so `body{background:#fff}`
+  turned the whole page white, and a `style="position:fixed"` element could cover it. Content is
+  styled by the component's own theme tokens. Not yet released.
+
 ### Skill (`sola-ui`)
 
 - **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill
