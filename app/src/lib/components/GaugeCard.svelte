@@ -28,7 +28,7 @@
   };
 
   // An unknown color (a model can return any word) falls back to emerald
-  // instead of throwing, which used to blank the whole Custom Grid view.
+  // instead of throwing, which used to blank the whole view it was drawn in.
   const activeColor = $derived(colorMap[(config.color ?? 'emerald') as keyof typeof colorMap] ?? colorMap.emerald);
 </script>
 
