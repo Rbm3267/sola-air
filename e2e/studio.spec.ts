@@ -68,7 +68,7 @@ test('blocks can be added, resized, moved, duplicated and removed', async ({ pag
   await expect(page.getByRole('complementary', { name: 'Properties' })).toContainText('Badge');
 
   await page.getByRole('button', { name: '3 col' }).click();
-  await expect(blocks(page).last()).toHaveClass(/lg:col-span-3/);
+  await expect(blocks(page).last()).toHaveClass(/studio-span-3/);
 
   await page.getByRole('button', { name: 'Move Badge earlier' }).click();
   await expect(blocks(page).nth(start - 1)).toContainText('Badge');
@@ -114,4 +114,53 @@ test('Arc fills the canvas with real components and drops anything else', async 
   const code = await exportedCode(page);
   expect(code).not.toContain('MadeUpWidget');
   expect(code).not.toContain('icon=');
+});
+
+test('a block can be dragged to a new place on the canvas', async ({ page }) => {
+  await open(page, '?template=revenue');
+  // Ids, not names: a template can hold several blocks of the same component.
+  const names = async () => blocks(page).evaluateAll((els) => els.map((e) => e.getAttribute('data-block-id')));
+  const before = await names();
+  expect(before.length).toBeGreaterThan(2);
+
+  const handle = blocks(page).first().getByRole('button', { name: /^Drag .* to move it$/ });
+  const from = (await handle.boundingBox())!;
+  const target = (await blocks(page).nth(2).boundingBox())!;
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(target.x + target.width / 2, target.y + target.height / 2, { steps: 12 });
+  await page.mouse.up();
+
+  const after = await names();
+  expect(after).not.toEqual(before);
+  expect(after.indexOf(before[0])).toBe(2);
+  // The export writes the order the canvas shows.
+  await page.getByRole('button', { name: 'Export .sola' }).click();
+  await expect(page.getByRole('dialog', { name: 'Export' })).toBeVisible();
+});
+
+test('dragging the right edge of a block changes how many columns it spans', async ({ page }) => {
+  await open(page, '?template=revenue');
+  const first = blocks(page).first();
+  const name = (await first.getAttribute('data-block'))!;
+  const slider = first.getByRole('slider', { name: `Width of ${name}` });
+  const startSpan = Number(await slider.getAttribute('aria-valuenow'));
+
+  const box = (await first.boundingBox())!;
+  const handle = (await slider.boundingBox())!;
+  const canvas = (await page.locator('main ol').boundingBox())!;
+  await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+  await page.mouse.down();
+  // Pull the edge to the far right of the canvas: all columns.
+  await page.mouse.move(canvas.x + canvas.width - 4, handle.y + handle.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await expect(slider).toHaveAttribute('aria-valuenow', '3');
+  expect(startSpan).not.toBe(3);
+  expect((await first.boundingBox())!.width).toBeGreaterThan(box.width);
+
+  // Back down to one column from the keyboard.
+  await slider.focus();
+  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('ArrowLeft');
+  await expect(slider).toHaveAttribute('aria-valuenow', '1');
 });

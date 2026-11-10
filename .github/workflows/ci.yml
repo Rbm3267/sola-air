@@ -26,6 +26,17 @@ jobs:
           fi
           echo "No local tooling config found in tracked files."
 
+  secrets:
+    name: No key-shaped strings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+      # Scans every tracked file for API keys and tokens. Prints where, never the value.
+      - run: node scripts/secret-guard.mjs
+
   unit:
     name: Unit tests
     runs-on: ubuntu-latest
@@ -62,6 +73,9 @@ jobs:
       # These drive the real site, so they need it running.
       - name: Build the site
         run: npm run build
+      # The browser bundle must never hold a key. This catches one that slipped in through an import.
+      - name: Scan the built site for key-shaped strings
+        run: node scripts/secret-guard.mjs app/.svelte-kit/output/client
       - name: Site quality and audit
         run: |
           # Any value works: e2e/model-key.spec.ts checks that the server sees it.
