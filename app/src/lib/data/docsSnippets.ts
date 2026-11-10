@@ -242,6 +242,18 @@ observe(document.querySelector('#target-form'), {
   }
 });`;
 
+/**
+ * The script-tag overlay step on the Host Embedding page. Run verbatim by
+ * e2e/docs-snippets.spec.ts after loading the core IIFE and a component compiled
+ * with --target iife --export-name MyWidget.
+ */
+export const scriptTagOverlayExample = `// After sola-core.iife.min.js and my-widget.js have loaded:
+var shell = SolaCore.mountShell(window.MyWidget, { title: 'My Widget' }, { id: 'my-companion' });
+
+// The widget now lives in a closed shadow root on document.body, so the host
+// page's CSS can't reach it. Run the same line on every page of a portal: the
+// id keeps it to one shell. shell.teardown() removes it.`;
+
 /** Shown in the docs, not executed as a snippet: it needs a real multi-page site. */
 export const shellBootstrapExample = `// portal-shell.js — load this file on EVERY page of the portal.
 import Dock from './Dock.sola';
