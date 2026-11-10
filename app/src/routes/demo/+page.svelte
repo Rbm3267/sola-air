@@ -2,79 +2,21 @@
   import SolaIcons from '$lib/components/SolaIcons.svelte';
   import SheetDemo from '$lib/components/SheetDemo.svelte';
   import GenerateDemo from '$lib/components/GenerateDemo.svelte';
-  import DynamicRenderer from '$lib/components/DynamicRenderer.svelte';
-  import SolaLogo from '$lib/components/SolaLogo.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
   import SignalMeshConsole from '$lib/components/SignalMeshConsole.svelte';
   import BehavioralIntentConsole from '$lib/components/BehavioralIntentConsole.svelte';
   import SolaMount from '$lib/components/SolaMount.svelte';
   import NativeDashboard from '@sola-air-ui/ui/Dashboard.sola';
-  import { fly, fade } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
   import { onMount } from 'svelte';
-  import { UI_MANIFEST } from '$lib/data/site';
-  import { toSolaFile } from '$lib/data/solaExport';
+  import { goto } from '$app/navigation';
 
-  interface DashboardWidget {
-    id: string;
-    component: 'DataCard' | 'GaugeCard' | 'DynamicForm' | 'ListBlock';
-    colSpan: 1 | 2 | 3;
-    config: any;
-  }
-  
-  let viewMode = $state<'native' | 'behavior' | 'mesh' | 'sheet' | 'generate' | 'custom'>('native');
+  let viewMode = $state<'native' | 'behavior' | 'mesh' | 'sheet' | 'generate'>('native');
   let intentQuery = $state('');
   let isLoading = $state(false);
   let errorMsg = $state('');
   let isListening = $state(false);
   let speechSupported = $state(false);
   let recognition: any = null;
-
-  // Active Production Widgets Grid
-  let widgets = $state<DashboardWidget[]>([
-    {
-      id: 'w-1',
-      component: 'DataCard',
-      colSpan: 1,
-      config: { title: 'Global Edge Requests', value: '42.8M / hr', trend: '+12.4% vs baseline', icon: 'activity' }
-    },
-    {
-      id: 'w-2',
-      component: 'GaugeCard',
-      colSpan: 1,
-      config: { title: 'p99 Latency SLA', value: '18.4 ms', percentage: 94, subtext: 'Optimal Edge Routing', color: 'indigo' }
-    },
-    {
-      id: 'w-3',
-      component: 'DataCard',
-      colSpan: 1,
-      config: { title: 'Monthly SaaS MRR', value: '$184,200', trend: '+$14,800 this month', icon: 'trending-up' }
-    },
-    {
-      id: 'w-4',
-      component: 'ListBlock',
-      colSpan: 2,
-      config: {
-        title: 'Active Edge Clusters',
-        items: [
-          { label: 'sola-edge-iad1', description: 'Washington DC • 99.99% Uptime', status: 'Active' },
-          { label: 'sola-edge-fra1', description: 'Frankfurt • 99.98% Uptime', status: 'Active' },
-          { label: 'sola-edge-syd1', description: 'Sydney • Performing Cache Sync', status: 'Syncing' }
-        ]
-      }
-    },
-    {
-      id: 'w-5',
-      component: 'GaugeCard',
-      colSpan: 1,
-      config: { title: 'Memory Load', value: '14.2 / 16 GB', percentage: 88, subtext: 'High Density Telemetry', color: 'amber' }
-    }
-  ]);
-
-  // Quick edit modal state
-  let editingWidget = $state<DashboardWidget | null>(null);
-  let isExportOpen = $state(false);
-  let copiedExport = $state(false);
 
   const sampleIntents = [
     "Add a CPU temperature gauge with 72% load",
@@ -85,17 +27,8 @@
 
   onMount(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sola_dashboard_layout');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            widgets = parsed;
-          }
-        } catch (e) {
-          console.warn('Failed to restore saved layout', e);
-        }
-      }
+      // The Custom Grid kept its layout here. It is gone, so drop what it left.
+      try { localStorage.removeItem('sola_dashboard_layout'); } catch { /* storage blocked */ }
 
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
@@ -121,16 +54,6 @@
     }
   });
 
-  function saveLayout() {
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('sola_dashboard_layout', JSON.stringify(widgets));
-      } catch (e) {
-        console.warn('Could not save layout', e);
-      }
-    }
-  }
-
   function toggleSpeech() {
     if (!speechSupported || !recognition) {
       errorMsg = "Speech recognition is not supported in this browser. Please use Chrome, Edge, or Safari.";
@@ -155,149 +78,32 @@
     submitIntent();
   }
 
-  async function submitIntent() {
-    if (!intentQuery.trim() || isLoading) return;
+  // Studio builds layouts from the real @sola-air-ui/ui components and exports code
+  // that works, so the intent box hands the request to it. The text goes through
+  // sessionStorage, not the address: a typed request can hold anything, and the
+  // address ends up in logs, history and referrers. Studio reads it once and
+  // removes it. A link cannot set it, so a link cannot make Studio run a request.
+  const ASK_KEY = 'sola:studio-ask';
 
-    // Generated cards, the loading state and errors are drawn in the Custom
-    // Grid view only. From any other tab nothing seemed to happen.
-    viewMode = 'custom';
+  async function submitIntent() {
+    const text = intentQuery.trim();
+    if (!text || isLoading) return;
     isLoading = true;
     errorMsg = '';
-
     try {
-      const res = await fetch('/api/intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ intent: intentQuery })
-      });
-
-      const rawText = await res.text();
-      if (!res.ok) {
-        let detail = '';
-        try { detail = JSON.parse(rawText)?.error ?? ''; } catch { /* not JSON */ }
-        throw new Error(detail || 'Could not generate that. Try again in a moment.');
-      }
-
-      let cleanText = rawText.trim();
-      if (cleanText.startsWith('```json')) {
-        cleanText = cleanText.replace(/```json/g, '').replace(/```/g, '').trim();
-      }
-
-      const generated = JSON.parse(cleanText);
-      // The server answers 200 with a plain reply when it has no model key.
-      if (!Array.isArray(generated) && !generated?.component && typeof generated?.reply === 'string') {
-        throw new Error(generated.reply);
-      }
-      const newItems = Array.isArray(generated) ? generated : [generated];
-
-      // Append new generated widgets to the top of the canvas
-      const converted: DashboardWidget[] = newItems.map((item: any, idx: number) => ({
-        id: `gen-${Date.now()}-${idx}`,
-        component: item.component || 'DataCard',
-        colSpan: item.component === 'ListBlock' || item.component === 'DynamicForm' ? 2 : 1,
-        config: item.config || {}
-      }));
-
-      widgets = [...converted, ...widgets];
-      saveLayout();
-      intentQuery = '';
+      sessionStorage.setItem(ASK_KEY, text.slice(0, 1000));
+    } catch {
+      errorMsg = 'This browser blocks storage, so the request cannot be passed on. Open Studio and type it there.';
+      isLoading = false;
+      return;
+    }
+    try {
+      await goto('/studio');
     } catch (e: any) {
-      console.error(e);
-      errorMsg = e.message || 'Failed to generate components.';
-    } finally {
+      try { sessionStorage.removeItem(ASK_KEY); } catch { /* nothing to clean up */ }
+      errorMsg = e?.message || 'Could not open Studio. Try again.';
       isLoading = false;
     }
-  }
-
-  // Widget Actions
-  function removeWidget(id: string) {
-    widgets = widgets.filter(w => w.id !== id);
-    saveLayout();
-  }
-
-  function moveWidget(index: number, direction: 'left' | 'right') {
-    const targetIndex = direction === 'left' ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= widgets.length) return;
-    const temp = widgets[index];
-    widgets[index] = widgets[targetIndex];
-    widgets[targetIndex] = temp;
-    saveLayout();
-  }
-
-  function cycleColSpan(widget: DashboardWidget) {
-    widget.colSpan = widget.colSpan === 1 ? 2 : widget.colSpan === 2 ? 3 : 1;
-    saveLayout();
-  }
-
-  function loadPreset(type: 'finance' | 'cloud' | 'enterprise-ops' | 'reset') {
-    if (type === 'finance') {
-      widgets = [
-        { id: 'fn-1', component: 'DataCard', colSpan: 1, config: { title: 'Monthly Recurring Revenue', value: '$184,200', trend: '+$14,800 this month', icon: 'trending-up' } },
-        { id: 'fn-2', component: 'GaugeCard', colSpan: 1, config: { title: 'Gross Margin Rate', value: '88%', percentage: 88, subtext: 'LTV/CAC Ratio: 4.8x', color: 'indigo' } },
-        { id: 'fn-3', component: 'DataCard', colSpan: 1, config: { title: 'Cash Runway', value: '24 Months', trend: 'Net Burn: $18.5k/mo', icon: 'activity' } },
-        { id: 'fn-4', component: 'ListBlock', colSpan: 3, config: { title: 'Recent transactions (sample data)', items: [
-          { label: 'Enterprise Contract Renewal • Acme Corp', description: '+$48,000 ARR • Net-30 Invoiced', status: 'Completed' },
-          { label: 'AWS Cloud Infrastructure Tier 2', description: '-$3,420 • Monthly Auto-settle', status: 'Completed' },
-          { label: 'Stripe Merchant Payout Batch #904', description: '+$12,840 • Clearing to SVB Treasury', status: 'Active' }
-        ]} }
-      ];
-    } else if (type === 'enterprise-ops') {
-      widgets = [
-        { id: 'sn-1', component: 'IncidentTriageMatrix', colSpan: 3, config: {
-          incidentId: 'INC009481',
-          title: 'API Gateway High-Frequency Latency Spike (EU-West)',
-          severity: 'P1 - Critical',
-          slaRemainingMin: 11,
-          blastRadius: '42,000 Active Checkout Sessions',
-          playbooks: [
-            { id: 'pb-1', title: 'Reroute Edge DNS to eu-central-1', action: 'Route53 Failover', automated: true },
-            { id: 'pb-2', title: 'Scale Redis Cluster Read Replicas (x4)', action: 'Auto-Provision', automated: true },
-            { id: 'pb-3', title: 'Page Tier 3 Database SRE On-Call', action: 'PagerDuty Incident', automated: false }
-          ]
-        } },
-        { id: 'sn-2', component: 'DiffAudit', colSpan: 3, config: {
-          title: 'Scale Redis Cluster Max Connections (x10)',
-          entityId: 'CHG009842',
-          entityType: 'Enterprise Platform CAB Release',
-          riskLevel: 'Moderate',
-          riskScore: 42,
-          requester: 'Tier 3 Platform SRE',
-          window: 'Tonight 02:00 – 04:00 UTC'
-        } },
-        { id: 'sn-3', component: 'DataCard', colSpan: 1, config: { title: 'P1 Critical Incidents', value: '1 Active', trend: '-4 resolved today', icon: 'activity' } },
-        { id: 'sn-4', component: 'GaugeCard', colSpan: 1, config: { title: 'SLA Compliance Rate', value: '98.4%', percentage: 98, subtext: 'MTTR: 14.2 mins (Target: <30m)', color: 'indigo' } },
-        { id: 'sn-5', component: 'DataCard', colSpan: 1, config: { title: 'Pending CAB Changes', value: '3 Awaiting', trend: 'Release Window 02:00 UTC', icon: 'check' } }
-      ];
-    } else if (type === 'cloud') {
-      widgets = [
-        { id: 'c-1', component: 'ClusterMatrix', colSpan: 3, config: {
-          title: 'AWS us-east-1 RDS Read Replica Cluster Mesh',
-          subtitle: '12 Regional Shards Distributed Across 6 Global Regions'
-        } },
-        { id: 'c-2', component: 'FlowWaterfall', colSpan: 3, config: {
-          title: 'SaaS Gross Revenue Realization & Cloud Costs',
-          subtitle: 'End-to-end deduction breakdown across billing gateway and AWS egress'
-        } },
-        { id: 'c-3', component: 'DataCard', colSpan: 1, config: { title: 'Enterprise ARR', value: '$1,840,000', trend: '+34.2%', icon: 'trending-up' } },
-        { id: 'c-4', component: 'GaugeCard', colSpan: 1, config: { title: 'Cluster CPU', value: '68.4%', percentage: 68, subtext: 'Auto-scaled across 3 zones', color: 'sky' } },
-        { id: 'c-5', component: 'DataCard', colSpan: 1, config: { title: 'Edge Requests', value: '42.8M / hr', trend: '99.99% Uptime', icon: 'check' } }
-      ];
-    } else {
-      widgets = [];
-    }
-    saveLayout();
-  }
-
-  // Copies a real .sola file: published components with the props they declare,
-  // and a comment for each site-only preview.
-  function exportSolaCode() {
-    const code = toSolaFile(
-      widgets.map((w) => ({ component: w.component, span: w.colSpan, props: w.config ?? {}, label: w.config?.title })),
-      UI_MANIFEST
-    );
-    navigator.clipboard.writeText(code);
-    copiedExport = true;
-    setTimeout(() => copiedExport = false, 2000);
   }
 </script>
 
@@ -318,13 +124,13 @@
     <!-- Title Area -->
     <div class="text-center max-w-2xl mx-auto">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/[0.08] border border-slate-200 dark:border-white/[0.04] text-slate-800 dark:text-slate-200 text-xs font-mono font-semibold mb-3">
-        <span>Sola Ambient Studio</span>
+        <span>Sola Playground</span>
       </div>
       <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">
         Ambient Intent Playground
       </h1>
       <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed font-normal max-w-[68ch]">
-        Speak or type what you want. The generated cards go on a <strong>grid you can edit</strong>: resize, reorder and change their settings.
+        Speak or type what you want and <strong>Studio</strong> builds it from the real components, on a grid you can edit and export. The tabs below show what else Sola does.
       </p>
     </div>
 
@@ -376,7 +182,7 @@
         <button 
           type="submit" 
           disabled={isLoading || !intentQuery.trim()}
-          aria-label="Submit intent"
+          aria-label="Build it in Studio" title="Build it in Studio"
           style={!isLoading && intentQuery.trim() ? "background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;" : ""}
           class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl font-bold transition-all active:scale-[0.97] disabled:bg-slate-100 dark:bg-white/[0.08] disabled:text-slate-500 dark:text-slate-400 disabled:cursor-not-allowed flex items-center justify-center shadow-md shrink-0 cursor-pointer"
         >
@@ -439,57 +245,10 @@
             <SolaIcons name="spark" size={16} />
             <span>Generate</span>
           </button>
-          <button 
-            onclick={() => viewMode = 'custom'}
-            class="px-4 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 active:scale-[0.97] cursor-pointer flex items-center gap-2 whitespace-nowrap {viewMode === 'custom' ? 'bg-white dark:bg-white/[0.02] text-slate-950 dark:text-white shadow-sm border border-slate-200 dark:border-white/[0.04]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
-            <SolaIcons name="layers" size={16} />
-            <span>Custom Grid ({widgets.length})</span>
-          </button>
         </div>
 
-        <!-- Right Side Main Actions -->
-        {#if viewMode === 'custom'}
-          <div class="flex items-center gap-2 self-end sm:self-auto">
-            <button 
-              onclick={exportSolaCode}
-              style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;"
-              class="text-xs font-mono font-medium px-4 py-1.5 rounded-full text-white shadow-sm hover:brightness-105 active:scale-[0.97] transition-all cursor-pointer flex items-center gap-1.5">
-              {#if copiedExport}
-                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                <span class="text-white">Copied .sola!</span>
-              {:else}
-                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                <span class="text-white">Export Code</span>
-              {/if}
-            </button>
-          </div>
-        {/if}
       </div>
 
-      <!-- Presets bar in sub-row with clean border -->
-      {#if viewMode === 'custom'}
-        <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 dark:border-white/[0.04]">
-          <span class="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 uppercase mr-1">Presets:</span>
-          <button 
-            onclick={() => loadPreset('enterprise-ops')}
-            class="text-xs font-mono font-medium px-3.5 py-1.5 rounded-full bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-white/[0.08] transition-all active:scale-[0.97] cursor-pointer flex items-center gap-2">
-            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-            <span>Enterprise Operations Platform</span>
-          </button>
-          <button 
-            onclick={() => loadPreset('finance')}
-            class="text-xs font-mono font-medium px-3.5 py-1.5 rounded-full bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-white/[0.08] transition-all active:scale-[0.97] cursor-pointer flex items-center gap-2">
-            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-            <span>Finance</span>
-          </button>
-          <button 
-            onclick={() => loadPreset('cloud')}
-            class="text-xs font-mono font-medium px-3.5 py-1.5 rounded-full bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:bg-white/[0.08] transition-all active:scale-[0.97] cursor-pointer flex items-center gap-2">
-            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span>SaaS Cloud</span>
-          </button>
-        </div>
-      {/if}
     </div>
 
     {#if viewMode === 'native'}
@@ -508,207 +267,8 @@
     {:else if viewMode === 'mesh'}
       <!-- LIVE INTER-WIDGET SIGNAL TELEMETRY MESH -->
       <SignalMeshConsole />
-    {:else}
-      <!-- Active Generating Elegant Light Banner -->
-      {#if isLoading}
-        <div 
-          transition:fly={{ y: 20, duration: 300 }}
-          class="bg-white dark:bg-white/[0.02] backdrop-blur-2xl rounded-3xl p-8 border border-blue-200 dark:border-blue-500/20 shadow-sm flex flex-col items-center justify-center relative overflow-hidden"
-        >
-          <div class="flex items-center gap-3">
-            <div class="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <span class="text-sm font-mono font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Building Reactive DOM Tree...</span>
-          </div>
-          <span class="text-xs font-mono text-slate-500 dark:text-slate-400 mt-2">Generated with Gemini 3.6 Flash</span>
-        </div>
-      {/if}
-
-      <!-- Active Interactive Production Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-        {#each widgets as widget, index (widget.id)}
-        <div 
-          class="group/widget relative flex flex-col transition-all duration-300 {widget.colSpan === 3 ? 'md:col-span-3' : widget.colSpan === 2 ? 'md:col-span-2' : 'md:col-span-1'}"
-          transition:fly={{ y: 20, duration: 250 }}
-        >
-          <!-- Floating Card Action Toolbar (Reorder, Span, Edit, Delete) -->
-          <div class="widget-toolbar absolute -top-3.5 right-4 z-20 opacity-0 group-hover/widget:opacity-100 group-focus-within/widget:opacity-100 transition-all duration-150 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md text-white px-3 py-1 rounded-2xl shadow-xl border border-slate-700/80 text-xs font-mono">
-            
-            <!-- Move Left / Up -->
-            <button 
-              onclick={() => moveWidget(index, 'left')}
-              disabled={index === 0}
-              title="Move left"
-              class="p-1 hover:text-blue-300 disabled:opacity-30 cursor-pointer">
-              ←
-            </button>
-
-            <!-- Move Right / Down -->
-            <button 
-              onclick={() => moveWidget(index, 'right')}
-              disabled={index === widgets.length - 1}
-              title="Move right"
-              class="p-1 hover:text-blue-300 disabled:opacity-30 cursor-pointer">
-              →
-            </button>
-
-            <span class="text-slate-600 dark:text-slate-400">|</span>
-
-            <!-- Column Span Toggle -->
-            <button 
-              onclick={() => cycleColSpan(widget)}
-              title="Toggle width (1x / 2x / 3x)"
-              class="px-1.5 py-0.5 hover:text-blue-300 font-bold cursor-pointer">
-              {widget.colSpan}x
-            </button>
-
-            <span class="text-slate-600 dark:text-slate-400">|</span>
-
-            <!-- Quick Edit Config -->
-            <button 
-              onclick={() => editingWidget = widget}
-              title="Configure widget data"
-              aria-label="Configure widget"
-              class="p-1 hover:text-blue-300 cursor-pointer flex items-center justify-center">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </button>
-
-            <!-- Delete -->
-            <button 
-              onclick={() => removeWidget(widget.id)}
-              title="Remove widget"
-              aria-label="Remove widget"
-              class="p-1 hover:text-rose-400 cursor-pointer flex items-center justify-center">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
-
-          <!-- Component Render Surface -->
-          <div class="w-full">
-            <DynamicRenderer data={{ component: widget.component, config: widget.config }} />
-          </div>
-        </div>
-      {/each}
-    </div>
-
-    <!-- Empty State -->
-    {#if widgets.length === 0}
-      <div class="bg-white dark:bg-white/[0.02] backdrop-blur-2xl border border-slate-200 dark:border-white/[0.04] rounded-3xl p-16 text-center max-w-lg mx-auto shadow-sm">
-        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-4">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-        </div>
-        <h3 class="text-base font-bold text-slate-900 dark:text-white font-mono mb-1">Canvas is Clean</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 max-w-[68ch]">Speak your intent or load a starter preset to begin constructing your dashboard.</p>
-        <button 
-          onclick={() => loadPreset('finance')}
-          style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;"
-          class="font-semibold text-xs text-white px-6 py-3 rounded-2xl transition-all cursor-pointer shadow-md">
-          Load Starter Preset
-        </button>
-      </div>
     {/if}
-  {/if}
 
   </div>
   </main>
 </div>
-
-<!-- Live Widget Config Modal -->
-{#if editingWidget}
-  <div 
-    transition:fade={{ duration: 150 }}
-    onclick={() => editingWidget = null}
-    onkeydown={(e) => { if (e.key === 'Escape') editingWidget = null; }}
-    role="dialog"
-    aria-modal="true"
-    tabindex="-1"
-    class="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <div 
-      transition:fly={{ y: 20, duration: 200 }}
-      onclick={(e) => e.stopPropagation()}
-      onkeydown={(e) => e.stopPropagation()}
-      role="document"
-      class="bg-white dark:bg-white/[0.02] backdrop-blur-2xl border border-slate-200 dark:border-white/[0.04] rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
-      <div class="flex justify-between items-center border-b border-slate-100 dark:border-white/[0.04] pb-3">
-        <h3 class="font-bold text-slate-900 dark:text-white font-mono text-base flex items-center gap-2">
-          <span>Configure {editingWidget.component}</span>
-        </h3>
-        <button onclick={() => editingWidget = null} aria-label="Close configuration dialog" class="text-slate-400 hover:text-slate-700 dark:text-slate-300 cursor-pointer p-1">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-
-      <div class="flex flex-col gap-3">
-        <div>
-          <label for="widget-title-input" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Title</label>
-          <input 
-            id="widget-title-input"
-            type="text" 
-            bind:value={editingWidget.config.title}
-            class="w-full bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none font-medium"
-          />
-        </div>
-
-        {#if editingWidget.config.value !== undefined}
-          <div>
-            <label for="widget-val-input" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Primary Value</label>
-            <input 
-              id="widget-val-input"
-              type="text" 
-              bind:value={editingWidget.config.value}
-              class="w-full bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none font-medium"
-            />
-          </div>
-        {/if}
-
-        {#if editingWidget.config.trend !== undefined}
-          <div>
-            <label for="widget-trend-input" class="block text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Trend Badge</label>
-            <input 
-              id="widget-trend-input"
-              type="text" 
-              bind:value={editingWidget.config.trend}
-              class="w-full bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.04] rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none font-medium"
-            />
-          </div>
-        {/if}
-
-        {#if editingWidget.config.percentage !== undefined}
-          <div>
-            <div class="flex justify-between text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
-              <span>Gauge Progress</span>
-              <span>{editingWidget.config.percentage}%</span>
-            </div>
-            <input 
-              type="range" 
-              aria-label="Gauge progress"
-              min="0" 
-              max="100" 
-              bind:value={editingWidget.config.percentage}
-              class="w-full accent-blue-500 cursor-pointer"
-            />
-          </div>
-        {/if}
-      </div>
-
-      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.04]">
-        <button 
-          onclick={() => editingWidget = null}
-          style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #ffffff !important;"
-          class="font-semibold text-xs text-white px-6 py-2.5 rounded-xl transition-all cursor-pointer shadow-sm">
-          Done
-        </button>
-      </div>
-    </div>
-  </div>
-{/if}
-
-<style>
-  /* A touch screen never hovers, so the width, move, edit and delete controls
-     would stay hidden. Show them whenever hover isn't available. */
-  @media (hover: none) {
-    .widget-toolbar {
-      opacity: 1;
-    }
-  }
-</style>

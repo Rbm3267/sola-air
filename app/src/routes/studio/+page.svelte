@@ -227,6 +227,19 @@
       history.replaceState(history.state, '', url);
     }
     ready = true;
+    // From the playground's intent box. It arrives through sessionStorage, which a
+    // link cannot set, and is read once: put the request in Arc's field and run it.
+    let ask = '';
+    try {
+      ask = sessionStorage.getItem('sola:studio-ask') ?? '';
+      sessionStorage.removeItem('sola:studio-ask');
+    } catch {
+      /* storage blocked: nothing was handed over */
+    }
+    if (ask.trim()) {
+      arcPrompt = ask.slice(0, 1000);
+      generate();
+    }
   });
 
   $effect(() => {
