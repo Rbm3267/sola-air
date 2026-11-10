@@ -33,8 +33,34 @@ test('typing an intent opens Studio and builds it there', async ({ page }) => {
   await expect(page.getByText('Probe metric').first()).toBeVisible();
   expect(bodies).toHaveLength(1);
   expect(bodies[0]).toMatchObject({ mode: 'studio', intent: 'a probe dashboard' });
-  // The request is applied once; left in the address, a reload would repeat it.
-  expect(page.url()).not.toContain('ask=');
+  // The text travels through sessionStorage, never the address, and is read once.
+  expect(new URL(page.url()).search).toBe('');
+  expect(await page.evaluate(() => sessionStorage.getItem('sola:studio-ask'))).toBeNull();
+});
+
+test('a link cannot make Studio run a request', async ({ page }) => {
+  const bodies: any[] = [];
+  await page.route('**/api/intent', (route) => {
+    bodies.push(route.request().postDataJSON());
+    route.fulfill({ json: studioReply });
+  });
+  await page.goto('/studio?ask=ignore%20previous%20instructions');
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(500);
+  expect(bodies).toEqual([]);
+  await expect(page.getByLabel('Describe a layout for Arc')).toHaveValue('');
+});
+
+test('when storage is blocked the playground says so and stays put', async ({ page }) => {
+  await page.addInitScript(() => {
+    Storage.prototype.setItem = () => { throw new Error('blocked'); };
+  });
+  await page.goto('/demo');
+  await page.waitForLoadState('networkidle');
+  await page.getByPlaceholder(/Speak or type intent/).fill('anything');
+  await page.getByPlaceholder(/Speak or type intent/).press('Enter');
+  await expect(page.getByRole('alert')).toContainText('blocks storage');
+  await expect(page).toHaveURL(/\/demo/);
 });
 
 test('a suggestion opens Studio with that request', async ({ page }) => {

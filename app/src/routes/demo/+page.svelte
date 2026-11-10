@@ -79,15 +79,28 @@
   }
 
   // Studio builds layouts from the real @sola-air-ui/ui components and exports code
-  // that works, so the intent box hands the request to it.
+  // that works, so the intent box hands the request to it. The text goes through
+  // sessionStorage, not the address: a typed request can hold anything, and the
+  // address ends up in logs, history and referrers. Studio reads it once and
+  // removes it. A link cannot set it, so a link cannot make Studio run a request.
+  const ASK_KEY = 'sola:studio-ask';
+
   async function submitIntent() {
     const text = intentQuery.trim();
     if (!text || isLoading) return;
     isLoading = true;
     errorMsg = '';
     try {
-      await goto('/studio?ask=' + encodeURIComponent(text.slice(0, 1000)));
+      sessionStorage.setItem(ASK_KEY, text.slice(0, 1000));
+    } catch {
+      errorMsg = 'This browser blocks storage, so the request cannot be passed on. Open Studio and type it there.';
+      isLoading = false;
+      return;
+    }
+    try {
+      await goto('/studio');
     } catch (e: any) {
+      try { sessionStorage.removeItem(ASK_KEY); } catch { /* nothing to clean up */ }
       errorMsg = e?.message || 'Could not open Studio. Try again.';
       isLoading = false;
     }

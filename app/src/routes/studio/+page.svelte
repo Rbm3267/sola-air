@@ -202,7 +202,6 @@
     const q = page.url.searchParams;
     const addParam = q.get('add');
     const templateParam = q.get('template');
-    const askParam = q.get('ask');
     let restored = false;
     try {
       const saved = JSON.parse(localStorage.getItem(STORE_KEY) ?? 'null');
@@ -221,17 +220,24 @@
     }
     // Applied once: left in the address, a reload would apply them again over
     // the canvas the visitor has since changed.
-    if (templateParam || addParam || askParam) {
+    if (templateParam || addParam) {
       const url = new URL(window.location.href);
       url.searchParams.delete('template');
       url.searchParams.delete('add');
-      url.searchParams.delete('ask');
       history.replaceState(history.state, '', url);
     }
     ready = true;
-    // From the playground's intent box: put the request in Arc's field and run it.
-    if (askParam) {
-      arcPrompt = askParam.slice(0, 1000);
+    // From the playground's intent box. It arrives through sessionStorage, which a
+    // link cannot set, and is read once: put the request in Arc's field and run it.
+    let ask = '';
+    try {
+      ask = sessionStorage.getItem('sola:studio-ask') ?? '';
+      sessionStorage.removeItem('sola:studio-ask');
+    } catch {
+      /* storage blocked: nothing was handed over */
+    }
+    if (ask.trim()) {
+      arcPrompt = ask.slice(0, 1000);
       generate();
     }
   });
