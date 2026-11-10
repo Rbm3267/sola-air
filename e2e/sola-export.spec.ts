@@ -8,7 +8,10 @@
 import { test, expect } from '@playwright/test';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { COMPONENT_CATALOG } from '../app/src/lib/data/componentCatalog';
+import { COMPONENT_CATALOG as PREVIEWS } from '../app/src/lib/data/componentCatalog';
+import { PACKAGE_CATALOG_ADDITIONS } from '../app/src/lib/data/packageCatalog';
+
+const COMPONENT_CATALOG = [...PREVIEWS, ...PACKAGE_CATALOG_ADDITIONS];
 import {
   toSolaFile,
   mountComponentSnippet,
