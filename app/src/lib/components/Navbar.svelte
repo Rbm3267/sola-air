@@ -125,13 +125,13 @@
       <button 
         type="button"
         onclick={() => isAiModalOpen = true}
-        class="flex items-center justify-between w-auto sm:w-56 h-9 px-3 rounded-xl bg-slate-100/70 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer shadow-2xs group">
+        class="flex items-center justify-between w-auto lg:w-56 h-9 px-3 rounded-xl bg-slate-100/70 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer shadow-2xs group">
         <div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" stroke-dasharray="4 4"/><circle cx="12" cy="12" r="3"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
-          <span class="font-medium text-slate-700 dark:text-slate-300 hidden sm:inline">Ask Sola AIR...</span>
-          <span class="font-medium text-slate-700 dark:text-slate-300 sm:hidden">AIR</span>
+          <span class="font-medium text-slate-700 dark:text-slate-300 hidden lg:inline">Ask Sola AIR...</span>
+          <span class="font-medium text-slate-700 dark:text-slate-300 lg:hidden">AIR</span>
         </div>
-        <kbd class="hidden sm:inline text-xs font-mono bg-slate-200/60 dark:bg-white/10 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400 font-semibold">⌘K</kbd>
+        <kbd class="hidden lg:inline text-xs font-mono bg-slate-200/60 dark:bg-white/10 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400 font-semibold">⌘K</kbd>
       </button>
 
       <!-- Theme Toggle -->
