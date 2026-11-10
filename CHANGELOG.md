@@ -4,7 +4,17 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
-### `@sola-air-ui/ui` 1.9.0
+### Skill (`sola-ui`)
+
+- **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill
+  alone, with no `gemini-extension.json` or anything else that launches a process. The Gemini CLI
+  extension is no longer published from it. `build-skill.mjs --gemini-repo` can still generate
+  the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
+  `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
+
+## 2026-11-10: ui 1.9.0
+
+### `@sola-air-ui/ui`
 
 - **Added**: `GaugeCard` props `badge`, `footerLeft`, `footerRight`, `max` and `ringLabel`. Pass `""` to hide the
   "Live Gauge" badge or the "Telemetry Synchronized" / "zero-vdom" footer, and `subtext={false}` to hide the
@@ -17,14 +27,6 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   `{ text, tone }` pill (`ok` | `warn` | `neutral`). Plain string columns work as before.
 - **Fixed**: the `Spinner` ring colour was hard-coded sky blue. It now follows `--sola-color-primary-500`, with the
   same fallback.
-
-### Skill (`sola-ui`)
-
-- **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill
-  alone, with no `gemini-extension.json` or anything else that launches a process. The Gemini CLI
-  extension is no longer published from it. `build-skill.mjs --gemini-repo` can still generate
-  the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
-  `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
 ## 2026-11-10: vite-plugin-sola 1.0.5
 
