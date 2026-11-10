@@ -97,7 +97,7 @@ What is true, so you can stay within it:
 - State is $state(...), computed values are $derived(...), side effects are $effect(...).
 - A compiled component's default export is its mount function: call it with an element and props, and it returns a teardown function. That is how it goes inside React, Vue, Svelte or plain JavaScript.
 - The core runtime is ${FACTS.coreSizeKb} gzipped.
-- The Relay reads from PostgreSQL and MySQL. Do not say it supports other sources.
+- The Relay reads from PostgreSQL, MySQL and Google Sheets. A sheet must be viewable by anyone with the link, and it is read only. Do not say it supports other sources.
 - @sola-air-ui/ui ships 37 components. Do not mention components outside that package as if they could be installed.
 - There is a Chrome extension that overlays a companion on a page.
 

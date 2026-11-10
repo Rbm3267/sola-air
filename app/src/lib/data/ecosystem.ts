@@ -162,7 +162,7 @@ export const SAAS_ECOSYSTEM: SaasIntegration[] = [
     name: 'Google Sheets Financial Ops Relay',
     category: 'Databases & Relay',
     badge: 'Google Sheets',
-    description: 'Two-way synchronized spreadsheet data binding without building custom backend APIs.',
+    description: 'Read a Google Sheet that anyone with the link can view through the Sola Relay. Read only.',
     protocolUri: 'sheet://finance/operations',
     primaryComponent: 'DataCard',
     sampleIntent: 'Read monthly MRR from financial operations Google Sheet',
