@@ -36,6 +36,17 @@ export function uiManifest() {
 
 const PRESETS = ['sola', 'zinc', 'compact', 'graphite'];
 
+/** The text between the first <script ...> and the next </script, in any case. Not a sanitizer. */
+function scriptBody(source) {
+  const lower = source.toLowerCase();
+  const open = lower.indexOf('<script');
+  if (open < 0) return '';
+  const start = lower.indexOf('>', open);
+  if (start < 0) return '';
+  const end = lower.indexOf('</script', start);
+  return source.slice(start + 1, end < 0 ? source.length : end);
+}
+
 /**
  * Check a design and build its preview.
  * @param {string} input path to the .sola file
@@ -60,7 +71,7 @@ export function preview(input, options = {}) {
 
     // Imports become globals in the no-bundler build, under their local names.
     // Only reads the import lines; the compiler does the real parse.
-    const script = (source.match(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/i) || [, ''])[1];
+    const script = scriptBody(source);
     for (const m of script.matchAll(/^\s*import\s+([^;'"]+?)\s+from\s+['"]([^'"]+)['"]/gm)) {
       const [, what, from] = m;
       if (/^type\b/.test(what.trim())) continue;
