@@ -12,6 +12,30 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   the extension layout if it is released separately later. For Gemini CLI, copy `GEMINI.md` from
   `skills/sola` and add `@sola-air-ui/mcp` as an MCP server.
 
+## 2026-11-13: preview 1.0.0, ui 1.9.2
+
+### `@sola-air-ui/preview`
+
+- **Added**: a new package. `npx @sola-air-ui/preview design.sola` checks a `.sola` design and writes
+  one self-contained HTML file with the core runtime, the design tokens and every `@sola-air-ui/ui`
+  component the design imports, all inline. `--check` prints errors as `file:line:col  CODE  message`
+  without writing a file; `--theme dark`, `--preset` and `--props` work as in the skill's preview script.
+  It is the same preview the skill vendors, reading the installed packages instead.
+
+### `@sola-air-ui/ui`
+
+- **Changed**: no component change. 1.9.2 exists so the `sola-ui` plugin, whose version follows this
+  package, gets a new version for the change below.
+
+### Skill (`sola-ui`)
+
+- **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) now holds only Markdown, JSON and the
+  icon, as the plugin directory requires from organizations it has not verified. It has no vendored
+  compiler, preview script or `.sola` files; the examples are Markdown files, and the skill checks and
+  previews a design with `npx -y @sola-air-ui/preview`. `build-skill.mjs --repo` fails if the output
+  has any other file type or a file starting with `#!`. `skills/sola` in this repo keeps the offline
+  version with the compiler bundled.
+
 ## 2026-11-10: ui 1.9.1
 
 ### `@sola-air-ui/ui`

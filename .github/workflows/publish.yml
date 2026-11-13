@@ -84,6 +84,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Publish @sola-air-ui/preview (after compiler, core, tokens and ui, which it depends on)
+        run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
+        working-directory: packages/preview
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish @sola/vite-plugin-sola
         run: node "$GITHUB_WORKSPACE/scripts/publish-if-new.mjs"
         working-directory: packages/vite-plugin-sola

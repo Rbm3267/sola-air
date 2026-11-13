@@ -64,6 +64,21 @@ describe('skills/sola', () => {
     assert.strictEqual(r.status, 0, r.stderr || r.stdout);
   });
 
+  it('the plugin repo (--repo) holds only Markdown, JSON, the icon and LICENSE, and previews through npm', () => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'sola-plugin-'));
+    const r = run(path.join(ROOT, 'scripts', 'build-skill.mjs'), ['--repo', dir]);
+    assert.strictEqual(r.status, 0, r.stderr || r.stdout);
+    const listAll = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? listAll(path.join(d, e.name)) : [path.relative(dir, path.join(d, e.name)).split(path.sep).join('/')]);
+    const all = listAll(dir).sort();
+    for (const f of all) assert.match(f, /(\.md|\.json|\.png)$|^LICENSE$/, `${f} is a type the plugin directory refuses`);
+    assert.ok(!all.some((f) => /vendor|scripts|\.sola$|\.m?js$/.test(f)), all.join(', '));
+    const skill = readFileSync(path.join(dir, 'skills/sola-ui/SKILL.md'), 'utf8');
+    const version = JSON.parse(readFileSync(path.join(ROOT, 'packages/preview/package.json'), 'utf8')).version;
+    assert.ok(skill.includes(`npx -y @sola-air-ui/preview@${version} design.sola`));
+    assert.ok(!skill.includes('scripts/preview.mjs'));
+    assert.strictEqual(all.filter((f) => f.startsWith('skills/sola-ui/examples/')).length, readdirSync(path.join(SKILL, 'examples')).length);
+  });
+
   it('rejects an unbalanced block and a component that does not exist', () => {
     const dir = mkdtempSync(path.join(os.tmpdir(), 'sola-skill-'));
     writeFileSync(path.join(dir, 'broken.sola'), '<script>let a = $state(1);</script>\n{#if a}<p>x</p>\n');

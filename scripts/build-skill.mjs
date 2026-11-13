@@ -287,6 +287,52 @@ function openRepoDir(dirArg, flag, markers) {
   };
   return { dir, put };
 }
+// The plugin directory accepts only Markdown, text, JSON, YAML and images from
+// organizations it has not verified, so the plugin repo cannot carry the vendored
+// compiler, the preview script or .sola files. Its skill is the instructions, the
+// reference and the examples (as Markdown), and it checks and previews a design
+// with @sola-air-ui/preview from npm. skills/sola keeps the offline version.
+const PREVIEW_VERSION = JSON.parse(read('packages/preview/package.json')).version;
+const PREVIEW_CMD = `npx -y @sola-air-ui/preview@${PREVIEW_VERSION}`;
+const pluginBody = (() => {
+  let b = body;
+  const swap = (from, to) => {
+    if (!b.includes(from)) throw new Error(`build-skill: the plugin edition expected ${JSON.stringify(from.slice(0, 60))} in instructions.md; update pluginBody.`);
+    b = b.replace(from, to);
+  };
+  swap(`This skill vendors core ${versions.core}, compiler ${versions.compiler} and those components, so you can check a design and render it to HTML with no install.`,
+    `The skill checks and previews a design with the \`@sola-air-ui/preview\` npm package (${PREVIEW_VERSION}), which brings core, the compiler, the design tokens and those components. npx downloads it from the npm registry the first time.`);
+  swap('node <SKILL_DIR>/scripts/preview.mjs design.sola', `${PREVIEW_CMD} design.sola`);
+  swap('Working examples are in `examples/`.', 'Working examples are in `examples/`, one design per Markdown file.');
+  return b.replaceAll('<SKILL_DIR>', '<skill-dir>');
+})();
+const PLUGIN_ALLOWED = /(\.md|\.json|\.png)$|^LICENSE$/;
+/** Fail the build if the plugin repo holds anything the directory would refuse. */
+function assertPluginFiles(dir) {
+  const bad = [];
+  const walk = (d) => {
+    for (const f of readdirSync(d)) {
+      if (f === '.git') continue;
+      const p = path.join(d, f);
+      const rel = path.relative(dir, p).split(path.sep).join('/');
+      if (statSync(p).isDirectory()) { walk(p); continue; }
+      if (!PLUGIN_ALLOWED.test(rel)) bad.push(`${rel} (type not allowed)`);
+      else if (!rel.endsWith('.png') && readFileSync(p, 'utf8').startsWith('#!')) bad.push(`${rel} (starts with #!)`);
+    }
+  };
+  walk(dir);
+  if (bad.length) throw new Error(`build-skill: the plugin directory would refuse:\n  ${bad.join('\n  ')}`);
+}
+const putPluginSkill = (put) => {
+  put('skills/sola-ui/SKILL.md', files.get('SKILL.md').split('\n---\n')[0] + '\n---\n\n' + pluginBody);
+  put('skills/sola-ui/reference/components.md', files.get('reference/components.md'));
+  put('skills/sola-ui/reference/AGENTS.md', files.get('reference/AGENTS.md'));
+  for (const [rel, contents] of files) {
+    if (!rel.startsWith('examples/') || !rel.endsWith('.sola')) continue;
+    const name = path.basename(rel, '.sola');
+    put(`skills/sola-ui/examples/${name}.md`, `# Example: ${name}\n\nSave this as \`${name}.sola\`, then run \`${PREVIEW_CMD} ${name}.sola\`. It passes the preview check in sola-air's CI.\n\n\`\`\`html\n${contents.trimEnd()}\n\`\`\`\n`);
+  }
+};
 const putSkill = (put) => {
   const rootOnly = new Set(['GEMINI.md', 'gemini-extension.json', 'README.md']);
   for (const [rel, contents] of files) if (!rootOnly.has(rel)) put(`skills/sola-ui/${rel}`, contents);
@@ -297,7 +343,7 @@ const geminiDirArg = argValue('--gemini-repo');
 if (repoDirArg) {
   // Existing clones from before the split also have gemini-extension.json at the root.
   const { dir, put } = openRepoDir(repoDirArg, '--repo', ['.claude-plugin', 'gemini-extension.json']);
-  putSkill(put);
+  putPluginSkill(put);
   put('.claude-plugin/plugin.json', JSON.stringify({
     name: 'sola-ui',
     displayName: 'Sola UI',
@@ -338,17 +384,20 @@ claude plugin marketplace add Rbm3267/sola-ui-skill
 claude plugin install sola-ui@sola-air
 \`\`\`
 
-**Claude.ai** (code execution on): zip the \`skills/sola-ui\` folder and upload it under Settings → Capabilities → Skills.
+**Claude.ai** (code execution on, with access to the npm registry): zip the \`skills/sola-ui\` folder and upload it under Settings → Capabilities → Skills.
 
 ## What's inside
 
 - \`skills/sola-ui/SKILL.md\`: instructions
 - \`skills/sola-ui/reference/components.md\`: every component, its import path and props, generated from the package
-- \`skills/sola-ui/examples/\`: designs that are previewed and tested in a real browser in sola-air's CI
-- \`skills/sola-ui/scripts/preview.mjs\` and \`vendor/\`: compiler ${versions.compiler}, core ${versions.core}, design tokens and the component sources
+- \`skills/sola-ui/reference/AGENTS.md\`: the full \`.sola\` language spec
+- \`skills/sola-ui/examples/\`: designs, one per Markdown file, that pass the preview check in sola-air's CI
 
-It reads only the \`.sola\` file you give it, makes no network requests, and needs no credentials. MIT licensed.
+The plugin is Markdown and JSON only. To check and preview a design it runs \`${PREVIEW_CMD}\`, which npx downloads from the npm registry with the compiler, core, design tokens and component sources. The preview reads only the \`.sola\` file you give it and writes one HTML file next to it. Nothing in the plugin reads credentials. MIT licensed.
+
+For a version with the compiler bundled, which previews with no install and no network, copy \`skills/sola\` from [Rbm3267/sola-air](https://github.com/Rbm3267/sola-air) instead.
 `);
+  assertPluginFiles(dir);
   console.log(`wrote ${dir} (sola-ui ${versions.ui}, Claude plugin)`);
   process.exit(0);
 }

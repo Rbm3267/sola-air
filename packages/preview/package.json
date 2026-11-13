@@ -1,0 +1,39 @@
+{
+  "name": "@sola-air-ui/preview",
+  "version": "1.0.0",
+  "description": "Check a .sola design and render it to one self-contained HTML file, with the @sola-air-ui/ui components it imports",
+  "type": "module",
+  "bin": {
+    "sola-preview": "src/cli.js"
+  },
+  "exports": {
+    ".": "./src/preview.js"
+  },
+  "files": [
+    "src"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/preview.test.js"
+  },
+  "dependencies": {
+    "@sola-air-ui/compiler": "^1.5.4",
+    "@sola-air-ui/core": "^1.5.2",
+    "@sola-air-ui/tokens": "^1.4.0",
+    "@sola-air-ui/ui": "^1.9.1"
+  },
+  "keywords": ["sola", "preview", "html", "components", "design"],
+  "license": "MIT",
+  "homepage": "https://sola-air.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rbm3267/sola-air.git",
+    "directory": "packages/preview"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
