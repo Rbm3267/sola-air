@@ -84,8 +84,13 @@
       {/each}
     </div>
 
-    <div class="mt-6 pt-4 border-t border-slate-200/80 dark:border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-      <span>MIT licensed</span>
+    <div class="mt-6 pt-4 border-t border-slate-200/80 dark:border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex items-center gap-2.5">
+        <a href="https://xdlabs.io" target="_blank" rel="noopener noreferrer" class="inline-flex items-center hover:opacity-90 hover:-translate-y-0.5 transition-all" aria-label="XD Labs (opens xdlabs.io)">
+          <img src="/xdlabs-mark.svg" width="24" height="24" alt="XD Labs" class="rounded-[6px] shadow-sm" loading="lazy" decoding="async" />
+        </a>
+        <span>MIT licensed</span>
+      </div>
       <!-- Each number names the package it belongs to; four bare version
            strings across the site previously read as contradictions. -->
       <span class="font-mono tabular-nums">
