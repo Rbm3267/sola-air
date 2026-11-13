@@ -6,6 +6,10 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ### Skill (`sola-ui`)
 
+- **Changed**: the plugin's `.claude-plugin/icon.png` is a 512×512 copy of the logo
+  (`brand/logo/sola-icon-512.png`, 224 KB) instead of the 1024×1024, 830 KB original. The build
+  fails if the icon is not a square PNG of at most 512px.
+
 - **Changed**: the Claude plugin repo (`Rbm3267/sola-ui-skill`) is now generated as the skill
   alone, with no `gemini-extension.json` or anything else that launches a process. The Gemini CLI
   extension is no longer published from it. `build-skill.mjs --gemini-repo` can still generate

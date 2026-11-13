@@ -366,8 +366,14 @@ if (repoDirArg) {
   }, null, 2) + '\n');
   // The Claude plugin is the skill alone: no .mcp.json, no gemini-extension.json, and
   // nothing else that starts a process. The directory picks the listing icon up from
-  // .claude-plugin/icon.png.
-  copyFileSync(path.join(ROOT, 'app/static/logo.png'), path.join(dir, '.claude-plugin/icon.png'));
+  // .claude-plugin/icon.png. It is a 512x512 copy of the logo (the 1024px, 830 KB
+  // original never showed on the listing); keep it square and at most 512px.
+  const icon = readFileSync(path.join(ROOT, 'brand/logo/sola-icon-512.png'));
+  const [iconW, iconH] = [icon.readUInt32BE(16), icon.readUInt32BE(20)];
+  if (icon.toString('ascii', 1, 4) !== 'PNG' || iconW !== iconH || iconW > 512) {
+    throw new Error(`build-skill: brand/logo/sola-icon-512.png must be a square PNG of at most 512px (is ${iconW}x${iconH}).`);
+  }
+  writeFileSync(path.join(dir, '.claude-plugin/icon.png'), icon);
   put('LICENSE', read('LICENSE'));
   put('README.md', `# Sola AIR UI skill
 
