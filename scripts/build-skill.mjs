@@ -7,7 +7,7 @@
 //   node scripts/build-skill.mjs           write skills/sola
 //   node scripts/build-skill.mjs --check   fail if skills/sola is out of date
 
-import { readFileSync, writeFileSync, copyFileSync, mkdirSync, rmSync, readdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildSync } from 'esbuild';
