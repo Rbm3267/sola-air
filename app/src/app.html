@@ -20,6 +20,27 @@
 		<meta data-default-meta property="og:description" content="A small reactive runtime and compiler. You write .sola components and they compile to plain DOM calls, with no virtual DOM." />
 		<meta data-default-meta property="og:image" content="https://sola-air.dev/og-image.jpg" />
 		<meta data-default-meta name="twitter:card" content="summary_large_image" />
+		<!--
+			Structured data for search engines. It lives here, not in a route, because pages
+			render in the browser only and crawlers read this file without running JavaScript.
+			It has no data-default-meta attribute, so the root layout leaves it in place.
+		-->
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "SoftwareApplication",
+				"name": "Sola AIR",
+				"alternateName": "Ambient Intent Runtime",
+				"applicationCategory": "DeveloperApplication",
+				"operatingSystem": "Web",
+				"description": "A small reactive runtime and compiler. You write .sola components and they compile to plain DOM calls, with no virtual DOM.",
+				"url": "https://sola-air.dev",
+				"codeRepository": "https://github.com/Rbm3267/sola-air",
+				"license": "https://spdx.org/licenses/MIT.html",
+				"offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+				"author": { "@type": "Organization", "name": "XD Labs", "url": "https://xdlabs.io" }
+			}
+		</script>
 		<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<!--

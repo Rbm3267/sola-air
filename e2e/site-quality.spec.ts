@@ -505,3 +505,20 @@ test('Arc renders cards whichever key the model uses for the component name', as
     await page.unroute('**/api/intent');
   }
 });
+
+test('the homepage carries SoftwareApplication structured data', async ({ page, request }) => {
+  // Crawlers read the served HTML without running JavaScript, so check that first.
+  const html = await (await request.get('/')).text();
+  expect(html, 'served HTML has no JSON-LD block').toContain('application/ld+json');
+
+  // Then check the block is still there, and parses, after the app has loaded.
+  await page.goto('/');
+  const blocks = await page
+    .locator('script[type="application/ld+json"]')
+    .evaluateAll((els) => els.map((e) => e.textContent ?? ''));
+  expect(blocks).toHaveLength(1);
+  const data = JSON.parse(blocks[0]);
+  expect(data['@type']).toBe('SoftwareApplication');
+  expect(typeof data.name).toBe('string');
+  expect(data.name.trim()).not.toBe('');
+});
