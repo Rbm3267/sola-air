@@ -12,6 +12,7 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   21 previews, 16 of them in `@sola-air-ui/ui`.
 - **Fixed**: page scraping reads values with a leading currency symbol (`$482,190`, `€1.2M`).
   Before, the DataCard skipped them and could use them as labels.
+- **Fixed**: the preview header's "Sola Shadow DOM" label no longer runs into the Target button.
 
 ## Unreleased
 

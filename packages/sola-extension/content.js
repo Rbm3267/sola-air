@@ -277,15 +277,15 @@
       @keyframes slideIn { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: none; } }
       .wrap { animation: slideIn 0.2s cubic-bezier(0.16,1,0.3,1); }
       .header {
-        display: flex; align-items: center; justify-content: space-between;
+        display: flex; align-items: center; justify-content: space-between; gap: 8px;
         padding: 6px 10px; margin-bottom: 8px;
         background: #090d19; border: 1px solid rgba(255,255,255,0.08);
         border-radius: 12px; cursor: grab; user-select: none;
       }
       .header:active { cursor: grabbing; }
-      .label { font-size: 10px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; }
+      .label { font-size: 10px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
-      .controls { display: flex; align-items: center; gap: 4px; }
+      .controls { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
       .btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; cursor: pointer; padding: 3px 6px; border-radius: 6px; font-size: 10px; transition: all 0.15s; }
       .btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
       .close { background: none; border: none; color: #64748b; cursor: pointer; padding: 3px 5px; border-radius: 4px; font-size: 12px; }
@@ -305,7 +305,7 @@
       <div class="header" id="drag-hdr">
         <span class="label"><span class="dot"></span>Sola Shadow DOM</span>
         <div class="controls">
-          <button class="btn" id="target-btn">🎯 Target Element</button>
+          <button class="btn" id="target-btn">🎯 Target</button>
           <button class="btn" id="snap-btn">📍 Snap</button>
           <button class="close" id="close-btn">✕</button>
         </div>
@@ -816,11 +816,11 @@
       * { box-sizing: border-box; margin: 0; padding: 0; }
       @keyframes slideIn { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: none; } }
       .wrap { animation: slideIn 0.2s cubic-bezier(0.16,1,0.3,1); }
-      .header { display:flex; align-items:center; justify-content:space-between; padding:6px 10px; margin-bottom:8px; background:#090d19; border:1px solid rgba(255,255,255,0.08); border-radius:12px; cursor:grab; user-select:none; }
+      .header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 10px; margin-bottom:8px; background:#090d19; border:1px solid rgba(255,255,255,0.08); border-radius:12px; cursor:grab; user-select:none; }
       .header:active { cursor:grabbing; }
-      .label { font-size:10px; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:6px; }
+      .label { font-size:10px; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:6px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       .dot { width:6px; height:6px; border-radius:50%; background:#10b981; }
-      .controls { display:flex; align-items:center; gap:4px; }
+      .controls { display:flex; align-items:center; gap:4px; flex-shrink:0; }
       .btn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#94a3b8; cursor:pointer; padding:3px 6px; border-radius:6px; font-size:10px; transition:all 0.15s; }
       .btn:hover { color:#fff; background:rgba(255,255,255,0.15); }
       .close { background:none; border:none; color:#64748b; cursor:pointer; padding:3px 5px; border-radius:4px; font-size:12px; }
