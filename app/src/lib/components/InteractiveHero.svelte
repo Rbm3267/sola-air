@@ -141,7 +141,7 @@
       {:else if mode === 'create'}
         Scaffolds a project with the compiler, the component library and a dev server.
       {:else}
-        Runs the fine-tuned 1.5B single-file component synthesis model locally via Ollama. 986 MB footprint, sub-second inference, zero framework hallucinations.
+        Runs sola-air-1.5b, the fine-tuned model that writes <code class="font-mono text-xs">.sola</code> components, locally through Ollama. It's a 986 MB download, and a component takes about 30 seconds on a 2 GB GPU.
         <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2">Hugging Face Hub ↗</a>
       {/if}
     </p>

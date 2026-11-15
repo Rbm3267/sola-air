@@ -1273,50 +1273,53 @@ export function SolaWidget({ title, value }) {
               </a>
             </div>
             <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-[68ch]">
-              A domain-adapted edge model for ultra-fast single-file reactive component synthesis (<code class="font-mono text-[0.9em]">.sola</code>) running locally with zero cloud dependencies and zero per-token cost.
+              A small model that writes <code class="font-mono text-[0.9em]">.sola</code> components. It runs on your own machine through Ollama, so there's no API key and no per-token cost.
             </p>
           </header>
 
           <section class="space-y-4">
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Why a Specialized Model?</h2>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Why a separate model</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Standard foundational coding models frequently struggle when generating specialized single-file components: they hallucinate foreign framework syntax (leaking React <code class="font-mono text-xs">useState</code> hooks or Vue <code class="font-mono text-xs">@click</code> bindings), wrap code in conversational markdown preamble, or produce broken template delimiters that fail AST parsers.
+              Ask a general coding model for a <code class="font-mono text-xs">.sola</code> component and it tends to slip into other frameworks. You get React <code class="font-mono text-xs">useState</code> hooks and Vue <code class="font-mono text-xs">@click</code> bindings, a "Sure! Here is your code..." before the code, and template blocks that don't close.
             </p>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              <strong class="text-slate-900 dark:text-white">Sola AIR 1.5B</strong> is domain-adapted from <code class="font-mono text-xs">Qwen/Qwen2.5-Coder-1.5B-Instruct</code> using QLoRA with strict ASD-STE100 technical clarity and answer-first procedural discipline. It outputs syntactically valid <code class="font-mono text-xs">.sola</code> components ready for immediate compilation.
+              <code class="font-mono text-xs">sola-air-1.5b</code> is <code class="font-mono text-xs">Qwen/Qwen2.5-Coder-1.5B-Instruct</code> fine-tuned with QLoRA to write <code class="font-mono text-xs">.sola</code> files and nothing else. It doesn't always get them right, so run <code class="font-mono text-xs">sola-check</code> on what it writes and mount it before you rely on it.
             </p>
           </section>
 
           <section class="space-y-4">
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Architectural Specifications</h2>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Benchmark results</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              From the 20-prompt benchmark run on Nov 15, 2026, on an NVIDIA Quadro P620 (2 GB) through Ollama. The <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="underline font-semibold text-blue-600 dark:text-blue-400">model card</a> has the full table, the base model's numbers and the commands to reproduce them.
+            </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
-                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Model Size / VRAM</div>
+                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Size</div>
                 <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">986 MB</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Fits in &lt;1GB VRAM, CPUs & mobile GPUs</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Q4_K_M GGUF. Fits a 2 GB GPU.</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
-                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Inference Speed</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">28.7+ tok/s</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Complete components in &lt;4 seconds</div>
+                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Speed</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">22.7 tok/s</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">About 30 s per component (median 31 s)</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
-                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Compile Accuracy</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">85.0%</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">1st-turn compile pass, 100% on 1-repair</div>
+                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Passes sola-check</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">19 / 20</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">16 of 20 also mount and render in a browser (base model: 3)</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
-                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Framework Leakage</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">0.0%</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Zero React or Vue hallucinations</div>
+                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">React / Vue syntax</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">0 / 20</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">The base model used it in 13 of 20</div>
               </div>
             </div>
           </section>
 
           <section class="space-y-4">
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white">1. Running with Ollama</h2>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">1. Run it with Ollama</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              The easiest way to run <code class="font-mono text-xs">sola-air-1.5b</code> locally is directly via <a href="https://ollama.ai" target="_blank" rel="noreferrer" class="underline font-semibold text-blue-600 dark:text-blue-400">Ollama</a>. Ollama pulls the Q4_K_M GGUF model directly from Hugging Face:
+              <a href="https://ollama.ai" target="_blank" rel="noreferrer" class="underline font-semibold text-blue-600 dark:text-blue-400">Ollama</a> pulls the model straight from Hugging Face:
             </p>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs flex items-center justify-between gap-4">
               <span class="text-emerald-400 select-all">{OLLAMA_MODEL_CMD}</span>
@@ -1328,73 +1331,71 @@ export function SolaWidget({ title, value }) {
               </button>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">
-              To run Ollama in server mode for local API calls, execute <code class="font-mono bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded">ollama serve</code> (listens on port 11434).
+              For API calls, keep <code class="font-mono bg-slate-100 dark:bg-white/10 px-1.5 py-0.5 rounded">ollama serve</code> running. It listens on port 11434.
             </p>
           </section>
 
           <section class="space-y-4">
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white">2. Connecting to Sola AIR $intent()</h2>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">2. Call it from $intent()</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Connect your application's intent endpoint directly to your local Ollama daemon using <code class="font-mono text-xs">@sola-air-ui/providers</code>:
+              Point your intent endpoint at Ollama with <code class="font-mono text-xs">OllamaProvider</code> from <code class="font-mono text-xs">@sola-air-ui/providers</code>. The server has to be able to reach Ollama, so this works when the app server and Ollama run on the same machine, like in local development. A deployed server can't reach the Ollama on a visitor's computer.
             </p>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
-<pre><code>// src/routes/api/intent/+server.ts
-import &#123; createIntentHandler &#125; from '@sola-air-ui/providers';
+<pre><code>// src/routes/api/intent/+server.js (SvelteKit)
+import &#123; OllamaProvider &#125; from '@sola-air-ui/providers/ollama';
 
-export const POST = createIntentHandler(&#123;
-  provider: 'ollama',
-  endpoint: 'http://localhost:11434',
-  model: 'hf.co/bennett-xdlabs/sola-air-1.5b'
-&#125;);</code></pre>
+const provider = OllamaProvider(&#123; model: 'hf.co/bennett-xdlabs/sola-air-1.5b' &#125;);
+
+export const POST = (&#123; request &#125;) =&gt; provider.handler(request);</code></pre>
             </div>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              Inside your <code class="font-mono text-xs">.sola</code> component, the reactive <code class="font-mono text-xs">$intent()</code> macro resolves structured state from the local model with zero cloud network latency:
+              In a component, <code class="font-mono text-xs">$intent()</code> sends the prompt and gives you the reply as text. This model replies with a <code class="font-mono text-xs">.sola</code> file in a <code class="font-mono text-xs">```sola</code> fence:
             </p>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-amber-200 leading-relaxed overflow-x-auto">
 <pre><code>&lt;script&gt;
-  let query = $state('Triage active production alerts');
-  let incidentPlan = $intent(query);
+  let request = $state('A toggle switch with an on/off label');
+  const draft = $intent(() =&gt; request);
 &lt;/script&gt;
 
-&lt;div class="incident-card"&gt;
-  &#123;#if incidentPlan.loading&#125;
-    &lt;p class="animate-pulse"&gt;Synthesizing mitigation plan...&lt;/p&gt;
-  &#123;:else&#125;
-    &lt;h3&gt;&#123;incidentPlan.title&#125;&lt;/h3&gt;
-    &lt;p&gt;&#123;incidentPlan.summary&#125;&lt;/p&gt;
-  &#123;/if&#125;
-&lt;/div&gt;</code></pre>
+&#123;#if draft.loading()&#125;
+  &lt;p&gt;Writing the component...&lt;/p&gt;
+&#123;:else if draft.error()&#125;
+  &lt;p&gt;&#123;draft.error()&#125;&lt;/p&gt;
+&#123;:else&#125;
+  &lt;pre&gt;&#123;draft()&#125;&lt;/pre&gt;
+&#123;/if&#125;</code></pre>
             </div>
           </section>
 
           <section class="space-y-4">
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white">3. Direct CLI Generation & Compilation</h2>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">3. Generate and compile from the command line</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              You can synthesize single-file components programmatically via HTTP curl and compile them directly to standalone JavaScript DOM instructions:
+              Ask Ollama for a component, strip the fence, check it, and compile it to JavaScript:
             </p>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-slate-200 leading-relaxed overflow-x-auto">
-<pre><code># 1. Ask the edge model for a .sola component:
+<pre><code># 1. Ask the model for a component (the sed drops the ```sola fence)
 curl http://localhost:11434/api/generate -d '&#123;
   "model": "hf.co/bennett-xdlabs/sola-air-1.5b",
-  "prompt": "Write a single-file .sola component for a real-time battery card with $state",
+  "prompt": "Write a Sola battery status card with a percent prop and a charging state",
   "stream": false
-&#125;' | jq -r '.response' &gt; BatteryCard.sola
+&#125;' | jq -r '.response' | sed '/^```/d' &gt; BatteryCard.sola
 
-# 2. Compile to zero-VDOM JavaScript DOM instructions:
-npx @sola-air-ui/compiler BatteryCard.sola</code></pre>
+# 2. Check it
+npx -p @sola-air-ui/compiler sola-check BatteryCard.sola
+
+# 3. Compile it to an ES module
+npx -p @sola-air-ui/compiler sola compile BatteryCard.sola -o BatteryCard.js</code></pre>
             </div>
           </section>
 
           <section class="space-y-4">
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white">4. Prompting Guidelines</h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              For optimal generation results, follow these prompting guidelines:
-            </p>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">4. Prompting tips</h2>
             <ul class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch] list-disc pl-5 space-y-2">
-              <li><strong class="text-slate-900 dark:text-white">Answer-First Discipline:</strong> Request a single-file <code class="font-mono text-xs">.sola</code> component directly without conversational greetings.</li>
-              <li><strong class="text-slate-900 dark:text-white">Declare Signals:</strong> Specify the desired <code class="font-mono text-xs">$state(...)</code> variables, <code class="font-mono text-xs">$derived(...)</code> computations, and handlers.</li>
-              <li><strong class="text-slate-900 dark:text-white">Direct Assignment:</strong> The model is tuned for native assignment reactivity (<code class="font-mono text-xs">count += 1</code>), not setter calls like <code class="font-mono text-xs">.set()</code> or hooks.</li>
-              <li><strong class="text-slate-900 dark:text-white">Scoped Styling:</strong> Include a <code class="font-mono text-xs">&lt;style&gt;</code> block at the bottom of the component for scoped styles.</li>
+              <li>Ask for one <code class="font-mono text-xs">.sola</code> component per prompt and name it.</li>
+              <li>Say which props, <code class="font-mono text-xs">$state(...)</code> values, <code class="font-mono text-xs">$derived(...)</code> values and handlers you want.</li>
+              <li>The model writes state by assignment (<code class="font-mono text-xs">count += 1</code>). If you see <code class="font-mono text-xs">.set()</code> or <code class="font-mono text-xs">.update()</code>, <code class="font-mono text-xs">sola-check</code> flags it as <code class="font-mono text-xs">SOLA002</code>.</li>
+              <li>Watch for variables it uses but never declares. They pass <code class="font-mono text-xs">sola-check</code> and only throw when the component mounts.</li>
+              <li>Use a low temperature (<code class="font-mono text-xs">0.1</code> to <code class="font-mono text-xs">0.2</code>).</li>
             </ul>
           </section>
         </article>

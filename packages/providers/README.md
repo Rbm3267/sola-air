@@ -10,22 +10,25 @@ npm install @sola-air-ui/providers
 
 ## Usage
 
-Import the adapter for whichever provider you're using, on the server side (never ship API keys to the browser):
+Create the adapter for your provider on the server (never ship API keys to the browser). Each one returns `{ handler, express }`. `handler` takes a fetch `Request` and returns a `Response`, so it drops into any route that speaks fetch:
 
 ```js
-import { anthropic } from '@sola-air-ui/providers/anthropic';
-// or: import { openai } from '@sola-air-ui/providers/openai';
-// or: import { gemini } from '@sola-air-ui/providers/gemini';
-// or: import { ollama } from '@sola-air-ui/providers/ollama';
+// src/routes/api/intent/+server.js (SvelteKit)
+import { AnthropicProvider } from '@sola-air-ui/providers/anthropic';
+// or: import { OpenAIProvider, AzureOpenAIProvider } from '@sola-air-ui/providers/openai';
+// or: import { GeminiProvider } from '@sola-air-ui/providers/gemini';
+// or: import { OllamaProvider } from '@sola-air-ui/providers/ollama';
 
-const provider = anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const provider = AnthropicProvider({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-export async function handleIntentRequest(prompt) {
-  return provider.stream(prompt);
-}
+export const POST = ({ request }) => provider.handler(request);
 ```
 
-Wire this into whatever API route your framework compiles `$intent` calls to hit — `configureIntent({ endpoint: '/api/intent' })` on the client side points Sola at it.
+For Express, use `app.post('/api/intent', express.json(), provider.express)`.
+
+On the client, `configureIntent({ endpoint: '/api/intent' })` points `$intent` at that route. The request body is `{ messages, model, stream }`. A non-streaming reply is `{ result }`, and a streaming one is server-sent events.
+
+To run [`sola-air-1.5b`](https://huggingface.co/bennett-xdlabs/sola-air-1.5b) locally, use `OllamaProvider({ model: 'hf.co/bennett-xdlabs/sola-air-1.5b' })`. The server has to reach Ollama, so the app server and Ollama need to be on the same machine or network.
 
 ## Supported providers
 
