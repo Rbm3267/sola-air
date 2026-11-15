@@ -153,7 +153,7 @@ test('user names never collide with generated variables', () => {
     const inIf = compile(`<script>let ${name} = 1; let on = $state(true);</script>{#if on}<p>{${name}}</p>{/if}<span>{${name}}</span>`).code;
     for (const [label, code] of [['keyed each', keyed], ['unkeyed each', unkeyed], ['script variable', inIf]]) {
       assertValidJs(code);
-      const declared = code.match(new RegExp(`(?:const|let) ${name.replace('$', '\\$')}\\b`, 'g')) || [];
+      const declared = code.match(new RegExp(`(?:const|let) ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g')) || [];
       assert.strictEqual(declared.length, 1, `${label}: "${name}" declared ${declared.length} times`);
     }
   }
