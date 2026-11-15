@@ -1687,8 +1687,24 @@ function buildDeclarations(props, exportStyles) {
 }
 
 // packages/compiler/src/check.js
+function scriptBodies(source) {
+  const lower = source.toLowerCase();
+  const bodies = [];
+  let from = 0;
+  for (; ; ) {
+    const open = lower.indexOf("<script", from);
+    if (open < 0) break;
+    const start = lower.indexOf(">", open);
+    if (start < 0) break;
+    const end = lower.indexOf("</script", start);
+    bodies.push(source.slice(start + 1, end < 0 ? source.length : end));
+    if (end < 0) break;
+    from = end + 8;
+  }
+  return bodies.join("\n");
+}
 function checkSetterCalls(source, add) {
-  const scripts = [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m2) => m2[1]).join("\n");
+  const scripts = scriptBodies(source);
   const names = /* @__PURE__ */ new Set();
   for (const m2 of scripts.matchAll(/\b(?:let|var|const)\s+([\w$]+)\s*=\s*\$(?:state|persist)\s*\(/g)) names.add(m2[1]);
   if (!names.size) return;

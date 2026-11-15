@@ -15,10 +15,29 @@ export const RULES = {
   SOLA002: 'state written with .set() or .update()'
 };
 
+// Text of every <script> body. Plain index search, so `</script >` and odd
+// casing are handled the same way the browser would end the element.
+function scriptBodies(source) {
+  const lower = source.toLowerCase();
+  const bodies = [];
+  let from = 0;
+  for (;;) {
+    const open = lower.indexOf('<script', from);
+    if (open < 0) break;
+    const start = lower.indexOf('>', open);
+    if (start < 0) break;
+    const end = lower.indexOf('</script', start);
+    bodies.push(source.slice(start + 1, end < 0 ? source.length : end));
+    if (end < 0) break;
+    from = end + 8;
+  }
+  return bodies.join('\n');
+}
+
 // A `$state` / `$persist` name is its signal getter, so `count.set(1)` compiles
 // to `count().set(1)` and throws when it runs. State is written by assignment.
 function checkSetterCalls(source, add) {
-  const scripts = [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m) => m[1]).join('\n');
+  const scripts = scriptBodies(source);
   const names = new Set();
   for (const m of scripts.matchAll(/\b(?:let|var|const)\s+([\w$]+)\s*=\s*\$(?:state|persist)\s*\(/g)) names.add(m[1]);
   if (!names.size) return;
