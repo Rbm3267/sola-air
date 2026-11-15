@@ -2,6 +2,30 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-15: compiler 1.6.0
+
+### `@sola-air-ui/compiler`
+
+- **Added**: `sola-check` rule `SOLA002` flags `.set()` or `.update()` called on a `$state` or
+  `$persist` variable. It compiles to `count().set(...)`, which throws when it runs. State is
+  written by assignment (`count += 1`).
+
+### Model certification
+
+- **Added**: `scripts/run-certification.mjs` runs the 20-prompt benchmark for the
+  `sola-air-1.5b` model against a local Ollama. It writes results to `--out` (default
+  `certification-results.json`) and exits 1 when the gate fails. The framework-syntax check now
+  catches `className=`, `@click=`, `useEffect(` and `v-if`; the old pattern never matched
+  `className=`.
+- **Added**: the benchmark mounts each component in headless Chromium (`scripts/mount-check.mjs`).
+  A component counts only if it mounts without an error and renders an element; passing
+  `sola-check` is not enough, because an undeclared variable compiles and throws on mount. New
+  gate: at least 80% mount. `--no-mount` skips it.
+- **Added**: `--rescore <results.json>` scores the responses in a saved run again, without the
+  model. The runs behind the model card are in `benchmarks/certification/`:
+  `sola-air-1.5b.json` (19/20 pass `sola-check`, 16/20 mount) and
+  `qwen2.5-coder-1.5b-instruct.json`, the base model (18/20, 3/20).
+
 ## 2026-11-15: Chrome extension 1.2.0
 
 ### Chrome extension (1.2.0)
@@ -15,20 +39,6 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Fixed**: the preview header's "Sola Shadow DOM" label no longer runs into the Target button.
 
 ## Unreleased
-
-### Compiler (`@sola-air-ui/compiler`)
-
-- **Added**: `sola-check` rule `SOLA002` flags `.set()` or `.update()` called on a `$state` or
-  `$persist` variable. It compiles to `count().set(...)`, which throws when it runs. State is
-  written by assignment (`count += 1`).
-
-### Model certification
-
-- **Added**: `scripts/run-certification.mjs` runs the 20-prompt benchmark for the
-  `sola-air-1.5b` model against a local Ollama. It writes results to `--out` (default
-  `certification-results.json`) and exits 1 when the gate fails. The framework-syntax check now
-  catches `className=`, `@click=`, `useEffect(` and `v-if`; the old pattern never matched
-  `className=`.
 
 ### Skill (`sola-ui`)
 
