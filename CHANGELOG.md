@@ -2,6 +2,16 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-15: providers 1.0.4
+
+### `@sola-air-ui/providers`
+
+- **Fixed**: the README's usage example imported `anthropic()` and called `provider.stream()`,
+  neither of which exists. It now uses `AnthropicProvider()` (and the other exported providers)
+  with `provider.handler(request)` for fetch-style routes and `provider.express` for Express. It
+  also documents the request and response shape `$intent` uses, and how to point
+  `OllamaProvider` at `sola-air-1.5b`. No code change.
+
 ## 2026-11-15: compiler 1.6.1
 
 ### `@sola-air-ui/compiler`
