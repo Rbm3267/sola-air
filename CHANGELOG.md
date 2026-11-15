@@ -2,6 +2,16 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-15: compiler 1.6.1
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: a variable could collide with a name the compiler generates. `{#each tags as f}`
+  overwrote the fragment the loop builds into and threw `f.appendChild is not a function` on
+  mount. A script variable named like a generated element (`let n0 = 1`) was declared twice,
+  so the output didn't parse. Every generated name in the template code now starts with `__`
+  (`__f`, `__n0`, `__e1`, `__items`, `__i`), like `__target` and `__ctx` already did.
+
 ## 2026-11-15: compiler 1.6.0
 
 ### `@sola-air-ui/compiler`

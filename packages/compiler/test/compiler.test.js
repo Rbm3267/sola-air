@@ -138,8 +138,25 @@ test('shadowed name is not auto-called', () => {
 
 test('each item shadows a signal of the same name', () => {
   const { code } = compile(`<script>let items = $state([1,2]); let item = $state('sig');</script><div>{#each items as item}<span>{item}</span>{/each}</div>`);
-  assert(code.includes('const _items = items() || []'), 'each source auto-called');
+  assert(code.includes('const __items = items() || []'), 'each source auto-called');
   assert(code.includes("String((item) ?? '')"), 'loop-local item not auto-called');
+});
+
+// The compiler's own variables (the fragment, element ids, loop counters) used
+// plain names like f, n0, e1, _items and _i. A loop variable with one of those
+// names shadowed the fragment ({#each tags as f} threw "f.appendChild is not a
+// function"), and a script variable with one was declared twice.
+test('user names never collide with generated variables', () => {
+  for (const name of ['f', 'n0', 'e1', 'c2', 't3', 'h4', 'comp5', '_items', '_i', '_key', '_entry', '_cursor']) {
+    const keyed = compile(`<script>let list = $state(['a']);</script><ul>{#each list as ${name} (${name})}<li>{${name}}</li>{/each}</ul>`).code;
+    const unkeyed = compile(`<script>let list = $state(['a']);</script><ul>{#each list as ${name}}<li>{${name}}</li>{/each}</ul>`).code;
+    const inIf = compile(`<script>let ${name} = 1; let on = $state(true);</script>{#if on}<p>{${name}}</p>{/if}<span>{${name}}</span>`).code;
+    for (const [label, code] of [['keyed each', keyed], ['unkeyed each', unkeyed], ['script variable', inIf]]) {
+      assertValidJs(code);
+      const declared = code.match(new RegExp(`(?:const|let) ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g')) || [];
+      assert.strictEqual(declared.length, 1, `${label}: "${name}" declared ${declared.length} times`);
+    }
+  }
 });
 
 test('{#if} condition auto-calls signals', () => {
@@ -246,7 +263,7 @@ test('bind:value still resolves through the marker', () => {
   const { code } = compile(`<script>let name = $state('');</script><input bind:value={name} />`);
   assertValidJs(code);
   assert(code.includes('set_name(e.target.value)'), 'writes back');
-  assert(code.includes('n0.value = name() ?? '), 'reads');
+  assert(code.includes('__n0.value = name() ?? '), 'reads');
 });
 
 test('a callback prop on a component is passed as a function', () => {
@@ -480,7 +497,7 @@ test('unkeyed {#each} iterates ascending', () => {
   const { code } = compile(`
 <script>let items = $state(['A', 'B']);</script>
 {#each items as item}<div>{item}</div>{/each}`);
-  assert(code.includes('for (let _i = 0; _i < _items.length; _i++)'), 'ascending loop');
+  assert(code.includes('for (let __i = 0; __i < __items.length; __i++)'), 'ascending loop');
   assert(code.includes('createDocumentFragment()'), 'fragment batching');
 });
 
@@ -490,22 +507,22 @@ test('keyed {#each items as item (item.id)} uses Map reconciliation', () => {
 {#each rows as row (row.id)}<div>{row.name}</div>{/each}`);
   assert(code.includes('_keyMap'), 'keyed map');
   assert(code.includes('String(row.id)'), 'key expression');
-  assert(code.includes('e0_keyMap.get(_key)'), 'looks the key up so existing nodes are reused, not rebuilt');
-  assert(code.includes('e0_keyMap.delete(_k)'), 'stale key removal');
+  assert(code.includes('__e0_keyMap.get(__key)'), 'looks the key up so existing nodes are reused, not rebuilt');
+  assert(code.includes('__e0_keyMap.delete(__k)'), 'stale key removal');
 });
 
 test('{#each} with index variable', () => {
   const { code } = compile(`{#each items as item, i}<li>{i}: {item}</li>{/each}`);
-  assert(code.includes('const i = _i'), 'index variable bound');
+  assert(code.includes('const i = __i'), 'index variable bound');
 });
 
 test('keyed {#each} emits a reconciler that can move nodes', () => {
   // The old emitter only inserted, against an anchor it never advanced, so
   // reordering a keyed list left the DOM in its original order — silently.
   const { code } = compile(`<script>let items = $state([]);</script><ul>{#each items as it (it.id)}<li>{it.n}</li>{/each}</ul>`);
-  assert(code.includes('insertBefore(_n, _cursor)'), 'moves existing nodes into place');
-  assert(code.includes('_cursor = _cursor.nextSibling'), 'advances a cursor');
-  assert(code.includes('_seen.add(_key)'), 'tracks live keys');
+  assert(code.includes('insertBefore(__n, __cursor)'), 'moves existing nodes into place');
+  assert(code.includes('__cursor = __cursor.nextSibling'), 'advances a cursor');
+  assert(code.includes('__seen.add(__key)'), 'tracks live keys');
   assert(!code.includes('_nextKeys.includes'), 'no O(n^2) key scan');
 });
 
@@ -674,7 +691,7 @@ test('a component imported from a package subpath is mounted, not created as an 
   );
   assertValidJs(code.replace(/^import .*$/gm, ''));
   assert(code.includes("import DataCard from '@sola-air-ui/ui/data-card';"), 'the import is kept');
-  assert(code.includes('DataCard(comp'), 'it is mounted as a component');
+  assert(code.includes('DataCard(__comp'), 'it is mounted as a component');
   assert(!code.includes("createElement('DataCard')"), 'not an unknown HTML element');
   assert(code.includes('"title": "A"') && code.includes('"value": "1"'), 'props are passed');
 });
@@ -682,7 +699,7 @@ test('a component imported from a package subpath is mounted, not created as an 
 test('a named import from a package root is a component too', () => {
   const { code } = compile(`<script>import { Table } from '@sola-air-ui/ui';</script><Table rows={[]} />`);
   assert(code.includes("import { Table } from '@sola-air-ui/ui';"), 'import kept');
-  assert(code.includes('Table(comp'), 'mounted as a component');
+  assert(code.includes('Table(__comp'), 'mounted as a component');
 });
 
 test('a package import that is not a component is kept for the script to use', () => {
@@ -811,11 +828,11 @@ test('desugarElseIf and transformBlocks handle nested braces in conditions and p
 test('bind:this={box} works with both plain let and $state', () => {
   const { code: plainCode } = compile('<script>let box = null;</script><div bind:this={box}></div>');
   assertValidJs(plainCode);
-  assert(plainCode.includes('box = n0;'), 'plain let bind:this emitted: ' + plainCode);
+  assert(plainCode.includes('box = __n0;'), 'plain let bind:this emitted: ' + plainCode);
 
   const { code: stateCode } = compile('<script>let box = $state(null);</script><div bind:this={box}></div>');
   assertValidJs(stateCode);
-  assert(stateCode.includes('set_box(n0);'), '$state bind:this emitted: ' + stateCode);
+  assert(stateCode.includes('set_box(__n0);'), '$state bind:this emitted: ' + stateCode);
 });
 
 test('HTML comments with braces or commented-out blocks are stripped before compilation', () => {

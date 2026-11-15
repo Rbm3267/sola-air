@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.6.0, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.6.1, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.6.0\"}"
+  "{\"version\":\"1.6.1\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -1163,7 +1163,7 @@ function compile(source, options = {}) {
     if (node.type === "text") {
       const text = escapeTemplateLiteral(node.data);
       if (text.trim().length > 0) {
-        const id2 = `t${uid++}`;
+        const id2 = `__t${uid++}`;
         domCode += `  const ${id2} = document.createTextNode(\`${text}\`);
 `;
         domCode += `  ${parentVar}.appendChild(${id2});
@@ -1175,7 +1175,7 @@ function compile(source, options = {}) {
       const raw = (node.attribs.expr || "").replace(/&quot;/g, '"');
       checkExpression(raw, "template expression");
       const expr = rewrite(raw);
-      const id2 = `e${uid++}`;
+      const id2 = `__e${uid++}`;
       domCode += `  const ${id2} = document.createTextNode('');
 `;
       domCode += `  ${parentVar}.appendChild(${id2});
@@ -1186,7 +1186,7 @@ function compile(source, options = {}) {
     }
     if (node.name === "sola-html") {
       const expr = rewrite((node.attribs.expr || "").replace(/&quot;/g, '"'));
-      const id2 = `h${uid++}`;
+      const id2 = `__h${uid++}`;
       domCode += `  const ${id2} = document.createElement('div');
 `;
       domCode += `  ${id2}.style.display = 'contents';
@@ -1198,7 +1198,7 @@ function compile(source, options = {}) {
       return;
     }
     if (importedComponentSet.has(node.name)) {
-      const cid = `comp${uid++}`;
+      const cid = `__comp${uid++}`;
       domCode += `  const ${cid}_target = document.createElement('div');
 `;
       domCode += `  ${cid}_target.className = 'sola-component-root';
@@ -1266,7 +1266,7 @@ function compile(source, options = {}) {
       return;
     }
     if (node.name === "sola-if") {
-      const cid = `c${uid++}`;
+      const cid = `__c${uid++}`;
       domCode += `  const ${cid}_a = document.createComment('if');
 `;
       domCode += `  ${parentVar}.appendChild(${cid}_a);
@@ -1285,12 +1285,12 @@ function compile(source, options = {}) {
 `;
         domCode += `      try {
 `;
-        domCode += `      const f = document.createDocumentFragment();
+        domCode += `      const __f = document.createDocumentFragment();
 `;
-        branch.children.forEach((child) => emitNode(child, "f", locals, inSvg));
-        domCode += `      Array.from(f.childNodes).forEach(n => ${cid}_els.push(n));
+        branch.children.forEach((child) => emitNode(child, "__f", locals, inSvg));
+        domCode += `      Array.from(__f.childNodes).forEach(n => ${cid}_els.push(n));
 `;
-        domCode += `      ${cid}_a.parentNode.insertBefore(f, ${cid}_a.nextSibling);
+        domCode += `      ${cid}_a.parentNode.insertBefore(__f, ${cid}_a.nextSibling);
 `;
         domCode += `      } finally { popContext(${cid}_ctx); }
 `;
@@ -1314,7 +1314,7 @@ function compile(source, options = {}) {
       return;
     }
     if (node.name === "sola-each") {
-      const eid = `e${uid++}`;
+      const eid = `__e${uid++}`;
       const eachLocals = new Set(locals);
       eachLocals.add(node.attribs.item);
       if (node.attribs.index) eachLocals.add(node.attribs.index);
@@ -1327,74 +1327,74 @@ function compile(source, options = {}) {
       if (keyExpr) {
         domCode += `  let ${eid}_keyMap = new Map();
 `;
-        domCode += `  onDestroy(() => { for (const _e of ${eid}_keyMap.values()) __flush_destroys(_e.ctx); ${eid}_keyMap.clear(); });
+        domCode += `  onDestroy(() => { for (const __e of ${eid}_keyMap.values()) __flush_destroys(__e.ctx); ${eid}_keyMap.clear(); });
 `;
         domCode += `  createEffect(() => {
 `;
-        domCode += `    const _items = ${arrayExpr} || [];
+        domCode += `    const __items = ${arrayExpr} || [];
 `;
-        domCode += `    const _parent = ${eid}_a.parentNode;
+        domCode += `    const __parent = ${eid}_a.parentNode;
 `;
-        domCode += `    const _seen = new Set();
+        domCode += `    const __seen = new Set();
 `;
-        domCode += `    let _cursor = ${eid}_a.nextSibling;
+        domCode += `    let __cursor = ${eid}_a.nextSibling;
 `;
-        domCode += `    for (let _i = 0; _i < _items.length; _i++) {
+        domCode += `    for (let __i = 0; __i < __items.length; __i++) {
 `;
-        domCode += `      const ${node.attribs.item} = _items[_i];
+        domCode += `      const ${node.attribs.item} = __items[__i];
 `;
-        if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;
+        if (node.attribs.index) domCode += `      const ${node.attribs.index} = __i;
 `;
-        domCode += `      const _key = String(${keyExpr});
+        domCode += `      const __key = String(${keyExpr});
 `;
-        domCode += `      _seen.add(_key);
+        domCode += `      __seen.add(__key);
 `;
-        domCode += `      let _entry = ${eid}_keyMap.get(_key);
+        domCode += `      let __entry = ${eid}_keyMap.get(__key);
 `;
-        domCode += `      if (_entry && (_entry.item !== ${node.attribs.item}${node.attribs.index ? ` || _entry.index !== _i` : ""})) {
+        domCode += `      if (__entry && (__entry.item !== ${node.attribs.item}${node.attribs.index ? ` || __entry.index !== __i` : ""})) {
 `;
-        domCode += `        __flush_destroys(_entry.ctx);
+        domCode += `        __flush_destroys(__entry.ctx);
 `;
-        domCode += `        const _old = _entry.nodes;
+        domCode += `        const __old = __entry.nodes;
 `;
-        domCode += `        if (_old.includes(_cursor)) _cursor = _old[_old.length - 1].nextSibling;
+        domCode += `        if (__old.includes(__cursor)) __cursor = __old[__old.length - 1].nextSibling;
 `;
-        domCode += `        _old.forEach(n => n.remove());
+        domCode += `        __old.forEach(n => n.remove());
 `;
-        domCode += `        _entry = null;
+        domCode += `        __entry = null;
 `;
         domCode += `      }
 `;
-        domCode += `      if (!_entry) {
+        domCode += `      if (!__entry) {
 `;
-        domCode += `        const _kctx = pushContext();
+        domCode += `        const __kctx = pushContext();
 `;
         domCode += `        try {
 `;
-        domCode += `        const f = document.createDocumentFragment();
+        domCode += `        const __f = document.createDocumentFragment();
 `;
-        node.children.forEach((child) => emitNode(child, "f", eachLocals, inSvg));
-        domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx, item: ${node.attribs.item}${node.attribs.index ? ", index: _i" : ""} };
+        node.children.forEach((child) => emitNode(child, "__f", eachLocals, inSvg));
+        domCode += `        __entry = { nodes: Array.from(__f.childNodes), ctx: __kctx, item: ${node.attribs.item}${node.attribs.index ? ", index: __i" : ""} };
 `;
-        domCode += `        } finally { popContext(_kctx); }
+        domCode += `        } finally { popContext(__kctx); }
 `;
-        domCode += `        ${eid}_keyMap.set(_key, _entry);
+        domCode += `        ${eid}_keyMap.set(__key, __entry);
 `;
         domCode += `      }
 `;
-        domCode += `      for (const _n of _entry.nodes) {
+        domCode += `      for (const __n of __entry.nodes) {
 `;
-        domCode += `        if (_n === _cursor) { _cursor = _cursor.nextSibling; }
+        domCode += `        if (__n === __cursor) { __cursor = __cursor.nextSibling; }
 `;
-        domCode += `        else { _parent.insertBefore(_n, _cursor); }
+        domCode += `        else { __parent.insertBefore(__n, __cursor); }
 `;
         domCode += `      }
 `;
         domCode += `    }
 `;
-        domCode += `    for (const [_k, _stale] of ${eid}_keyMap) {
+        domCode += `    for (const [__k, __stale] of ${eid}_keyMap) {
 `;
-        domCode += `      if (!_seen.has(_k)) { __flush_destroys(_stale.ctx); _stale.nodes.forEach(n => n.remove()); ${eid}_keyMap.delete(_k); }
+        domCode += `      if (!__seen.has(__k)) { __flush_destroys(__stale.ctx); __stale.nodes.forEach(n => n.remove()); ${eid}_keyMap.delete(__k); }
 `;
         domCode += `    }
 `;
@@ -1413,26 +1413,26 @@ function compile(source, options = {}) {
 `;
         domCode += `    ${eid}_els.forEach(e => e.remove()); ${eid}_els = [];
 `;
-        domCode += `    const _items = ${arrayExpr} || [];
+        domCode += `    const __items = ${arrayExpr} || [];
 `;
         domCode += `    ${eid}_ctx = pushContext();
 `;
         domCode += `    try {
 `;
-        domCode += `    const f = document.createDocumentFragment();
+        domCode += `    const __f = document.createDocumentFragment();
 `;
-        domCode += `    for (let _i = 0; _i < _items.length; _i++) {
+        domCode += `    for (let __i = 0; __i < __items.length; __i++) {
 `;
-        domCode += `      const ${node.attribs.item} = _items[_i];
+        domCode += `      const ${node.attribs.item} = __items[__i];
 `;
-        if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;
+        if (node.attribs.index) domCode += `      const ${node.attribs.index} = __i;
 `;
-        node.children.forEach((child) => emitNode(child, "f", eachLocals, inSvg));
+        node.children.forEach((child) => emitNode(child, "__f", eachLocals, inSvg));
         domCode += `    }
 `;
-        domCode += `    Array.from(f.childNodes).forEach(n => ${eid}_els.push(n));
+        domCode += `    Array.from(__f.childNodes).forEach(n => ${eid}_els.push(n));
 `;
-        domCode += `    ${eid}_a.parentNode.insertBefore(f, ${eid}_a.nextSibling);
+        domCode += `    ${eid}_a.parentNode.insertBefore(__f, ${eid}_a.nextSibling);
 `;
         domCode += `    } finally { popContext(${eid}_ctx); }
 `;
@@ -1443,7 +1443,7 @@ function compile(source, options = {}) {
     }
     const isSvg = inSvg || node.name === "svg";
     const childSvg = isSvg && node.name !== "foreignObject";
-    const id = `n${uid++}`;
+    const id = `__n${uid++}`;
     if (isSvg) {
       domCode += `  const ${id} = document.createElementNS('http://www.w3.org/2000/svg', '${node.name}');
 `;
