@@ -2,6 +2,17 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-15: Chrome extension 1.2.0
+
+### Chrome extension (1.2.0)
+
+- **Added**: the side panel previews nine more `@sola-air-ui/ui` components: Card, Table, Chart,
+  Badge, Alert, Spinner, TextInput, Select and DatePicker. Forms and Feedback are new categories.
+  Chart and Table are under Metrics & Data, and Card is under Foundation UI. The panel now shows
+  21 previews, 16 of them in `@sola-air-ui/ui`.
+- **Fixed**: page scraping reads values with a leading currency symbol (`$482,190`, `€1.2M`).
+  Before, the DataCard skipped them and could use them as labels.
+
 ## Unreleased
 
 ### Compiler (`@sola-air-ui/compiler`)

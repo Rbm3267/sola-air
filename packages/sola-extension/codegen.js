@@ -19,6 +19,15 @@
     toggle:    { name: 'Toggle',          subpath: 'toggle' },
     button:    { name: 'Button',          subpath: 'button' },
     stream:    { name: 'StreamView',      subpath: 'stream-view' },
+    card:      { name: 'Card',            subpath: 'card' },
+    table:     { name: 'Table',           subpath: 'table' },
+    chart:     { name: 'Chart',           subpath: 'chart' },
+    badge:     { name: 'Badge',           subpath: 'badge' },
+    alert:     { name: 'Alert',           subpath: 'alert' },
+    spinner:   { name: 'Spinner',         subpath: 'spinner' },
+    textinput: { name: 'TextInput',       subpath: 'text-input' },
+    select:    { name: 'Select',          subpath: 'select' },
+    datepicker:{ name: 'DatePicker',      subpath: 'date-picker' },
     slider:    { name: 'RangeSlider',     subpath: null },
     tabs:      { name: 'Tabs',            subpath: null },
     avatar:    { name: 'Avatar',          subpath: null },
@@ -35,6 +44,24 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  // Page scraping: what counts as a metric value. A value may carry a leading
+  // currency symbol ("$482,190"), separators and a K/M/B or % suffix.
+  const VALUE_RE = /^[$€£¥]?\d[\d,.]*[KMBk%]?$/;
+  const NUMBER_START_RE = /^[$€£¥]?\d/;
+
+  function isMetricValue(text) {
+    return VALUE_RE.test(String(text ?? '').trim());
+  }
+
+  // True when text starts like a number, so it must not be used as a label.
+  function startsWithNumber(text) {
+    return NUMBER_START_RE.test(String(text ?? '').trim());
+  }
+
+  function metricNumber(text) {
+    return parseFloat(String(text ?? '').replace(/[^\d.]/g, ''));
   }
 
   // One import line. Every published component is imported by its subpath so
@@ -95,5 +122,5 @@
     return `<StatGrid> of ${list.length} DataCards`;
   }
 
-  return { COMPONENTS, escapeHtml, importLine, generateCode, summarize };
+  return { COMPONENTS, escapeHtml, importLine, generateCode, summarize, isMetricValue, startsWithNumber, metricNumber };
 });

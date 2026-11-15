@@ -12,7 +12,7 @@ import { compile } from '../../compiler/src/index.js';
 
 const require = createRequire(import.meta.url);
 const here = dirname(fileURLToPath(import.meta.url));
-const { COMPONENTS, escapeHtml, importLine, generateCode, summarize } = require('../codegen.js');
+const { COMPONENTS, escapeHtml, importLine, generateCode, summarize, isMetricValue, startsWithNumber, metricNumber } = require('../codegen.js');
 
 const uiDir = join(here, '../../ui');
 const uiExports = JSON.parse(readFileSync(join(uiDir, 'package.json'), 'utf8')).exports;
@@ -130,5 +130,26 @@ describe('side panel', () => {
   it('shows the scoped package names', () => {
     assert.ok(html.includes('npm install @sola-air-ui/core @sola-air-ui/ui'));
     assert.ok(!html.includes('@sola/core'), 'the old unscoped name is gone');
+  });
+});
+
+describe('page metric values', () => {
+  it('accepts currency-prefixed values', () => {
+    for (const v of ['$482,190', '€1.2M', '£75', '¥3,000']) assert.ok(isMetricValue(v), v);
+    assert.strictEqual(metricNumber('$482,190'), 482190);
+    assert.strictEqual(metricNumber('€1.2M'), 1.2);
+  });
+
+  it('still accepts plain numbers, suffixes and percentages', () => {
+    for (const v of ['12,904', '38', '2.1%', '4.5K']) assert.ok(isMetricValue(v), v);
+  });
+
+  it('does not treat a currency value as a label', () => {
+    assert.ok(startsWithNumber('$482,190'));
+    assert.ok(!startsWithNumber('Revenue'));
+  });
+
+  it('rejects text that is not a value', () => {
+    for (const v of ['Revenue', '$', 'USD 40', '+8.4% vs last month']) assert.ok(!isMetricValue(v), v);
   });
 });

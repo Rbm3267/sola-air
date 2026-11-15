@@ -6,7 +6,7 @@
 
   // Code generation and escaping live in codegen.js, which the side panel injects
   // first. Keeping them there lets Node test that "Copy code" output works.
-  const { escapeHtml, generateCode, summarize } = globalThis.SolaCodegen || {};
+  const { escapeHtml, generateCode, summarize, isMetricValue, startsWithNumber, metricNumber } = globalThis.SolaCodegen || {};
   const SolaCodegen = globalThis.SolaCodegen;
   if (!generateCode) {
     console.error('[Sola] codegen.js did not load; cannot build code snippets.');
@@ -62,22 +62,22 @@
       if (!text || text.length > 200 || el.children.length > 4) return;
 
       // Pure number leaf node — pair with nearest label sibling
-      if (/^\d[\d,\.]*[KMBk%]?$/.test(text) && el.children.length === 0) {
+      if (isMetricValue(text) && el.children.length === 0) {
         // Look for a label in siblings or parent's first child
         const parent = el.parentElement;
         if (parent) {
           const siblings = [...parent.children].filter(c => c !== el);
-          const labelEl = siblings.find(s => s.textContent && !/^\d/.test(s.textContent.trim()) && s.textContent.trim().length > 1);
+          const labelEl = siblings.find(s => s.textContent && !startsWithNumber(s.textContent) && s.textContent.trim().length > 1);
           if (labelEl) {
             const label = labelEl.textContent.trim();
-            const numVal = parseFloat(text.replace(/[,KMBk%]/g, ''));
+            const numVal = metricNumber(text);
             const variant = numVal > 10000 ? 'warn' : numVal > 0 ? 'ok' : 'neutral';
             addMetric(label, text, variant);
             return;
           }
         }
         allText.push({ type: 'value', text });
-      } else if (el.children.length === 0 && text.length > 1 && !/^\d/.test(text) && !/^\s*$/.test(text)) {
+      } else if (el.children.length === 0 && text.length > 1 && !startsWithNumber(text) && !/^\s*$/.test(text)) {
         allText.push({ type: 'label', text });
       }
     });
@@ -85,7 +85,7 @@
     // Strategy 2: consecutive label/value pairs from the collected text list
     for (let i = 0; i < allText.length - 1; i++) {
       if (allText[i].type === 'label' && allText[i + 1].type === 'value') {
-        const numVal = parseFloat(allText[i + 1].text.replace(/[,KMBk%]/g, ''));
+        const numVal = metricNumber(allText[i + 1].text);
         const variant = numVal > 10000 ? 'warn' : numVal > 0 ? 'ok' : 'neutral';
         addMetric(allText[i].text, allText[i + 1].text, variant);
       }
@@ -95,9 +95,9 @@
     walkShadows(root, 0, (el) => {
       if (!(el.tagName || '').includes('CARD-HEADER')) return;
       const text = (el.shadowRoot?.textContent || el.textContent || '').replace(/\s+/g, ' ').trim();
-      const m = text.match(/^([A-Za-z][A-Za-z\s\-\/]+?)\s*([\d,]+(?:\.\d+)?[KMBk]?)\s/);
+      const m = text.match(/^([A-Za-z][A-Za-z\s\-\/]+?)\s*([$€£¥]?[\d,]+(?:\.\d+)?[KMBk]?)\s/);
       if (!m) return;
-      const numVal = parseFloat(m[2].replace(/[,KMBk]/g, ''));
+      const numVal = metricNumber(m[2]);
       addMetric(m[1], m[2], numVal > 10000 ? 'warn' : 'ok');
     });
 
@@ -106,9 +106,9 @@
       if (!(el.tagName || '').includes('LABEL') && !(el.tagName || '').includes('VALUE')) return;
       const text = (el.shadowRoot?.textContent || el.textContent || '').replace(/\s+/g, ' ').trim();
       if (text.length > 80) return;
-      const m = text.match(/^([A-Za-z][A-Za-z\s]+?)\s*([\d,]+(?:\.\d+)?[KMBk%]?)$/);
+      const m = text.match(/^([A-Za-z][A-Za-z\s]+?)\s*([$€£¥]?[\d,]+(?:\.\d+)?[KMBk%]?)$/);
       if (!m) return;
-      const numVal = parseFloat(m[2].replace(/[,KMBk%]/g, ''));
+      const numVal = metricNumber(m[2]);
       addMetric(m[1], m[2], numVal > 10000 ? 'warn' : numVal > 0 ? 'ok' : 'neutral');
     });
 
@@ -490,6 +490,132 @@
         <div style="color:#f43f5e;">✕ Stale CI threshold exceeded <span style="color:#475569;">09:47:58</span></div>
       </div>`, 'StreamView · Live Log'),
 
+    card: () => staticRender(`
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;">
+          <div style="font-size:14px;font-weight:600;color:#e2e8f0;padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">Weekly summary</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.5;">Card body content goes in the slot.</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-top:3px solid #3b82f6;border-radius:12px;padding:14px 16px;">
+          <div style="font-size:14px;font-weight:600;color:#e2e8f0;padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">With accentColor</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.5;">A 3px top border in the color you pass.</div>
+        </div>
+      </div>`, 'Card · Title & Accent'),
+
+    table: () => staticRender(`
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr>
+            ${['Service', 'Region', 'Status'].map(h => `<th scope="col" style="text-align:left;padding:6px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;border-bottom:1px solid rgba(255,255,255,0.1);">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${[
+            { name: 'api-gateway', region: 'us-east', status: 'Healthy', color: '#10b981', bg: 'rgba(16,185,129,0.12)', stripe: false },
+            { name: 'billing', region: 'eu-west', status: 'Slow', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', stripe: true },
+            { name: 'search', region: 'us-west', status: 'Healthy', color: '#10b981', bg: 'rgba(16,185,129,0.12)', stripe: false },
+            { name: 'reports', region: 'ap-south', status: 'Idle', color: '#94a3b8', bg: 'rgba(148,163,184,0.12)', stripe: true },
+          ].map(r => `<tr style="background:${r.stripe ? 'rgba(255,255,255,0.03)' : 'transparent'};">
+            <th scope="row" style="text-align:left;padding:7px 8px;font-weight:600;color:#e2e8f0;border-bottom:1px solid rgba(255,255,255,0.05);">${r.name}</th>
+            <td style="padding:7px 8px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,0.05);">${r.region}</td>
+            <td style="padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;color:${r.color};background:${r.bg};">${r.status}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`, 'Table · Rows & Pills'),
+
+    chart: () => staticRender(`
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+          <div>
+            <div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;font-family:monospace;">Signal telemetry</div>
+            <div style="font-size:24px;font-weight:700;color:#f8fafc;margin-top:4px;letter-spacing:-0.02em;">94.2 req/s</div>
+          </div>
+          <span style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.25);font-size:11px;font-weight:600;font-family:monospace;padding:2px 7px;border-radius:6px;">+14.8%</span>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:5px;height:60px;padding-top:6px;">
+          ${[35, 55, 40, 80, 65, 95, 70, 88].map(v => `<div style="flex:1;height:${v}%;background:rgba(16,185,129,0.4);border-radius:3px 3px 0 0;"></div>`).join('')}
+        </div>
+      </div>`, 'Chart · Bars & Delta'),
+
+    badge: () => staticRender(`
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${[
+          { label: 'Default', color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' },
+          { label: 'Success', color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
+          { label: 'Warning', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+          { label: 'Error', color: '#f43f5e', bg: 'rgba(244,63,94,0.12)' },
+        ].map(b => `<span style="display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;font-family:monospace;padding:3px 8px;border-radius:6px;color:${b.color};background:${b.bg};">${b.label}</span>`).join('')}
+      </div>`, 'Badge · 4 Variants'),
+
+    alert: () => staticRender(`
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${[
+          { msg: 'A new version is available.', color: '#60a5fa', bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.3)' },
+          { msg: 'Changes saved.', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)' },
+          { msg: 'Storage is almost full.', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)' },
+          { msg: 'The request failed.', color: '#f43f5e', bg: 'rgba(244,63,94,0.1)', border: 'rgba(244,63,94,0.3)' },
+        ].map(a => `<div style="padding:10px 12px;border-radius:10px;font-size:12px;font-weight:500;line-height:1.5;color:${a.color};background:${a.bg};border:1px solid ${a.border};">${a.msg}</div>`).join('')}
+      </div>`, 'Alert · Info, Success, Warning, Error'),
+
+    spinner: () => staticRender(`
+      <div style="display:flex;align-items:center;gap:18px;">
+        <style>@keyframes sola-ext-spin{to{transform:rotate(360deg);}}</style>
+        ${[16, 24, 40].map(px => `<div style="width:${px}px;height:${px}px;border:2.5px solid rgba(255,255,255,0.1);border-top-color:#0ea5e9;border-radius:50%;animation:sola-ext-spin 0.6s linear infinite;"></div>`).join('')}
+        <span style="font-size:12px;color:#94a3b8;">Loading</span>
+      </div>`, 'Spinner · Sizes'),
+
+    textinput: () => staticRender(`
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:11px;color:#94a3b8;font-weight:600;letter-spacing:0.02em;">Project name</span>
+          <div style="padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:12px;font-size:13px;color:#e2e8f0;">Quarterly report</div>
+          <span style="font-size:11px;color:#64748b;">Shown on the dashboard.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:11px;color:#94a3b8;font-weight:600;letter-spacing:0.02em;">Contact email</span>
+          <div style="padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid #f43f5e;border-radius:12px;font-size:13px;color:#e2e8f0;">name@</div>
+          <span style="font-size:11px;color:#f43f5e;">Enter a valid email address.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;opacity:0.5;">
+          <span style="font-size:11px;color:#94a3b8;font-weight:600;letter-spacing:0.02em;">Disabled</span>
+          <div style="padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;font-size:13px;color:#64748b;">Enter value...</div>
+        </div>
+      </div>`, 'TextInput · Help, Error, Disabled'),
+
+    select: () => staticRender(`
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:11px;color:#94a3b8;font-weight:600;letter-spacing:0.02em;">Region</span>
+          <div style="position:relative;padding:8px 34px 8px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:13px;font-weight:500;color:#e2e8f0;">US East
+            <svg style="position:absolute;right:11px;top:11px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:11px;color:#94a3b8;font-weight:600;letter-spacing:0.02em;">Plan</span>
+          <div style="position:relative;padding:8px 34px 8px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:13px;font-weight:500;color:#64748b;">Choose an option...
+            <svg style="position:absolute;right:11px;top:11px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+      </div>`, 'Select · Selected & Placeholder'),
+
+    datepicker: () => staticRender(`
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;font-family:monospace;">Start date</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:12px;font-size:13px;color:#e2e8f0;">
+            <span>2026-03-14</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;font-family:monospace;">End date</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:12px;font-size:13px;color:#64748b;">
+            <span>Pick a date...</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+        </div>
+      </div>`, 'DatePicker · Value & Placeholder'),
+
     sentinel: () => staticRender(`
       <div style="display:flex;flex-direction:column;gap:8px;">
         ${[
@@ -587,9 +713,9 @@
         const text = el.textContent?.trim().replace(/\s+/g, ' ');
         if (!text || text.length === 0 || text.length > 80) return;
 
-        if (/^\d[\d,\.]*[KMBk%]?$/.test(text)) {
+        if (isMetricValue(text)) {
           collected.push({ type: 'value', text });
-        } else if (!/^\d/.test(text) && text.length > 1) {
+        } else if (!startsWithNumber(text) && text.length > 1) {
           collected.push({ type: 'label', text });
         }
       });
@@ -597,7 +723,7 @@
       // Pair consecutive label → value
       for (let i = 0; i < collected.length - 1; i++) {
         if (collected[i].type === 'label' && collected[i + 1].type === 'value') {
-          const numVal = parseFloat(collected[i + 1].text.replace(/[,KMBk%]/g, ''));
+          const numVal = metricNumber(collected[i + 1].text);
           const variant = numVal > 10000 ? 'warn' : numVal > 0 ? 'ok' : 'neutral';
           addMetric(collected[i].text, collected[i + 1].text, variant);
           i++; // skip the value we just consumed
@@ -610,7 +736,7 @@
           // look backwards for nearest unused label
           for (let j = i - 1; j >= 0; j--) {
             if (collected[j].type === 'label' && !seenLabels.has(collected[j].text.toLowerCase())) {
-              const numVal = parseFloat(collected[i].text.replace(/[,KMBk%]/g, ''));
+              const numVal = metricNumber(collected[i].text);
               addMetric(collected[j].text, collected[i].text, numVal > 10000 ? 'warn' : 'ok');
               break;
             }
