@@ -32,7 +32,8 @@ export function extensionFiles() {
   const iconDir = join(EXTENSION_DIR, 'icons');
   for (const name of readdirSync(iconDir).sort()) {
     if (statSync(join(iconDir, name)).isFile()) {
-      files.push({ name: `icons/${name}`, data: readFileSync(join(iconDir, name)) });
+      const data = readFileSync(join(iconDir, name));
+      files.push({ name: `icons/${name}`, data: name.endsWith('.svg') ? lf(data) : data });
     }
   }
   return files;
