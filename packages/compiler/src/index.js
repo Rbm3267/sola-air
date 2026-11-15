@@ -1310,7 +1310,7 @@ export function compile(source, options = {}) {
     if (node.type === 'text') {
       const text = escapeTemplateLiteral(node.data);
       if (text.trim().length > 0) {
-        const id = `t${uid++}`;
+        const id = `__t${uid++}`;
         domCode += `  const ${id} = document.createTextNode(\`${text}\`);\n`;
         domCode += `  ${parentVar}.appendChild(${id});\n`;
       }
@@ -1321,7 +1321,7 @@ export function compile(source, options = {}) {
       const raw = (node.attribs.expr || '').replace(/&quot;/g, '"');
       checkExpression(raw, 'template expression');
       const expr = rewrite(raw);
-      const id = `e${uid++}`;
+      const id = `__e${uid++}`;
       domCode += `  const ${id} = document.createTextNode('');\n`;
       domCode += `  ${parentVar}.appendChild(${id});\n`;
       // Parenthesize expr before `?? ''`: JS forbids mixing ?? with || or && at the
@@ -1338,7 +1338,7 @@ export function compile(source, options = {}) {
     // whatever markup they pass — same contract as innerHTML anywhere else.
     if (node.name === 'sola-html') {
       const expr = rewrite((node.attribs.expr || '').replace(/&quot;/g, '"'));
-      const id = `h${uid++}`;
+      const id = `__h${uid++}`;
       domCode += `  const ${id} = document.createElement('div');\n`;
       domCode += `  ${id}.style.display = 'contents';\n`;
       domCode += `  ${parentVar}.appendChild(${id});\n`;
@@ -1348,7 +1348,7 @@ export function compile(source, options = {}) {
 
     // Nested custom component
     if (importedComponentSet.has(node.name)) {
-      const cid = `comp${uid++}`;
+      const cid = `__comp${uid++}`;
       domCode += `  const ${cid}_target = document.createElement('div');\n`;
       domCode += `  ${cid}_target.className = 'sola-component-root';\n`;
       domCode += `  ${parentVar}.appendChild(${cid}_target);\n`;
@@ -1435,7 +1435,7 @@ export function compile(source, options = {}) {
     // scope, and switching or removing the branch destroys it, so nothing built
     // for a branch that is no longer on the page keeps running.
     if (node.name === 'sola-if') {
-      const cid = `c${uid++}`;
+      const cid = `__c${uid++}`;
       domCode += `  const ${cid}_a = document.createComment('if');\n`;
       domCode += `  ${parentVar}.appendChild(${cid}_a);\n`;
       domCode += `  let ${cid}_els = [];\n`;
@@ -1449,10 +1449,10 @@ export function compile(source, options = {}) {
         if (!branch) return;
         domCode += `      ${cid}_ctx = pushContext();\n`;
         domCode += `      try {\n`;
-        domCode += `      const f = document.createDocumentFragment();\n`;
-        branch.children.forEach(child => emitNode(child, 'f', locals, inSvg));
-        domCode += `      Array.from(f.childNodes).forEach(n => ${cid}_els.push(n));\n`;
-        domCode += `      ${cid}_a.parentNode.insertBefore(f, ${cid}_a.nextSibling);\n`;
+        domCode += `      const __f = document.createDocumentFragment();\n`;
+        branch.children.forEach(child => emitNode(child, '__f', locals, inSvg));
+        domCode += `      Array.from(__f.childNodes).forEach(n => ${cid}_els.push(n));\n`;
+        domCode += `      ${cid}_a.parentNode.insertBefore(__f, ${cid}_a.nextSibling);\n`;
         domCode += `      } finally { popContext(${cid}_ctx); }\n`;
       };
 
@@ -1474,7 +1474,7 @@ export function compile(source, options = {}) {
     // destroyed: the whole list for an unkeyed each, one scope per key for a
     // keyed one (so removing an item stops that item's effects and children).
     if (node.name === 'sola-each') {
-      const eid = `e${uid++}`;
+      const eid = `__e${uid++}`;
       // Item/index names shadow signals inside the loop body and key expression
       const eachLocals = new Set(locals);
       eachLocals.add(node.attribs.item);
@@ -1492,46 +1492,46 @@ export function compile(source, options = {}) {
         // against an anchor it never advanced — so reordering a keyed list (a
         // sort, a drag, a reverse) left the DOM in its original order, silently.
         domCode += `  let ${eid}_keyMap = new Map();\n`;
-        domCode += `  onDestroy(() => { for (const _e of ${eid}_keyMap.values()) __flush_destroys(_e.ctx); ${eid}_keyMap.clear(); });\n`;
+        domCode += `  onDestroy(() => { for (const __e of ${eid}_keyMap.values()) __flush_destroys(__e.ctx); ${eid}_keyMap.clear(); });\n`;
         domCode += `  createEffect(() => {\n`;
-        domCode += `    const _items = ${arrayExpr} || [];\n`;
-        domCode += `    const _parent = ${eid}_a.parentNode;\n`;
-        domCode += `    const _seen = new Set();\n`;
-        domCode += `    let _cursor = ${eid}_a.nextSibling;\n`;
-        domCode += `    for (let _i = 0; _i < _items.length; _i++) {\n`;
-        domCode += `      const ${node.attribs.item} = _items[_i];\n`;
-        if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;\n`;
-        domCode += `      const _key = String(${keyExpr});\n`;
-        domCode += `      _seen.add(_key);\n`;
-        domCode += `      let _entry = ${eid}_keyMap.get(_key);\n`;
+        domCode += `    const __items = ${arrayExpr} || [];\n`;
+        domCode += `    const __parent = ${eid}_a.parentNode;\n`;
+        domCode += `    const __seen = new Set();\n`;
+        domCode += `    let __cursor = ${eid}_a.nextSibling;\n`;
+        domCode += `    for (let __i = 0; __i < __items.length; __i++) {\n`;
+        domCode += `      const ${node.attribs.item} = __items[__i];\n`;
+        if (node.attribs.index) domCode += `      const ${node.attribs.index} = __i;\n`;
+        domCode += `      const __key = String(${keyExpr});\n`;
+        domCode += `      __seen.add(__key);\n`;
+        domCode += `      let __entry = ${eid}_keyMap.get(__key);\n`;
         // A row's bindings read the item it was built with. When the list hands
         // back a different object for the same key (an immutable update such as
         // items.map(i => i.id === id ? { ...i, done: true } : i)), or the index the
         // row shows has changed, rebuild that row; rows whose item is the same
         // object are kept as they are.
-        domCode += `      if (_entry && (_entry.item !== ${node.attribs.item}${node.attribs.index ? ` || _entry.index !== _i` : ''})) {\n`;
-        domCode += `        __flush_destroys(_entry.ctx);\n`;
-        domCode += `        const _old = _entry.nodes;\n`;
-        domCode += `        if (_old.includes(_cursor)) _cursor = _old[_old.length - 1].nextSibling;\n`;
-        domCode += `        _old.forEach(n => n.remove());\n`;
-        domCode += `        _entry = null;\n`;
+        domCode += `      if (__entry && (__entry.item !== ${node.attribs.item}${node.attribs.index ? ` || __entry.index !== __i` : ''})) {\n`;
+        domCode += `        __flush_destroys(__entry.ctx);\n`;
+        domCode += `        const __old = __entry.nodes;\n`;
+        domCode += `        if (__old.includes(__cursor)) __cursor = __old[__old.length - 1].nextSibling;\n`;
+        domCode += `        __old.forEach(n => n.remove());\n`;
+        domCode += `        __entry = null;\n`;
         domCode += `      }\n`;
-        domCode += `      if (!_entry) {\n`;
-        domCode += `        const _kctx = pushContext();\n`;
+        domCode += `      if (!__entry) {\n`;
+        domCode += `        const __kctx = pushContext();\n`;
         domCode += `        try {\n`;
-        domCode += `        const f = document.createDocumentFragment();\n`;
-        node.children.forEach(child => emitNode(child, 'f', eachLocals, inSvg));
-        domCode += `        _entry = { nodes: Array.from(f.childNodes), ctx: _kctx, item: ${node.attribs.item}${node.attribs.index ? ', index: _i' : ''} };\n`;
-        domCode += `        } finally { popContext(_kctx); }\n`;
-        domCode += `        ${eid}_keyMap.set(_key, _entry);\n`;
+        domCode += `        const __f = document.createDocumentFragment();\n`;
+        node.children.forEach(child => emitNode(child, '__f', eachLocals, inSvg));
+        domCode += `        __entry = { nodes: Array.from(__f.childNodes), ctx: __kctx, item: ${node.attribs.item}${node.attribs.index ? ', index: __i' : ''} };\n`;
+        domCode += `        } finally { popContext(__kctx); }\n`;
+        domCode += `        ${eid}_keyMap.set(__key, __entry);\n`;
         domCode += `      }\n`;
-        domCode += `      for (const _n of _entry.nodes) {\n`;
-        domCode += `        if (_n === _cursor) { _cursor = _cursor.nextSibling; }\n`;
-        domCode += `        else { _parent.insertBefore(_n, _cursor); }\n`;
+        domCode += `      for (const __n of __entry.nodes) {\n`;
+        domCode += `        if (__n === __cursor) { __cursor = __cursor.nextSibling; }\n`;
+        domCode += `        else { __parent.insertBefore(__n, __cursor); }\n`;
         domCode += `      }\n`;
         domCode += `    }\n`;
-        domCode += `    for (const [_k, _stale] of ${eid}_keyMap) {\n`;
-        domCode += `      if (!_seen.has(_k)) { __flush_destroys(_stale.ctx); _stale.nodes.forEach(n => n.remove()); ${eid}_keyMap.delete(_k); }\n`;
+        domCode += `    for (const [__k, __stale] of ${eid}_keyMap) {\n`;
+        domCode += `      if (!__seen.has(__k)) { __flush_destroys(__stale.ctx); __stale.nodes.forEach(n => n.remove()); ${eid}_keyMap.delete(__k); }\n`;
         domCode += `    }\n`;
         domCode += `  });\n`;
       } else {
@@ -1542,17 +1542,17 @@ export function compile(source, options = {}) {
         domCode += `  createEffect(() => {\n`;
         domCode += `    if (${eid}_ctx) { __flush_destroys(${eid}_ctx); ${eid}_ctx = null; }\n`;
         domCode += `    ${eid}_els.forEach(e => e.remove()); ${eid}_els = [];\n`;
-        domCode += `    const _items = ${arrayExpr} || [];\n`;
+        domCode += `    const __items = ${arrayExpr} || [];\n`;
         domCode += `    ${eid}_ctx = pushContext();\n`;
         domCode += `    try {\n`;
-        domCode += `    const f = document.createDocumentFragment();\n`;
-        domCode += `    for (let _i = 0; _i < _items.length; _i++) {\n`;
-        domCode += `      const ${node.attribs.item} = _items[_i];\n`;
-        if (node.attribs.index) domCode += `      const ${node.attribs.index} = _i;\n`;
-        node.children.forEach(child => emitNode(child, 'f', eachLocals, inSvg));
+        domCode += `    const __f = document.createDocumentFragment();\n`;
+        domCode += `    for (let __i = 0; __i < __items.length; __i++) {\n`;
+        domCode += `      const ${node.attribs.item} = __items[__i];\n`;
+        if (node.attribs.index) domCode += `      const ${node.attribs.index} = __i;\n`;
+        node.children.forEach(child => emitNode(child, '__f', eachLocals, inSvg));
         domCode += `    }\n`;
-        domCode += `    Array.from(f.childNodes).forEach(n => ${eid}_els.push(n));\n`;
-        domCode += `    ${eid}_a.parentNode.insertBefore(f, ${eid}_a.nextSibling);\n`;
+        domCode += `    Array.from(__f.childNodes).forEach(n => ${eid}_els.push(n));\n`;
+        domCode += `    ${eid}_a.parentNode.insertBefore(__f, ${eid}_a.nextSibling);\n`;
         domCode += `    } finally { popContext(${eid}_ctx); }\n`;
         domCode += `  });\n`;
       }
@@ -1562,7 +1562,7 @@ export function compile(source, options = {}) {
     // Normal element
     const isSvg = inSvg || node.name === 'svg';
     const childSvg = isSvg && node.name !== 'foreignObject';
-    const id = `n${uid++}`;
+    const id = `__n${uid++}`;
     if (isSvg) {
       domCode += `  const ${id} = document.createElementNS('http://www.w3.org/2000/svg', '${node.name}');\n`;
     } else {
