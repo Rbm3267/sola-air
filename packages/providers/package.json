@@ -8,7 +8,8 @@
     "./anthropic": "./src/anthropic.js",
     "./openai": "./src/openai.js",
     "./gemini": "./src/gemini.js",
-    "./ollama": "./src/ollama.js"
+    "./ollama": "./src/ollama.js",
+    "./huggingface": "./src/huggingface.js"
   },
   "scripts": {
     "test": "node --test test/*.test.js"

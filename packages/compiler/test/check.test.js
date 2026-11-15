@@ -53,6 +53,23 @@ describe('checkSource', () => {
     const src = `<script>const s = '{#if x}';\nlet a=$state(1);</script>\n<p>{a}</p>\n<style>/* {:else} */ p{color:red}</style>`;
     assert.deepStrictEqual(codes(src), []);
   });
+
+  it('flags calling .set() or .update() on a $state variable as SOLA002', () => {
+    const src1 = `<script>let count = $state(0); function inc() { count.update(n => n + 1); }</script><p>{count}</p>`;
+    assert.deepStrictEqual(codes(src1), ['SOLA002']);
+    const src2 = `<script>let tab = $state('home'); function setTab(t) { tab.set(t); }</script><p>{tab}</p>`;
+    assert.deepStrictEqual(codes(src2), ['SOLA002']);
+    const srcDerived = `<script>let a = $state(1); let b = $derived(a * 2); function bad() { b.set(4); }</script><p>{b}</p>`;
+    assert.deepStrictEqual(codes(srcDerived), ['SOLA002']);
+    const srcMultiple = `<script>let x = $state(1); let y = $state(2); function inc() { x += 1; y.update(n => n + 1); }</script>`;
+    assert.deepStrictEqual(codes(srcMultiple), ['SOLA002']);
+    const srcDollarVar = `<script>let $foo = $state(0); function inc() { $foo.set(1); }</script>`;
+    assert.deepStrictEqual(codes(srcDollarVar), ['SOLA002']);
+    const srcTemplateSafe = `<script>let a = $state(0);</script><p>Text saying "let x = $state(0); x.set()" should not trigger false positives</p>`;
+    assert.deepStrictEqual(codes(srcTemplateSafe), []);
+    const valid = `<script>let count = $state(0); function inc() { count += 1; }</script><p>{count}</p>`;
+    assert.deepStrictEqual(codes(valid), []);
+  });
 });
 
 describe('sola-check CLI', () => {

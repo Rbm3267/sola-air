@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { GeminiProvider } from '../src/gemini.js';
 import { OpenAIProvider, AzureOpenAIProvider } from '../src/openai.js';
+import { HuggingFaceProvider } from '../src/huggingface.js';
 
 describe('@sola-air-ui/providers', () => {
   it('GeminiProvider uses ?key= for non-streaming and &key= for streaming', async () => {
@@ -92,6 +93,66 @@ describe('@sola-air-ui/providers', () => {
       assert.strictEqual(captured.init.headers['Authorization'], 'Bearer sk-test');
       // Only Azure needs the key in a second header; don't send it to anyone else.
       assert.strictEqual(captured.init.headers['api-key'], undefined);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
+
+  it('HuggingFaceProvider sends Bearer token and targets HF router endpoint', async () => {
+    const realFetch = globalThis.fetch;
+    let captured = null;
+    globalThis.fetch = async (url, init) => {
+      captured = { url, init };
+      return {
+        ok: true,
+        json: async () => ({ choices: [{ message: { content: 'hf-ok' } }] })
+      };
+    };
+
+    try {
+      const hf = HuggingFaceProvider({
+        apiKey: 'hf_secret_123',
+        model: 'bennett-xdlabs/sola-air-1.5b'
+      });
+
+      const res = await hf.handler({
+        json: async () => ({ messages: [{ role: 'user', content: 'build stat card' }], stream: false })
+      });
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(
+        captured.url,
+        'https://api-inference.huggingface.co/models/bennett-xdlabs/sola-air-1.5b/v1/chat/completions'
+      );
+      assert.strictEqual(captured.init.headers['Authorization'], 'Bearer hf_secret_123');
+
+      // Test streaming
+      globalThis.fetch = async (url, init) => {
+        let sent = false;
+        return {
+          ok: true,
+          body: {
+            getReader() {
+              return {
+                async read() {
+                  if (sent) return { done: true, value: undefined };
+                  sent = true;
+                  return {
+                    done: false,
+                    value: new TextEncoder().encode('data: {"choices":[{"delta":{"content":"token1"}}]}\ndata: [DONE]\n\n')
+                  };
+                },
+                releaseLock() {}
+              };
+            }
+          }
+        };
+      };
+
+      const streamRes = await hf.handler({
+        json: async () => ({ messages: [{ role: 'user', content: 'test stream' }], stream: true })
+      });
+      assert.strictEqual(streamRes.status, 200);
+      assert.strictEqual(streamRes.headers.get('Content-Type'), 'text/event-stream');
     } finally {
       globalThis.fetch = realFetch;
     }

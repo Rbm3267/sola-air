@@ -75,7 +75,8 @@
         { id: 'event-bus', title: 'Event Bus' },
         { id: 'relay-saas', title: 'Sola Relay SaaS' },
         { id: 'mcp', title: 'MCP Server' },
-        { id: 'llm-spec', title: 'AI Prompting Spec' }
+        { id: 'llm-spec', title: 'AI Prompting Spec' },
+        { id: 'sola-local-model', title: 'sola-air-1.5b Local Model', badge: 'Hugging Face' }
       ]
     }
   ];
@@ -1254,6 +1255,112 @@ export function SolaWidget({ title, value }) {
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">System prompt</h2>
             <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-blue-300 leading-relaxed overflow-x-auto">
               <pre><code>{llmSystemPrompt}</code></pre>
+            </div>
+          </section>
+        </article>
+      {:else if activeSection === 'sola-local-model'}
+        <article class="space-y-8">
+          <header class="space-y-2 pb-6 border-b border-slate-900/[0.04] dark:border-white/[0.05]">
+            <div class="flex items-center gap-2">
+              <p class="text-xs font-mono font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Local Edge AI</p>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">Hugging Face Release</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              sola-air-1.5b Local Model
+            </h1>
+            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-[68ch]">
+              A specialized 1.5B local model fine-tuned for high-speed <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">.sola</code> component synthesis, zero-hallucination AST compilation, and edge UI generation.
+            </p>
+          </header>
+
+          <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Overview & Architecture</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              Standard coding models frequently leak React <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">useState</code> hooks, Vue directives, or conversational pleasantries when asked to write single-file components. <strong class="text-slate-900 dark:text-white">sola-air-1.5b</strong> was fine-tuned from <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">Qwen2.5-Coder-1.5B-Instruct</code> using QLoRA to directly emit valid Sola AST components with strict ASD-STE100 technical discipline.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10">
+                <div class="text-2xl font-bold text-slate-900 dark:text-white">986 MB</div>
+                <div class="text-xs text-slate-500 mt-1">VRAM Footprint (Q4_K_M)</div>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10">
+                <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">&ge; 90%</div>
+                <div class="text-xs text-slate-500 mt-1">AST Compile Pass Rate</div>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10">
+                <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">28.7 tok/s</div>
+                <div class="text-xs text-slate-500 mt-1">Speed on Quadro P620 (2GB)</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">1-Click Quickstart with Ollama</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+              You can run the model locally using Ollama on macOS, Linux, or Windows:
+            </p>
+            <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 font-mono text-xs text-emerald-300 leading-relaxed overflow-x-auto">
+              <pre><code># 1. Download model & recipe from Hugging Face
+hf download bennett-xdlabs/sola-air-1.5b sola-air-1.5b-q4_k_m.gguf
+hf download bennett-xdlabs/sola-air-1.5b Modelfile
+
+# 2. Register with Ollama
+ollama create sola-air-1.5b -f Modelfile
+
+# 3. Generate components locally
+ollama run sola-air-1.5b "Build a telemetry KPI badge in .sola"</code></pre>
+            </div>
+          </section>
+
+          <section class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Benchmark vs Base Model</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse border border-slate-200 dark:border-white/10">
+                <thead>
+                  <tr class="bg-slate-100 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
+                    <th class="p-3 font-semibold">Certification Metric</th>
+                    <th class="p-3 font-semibold">Base Model (1.5B)</th>
+                    <th class="p-3 font-semibold text-emerald-600 dark:text-emerald-400">Sola AIR 1.5B</th>
+                    <th class="p-3 font-semibold">Improvement</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 dark:divide-white/5 text-slate-600 dark:text-slate-400">
+                  <tr>
+                    <td class="p-3 font-medium text-slate-900 dark:text-white">.sola AST Compile Pass Rate</td>
+                    <td class="p-3">35.0%</td>
+                    <td class="p-3 font-semibold text-emerald-600 dark:text-emerald-400">&ge; 90.0%</td>
+                    <td class="p-3">+157% relative gain</td>
+                  </tr>
+                  <tr>
+                    <td class="p-3 font-medium text-slate-900 dark:text-white">Raw HTML Fences</td>
+                    <td class="p-3">35.0%</td>
+                    <td class="p-3 font-semibold text-emerald-600 dark:text-emerald-400">0.0%</td>
+                    <td class="p-3">100% eliminated</td>
+                  </tr>
+                  <tr>
+                    <td class="p-3 font-medium text-slate-900 dark:text-white">Chatbot Residue / Apologies</td>
+                    <td class="p-3">30.0%</td>
+                    <td class="p-3 font-semibold text-emerald-600 dark:text-emerald-400">0.0%</td>
+                    <td class="p-3">100% eliminated</td>
+                  </tr>
+                  <tr>
+                    <td class="p-3 font-medium text-slate-900 dark:text-white">Framework Leaks (useState)</td>
+                    <td class="p-3">65.0%</td>
+                    <td class="p-3 font-semibold text-emerald-600 dark:text-emerald-400">0.0%</td>
+                    <td class="p-3">100% eliminated</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pt-2">
+              <a 
+                href="https://huggingface.co/bennett-xdlabs/sola-air-1.5b" 
+                target="_blank" 
+                rel="noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors shadow-sm">
+                <span>View on Hugging Face</span>
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
             </div>
           </section>
         </article>

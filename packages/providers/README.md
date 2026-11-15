@@ -29,14 +29,15 @@ Wire this into whatever API route your framework compiles `$intent` calls to hit
 
 ## Supported providers
 
-| Provider | Import path |
-|---|---|
-| Anthropic (Claude) | `@sola-air-ui/providers/anthropic` |
-| OpenAI | `@sola-air-ui/providers/openai` |
-| Google Gemini | `@sola-air-ui/providers/gemini` |
-| Ollama (local models) | `@sola-air-ui/providers/ollama` |
+| Provider | Import path | Notes |
+|---|---|---|
+| Hugging Face Hub | `@sola-air-ui/providers/huggingface` | Supports `bennett-xdlabs/sola-air-1.5b` via Serverless API & Endpoints |
+| Ollama (local models) | `@sola-air-ui/providers/ollama` | Zero-API-key local inference (`sola-air-1.5b`, `llama3.2`, etc.) |
+| Anthropic (Claude) | `@sola-air-ui/providers/anthropic` | Claude 3.5 Sonnet / Haiku |
+| OpenAI | `@sola-air-ui/providers/openai` | GPT-4o / Azure OpenAI |
+| Google Gemini | `@sola-air-ui/providers/gemini` | Gemini 2.5 Flash / Thinking |
 
-All four adapters support streaming responses.
+All adapters support streaming responses.
 
 ## License
 

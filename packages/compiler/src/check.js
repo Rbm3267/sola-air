@@ -11,7 +11,8 @@ import { compile } from './index.js';
 
 export const RULES = {
   SOLA000: 'compile error',
-  SOLA001: 'unbalanced block'
+  SOLA001: 'unbalanced block',
+  SOLA002: 'invalid state store method'
 };
 
 // Blank out <script> and <style> bodies and HTML comments, keeping newlines so
@@ -26,6 +27,10 @@ function position(source, index) {
   const before = source.slice(0, index);
   const line = before.split('\n').length;
   return { line, column: index - before.lastIndexOf('\n') };
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function matchBrace(text, openPos) {
@@ -117,6 +122,35 @@ export function checkSource(source, filename = 'component.sola') {
     }
   }
   for (const open of stack) add(open.at, 'error', 'SOLA001', `\`{#${open.kind}}\` is never closed. It renders as literal text.`);
+
+  // Detect Svelte store anti-patterns (.set() or .update() on $state / $derived variables).
+  // In Sola, variables are assigned directly (x = ... or x += 1). Calling .set() or .update()
+  // compiles to getter invocation like x().set(...), triggering a runtime TypeError.
+  const stateVarNames = new Set();
+  const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+  let scriptMatch;
+  while ((scriptMatch = scriptRegex.exec(source))) {
+    const scriptBody = scriptMatch[1];
+    const stateDeclRegex = /\b(?:let|const|var)\s+([\w$]+)\s*=\s*\$(?:state|derived)\b/g;
+    let declMatch;
+    while ((declMatch = stateDeclRegex.exec(scriptBody))) {
+      stateVarNames.add(declMatch[1]);
+    }
+  }
+
+  for (const name of stateVarNames) {
+    const escaped = escapeRegex(name);
+    const invalidMethodRegex = new RegExp(`(?<![\\w$])${escaped}\\s*\\.\\s*(set|update)\\s*\\(`, 'g');
+    let m;
+    while ((m = invalidMethodRegex.exec(source))) {
+      add(
+        m.index,
+        'error',
+        'SOLA002',
+        `Cannot call .${m[1]}() on reactive state '${name}'. In Sola, assign directly (${name} = ... or ${name} += 1). The compiler rewrites assignments to setters; calling .${m[1]}() causes a runtime TypeError.`
+      );
+    }
+  }
 
   return diagnostics.sort((a, b) => a.line - b.line || a.column - b.column);
 }

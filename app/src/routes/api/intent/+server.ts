@@ -61,11 +61,12 @@ export async function POST({ request, getClientAddress }) {
     }
 
     const apiKey = GEMINI_API_KEY;
+    const isLocalSola = data.mode === 'sola' && (data.provider === 'ollama' || data.model === 'sola-air-1.5b');
 
-    if (!apiKey && (data.mode === 'studio' || data.mode === 'sola')) {
+    if (!isLocalSola && !apiKey && (data.mode === 'studio' || data.mode === 'sola')) {
       return json({ error: 'Arc is offline: this server has no model key configured.' }, { status: 503 });
     }
-    if (!apiKey) {
+    if (!isLocalSola && !apiKey) {
       return json({ 
         reply: "Sola Arc is offline because no GEMINI_API_KEY is set on this server. Sola components compile to plain DOM updates with @sola-air-ui/compiler. Set the key to get live answers." 
       });
@@ -152,6 +153,37 @@ Return only the contents of the file. No code fences, no commentary.`;
       const fix = previous
         ? `\n\nYour previous attempt did not work.\nError: ${problem || 'it did not compile'}\n\nPrevious file:\n${previous}\n\nReturn the corrected whole file.`
         : '';
+
+      if (isLocalSola) {
+        const ollamaHost = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434';
+        try {
+          const oRes = await fetch(`${ollamaHost}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: 'xdlabs:sola',
+              messages: [{ role: 'user', content: writer + '\n\nBuild this: ' + ask + fix }],
+              options: { temperature: 0.2, top_p: 0.9 },
+              stream: false
+            })
+          });
+
+          if (oRes.ok) {
+            const oJson = await oRes.json();
+            let source = (oJson.message?.content || '').trim();
+            const fenced = source.match(/^```[a-z]*\n([\s\S]*?)\n```$/i);
+            if (fenced) source = fenced[1].trim();
+            if (source.includes('<script') || source.includes('<')) {
+              return json({ source, model: 'sola-air-1.5b (Ollama)' });
+            }
+          }
+        } catch (err) {
+          console.warn('[sola-air] Local Ollama call failed:', (err as Error).message);
+          if (!apiKey) {
+            return json({ error: 'Local sola-air-1.5b model is unreachable on localhost:11434, and no cloud model key is configured.' }, { status: 503 });
+          }
+        }
+      }
 
       const response = await generate('sola', {
         model: 'gemini-3.6-flash',
