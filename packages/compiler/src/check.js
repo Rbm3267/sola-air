@@ -11,8 +11,32 @@ import { compile } from './index.js';
 
 export const RULES = {
   SOLA000: 'compile error',
-  SOLA001: 'unbalanced block'
+  SOLA001: 'unbalanced block',
+  SOLA002: 'state written with .set() or .update()'
 };
+
+// A `$state` / `$persist` name is its signal getter, so `count.set(1)` compiles
+// to `count().set(1)` and throws when it runs. State is written by assignment.
+function checkSetterCalls(source, add) {
+  const scripts = [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m) => m[1]).join('\n');
+  const names = new Set();
+  for (const m of scripts.matchAll(/\b(?:let|var|const)\s+([\w$]+)\s*=\s*\$(?:state|persist)\s*\(/g)) names.add(m[1]);
+  if (!names.size) return;
+  const blank = (m) => m.replace(/[^\n]/g, ' ');
+  const code = source
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, blank)
+    .replace(/<!--[\s\S]*?-->/g, blank)
+    .replace(/\/\*[\s\S]*?\*\//g, blank)
+    .replace(/(^|[^:])\/\/[^\n]*/g, (m, pre) => pre + blank(m.slice(pre.length)));
+  const call = /(?<![\w$.])([\w$]+)(\(\))?\s*\.\s*(set|update)\s*\(/g;
+  let m;
+  while ((m = call.exec(code))) {
+    const [, name, , method] = m;
+    if (!names.has(name)) continue;
+    const fix = method === 'set' ? `${name} = value` : `${name} = fn(${name})`;
+    add(m.index, 'error', 'SOLA002', `\`${name}.${method}()\` throws at runtime: \`${name}\` is state, which is written by assignment. Use \`${fix}\`.`);
+  }
+}
 
 // Blank out <script> and <style> bodies and HTML comments, keeping newlines so
 // line numbers hold. A commented-out block is not a block.
@@ -67,6 +91,8 @@ export function checkSource(source, filename = 'component.sola') {
       message: err.message.replace(/^\[sola compiler\]\s*/, '').split('\n').map((s) => s.trim()).filter(Boolean).join(' ')
     });
   }
+
+  checkSetterCalls(source, add);
 
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;

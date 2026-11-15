@@ -7,8 +7,8 @@ export interface Diagnostic {
   /** 1-based. */
   column: number;
   severity: 'error' | 'warning';
-  /** SOLA000 compile error, SOLA001 unbalanced block. */
-  code: 'SOLA000' | 'SOLA001';
+  /** SOLA000 compile error, SOLA001 unbalanced block, SOLA002 state written with .set() or .update(). */
+  code: 'SOLA000' | 'SOLA001' | 'SOLA002';
   message: string;
 }
 

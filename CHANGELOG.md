@@ -4,6 +4,20 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
 ## Unreleased
 
+### Compiler (`@sola-air-ui/compiler`)
+
+- **Added**: `sola-check` rule `SOLA002` flags `.set()` or `.update()` called on a `$state` or
+  `$persist` variable. It compiles to `count().set(...)`, which throws when it runs. State is
+  written by assignment (`count += 1`).
+
+### Model certification
+
+- **Added**: `scripts/run-certification.mjs` runs the 20-prompt benchmark for the
+  `sola-air-1.5b` model against a local Ollama. It writes results to `--out` (default
+  `certification-results.json`) and exits 1 when the gate fails. The framework-syntax check now
+  catches `className=`, `@click=`, `useEffect(` and `v-if`; the old pattern never matched
+  `className=`.
+
 ### Skill (`sola-ui`)
 
 - **Changed**: the plugin's `.claude-plugin/icon.png` is a 512×512 copy of the logo

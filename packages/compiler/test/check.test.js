@@ -44,6 +44,20 @@ describe('checkSource', () => {
     assert.deepStrictEqual(codes(`<script>let a=$state(1);</script>\n{#if a}<p>1</p>{:else if}<p>2</p>{/if}`), ['SOLA001']);
   });
 
+  it('flags .set() and .update() on state as SOLA002, which compile but throw when run', () => {
+    assert.deepStrictEqual(codes(`<script>let n=$state(0); function f(){ n.update(x=>x+1); }</script><p>{n}</p>`), ['SOLA002']);
+    assert.deepStrictEqual(codes(`<script>let t=$state('a');</script><button onclick={() => t.set('b')}>{t}</button>`), ['SOLA002']);
+    assert.deepStrictEqual(codes(`<script>let t=$state('a'); function f(){ t().set('b'); }</script><p>{t}</p>`), ['SOLA002']);
+    assert.deepStrictEqual(codes(`<script>let o=$persist('k', false); function f(){ o.set(true); }</script><p>{o}</p>`), ['SOLA002']);
+  });
+
+  it('allows assignment, and .set() on things that are not state', () => {
+    assert.deepStrictEqual(codes(`<script>let n=$state(0); function f(){ n += 1; }</script><p>{n}</p>`), []);
+    assert.deepStrictEqual(codes(`<script>const m=new Map(); let n=$state(0); function f(){ m.set('a',1); }</script><p>{n}</p>`), []);
+    assert.deepStrictEqual(codes(`<script>let n=$state(0); const o={n:{set(){}}}; function f(){ o.n.set(1); }</script><p>{n}</p>`), []);
+    assert.deepStrictEqual(codes(`<script>let n=$state(0); // n.set(1) is wrong\n</script><p>{n}</p>`), []);
+  });
+
   it('ignores a commented-out block', () => {
     const src = `<script>let a=$state(1);</script>\n<!-- {#if a} old branch -->\n<p>{a}</p>\n<!--\n  {:else}\n-->`;
     assert.deepStrictEqual(codes(src), []);

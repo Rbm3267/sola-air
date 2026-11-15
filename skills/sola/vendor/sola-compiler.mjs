@@ -1687,6 +1687,22 @@ function buildDeclarations(props, exportStyles) {
 }
 
 // packages/compiler/src/check.js
+function checkSetterCalls(source, add) {
+  const scripts = [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((m2) => m2[1]).join("\n");
+  const names = /* @__PURE__ */ new Set();
+  for (const m2 of scripts.matchAll(/\b(?:let|var|const)\s+([\w$]+)\s*=\s*\$(?:state|persist)\s*\(/g)) names.add(m2[1]);
+  if (!names.size) return;
+  const blank = (m2) => m2.replace(/[^\n]/g, " ");
+  const code = source.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, blank).replace(/<!--[\s\S]*?-->/g, blank).replace(/\/\*[\s\S]*?\*\//g, blank).replace(/(^|[^:])\/\/[^\n]*/g, (m2, pre) => pre + blank(m2.slice(pre.length)));
+  const call = /(?<![\w$.])([\w$]+)(\(\))?\s*\.\s*(set|update)\s*\(/g;
+  let m;
+  while (m = call.exec(code)) {
+    const [, name, , method] = m;
+    if (!names.has(name)) continue;
+    const fix = method === "set" ? `${name} = value` : `${name} = fn(${name})`;
+    add(m.index, "error", "SOLA002", `\`${name}.${method}()\` throws at runtime: \`${name}\` is state, which is written by assignment. Use \`${fix}\`.`);
+  }
+}
 function maskNonTemplate(source) {
   return source.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, (m) => m.replace(/[^\n]/g, " ")).replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, " "));
 }
@@ -1735,6 +1751,7 @@ function checkSource(source, filename = "component.sola") {
       message: err.message.replace(/^\[sola compiler\]\s*/, "").split("\n").map((s) => s.trim()).filter(Boolean).join(" ")
     });
   }
+  checkSetterCalls(source, add);
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;
   const stack = [];
