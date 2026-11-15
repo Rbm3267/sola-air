@@ -978,9 +978,11 @@ function compile(source, options = {}) {
       }
     },
     ontext(text) {
-      if (text.trim().length > 0 && templateNodes.length > 0) {
-        templateNodes[templateNodes.length - 1].children.push({ type: "text", data: text });
-      }
+      if (templateNodes.length === 0) return;
+      const siblings = templateNodes[templateNodes.length - 1].children;
+      const last = siblings[siblings.length - 1];
+      if (last && last.type === "text") last.data += text;
+      else siblings.push({ type: "text", data: text });
     },
     onclosetag(name) {
       if (templateNodes.length > 1 && !VOID_ELEMENTS.has(name)) {
@@ -990,6 +992,14 @@ function compile(source, options = {}) {
   }, { recognizeSelfClosing: true, lowerCaseTags: false, lowerCaseAttributeNames: false });
   parser.write(rawTemplate.trim() || "<div></div>");
   parser.end();
+  (function link(node) {
+    const kids = node.children || [];
+    kids.forEach((k, i) => {
+      Object.defineProperty(k, "prev", { value: kids[i - 1] || null, enumerable: false, configurable: true });
+      Object.defineProperty(k, "next", { value: kids[i + 1] || null, enumerable: false, configurable: true });
+      link(k);
+    });
+  })(root);
   const strippedScript = scriptContent.trim() && isTypeScript ? stripTypeScript(scriptContent) : scriptContent;
   let jsOutput = strippedScript;
   const stateVars = /* @__PURE__ */ new Set();
@@ -1168,6 +1178,15 @@ function compile(source, options = {}) {
 `;
         domCode += `  ${parentVar}.appendChild(${id2});
 `;
+      } else if (text.length > 0 && node.prev && node.next) {
+        const isExpr = (n) => n.name === "sola-expr";
+        if (!text.includes("\n") || isExpr(node.prev) && isExpr(node.next)) {
+          const id2 = `__t${uid++}`;
+          domCode += `  const ${id2} = document.createTextNode(' ');
+`;
+          domCode += `  ${parentVar}.appendChild(${id2});
+`;
+        }
       }
       return;
     }

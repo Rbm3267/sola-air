@@ -13,6 +13,10 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
   compiled output, so it sees the same scopes the browser does, and it allows JavaScript and
   browser globals. In the last benchmark run it caught the four outputs that compiled but
   failed to mount (Badge, RatingStars, SearchInput, Timer).
+- **Fixed**: a space between two expressions was dropped, so `{value} {unit}` rendered as
+  `5km`. The same happened between inline elements (`<b>1</b> <i>2</i>`). A same-line space
+  between siblings, and any gap between two expressions, is now kept. Indentation between
+  block elements is still dropped.
 
 ## 2026-11-15: providers 1.0.4
 

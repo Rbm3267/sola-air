@@ -146,6 +146,15 @@ test('each item shadows a signal of the same name', () => {
 // plain names like f, n0, e1, _items and _i. A loop variable with one of those
 // names shadowed the fragment ({#each tags as f} threw "f.appendChild is not a
 // function"), and a script variable with one was declared twice.
+test('a space between two expressions or inline elements is kept; indentation is not', () => {
+  const spaces = (src) => (compile(src).code.match(/createTextNode\(' '\)/g) || []).length;
+  assert.strictEqual(spaces(`<script>let a = $state(5); let u = 'km';</script><p>{a} {u}</p>`), 1);
+  assert.strictEqual(spaces(`<script>let a = 1; let b = 2;</script><p>{a}\n  {b}</p>`), 1);
+  assert.strictEqual(spaces(`<p><b>1</b> <i>2</i></p>`), 1);
+  assert.strictEqual(spaces(`<div>\n  <p>x</p>\n  <p>y</p>\n</div>`), 0);
+  assert.strictEqual(spaces(`<p> {1} </p>`), 0);
+});
+
 test('user names never collide with generated variables', () => {
   for (const name of ['f', 'n0', 'e1', 'c2', 't3', 'h4', 'comp5', '_items', '_i', '_key', '_entry', '_cursor']) {
     const keyed = compile(`<script>let list = $state(['a']);</script><ul>{#each list as ${name} (${name})}<li>{${name}}</li>{/each}</ul>`).code;

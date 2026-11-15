@@ -1054,9 +1054,14 @@ export function compile(source, options = {}) {
       }
     },
     ontext(text) {
-      if (text.trim().length > 0 && templateNodes.length > 0) {
-        templateNodes[templateNodes.length - 1].children.push({ type: 'text', data: text });
-      }
+      if (templateNodes.length === 0) return;
+      // Keep whitespace-only text too: emitNode decides whether it is a real
+      // space (`{value} {unit}`) or indentation. The parser can split one run
+      // of text across several calls, so join it to a preceding text node.
+      const siblings = templateNodes[templateNodes.length - 1].children;
+      const last = siblings[siblings.length - 1];
+      if (last && last.type === 'text') last.data += text;
+      else siblings.push({ type: 'text', data: text });
     },
     onclosetag(name) {
       if (templateNodes.length > 1 && !VOID_ELEMENTS.has(name)) {
@@ -1067,6 +1072,16 @@ export function compile(source, options = {}) {
 
   parser.write(rawTemplate.trim() || '<div></div>');
   parser.end();
+
+  // Link siblings so a whitespace text node can see what it sits between.
+  (function link(node) {
+    const kids = node.children || [];
+    kids.forEach((k, i) => {
+      Object.defineProperty(k, 'prev', { value: kids[i - 1] || null, enumerable: false, configurable: true });
+      Object.defineProperty(k, 'next', { value: kids[i + 1] || null, enumerable: false, configurable: true });
+      link(k);
+    });
+  })(root);
 
   // Parse JS AST with Acorn
   // Strip TS first — AST positions and all slice() calls operate on the stripped source.
@@ -1313,6 +1328,17 @@ export function compile(source, options = {}) {
         const id = `__t${uid++}`;
         domCode += `  const ${id} = document.createTextNode(\`${text}\`);\n`;
         domCode += `  ${parentVar}.appendChild(${id});\n`;
+      } else if (text.length > 0 && node.prev && node.next) {
+        // Whitespace between two siblings. Indentation between block elements
+        // (it spans a line break) is dropped, but a same-line gap like
+        // `{value} {unit}` or `<b>a</b> <i>b</i>` is a real space, and so is any
+        // gap between two expressions. Without it `{value} {unit}` rendered `5km`.
+        const isExpr = (n) => n.name === 'sola-expr';
+        if (!text.includes('\n') || (isExpr(node.prev) && isExpr(node.next))) {
+          const id = `__t${uid++}`;
+          domCode += `  const ${id} = document.createTextNode(' ');\n`;
+          domCode += `  ${parentVar}.appendChild(${id});\n`;
+        }
       }
       return;
     }
