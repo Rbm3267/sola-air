@@ -103,7 +103,7 @@
                 <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   sola-air-1.5b
                 </h3>
-                <span class="inline-flex items-center text-[10px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-200/80 dark:border-amber-500/20 font-semibold">Model</span>
+                <span class="inline-flex items-center text-xs font-mono uppercase tracking-wider text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-200/80 dark:border-amber-500/20 font-semibold">Model</span>
               </div>
               <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
                 Domain-adapted 1.5B edge model on Hugging Face for single-file reactive component synthesis. 986 MB Q4_K_M GGUF, 28+ tok/s locally, and 0% framework hallucination.
@@ -114,7 +114,7 @@
                 <span>Hugging Face</span>
                 <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
               </a>
-              <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded-md">Ollama</span>
+              <span class="text-xs font-mono text-slate-700 dark:text-slate-300 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded-md">Ollama</span>
             </div>
           </div>
 

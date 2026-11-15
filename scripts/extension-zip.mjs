@@ -20,8 +20,15 @@ export const ZIP_PATH = join(EXTENSION_DIR, 'sola-extension.zip');
 // What ships in the extension. Tests, store assets and the zip itself do not.
 const TOP_LEVEL = ['manifest.json', 'background.js', 'codegen.js', 'content.js', 'sidepanel.html', 'sidepanel.js'];
 
+// Text files go in with LF line endings, as git stores them. A Windows checkout
+// has CRLF in the working copy, and the zip has to come out the same on every
+// platform, or CI (Linux) sees a zip built on Windows as stale.
+function lf(buf) {
+  return Buffer.from(buf.toString('utf8').replace(/\r\n/g, '\n'), 'utf8');
+}
+
 export function extensionFiles() {
-  const files = TOP_LEVEL.map((name) => ({ name, data: readFileSync(join(EXTENSION_DIR, name)) }));
+  const files = TOP_LEVEL.map((name) => ({ name, data: lf(readFileSync(join(EXTENSION_DIR, name))) }));
   const iconDir = join(EXTENSION_DIR, 'icons');
   for (const name of readdirSync(iconDir).sort()) {
     if (statSync(join(iconDir, name)).isFile()) {
