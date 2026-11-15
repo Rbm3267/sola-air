@@ -36,7 +36,7 @@ npx sola build App.sola
 npx sola-check src/
 ```
 
-`sola-check` validates `.sola` files on disk (pass `--json` for machine-readable output), reporting syntax errors (`SOLA000`) and unbalanced or malformed `{#if}` / `{#each}` / `{:else}` blocks (`SOLA001`).
+`sola-check` validates `.sola` files on disk (pass `--json` for machine-readable output), reporting syntax errors (`SOLA000`) and unbalanced or malformed `{#if}` / `{#each}` / `{:else}` blocks (`SOLA001`), and state written with `.set()` or `.update()` instead of assignment (`SOLA002`), which compiles but throws when it runs.
 
 ## What a `.sola` file looks like
 

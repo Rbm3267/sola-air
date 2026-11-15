@@ -11,8 +11,51 @@ import { compile } from './index.js';
 
 export const RULES = {
   SOLA000: 'compile error',
-  SOLA001: 'unbalanced block'
+  SOLA001: 'unbalanced block',
+  SOLA002: 'state written with .set() or .update()'
 };
+
+// Text of every <script> body. Plain index search, so `</script >` and odd
+// casing are handled the same way the browser would end the element.
+function scriptBodies(source) {
+  const lower = source.toLowerCase();
+  const bodies = [];
+  let from = 0;
+  for (;;) {
+    const open = lower.indexOf('<script', from);
+    if (open < 0) break;
+    const start = lower.indexOf('>', open);
+    if (start < 0) break;
+    const end = lower.indexOf('</script', start);
+    bodies.push(source.slice(start + 1, end < 0 ? source.length : end));
+    if (end < 0) break;
+    from = end + 8;
+  }
+  return bodies.join('\n');
+}
+
+// A `$state` / `$persist` name is its signal getter, so `count.set(1)` compiles
+// to `count().set(1)` and throws when it runs. State is written by assignment.
+function checkSetterCalls(source, add) {
+  const scripts = scriptBodies(source);
+  const names = new Set();
+  for (const m of scripts.matchAll(/\b(?:let|var|const)\s+([\w$]+)\s*=\s*\$(?:state|persist)\s*\(/g)) names.add(m[1]);
+  if (!names.size) return;
+  const blank = (m) => m.replace(/[^\n]/g, ' ');
+  const code = source
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, blank)
+    .replace(/<!--[\s\S]*?-->/g, blank)
+    .replace(/\/\*[\s\S]*?\*\//g, blank)
+    .replace(/(^|[^:])\/\/[^\n]*/g, (m, pre) => pre + blank(m.slice(pre.length)));
+  const call = /(?<![\w$.])([\w$]+)(\(\))?\s*\.\s*(set|update)\s*\(/g;
+  let m;
+  while ((m = call.exec(code))) {
+    const [, name, , method] = m;
+    if (!names.has(name)) continue;
+    const fix = method === 'set' ? `${name} = value` : `${name} = fn(${name})`;
+    add(m.index, 'error', 'SOLA002', `\`${name}.${method}()\` throws at runtime: \`${name}\` is state, which is written by assignment. Use \`${fix}\`.`);
+  }
+}
 
 // Blank out <script> and <style> bodies and HTML comments, keeping newlines so
 // line numbers hold. A commented-out block is not a block.
@@ -67,6 +110,8 @@ export function checkSource(source, filename = 'component.sola') {
       message: err.message.replace(/^\[sola compiler\]\s*/, '').split('\n').map((s) => s.trim()).filter(Boolean).join(' ')
     });
   }
+
+  checkSetterCalls(source, add);
 
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;
