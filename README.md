@@ -21,12 +21,16 @@
   <a href="https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode"><img src="https://img.shields.io/visual-studio-marketplace/v/SolaAIR.sola-vscode?label=VS%20Code&color=6366f1&style=flat-square" alt="VS Code Marketplace" /></a>
   <a href="https://open-vsx.org/extension/SolaAIR/sola-vscode"><img src="https://img.shields.io/open-vsx/v/SolaAIR/sola-vscode?label=Open%20VSX&color=6366f1&style=flat-square" alt="Open VSX Registry" /></a>
   <a href="https://chromewebstore.google.com/detail/sola-air/cahdakefpjocaapggijdbbgidcjdaehc"><img src="https://img.shields.io/chrome-web-store/v/cahdakefpjocaapggijdbbgidcjdaehc?label=Chrome&color=3b82f6&style=flat-square" alt="Chrome Web Store" /></a>
+  <a href="https://huggingface.co/bennett-xdlabs/sola-air-1.5b"><img src="https://img.shields.io/badge/Hugging%20Face-sola--air--1.5b-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="Hugging Face sola-air-1.5b" /></a>
   <a href="https://github.com/rbm3267/sola-air/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-0ea5e9?style=flat-square" alt="MIT License" /></a>
 </p>
 
 ```bash
 # Install everything at once
 npm install sola-air
+
+# Or run the fine-tuned 1.5B edge model with Ollama
+ollama run hf.co/bennett-xdlabs/sola-air-1.5b
 
 # Or install individual packages
 npm install @sola-air-ui/core @sola-air-ui/compiler @sola-air-ui/vite-plugin-sola

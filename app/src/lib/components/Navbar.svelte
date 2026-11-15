@@ -4,7 +4,7 @@
   import SolaLogo from './SolaLogo.svelte';
   import AiAssistantModal from './AiAssistantModal.svelte';
 
-  import { GITHUB_URL, VSCODE_URL, OPEN_VSX_URL, VERSIONS } from '$lib/data/site';
+  import { GITHUB_URL, VSCODE_URL, OPEN_VSX_URL, HUGGINGFACE_URL, VERSIONS } from '$lib/data/site';
 
   const version = VERSIONS.solaAir;
 
@@ -18,6 +18,7 @@
   ];
 
   const toolsNav = [
+    { href: HUGGINGFACE_URL, label: '1.5B Model', blurb: 'Fine-tuned edge LLM on Hugging Face', external: true },
     { href: '/demo', label: 'Playground', blurb: 'Interactive .sola & signal mesh stage' },
     { href: '/demo/ai', label: 'AI Demo', blurb: 'Ambient intent, resolved live' },
     { href: '/overview', label: 'Written in Sola', blurb: 'Live page compiled from Overview.sola' },

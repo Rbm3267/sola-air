@@ -595,6 +595,7 @@
           <ul class="space-y-1.5 text-slate-600 dark:text-slate-400">
             <li class="flex items-center gap-2"><span class="text-blue-500">✓</span> Provider-agnostic <code class="font-mono text-xs">$intent</code> — your server, your model</li>
             <li class="flex items-center gap-2"><span class="text-blue-500">✓</span> Anthropic · OpenAI · Gemini · Ollama adapters included</li>
+            <li class="flex items-center gap-2"><span class="text-blue-500">✓</span> Fine-tuned <a href="https://huggingface.co/bennett-xdlabs/sola-air-1.5b" target="_blank" rel="noreferrer" class="underline decoration-blue-300 dark:decoration-blue-500 font-semibold hover:text-blue-600 dark:hover:text-blue-400">sola-air-1.5b</a> edge model on Hugging Face (986 MB GGUF)</li>
             <li class="flex items-center gap-2"><span class="text-blue-500">✓</span> Streaming SSE built into the core primitive</li>
             <li class="flex items-center gap-2"><span class="text-blue-500">✓</span> AI component suite ships as npm — use it in any project</li>
           </ul>

@@ -11,7 +11,7 @@
   import TactileDialCard from '@sola-air-ui/ui/TactileDialCard.sola';
   import FlowWaterfall from '@sola-air-ui/ui/FlowWaterfall.sola';
   import IncidentTriageMatrix from '@sola-air-ui/ui/IncidentTriageMatrix.sola';
-  import { PUBLISHED_COUNT } from '$lib/data/site';
+  import { PUBLISHED_COUNT, HUGGINGFACE_URL } from '$lib/data/site';
   import { STUDIO_COMPONENTS } from '$lib/data/studioComponents';
 </script>
 
@@ -49,11 +49,11 @@
             Build and try a companion
           </h2>
           <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-            Lay one out, see it running on a page, and read how it is made.
+            Lay one out, run the fine-tuned edge model, see it running on a page, and read how it is made.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
           <!-- Pillar 1: Chrome extension (try it on your own page) -->
           <div class="sola-spring-card p-8 rounded-3xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.06] shadow-xs hover:shadow-xl hover:border-blue-500/40 flex flex-col justify-between gap-6 group">
@@ -93,7 +93,32 @@
             </a>
           </div>
 
-          <!-- Pillar 3: Written in Sola -->
+          <!-- Pillar 3: Sola AIR 1.5B Edge Model -->
+          <div class="sola-spring-card p-8 rounded-3xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.06] shadow-xs hover:shadow-xl hover:border-amber-500/40 flex flex-col justify-between gap-6 group">
+            <div class="flex flex-col gap-3.5">
+              <div class="w-11 h-11 rounded-2xl bg-white dark:bg-amber-500/10 border border-amber-200/80 dark:border-amber-500/20 flex items-center justify-center shadow-2xs text-amber-600 dark:text-amber-400">
+                <SolaIcons name="spark" size={22} />
+              </div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                  sola-air-1.5b
+                </h3>
+                <span class="inline-flex items-center text-[10px] font-mono uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-200/80 dark:border-amber-500/20 font-semibold">Model</span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
+                Domain-adapted 1.5B edge model on Hugging Face for single-file reactive component synthesis. 986 MB Q4_K_M GGUF, 28+ tok/s locally, and 0% framework hallucination.
+              </p>
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-1">
+              <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all whitespace-nowrap leading-none">
+                <span>Hugging Face</span>
+                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+              </a>
+              <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded-md">Ollama</span>
+            </div>
+          </div>
+
+          <!-- Pillar 4: Written in Sola -->
           <div class="sola-spring-card p-8 rounded-3xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/[0.06] shadow-xs hover:shadow-xl hover:border-blue-500/40 flex flex-col justify-between gap-6 group">
             <div class="flex flex-col gap-3.5">
               <div class="w-11 h-11 rounded-2xl bg-white dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 flex items-center justify-center shadow-2xs">

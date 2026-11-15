@@ -2,7 +2,7 @@
   import SentinelHeroDemo from './SentinelHeroDemo.svelte';
   import SolaLogo from './SolaLogo.svelte';
   import SolaCodeBlock from './SolaCodeBlock.svelte';
-  import { VERSIONS, PUBLISHED_COUNT, FACTS, POSTBUILD_URL } from '$lib/data/site';
+  import { VERSIONS, PUBLISHED_COUNT, FACTS, POSTBUILD_URL, HUGGINGFACE_URL } from '$lib/data/site';
   import { overlayExample } from '$lib/data/docsSnippets';
 
   const version = VERSIONS.solaAir;
@@ -10,7 +10,8 @@
   // Two ways in: add Sola to an app that already exists, or start a new one.
   const COMMANDS = {
     add: 'npm i @sola-air-ui/core @sola-air-ui/sentinel',
-    create: 'npm create sola@latest'
+    create: 'npm create sola@latest',
+    model: 'ollama run hf.co/bennett-xdlabs/sola-air-1.5b'
   } as const;
 
   let mode = $state<keyof typeof COMMANDS>('add');
@@ -107,6 +108,13 @@
         class="px-3 py-1.5 rounded-lg leading-none cursor-pointer transition-colors {mode === 'create' ? 'bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
         Start a new app
       </button>
+      <button
+        type="button"
+        aria-pressed={mode === 'model'}
+        onclick={() => (mode = 'model')}
+        class="px-3 py-1.5 rounded-lg leading-none cursor-pointer transition-colors {mode === 'model' ? 'bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+        Run 1.5B model
+      </button>
     </div>
     <div class="h-11 w-full max-w-md px-4 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-slate-50/90 dark:bg-white/5 backdrop-blur-md text-slate-800 dark:text-slate-200 font-mono text-xs inline-flex items-center justify-between gap-3 shadow-2xs whitespace-nowrap leading-none">
       <!-- Focusable so keyboard users can scroll the command on narrow screens. -->
@@ -130,8 +138,11 @@
       {#if mode === 'add'}
         Companions are written in <code class="font-mono">.sola</code> and compiled once, with the Vite plugin or the <code class="font-mono">sola compile</code> command. The host page then needs only a bundler import or two script tags.
         <a href="/docs#host-embedding" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2">Details</a>
-      {:else}
+      {:else if mode === 'create'}
         Scaffolds a project with the compiler, the component library and a dev server.
+      {:else}
+        Runs the fine-tuned 1.5B single-file component synthesis model locally via Ollama. 986 MB footprint, sub-second inference, zero framework hallucinations.
+        <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2">Hugging Face Hub ↗</a>
       {/if}
     </p>
   </div>
@@ -141,6 +152,8 @@
     <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> {FACTS.coreSizeKb} core runtime</span>
     <span class="hidden sm:inline">•</span>
     <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> Compiles to plain DOM calls</span>
+    <span class="hidden sm:inline">•</span>
+    <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="inline-flex items-center gap-1.5 whitespace-nowrap text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> sola-air-1.5b on Hugging Face ↗</a>
     <span class="hidden sm:inline">•</span>
     <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Styles and DOM isolated in a closed shadow root</span>
     <span class="hidden sm:inline">•</span>

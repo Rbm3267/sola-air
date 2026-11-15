@@ -14,6 +14,9 @@ export const OPEN_VSX_URL = 'https://open-vsx.org/extension/SolaAIR/sola-vscode'
 export const GITHUB_REPO = 'Rbm3267/sola-air';
 /** A separate app, built with Sola AIR by the same author. */
 export const POSTBUILD_URL = 'https://postbuild.dev';
+/** Fine-tuned 1.5B edge model for single-file reactive component synthesis. */
+export const HUGGINGFACE_URL = 'https://huggingface.co/bennett-xdlabs/sola-air-1.5b';
+export const OLLAMA_MODEL_CMD = 'ollama run hf.co/bennett-xdlabs/sola-air-1.5b';
 
 export interface ChangelogPackageEntry {
   pkg: string;
