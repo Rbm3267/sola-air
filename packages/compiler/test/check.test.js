@@ -104,3 +104,49 @@ describe('sola-check CLI', () => {
     assert.strictEqual(out.diagnostics[0].code, 'SOLA001');
   });
 });
+
+describe('SOLA003 undeclared names', () => {
+  const undeclared = (src) => checkSource(src, 'T.sola').filter((d) => d.code === 'SOLA003');
+
+  it('flags a template name the script never declares, at its first use', () => {
+    const src = `<script>let q = $state('');</script>\n<p>{q}</p>\n<p class={activeId === 1 ? 'on' : ''}>x</p>`;
+    const [d, ...rest] = undeclared(src);
+    assert.strictEqual(rest.length, 0);
+    assert.strictEqual(d.severity, 'error');
+    assert.strictEqual(d.line, 3);
+    assert.match(d.message, /`activeId` is used but never declared/);
+  });
+
+  it('flags an undeclared helper called from a handler', () => {
+    const src = `<script>let ms = $state(0);</script>\n<button onclick={() => alert(formatMs(ms))}>t</button>`;
+    assert.deepStrictEqual(undeclared(src).map((d) => d.message.split(' ')[0]), ['`formatMs`']);
+  });
+
+  it('flags a macro used outside a declaration', () => {
+    const src = `<script>let n = 0; const list = [$state(1)];</script>\n<p>{n}</p>`;
+    const [d] = undeclared(src);
+    assert.match(d.message, /`\$state` is only a macro/);
+  });
+
+  it('accepts props, locals, each items, globals, window.x and typeof checks', () => {
+    const src = `<script>
+  export let items = [];
+  import Badge from '@sola-air-ui/ui/badge';
+  let open = $state(false);
+  let total = $derived(items.length);
+  function toggle(e) { open = !open; console.log(e.target, Math.max(1, total)); }
+  const has = typeof gtag !== 'undefined';
+  window.solaReady = true;
+</script>
+{#each items as item, i (item.id)}<p onclick={toggle}>{i}: {item.name} {JSON.stringify(item)}</p>{/each}
+<Badge label="x" />
+<style>.a { color: undefinedVar; }</style>`;
+    assert.deepStrictEqual(undeclared(src), []);
+  });
+
+  it('passes every component in packages/ui', () => {
+    const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'ui', 'src');
+    const { diagnostics } = checkFiles([dir]);
+    assert.deepStrictEqual(diagnostics.filter((d) => d.code === 'SOLA003'), []);
+  });
+});

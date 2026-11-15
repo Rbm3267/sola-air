@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.6.1, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.7.0, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.6.1\"}"
+  "{\"version\":\"1.7.0\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -1686,6 +1686,211 @@ function buildDeclarations(props, exportStyles) {
   ].join("\n");
 }
 
+// packages/compiler/src/undeclared.js
+import * as acorn2 from "./acorn.mjs";
+var GLOBALS = new Set(`
+  undefined NaN Infinity globalThis window self document navigator location history screen
+  console performance crypto localStorage sessionStorage indexedDB caches
+  Object Function Array Number String Boolean Symbol BigInt Math JSON Date RegExp Intl Reflect Proxy
+  Error TypeError RangeError SyntaxError ReferenceError EvalError URIError AggregateError
+  Map Set WeakMap WeakSet WeakRef FinalizationRegistry Promise
+  ArrayBuffer SharedArrayBuffer DataView Atomics
+  Int8Array Uint8Array Uint8ClampedArray Int16Array Uint16Array Int32Array Uint32Array
+  Float32Array Float64Array BigInt64Array BigUint64Array
+  parseInt parseFloat isNaN isFinite encodeURI encodeURIComponent decodeURI decodeURIComponent escape unescape
+  setTimeout clearTimeout setInterval clearInterval queueMicrotask structuredClone
+  requestAnimationFrame cancelAnimationFrame requestIdleCallback cancelIdleCallback
+  fetch Request Response Headers FormData URL URLSearchParams AbortController AbortSignal
+  Blob File FileReader FileList TextEncoder TextDecoder atob btoa
+  WebSocket EventSource BroadcastChannel MessageChannel MessagePort Worker XMLHttpRequest
+  Event CustomEvent EventTarget KeyboardEvent MouseEvent PointerEvent TouchEvent FocusEvent InputEvent
+  WheelEvent DragEvent ClipboardEvent SubmitEvent ErrorEvent ProgressEvent AnimationEvent TransitionEvent
+  Node Element HTMLElement SVGElement HTMLInputElement HTMLTextAreaElement HTMLSelectElement
+  HTMLButtonElement HTMLFormElement HTMLCanvasElement HTMLImageElement HTMLVideoElement HTMLAudioElement
+  DocumentFragment ShadowRoot Text Comment Range Selection NodeFilter DOMParser XMLSerializer
+  CSS CSSStyleSheet getComputedStyle matchMedia getSelection
+  MutationObserver ResizeObserver IntersectionObserver PerformanceObserver
+  Image Audio Option Path2D ImageData OffscreenCanvas
+  Notification alert confirm prompt print open close scrollTo scrollBy
+  innerWidth innerHeight outerWidth outerHeight devicePixelRatio scrollX scrollY pageXOffset pageYOffset
+  customElements visualViewport origin isSecureContext
+  arguments
+`.trim().split(/\s+/));
+var FUNCTION_TYPES = /* @__PURE__ */ new Set(["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"]);
+var Scope = class {
+  constructor(parent, isFunction) {
+    this.parent = parent;
+    this.isFunction = isFunction;
+    this.names = /* @__PURE__ */ new Set();
+  }
+  functionScope() {
+    let s = this;
+    while (!s.isFunction && s.parent) s = s.parent;
+    return s;
+  }
+  has(name) {
+    for (let s = this; s; s = s.parent) if (s.names.has(name)) return true;
+    return false;
+  }
+};
+function patternNames(pattern, out = []) {
+  if (!pattern) return out;
+  switch (pattern.type) {
+    case "Identifier":
+      out.push(pattern.name);
+      break;
+    case "ObjectPattern":
+      for (const p of pattern.properties) patternNames(p.type === "RestElement" ? p.argument : p.value, out);
+      break;
+    case "ArrayPattern":
+      for (const el of pattern.elements) patternNames(el, out);
+      break;
+    case "RestElement":
+      patternNames(pattern.argument, out);
+      break;
+    case "AssignmentPattern":
+      patternNames(pattern.left, out);
+      break;
+  }
+  return out;
+}
+function children(node) {
+  const out = [];
+  for (const key of Object.keys(node)) {
+    if (key === "type" || key === "start" || key === "end" || key === "loc") continue;
+    const v = node[key];
+    if (Array.isArray(v)) {
+      for (const c of v) if (c && typeof c.type === "string") out.push(c);
+    } else if (v && typeof v.type === "string") out.push(v);
+  }
+  return out;
+}
+function declare(scope, block) {
+  for (let stmt of block.body) {
+    if ((stmt.type === "ExportNamedDeclaration" || stmt.type === "ExportDefaultDeclaration") && stmt.declaration) stmt = stmt.declaration;
+    if (stmt.type === "VariableDeclaration" && stmt.kind !== "var") {
+      for (const d of stmt.declarations) for (const name of patternNames(d.id)) scope.names.add(name);
+    } else if ((stmt.type === "FunctionDeclaration" || stmt.type === "ClassDeclaration") && stmt.id) {
+      scope.names.add(stmt.id.name);
+    } else if (stmt.type === "ImportDeclaration") {
+      for (const sp of stmt.specifiers) scope.names.add(sp.local.name);
+    }
+  }
+  const fnScope = scope.functionScope();
+  const hoistVars = (n) => {
+    if (!n || typeof n.type !== "string" || FUNCTION_TYPES.has(n.type)) return;
+    if (n.type === "VariableDeclaration" && n.kind === "var") {
+      for (const d of n.declarations) for (const name of patternNames(d.id)) fnScope.names.add(name);
+    }
+    for (const c of children(n)) hoistVars(c);
+  };
+  for (const stmt of block.body) hoistVars(stmt);
+}
+function findUndeclared(code) {
+  const ast = acorn2.parse(code, { ecmaVersion: "latest", sourceType: "module" });
+  const found = /* @__PURE__ */ new Map();
+  const walk = (node, scope, parent, key) => {
+    if (!node || typeof node.type !== "string") return;
+    if (node.type === "Identifier") {
+      if (parent) {
+        if (parent.type === "MemberExpression" && key === "property" && !parent.computed) return;
+        if ((parent.type === "Property" || parent.type === "MethodDefinition" || parent.type === "PropertyDefinition") && key === "key" && !parent.computed) return;
+        if (parent.type === "LabeledStatement" || parent.type === "BreakStatement" || parent.type === "ContinueStatement") return;
+        if (parent.type === "ExportSpecifier" || parent.type === "ImportSpecifier" || parent.type === "ImportDefaultSpecifier" || parent.type === "ImportNamespaceSpecifier") return;
+        if (parent.type === "MetaProperty") return;
+        if (parent.type === "UnaryExpression" && parent.operator === "typeof") return;
+      }
+      if (!scope.has(node.name) && !GLOBALS.has(node.name) && !found.has(node.name)) {
+        found.set(node.name, { name: node.name });
+      }
+      return;
+    }
+    if (FUNCTION_TYPES.has(node.type)) {
+      const fnScope = new Scope(scope, true);
+      if (node.type === "FunctionExpression" && node.id) fnScope.names.add(node.id.name);
+      for (const p of node.params) for (const name of patternNames(p)) fnScope.names.add(name);
+      for (const p of node.params) walkPattern(p, fnScope);
+      if (node.body.type === "BlockStatement") {
+        declare(fnScope, node.body);
+        for (const s of node.body.body) walk(s, fnScope, node.body, "body");
+      } else {
+        walk(node.body, fnScope, node, "body");
+      }
+      return;
+    }
+    if (node.type === "ClassDeclaration" || node.type === "ClassExpression") {
+      const classScope = new Scope(scope, false);
+      if (node.id) classScope.names.add(node.id.name);
+      if (node.superClass) walk(node.superClass, scope, node, "superClass");
+      walk(node.body, classScope, node, "body");
+      return;
+    }
+    if (node.type === "BlockStatement" || node.type === "StaticBlock") {
+      const block = new Scope(scope, false);
+      declare(block, node);
+      for (const s of node.body) walk(s, block, node, "body");
+      return;
+    }
+    if (node.type === "ForStatement" || node.type === "ForInStatement" || node.type === "ForOfStatement") {
+      const loop = new Scope(scope, false);
+      const init = node.init || node.left;
+      if (init && init.type === "VariableDeclaration" && init.kind !== "var") {
+        for (const d of init.declarations) for (const name of patternNames(d.id)) loop.names.add(name);
+      }
+      for (const c of children(node)) walk(c, loop, node, null);
+      return;
+    }
+    if (node.type === "SwitchStatement") {
+      walk(node.discriminant, scope, node, "discriminant");
+      const block = new Scope(scope, false);
+      declare(block, { body: node.cases.flatMap((c) => c.consequent) });
+      for (const c of node.cases) walk(c, block, node, "cases");
+      return;
+    }
+    if (node.type === "CatchClause") {
+      const catchScope = new Scope(scope, false);
+      for (const name of patternNames(node.param)) catchScope.names.add(name);
+      walk(node.body, catchScope, node, "body");
+      return;
+    }
+    if (node.type === "VariableDeclarator") {
+      walkPattern(node.id, scope);
+      walk(node.init, scope, node, "init");
+      return;
+    }
+    if (node.type === "ImportDeclaration") return;
+    for (const key2 of Object.keys(node)) {
+      if (key2 === "type" || key2 === "start" || key2 === "end" || key2 === "loc") continue;
+      const v = node[key2];
+      if (Array.isArray(v)) {
+        for (const c of v) walk(c, scope, node, key2);
+      } else if (v && typeof v.type === "string") walk(v, scope, node, key2);
+    }
+  };
+  const walkPattern = (p, scope) => {
+    if (!p) return;
+    if (p.type === "AssignmentPattern") {
+      walkPattern(p.left, scope);
+      walk(p.right, scope, p, "right");
+    } else if (p.type === "ObjectPattern") {
+      for (const prop of p.properties) {
+        if (prop.type === "RestElement") walkPattern(prop.argument, scope);
+        else {
+          if (prop.computed) walk(prop.key, scope, prop, "key");
+          walkPattern(prop.value, scope);
+        }
+      }
+    } else if (p.type === "ArrayPattern") {
+      for (const el of p.elements) walkPattern(el, scope);
+    } else if (p.type === "RestElement") walkPattern(p.argument, scope);
+    else if (p.type === "MemberExpression") walk(p, scope, null, null);
+  };
+  const top = new Scope(null, true);
+  declare(top, ast);
+  for (const s of ast.body) walk(s, top, ast, "body");
+  return [...found.values()];
+}
+
 // packages/compiler/src/check.js
 function scriptBodies(source) {
   const lower = source.toLowerCase();
@@ -1717,6 +1922,23 @@ function checkSetterCalls(source, add) {
     if (!names.has(name)) continue;
     const fix = method === "set" ? `${name} = value` : `${name} = fn(${name})`;
     add(m.index, "error", "SOLA002", `\`${name}.${method}()\` throws at runtime: \`${name}\` is state, which is written by assignment. Use \`${fix}\`.`);
+  }
+}
+function checkUndeclared(source, compiled, add) {
+  let names;
+  try {
+    names = findUndeclared(compiled);
+  } catch {
+    return;
+  }
+  if (!names.length) return;
+  const blank = (m) => m.replace(/[^\n]/g, " ");
+  const code = source.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, blank).replace(/<!--[\s\S]*?-->/g, blank);
+  for (const { name } of names) {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const at = new RegExp(`(?<![\\w$.])${escaped}(?![\\w$])`).exec(code);
+    const hint = name.startsWith("$") ? `\`${name}\` is only a macro as a declaration's value (\`let x = ${name}(...)\`).` : `Declare it in <script> (\`let ${name} = ...\` or \`export let ${name}\`), or use \`window.${name}\` for a global.`;
+    add(at ? at.index : 0, "error", "SOLA003", `\`${name}\` is used but never declared, so the component throws "${name} is not defined" when it mounts. ${hint}`);
   }
 }
 function maskNonTemplate(source) {
@@ -1754,8 +1976,9 @@ function matchBrace2(text, openPos) {
 function checkSource(source, filename = "component.sola") {
   const diagnostics = [];
   const add = (index, severity, code, message) => diagnostics.push({ file: filename, ...position(source, index), severity, code, message });
+  let compiled = null;
   try {
-    compile(source, { filename, sourcemap: false });
+    compiled = compile(source, { filename, sourcemap: false }).code;
   } catch (err) {
     const m = /\(line (\d+), col (\d+)\)/.exec(err.message);
     diagnostics.push({
@@ -1768,6 +1991,7 @@ function checkSource(source, filename = "component.sola") {
     });
   }
   checkSetterCalls(source, add);
+  if (compiled) checkUndeclared(source, compiled, add);
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;
   const stack = [];

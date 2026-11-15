@@ -2,6 +2,18 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-15: compiler 1.7.0
+
+### `@sola-air-ui/compiler`
+
+- **Added**: `sola-check` rule `SOLA003` flags a name the component uses but never declares,
+  such as `{activeId}` with no `let activeId`, a helper like `formatMs()` that was never
+  written, or `$state(...)` used anywhere but as a declaration's value. These compile and then
+  throw "x is not defined" when the component mounts or the handler runs. The rule walks the
+  compiled output, so it sees the same scopes the browser does, and it allows JavaScript and
+  browser globals. In the last benchmark run it caught the four outputs that compiled but
+  failed to mount (Badge, RatingStars, SearchInput, Timer).
+
 ## 2026-11-15: providers 1.0.4
 
 ### `@sola-air-ui/providers`

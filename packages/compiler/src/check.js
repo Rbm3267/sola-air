@@ -8,11 +8,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { compile } from './index.js';
+import { findUndeclared } from './undeclared.js';
 
 export const RULES = {
   SOLA000: 'compile error',
   SOLA001: 'unbalanced block',
-  SOLA002: 'state written with .set() or .update()'
+  SOLA002: 'state written with .set() or .update()',
+  SOLA003: 'name used but never declared'
 };
 
 // Text of every <script> body. Plain index search, so `</script >` and odd
@@ -57,6 +59,29 @@ function checkSetterCalls(source, add) {
   }
 }
 
+// A name the component reads but never declares compiles fine and then throws
+// "x is not defined" when it mounts. Find those in the compiled output and point
+// at the first place the source uses the name.
+function checkUndeclared(source, compiled, add) {
+  let names;
+  try {
+    names = findUndeclared(compiled);
+  } catch {
+    return; // Output that doesn't parse is a compiler bug, not this rule's to report.
+  }
+  if (!names.length) return;
+  const blank = (m) => m.replace(/[^\n]/g, ' ');
+  const code = source.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, blank).replace(/<!--[\s\S]*?-->/g, blank);
+  for (const { name } of names) {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const at = new RegExp(`(?<![\\w$.])${escaped}(?![\\w$])`).exec(code);
+    const hint = name.startsWith('$')
+      ? `\`${name}\` is only a macro as a declaration's value (\`let x = ${name}(...)\`).`
+      : `Declare it in <script> (\`let ${name} = ...\` or \`export let ${name}\`), or use \`window.${name}\` for a global.`;
+    add(at ? at.index : 0, 'error', 'SOLA003', `\`${name}\` is used but never declared, so the component throws "${name} is not defined" when it mounts. ${hint}`);
+  }
+}
+
 // Blank out <script> and <style> bodies and HTML comments, keeping newlines so
 // line numbers hold. A commented-out block is not a block.
 function maskNonTemplate(source) {
@@ -97,8 +122,9 @@ export function checkSource(source, filename = 'component.sola') {
   const add = (index, severity, code, message) =>
     diagnostics.push({ file: filename, ...position(source, index), severity, code, message });
 
+  let compiled = null;
   try {
-    compile(source, { filename, sourcemap: false });
+    compiled = compile(source, { filename, sourcemap: false }).code;
   } catch (err) {
     const m = /\(line (\d+), col (\d+)\)/.exec(err.message);
     diagnostics.push({
@@ -112,6 +138,7 @@ export function checkSource(source, filename = 'component.sola') {
   }
 
   checkSetterCalls(source, add);
+  if (compiled) checkUndeclared(source, compiled, add);
 
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;
