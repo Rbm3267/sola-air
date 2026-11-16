@@ -36,7 +36,7 @@ npx sola build App.sola
 npx sola-check src/
 ```
 
-`sola-check` validates `.sola` files on disk (pass `--json` for machine-readable output), reporting syntax errors (`SOLA000`) and unbalanced or malformed `{#if}` / `{#each}` / `{:else}` blocks (`SOLA001`), and state written with `.set()` or `.update()` instead of assignment (`SOLA002`), which compiles but throws when it runs.
+`sola-check` validates `.sola` files on disk (pass `--json` for machine-readable output), reporting syntax errors (`SOLA000`) and unbalanced or malformed `{#if}` / `{#each}` / `{:else}` blocks (`SOLA001`), and state written with `.set()` or `.update()` instead of assignment (`SOLA002`), which compiles but throws when it runs. It also flags a name the component uses but never declares (`SOLA003`), which compiles and then throws "x is not defined" when it mounts or when the handler runs.
 
 ## What a `.sola` file looks like
 
