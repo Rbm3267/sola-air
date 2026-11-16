@@ -1290,7 +1290,7 @@ export function SolaWidget({ title, value }) {
           <section class="space-y-4">
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Benchmark results</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              From the 20-prompt benchmark run on Nov 15, 2026, on an NVIDIA Quadro P620 (2 GB) through Ollama. The <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="underline font-semibold text-blue-600 dark:text-blue-400">model card</a> has the full table, the base model's numbers and the commands to reproduce them.
+              From the 20-prompt benchmark run on Nov 16, 2026, on an NVIDIA Quadro P620 (2 GB) through Ollama. The <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="underline font-semibold text-blue-600 dark:text-blue-400">model card</a> has the full table, the base model's numbers and the commands to reproduce them.
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
@@ -1300,18 +1300,18 @@ export function SolaWidget({ title, value }) {
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
                 <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Speed</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">22.7 tok/s</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">About 30 s per component (median 31 s)</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">28.8 tok/s</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">About 13 s per component (median)</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
                 <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Passes sola-check</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">16 / 20</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">15 of 20 also mount and render in a browser (base model: 2)</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">18 / 20</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">17 of 20 also mount and render in a browser (base model: 2)</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
                 <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">React / Vue syntax</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">0 / 20</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">The base model used it in 13 of 20</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">1 / 20</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">A Vue-style <code class="font-mono">:class</code> in Badge. The base model used it in 13 of 20</div>
               </div>
             </div>
           </section>
