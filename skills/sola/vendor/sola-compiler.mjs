@@ -215,7 +215,7 @@ function extractScriptAndStyle(source) {
   let template = source;
   let isTypeScript = false;
   let scriptStartLine = 0;
-  const scriptMatch = template.match(/<script(?:\s+lang=["'](ts|js)["'])?>([\s\S]*?)<\/script>/);
+  const scriptMatch = template.match(/<script(?:\s+lang=["'](ts|js)["'])?\s*>([\s\S]*?)<\/script\b[^>]*>/i);
   if (scriptMatch) {
     isTypeScript = scriptMatch[1] === "ts";
     script = scriptMatch[2];

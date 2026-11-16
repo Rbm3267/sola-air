@@ -214,7 +214,7 @@ function extractScriptAndStyle(source) {
   // Zero-based line in the original .sola file where the script body starts,
   // so generated output can be mapped back to it.
   let scriptStartLine = 0;
-  const scriptMatch = template.match(/<script(?:\s+lang=["'](ts|js)["'])?>([\s\S]*?)<\/script>/);
+  const scriptMatch = template.match(/<script(?:\s+lang=["'](ts|js)["'])?\s*>([\s\S]*?)<\/script\b[^>]*>/i);
   if (scriptMatch) {
     isTypeScript = scriptMatch[1] === 'ts';
     script = scriptMatch[2];

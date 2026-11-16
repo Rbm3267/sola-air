@@ -48,7 +48,7 @@ function addSola(file, globalName, label) {
   if (errors.length) return;
 
   // Imports become globals in the no-bundler build, under their local names.
-  const script = (source.match(/<script[^>]*>([\s\S]*?)<\/script>/) || [, ''])[1];
+  const script = (source.match(/<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/i) || [, ''])[1];
   for (const m of script.matchAll(/^\s*import\s+([^;'"]+?)\s+from\s+['"]([^'"]+)['"]/gm)) {
     const [, what, from] = m;
     if (/^type\b/.test(what.trim())) continue;
