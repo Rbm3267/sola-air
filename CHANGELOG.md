@@ -2,6 +2,20 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-16: compiler 1.7.5
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: the `check` types listed `code` as `SOLA000` to `SOLA003`, so TypeScript rejected a
+  comparison with `SOLA004`. It now includes `SOLA004`.
+
+### Benchmark
+
+- `scripts/run-certification.mjs --retry [n]` asks again, up to n more times (default 2), for a
+  component that fails `sola-check` or doesn't mount: the same prompt at temperature 0.7 with a new
+  seed. The summary shows first-try numbers next to the final ones. Answers are now capped at 1,200
+  tokens, as in the playground, so a run that never stops can't hang the benchmark.
+
 ## 2026-11-16: compiler 1.7.4
 
 ### `@sola-air-ui/compiler`
