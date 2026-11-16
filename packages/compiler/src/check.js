@@ -24,8 +24,11 @@ export const RULES = {
 function checkExtraScripts(source, add) {
   // Skip the first block whole, as the compiler does: its body may mention
   // `<script` or `<style` in a comment or a regex.
-  const first = /<script\b[^>]*>[\s\S]*?<\/script\s*>/i.exec(source);
-  const from = first ? first.index + first[0].length : 0;
+  const lower = source.toLowerCase();
+  const open = lower.indexOf('<script');
+  const end = open < 0 ? -1 : lower.indexOf('</script', open);
+  const close = end < 0 ? -1 : lower.indexOf('>', end);
+  const from = close < 0 ? (open < 0 ? 0 : source.length) : close + 1;
   const rest = source.slice(from)
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, (m) => m.replace(/[^\n]/g, ' '))
     .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '));
