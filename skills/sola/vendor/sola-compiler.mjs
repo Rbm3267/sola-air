@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.7.5, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.7.6, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.7.5\"}"
+  "{\"version\":\"1.7.6\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -222,10 +222,10 @@ function extractScriptAndStyle(source) {
     scriptStartLine = source.slice(0, block.bodyStart).split("\n").length - 1;
     template = template.slice(0, block.start) + template.slice(block.end);
   }
-  const styleMatch = template.match(/<style(?:\s+scoped)?>([\s\S]*?)<\/style>/);
-  if (styleMatch) {
-    style = styleMatch[1];
-    template = template.replace(styleMatch[0], "");
+  const styleBlock = findStyleBlock(template);
+  if (styleBlock) {
+    style = styleBlock.body;
+    template = template.slice(0, styleBlock.start) + template.slice(styleBlock.end);
   }
   return { script, style, template, isTypeScript, scriptStartLine };
 }
@@ -784,6 +784,33 @@ function collectDeclaredNames(node, out) {
     else if (child && typeof child === "object" && child.type) collectDeclaredNames(child, out);
   }
 }
+function findStyleBlock(text) {
+  for (let from = 0; ; ) {
+    const start = text.indexOf("<style", from);
+    if (start < 0) return null;
+    const tagEnd = text.indexOf(">", start);
+    if (tagEnd < 0) return null;
+    const attrs = text.slice(start + 6, tagEnd);
+    if (attrs === "" || /^\s+scoped$/.test(attrs)) {
+      const close = text.indexOf("</style>", tagEnd);
+      if (close < 0) return null;
+      return { start, end: close + 8, body: text.slice(tagEnd + 1, close) };
+    }
+    from = start + 1;
+  }
+}
+function stripHtmlComments(text) {
+  let out = "";
+  let from = 0;
+  for (; ; ) {
+    const open = text.indexOf("<!--", from);
+    if (open < 0) return out + text.slice(from);
+    out += text.slice(from, open);
+    const close = text.indexOf("-->", open + 4);
+    if (close < 0) return out;
+    from = close + 3;
+  }
+}
 function findScriptBlock(text) {
   const lower = text.toLowerCase();
   for (let from = 0; ; ) {
@@ -979,7 +1006,7 @@ function compile(source, options = {}) {
   const scopeHash = hashString(styleContent || rawTemplateSource);
   const hasStyles = styleContent.trim().length > 0;
   const scopedCss = hasStyles ? scopeStyles(styleContent, scopeHash) : "";
-  let rawTemplate = rawTemplateSource.replace(/<!--[\s\S]*?-->/g, "");
+  let rawTemplate = stripHtmlComments(rawTemplateSource);
   rawTemplate = desugarElseIf(rawTemplate);
   const dynAttrs = [];
   const handlers = [];

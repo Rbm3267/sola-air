@@ -190,7 +190,7 @@ const grouped = new Set(groups.flatMap(([, n]) => n));
 const ungrouped = components.filter((c) => !grouped.has(c.name)).map((c) => c.name);
 if (ungrouped.length) groups.push(['Other', ungrouped]);
 const byName = Object.fromEntries(components.map((c) => [c.name, c]));
-const esc = (s) => s.replace(/\|/g, '\\|');
+const esc = (s) => s.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
 let ref = `# @sola-air-ui/ui ${versions.ui}: components\n\n`;
 ref += `Generated from the package by scripts/build-skill.mjs. Every component listed here exists, and every prop listed is one it declares with \`export let\`. Nothing else is accepted.\n\n`;
 ref += `Import each one by its subpath, for example \`import DataCard from '@sola-air-ui/ui/data-card';\`. A prop marked "value or getter" also accepts a function, so the component follows a changing value, e.g. \`rows={() => data().rows}\`. Other props are read once at mount; pass an expression that reads a signal and the child is re-mounted when it changes.\n`;

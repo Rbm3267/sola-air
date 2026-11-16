@@ -222,10 +222,10 @@ function extractScriptAndStyle(source) {
     template = template.slice(0, block.start) + template.slice(block.end);
   }
 
-  const styleMatch = template.match(/<style(?:\s+scoped)?>([\s\S]*?)<\/style>/);
-  if (styleMatch) {
-    style = styleMatch[1];
-    template = template.replace(styleMatch[0], '');
+  const styleBlock = findStyleBlock(template);
+  if (styleBlock) {
+    style = styleBlock.body;
+    template = template.slice(0, styleBlock.start) + template.slice(styleBlock.end);
   }
 
   return { script, style, template, isTypeScript, scriptStartLine };
@@ -775,6 +775,40 @@ function collectDeclaredNames(node, out) {
 
 // Pre-pass: find every $state/$derived/$intent/$data declaration up front so
 // reads that appear earlier in the source (hoisted functions) still rewrite.
+/**
+ * The first `<style>` or `<style scoped>` block, found by index rather than a
+ * tag regex (slow on many unclosed tags). Case-sensitive, as before.
+ */
+function findStyleBlock(text) {
+  for (let from = 0; ; ) {
+    const start = text.indexOf('<style', from);
+    if (start < 0) return null;
+    const tagEnd = text.indexOf('>', start);
+    if (tagEnd < 0) return null;
+    const attrs = text.slice(start + 6, tagEnd);
+    if (attrs === '' || /^\s+scoped$/.test(attrs)) {
+      const close = text.indexOf('</style>', tagEnd);
+      if (close < 0) return null;
+      return { start, end: close + 8, body: text.slice(tagEnd + 1, close) };
+    }
+    from = start + 1;
+  }
+}
+
+/** Removes HTML comments. An unclosed `<!--` runs to the end, as in a browser. */
+function stripHtmlComments(text) {
+  let out = '';
+  let from = 0;
+  for (;;) {
+    const open = text.indexOf('<!--', from);
+    if (open < 0) return out + text.slice(from);
+    out += text.slice(from, open);
+    const close = text.indexOf('-->', open + 4);
+    if (close < 0) return out;
+    from = close + 3;
+  }
+}
+
 // The component's <script>: the first `<script>` or `<script lang="ts|js">`,
 // up to the first `</script ...>` after it (any case, any attributes on the end
 // tag, as a browser reads it). Index search instead of a regex, which would
@@ -1045,7 +1079,7 @@ export function compile(source, options = {}) {
 
   // Strip HTML comments first so commented-out blocks or literal braces inside
   // comments never trigger block transforms or expression errors.
-  let rawTemplate = rawTemplateSource.replace(/<!--[\s\S]*?-->/g, '');
+  let rawTemplate = stripHtmlComments(rawTemplateSource);
 
   // Flatten else-if chains into nested if/else before anything else looks at
   // the template, so the block handling below only ever sees the simple form.

@@ -79,6 +79,12 @@ const uiSubpathAliases = Object.entries(uiPackageExports)
 // it in a sandboxed frame that has no access to the page. Two things it needs
 // at build time: the core runtime as text to put inside that frame, and a stand
 // in for node:fs, which the compiler only uses to read its own version.
+// A string as a JS literal that is also safe inside an HTML <script> block.
+function jsLiteral(value: string) {
+	const escapes: Record<string, string> = { '<': '\\u003C', '>': '\\u003E', '/': '\\u002F', '\u2028': '\\u2028', '\u2029': '\\u2029' };
+	return JSON.stringify(value).replace(/[<>\/\u2028\u2029]/g, (c) => escapes[c]);
+}
+
 function solaGenerate() {
 	const CORE = '\0virtual:sola-core-iife';
 	const FS = '\0virtual:sola-compiler-fs';
@@ -90,9 +96,9 @@ function solaGenerate() {
 			if (id === 'node:fs' && !options?.ssr && importer && importer.includes('/packages/compiler/')) return FS;
 		},
 		load(id: string) {
-			if (id === CORE) return `export default ${JSON.stringify(bundleCore().toString('utf8'))};`;
+			if (id === CORE) return `export default ${jsLiteral(bundleCore().toString('utf8'))};`;
 			if (id === FS) {
-				const stub = JSON.stringify(JSON.stringify({ version: compilerVersion }));
+				const stub = jsLiteral(JSON.stringify({ version: compilerVersion }));
 				return `export const readFileSync = () => ${stub}; export default { readFileSync };`;
 			}
 		}
