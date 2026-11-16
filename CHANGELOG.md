@@ -9,7 +9,10 @@ All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 - **Fixed**: `export let x = $state(5)` compiled to invalid JavaScript (`...ad] = createSignal(5);`),
   so the component failed to load. It now works as a prop that starts local state: the parent's
   value when it passes one, otherwise the default. `$persist` works the same way.
-- **Fixed**: `sola-check` passed a file whose compiled output didn't parse. It now reports `SOLA000`.
+  `export let x = $derived(...)` (or another macro) had the same problem; it now compiles as a
+  local value, since the parent can't set it.
+- **Fixed**: `sola-check` passed a file whose compiled output didn't parse (a compiler bug like the
+  one above, or a template expression such as `{() => (x = 0))}`). It now reports `SOLA000`.
 
 ## 2026-11-16: compiler 1.7.1
 

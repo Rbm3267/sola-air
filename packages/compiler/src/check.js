@@ -70,7 +70,7 @@ function checkUndeclared(source, compiled, add, alreadyReported = new Set(), rep
     // Output that doesn't parse is a compiler bug, but the file still won't
     // mount, so say so instead of passing it. Skipped when another error (an
     // unbalanced block, say) already explains the broken output.
-    if (reportParseError) add(0, 'error', 'SOLA000', `The compiled output is not valid JavaScript (${err.message}), so the component won't mount. This is a compiler bug; please report it with this file.`);
+    if (reportParseError) add(0, 'error', 'SOLA000', `The compiled output is not valid JavaScript (${err.message}), so the component won't mount. Look for a syntax error in a template expression, such as an unbalanced parenthesis. If the source is valid, it's a compiler bug; please report it with this file.`);
     return;
   }
   if (!names.length) return;

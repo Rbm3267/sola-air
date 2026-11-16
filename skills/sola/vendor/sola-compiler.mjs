@@ -1041,7 +1041,10 @@ function compile(source, options = {}) {
         if (node.type === "ExportNamedDeclaration" && node.declaration && node.declaration.type === "VariableDeclaration") {
           const only = node.declaration.declarations.length === 1 && node.declaration.declarations[0];
           const stateMacro = only && only.id.type === "Identifier" && only.init && only.init.type === "CallExpression" && only.init.callee.type === "Identifier" && (only.init.callee.name === "$state" || only.init.callee.name === "$persist");
-          if (stateMacro) {
+          const otherMacro = !stateMacro && only && only.init && only.init.type === "CallExpression" && only.init.callee.type === "Identifier" && /^\$(derived|effect|intent|data|lastEvent)$/.test(only.init.callee.name);
+          if (otherMacro) {
+            edits.push({ start: node.start, end: node.declaration.start, replacement: "" });
+          } else if (stateMacro) {
             const init = only.init.arguments[only.init.callee.name === "$persist" ? 1 : 0];
             exportedProps.push({
               name: only.id.name,
@@ -1054,7 +1057,7 @@ function compile(source, options = {}) {
             const defaultVal = decl.init ? strippedScript.slice(decl.init.start, decl.init.end) : "undefined";
             exportedProps.push({ name, default: defaultVal });
           });
-          if (!stateMacro) {
+          if (!stateMacro && !otherMacro) {
             edits.push({ start: node.start, end: node.end, replacement: "" });
             removedRanges.push([node.start, node.end]);
           }
@@ -1973,7 +1976,7 @@ function checkUndeclared(source, compiled, add, alreadyReported = /* @__PURE__ *
   try {
     names = findUndeclared(compiled).filter(({ name }) => !alreadyReported.has(name));
   } catch (err) {
-    if (reportParseError) add(0, "error", "SOLA000", `The compiled output is not valid JavaScript (${err.message}), so the component won't mount. This is a compiler bug; please report it with this file.`);
+    if (reportParseError) add(0, "error", "SOLA000", `The compiled output is not valid JavaScript (${err.message}), so the component won't mount. Look for a syntax error in a template expression, such as an unbalanced parenthesis. If the source is valid, it's a compiler bug; please report it with this file.`);
     return;
   }
   if (!names.length) return;

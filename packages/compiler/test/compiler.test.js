@@ -323,6 +323,15 @@ test('export let x = $state(init) is a prop that starts local state', () => {
   assert(/unread\?: number;/.test(dts) && /open\?: boolean;/.test(dts), dts);
 });
 
+test('export let x = $derived(...) compiles as a local derived value', () => {
+  const { code, dts } = compile(
+    `<script>\n  export let n = 2;\n  export let twice = $derived(() => n * 2);\n</script>\n<p>{twice}</p>`
+  );
+  new Function(code.replace(/^import.*$/gm, '').replace('export default ', 'globalThis.__t = '));
+  assert(code.includes('const twice = createDerived('), code);
+  assert(!/twice\?:/.test(dts), 'a derived value is not a prop');
+});
+
 test('three-branch chain nests correctly', () => {
   const { code } = compile(
     `<script>let s = $state('b');</script>{#if s === 'a'}<p>A</p>{:else if s === 'b'}<p>B</p>{:else if s === 'c'}<p>C</p>{:else}<p>D</p>{/if}`

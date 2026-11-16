@@ -1159,7 +1159,14 @@ export function compile(source, options = {}) {
           const stateMacro = only && only.id.type === 'Identifier' && only.init &&
             only.init.type === 'CallExpression' && only.init.callee.type === 'Identifier' &&
             (only.init.callee.name === '$state' || only.init.callee.name === '$persist');
-          if (stateMacro) {
+          // Any other macro ($derived, $intent, $data, ...) can't take a value
+          // from the parent, so it stays a local and only `export` goes.
+          const otherMacro = !stateMacro && only && only.init &&
+            only.init.type === 'CallExpression' && only.init.callee.type === 'Identifier' &&
+            /^\$(derived|effect|intent|data|lastEvent)$/.test(only.init.callee.name);
+          if (otherMacro) {
+            edits.push({ start: node.start, end: node.declaration.start, replacement: '' });
+          } else if (stateMacro) {
             const init = only.init.arguments[only.init.callee.name === '$persist' ? 1 : 0];
             exportedProps.push({
               name: only.id.name,
@@ -1174,7 +1181,7 @@ export function compile(source, options = {}) {
               : 'undefined';
             exportedProps.push({ name, default: defaultVal });
           });
-          if (!stateMacro) {
+          if (!stateMacro && !otherMacro) {
             edits.push({ start: node.start, end: node.end, replacement: '' });
             removedRanges.push([node.start, node.end]);
           }
