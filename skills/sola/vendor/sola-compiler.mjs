@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.7.1, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.7.2, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.7.1\"}"
+  "{\"version\":\"1.7.2\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -1039,13 +1039,28 @@ function compile(source, options = {}) {
           removedRanges.push([node.start, node.end]);
         }
         if (node.type === "ExportNamedDeclaration" && node.declaration && node.declaration.type === "VariableDeclaration") {
-          node.declaration.declarations.forEach((decl) => {
+          const only = node.declaration.declarations.length === 1 && node.declaration.declarations[0];
+          const stateMacro = only && only.id.type === "Identifier" && only.init && only.init.type === "CallExpression" && only.init.callee.type === "Identifier" && (only.init.callee.name === "$state" || only.init.callee.name === "$persist");
+          const otherMacro = !stateMacro && only && only.init && only.init.type === "CallExpression" && only.init.callee.type === "Identifier" && /^\$(derived|effect|intent|data|lastEvent)$/.test(only.init.callee.name);
+          if (otherMacro) {
+            edits.push({ start: node.start, end: node.declaration.start, replacement: "" });
+          } else if (stateMacro) {
+            const init = only.init.arguments[only.init.callee.name === "$persist" ? 1 : 0];
+            exportedProps.push({
+              name: only.id.name,
+              default: init ? strippedScript.slice(init.start, init.end) : "undefined",
+              state: true
+            });
+            edits.push({ start: node.start, end: node.declaration.start, replacement: "" });
+          } else node.declaration.declarations.forEach((decl) => {
             const name = decl.id.name;
             const defaultVal = decl.init ? strippedScript.slice(decl.init.start, decl.init.end) : "undefined";
             exportedProps.push({ name, default: defaultVal });
           });
-          edits.push({ start: node.start, end: node.end, replacement: "" });
-          removedRanges.push([node.start, node.end]);
+          if (!stateMacro && !otherMacro) {
+            edits.push({ start: node.start, end: node.end, replacement: "" });
+            removedRanges.push([node.start, node.end]);
+          }
         }
         if (node.type === "ExpressionStatement" && node.expression.type === "CallExpression" && node.expression.callee.type === "Identifier" && node.expression.callee.name === "$on") {
           const call = node.expression;
@@ -1065,7 +1080,19 @@ function compile(source, options = {}) {
             if (macro === "$state" || macro === "$persist") {
               const varName = decl.id.name;
               const factory = macro === "$persist" ? "createPersistentSignal" : "createSignal";
-              if (arg) {
+              const fromProp = parent && parent.type === "ExportNamedDeclaration";
+              const initArg = decl.init.arguments[macro === "$persist" ? 1 : 0];
+              if (fromProp && initArg) {
+                edits.push({ start: node.start, end: initArg.start, replacement: `const [${varName}, set_${varName}] = ${factory}(` + strippedScript.slice(arg.start, initArg.start) + `props.${varName} !== undefined ? props.${varName} : (` });
+                if (initArg === lastArg) {
+                  edits.push({ start: lastArg.end, end: node.end, replacement: `));` });
+                } else {
+                  edits.push({ start: initArg.end, end: lastArg.start, replacement: ")" + strippedScript.slice(initArg.end, lastArg.start) });
+                  edits.push({ start: lastArg.end, end: node.end, replacement: `);` });
+                }
+              } else if (fromProp && macro === "$state") {
+                edits.push({ start: node.start, end: node.end, replacement: `const [${varName}, set_${varName}] = createSignal(props.${varName});` });
+              } else if (arg) {
                 edits.push({ start: node.start, end: arg.start, replacement: `const [${varName}, set_${varName}] = ${factory}(` });
                 edits.push({ start: lastArg.end, end: node.end, replacement: `);` });
               } else {
@@ -1623,6 +1650,7 @@ function compile(source, options = {}) {
 `;
   }
   for (const prop of exportedProps) {
+    if (prop.state) continue;
     output += `  let ${prop.name} = props.${prop.name} !== undefined ? props.${prop.name} : ${prop.default};
 `;
   }
@@ -1943,11 +1971,12 @@ function checkSetterCalls(source, add) {
     add(m.index, "error", "SOLA002", `\`${name}.${method}()\` throws at runtime: \`${name}\` is state, which is written by assignment. Use \`${fix}\`.`);
   }
 }
-function checkUndeclared(source, compiled, add, alreadyReported = /* @__PURE__ */ new Set()) {
+function checkUndeclared(source, compiled, add, alreadyReported = /* @__PURE__ */ new Set(), reportParseError = true) {
   let names;
   try {
     names = findUndeclared(compiled).filter(({ name }) => !alreadyReported.has(name));
-  } catch {
+  } catch (err) {
+    if (reportParseError) add(0, "error", "SOLA000", `The compiled output is not valid JavaScript (${err.message}), so the component won't mount. Look for a syntax error in a template expression, such as an unbalanced parenthesis. If the source is valid, it's a compiler bug; please report it with this file.`);
     return;
   }
   if (!names.length) return;
@@ -2067,7 +2096,7 @@ function checkSource(source, filename = "component.sola") {
     }
   }
   for (const open of stack) add(open.at, "error", "SOLA001", `\`{#${open.kind}}\` is never closed. It renders as literal text.`);
-  if (compiled) checkUndeclared(source, compiled, add, destructured);
+  if (compiled) checkUndeclared(source, compiled, add, destructured, diagnostics.length === 0);
   return diagnostics.sort((a, b) => a.line - b.line || a.column - b.column);
 }
 export {

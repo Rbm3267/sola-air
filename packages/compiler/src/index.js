@@ -1152,15 +1152,39 @@ export function compile(source, options = {}) {
         // Exported props
         if (node.type === 'ExportNamedDeclaration' && node.declaration &&
             node.declaration.type === 'VariableDeclaration') {
-          node.declaration.declarations.forEach(decl => {
+          // `export let x = $state(init)`: a prop whose value is local state. The
+          // $state branch below declares the signal and starts it from the prop
+          // (or `init` when the parent passes nothing), so only `export` goes.
+          const only = node.declaration.declarations.length === 1 && node.declaration.declarations[0];
+          const stateMacro = only && only.id.type === 'Identifier' && only.init &&
+            only.init.type === 'CallExpression' && only.init.callee.type === 'Identifier' &&
+            (only.init.callee.name === '$state' || only.init.callee.name === '$persist');
+          // Any other macro ($derived, $intent, $data, ...) can't take a value
+          // from the parent, so it stays a local and only `export` goes.
+          const otherMacro = !stateMacro && only && only.init &&
+            only.init.type === 'CallExpression' && only.init.callee.type === 'Identifier' &&
+            /^\$(derived|effect|intent|data|lastEvent)$/.test(only.init.callee.name);
+          if (otherMacro) {
+            edits.push({ start: node.start, end: node.declaration.start, replacement: '' });
+          } else if (stateMacro) {
+            const init = only.init.arguments[only.init.callee.name === '$persist' ? 1 : 0];
+            exportedProps.push({
+              name: only.id.name,
+              default: init ? strippedScript.slice(init.start, init.end) : 'undefined',
+              state: true
+            });
+            edits.push({ start: node.start, end: node.declaration.start, replacement: '' });
+          } else node.declaration.declarations.forEach(decl => {
             const name = decl.id.name;
             const defaultVal = decl.init
               ? strippedScript.slice(decl.init.start, decl.init.end)
               : 'undefined';
             exportedProps.push({ name, default: defaultVal });
           });
-          edits.push({ start: node.start, end: node.end, replacement: '' });
-          removedRanges.push([node.start, node.end]);
+          if (!stateMacro && !otherMacro) {
+            edits.push({ start: node.start, end: node.end, replacement: '' });
+            removedRanges.push([node.start, node.end]);
+          }
         }
 
         // $on('type', handler): subscribe to a bus event for the life of the
@@ -1195,7 +1219,20 @@ export function compile(source, options = {}) {
               // synced across tabs/pages; it reads and assigns exactly like $state.
               const varName = decl.id.name;
               const factory = macro === '$persist' ? 'createPersistentSignal' : 'createSignal';
-              if (arg) {
+              const fromProp = parent && parent.type === 'ExportNamedDeclaration';
+              const initArg = decl.init.arguments[macro === '$persist' ? 1 : 0];
+              if (fromProp && initArg) {
+                // Exported: start from the prop when the parent passes one.
+                edits.push({ start: node.start, end: initArg.start, replacement: `const [${varName}, set_${varName}] = ${factory}(` + strippedScript.slice(arg.start, initArg.start) + `props.${varName} !== undefined ? props.${varName} : (` });
+                if (initArg === lastArg) {
+                  edits.push({ start: lastArg.end, end: node.end, replacement: `));` });
+                } else {
+                  edits.push({ start: initArg.end, end: lastArg.start, replacement: ')' + strippedScript.slice(initArg.end, lastArg.start) });
+                  edits.push({ start: lastArg.end, end: node.end, replacement: `);` });
+                }
+              } else if (fromProp && macro === '$state') {
+                edits.push({ start: node.start, end: node.end, replacement: `const [${varName}, set_${varName}] = createSignal(props.${varName});` });
+              } else if (arg) {
                 edits.push({ start: node.start, end: arg.start, replacement: `const [${varName}, set_${varName}] = ${factory}(` });
                 edits.push({ start: lastArg.end, end: node.end, replacement: `);` });
               } else {
@@ -1725,6 +1762,7 @@ export function compile(source, options = {}) {
   }
 
   for (const prop of exportedProps) {
+    if (prop.state) continue; // declared as a signal in the user script
     output += `  let ${prop.name} = props.${prop.name} !== undefined ? props.${prop.name} : ${prop.default};\n`;
   }
 
