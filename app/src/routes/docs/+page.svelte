@@ -1305,8 +1305,8 @@ export function SolaWidget({ title, value }) {
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
                 <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Passes sola-check</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">19 / 20</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">16 of 20 also mount and render in a browser (base model: 3)</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">16 / 20</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">15 of 20 also mount and render in a browser (base model: 2)</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
                 <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">React / Vue syntax</div>
