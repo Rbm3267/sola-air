@@ -28,6 +28,24 @@ describe('isReadOnlySql', () => {
     assert.strictEqual(isReadOnlySql('SELECT 1; DROP TABLE users'), false);
     assert.strictEqual(isReadOnlySql('SELECT * FROM users; DELETE FROM users;'), false);
   });
+
+  it('reads strings and comments in one pass', () => {
+    assert.strictEqual(isReadOnlySql("SELECT 'it''s -- fine' AS a"), true);
+    assert.strictEqual(isReadOnlySql('SELECT 1 -- it\'s a comment\nFROM t'), true);
+    assert.strictEqual(isReadOnlySql("SELECT 1 /* ' */ FROM t"), true);
+    assert.strictEqual(isReadOnlySql('SELECT 1 /* ; */ ;; ; '), true);
+    assert.strictEqual(isReadOnlySql("SELECT 'unclosed"), false);
+    assert.strictEqual(isReadOnlySql('SELECT 1 /* unclosed'), false);
+    assert.strictEqual(isReadOnlySql("SELECT 1 -- '\n; DROP TABLE users"), false);
+  });
+
+  it('stays fast on long repeated input', () => {
+    const t0 = Date.now();
+    isReadOnlySql('SELECT 1' + ';'.repeat(50000) + 'x');
+    isReadOnlySql("SELECT '" + '\\&'.repeat(50000));
+    isReadOnlySql('SELECT "' + '\\!'.repeat(50000));
+    assert.ok(Date.now() - t0 < 1000);
+  });
 });
 
 describe('RelayServer HTTP query guard & connectors', () => {

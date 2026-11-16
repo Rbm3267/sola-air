@@ -348,6 +348,21 @@ test('the script block ends at </script> in any case or spacing', () => {
   assert(Date.now() - t0 < 2000, 'unclosed <script> tags compile quickly');
 });
 
+test('style blocks and HTML comments are found without a regex', () => {
+  for (const src of [`<p>x</p><style>p { color: red; }</style>`, `<p>x</p><style scoped>p { color: red; }</style>`]) {
+    const { code } = compile(src);
+    assert(code.includes('color: red'), src);
+    assert(!code.includes('<style'), 'style tag removed from the markup');
+  }
+  const { code } = compile(`<p>a</p><!-- {#if x} --><p>b</p><!-- unclosed {oops`);
+  assert(code.includes('>a<') && code.includes('>b<'), 'markup around comments kept');
+  assert(!code.includes('oops') && !code.includes('#if'), 'comments, including an unclosed one, removed');
+  const t0 = Date.now();
+  try { compile('<style>' + '<style>a'.repeat(20000)); } catch {}
+  try { compile('<!--'.repeat(20000)); } catch {}
+  assert(Date.now() - t0 < 2000, 'many unclosed tags or comments compile quickly');
+});
+
 test('three-branch chain nests correctly', () => {
   const { code } = compile(
     `<script>let s = $state('b');</script>{#if s === 'a'}<p>A</p>{:else if s === 'b'}<p>B</p>{:else if s === 'c'}<p>C</p>{:else}<p>D</p>{/if}`

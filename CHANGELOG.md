@@ -2,6 +2,28 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-16: compiler 1.7.6, relay 2.0.1
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: the `<style>` block and HTML comments are now found by index search instead of
+  regexes that could slow down badly on input with many unclosed `<style>` tags or `<!--`.
+- **Changed**: an unclosed `<!--` now hides everything after it, as in a browser. Before, it was
+  left in the template as text.
+
+### `@sola-air-ui/relay`
+
+- **Fixed**: the read-only SQL check strips strings and comments in a single pass. The old regexes
+  could take exponential time on long runs of backslashes inside a string, and read a quote
+  inside a comment as the start of a string.
+- **Changed**: a query with an unclosed string or `/*` comment is now rejected.
+
+### Repo
+
+- CI jobs run with a read-only `GITHUB_TOKEN`. The GitHub Releases workflow checks out `main`
+  instead of the commit that triggered it, and only runs after a publish from `main`.
+- The site escapes the core runtime and compiler version for use inside a `<script>` block.
+
 ## 2026-11-16: compiler 1.7.5
 
 ### `@sola-air-ui/compiler`

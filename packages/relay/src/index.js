@@ -9,18 +9,55 @@ const { version: RELAY_VERSION } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8')
 );
 
+// Trims whitespace and any run of trailing semicolons (with whitespace between).
+function trimTrailingSemicolons(sql) {
+  let end = sql.length;
+  while (end > 0 && (sql[end - 1] === ';' || /\s/.test(sql[end - 1]))) end--;
+  return sql.slice(0, end).trim();
+}
+
+// Replaces string literals with empty ones ('' or "") and comments with a space,
+// in one pass so a quote inside a comment or `--` inside a string is read right.
+// Returns '' for an unterminated string or block comment, which callers reject.
+function stripSqlLiterals(sql) {
+  let out = '';
+  let i = 0;
+  while (i < sql.length) {
+    const c = sql[i];
+    if (c === "'" || c === '"') {
+      let j = i + 1;
+      for (;;) {
+        if (j >= sql.length) return '';
+        if (sql[j] === '\\') { j += 2; continue; }
+        if (sql[j] === c) {
+          if (sql[j + 1] === c) { j += 2; continue; }
+          break;
+        }
+        j++;
+      }
+      out += c + c;
+      i = j + 1;
+    } else if (c === '-' && sql[i + 1] === '-') {
+      out += ' ';
+      while (i < sql.length && sql[i] !== '\n' && sql[i] !== '\r') i++;
+    } else if (c === '/' && sql[i + 1] === '*') {
+      const close = sql.indexOf('*/', i + 2);
+      if (close < 0) return '';
+      out += ' ';
+      i = close + 2;
+    } else {
+      out += c;
+      i++;
+    }
+  }
+  return out.trim();
+}
+
 // Only single-statement read-only SELECT queries are permitted on SQL connectors.
 export function isReadOnlySql(sql) {
   if (typeof sql !== 'string') return false;
-  const trimmed = sql.trim().replace(/;+\s*$/, '');
-  if (!trimmed) return false;
-  const withoutStrings = trimmed
-    .replace(/'(?:''|\\.|[^'])*'/g, "''")
-    .replace(/"(?:""|\\.|[^"])*"/g, '""');
-  const withoutComments = withoutStrings
-    .replace(/--[^\r\n]*/g, ' ')
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
-    .trim();
+  const withoutComments = stripSqlLiterals(trimTrailingSemicolons(sql));
+  if (!withoutComments) return false;
   if (!/^SELECT\b/i.test(withoutComments)) return false;
   if (withoutComments.includes(';')) return false;
   // INTO covers SELECT ... INTO, which creates a table (PostgreSQL) or writes a file
