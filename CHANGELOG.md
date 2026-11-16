@@ -2,6 +2,16 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-16: compiler 1.7.4
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: the compiler found the `<script>` block with a regex that only ended at a literal
+  `</script>` and could backtrack for a long time on input with many unclosed `<script>` tags. It now
+  finds the block by index search and ends it at `</script>` in any case, with or without spaces or
+  attributes, the way a browser does. `<SCRIPT>` works too. Clears CodeQL alerts for a bad tag filter
+  and a polynomial regex.
+
 ## 2026-11-16: compiler 1.7.3
 
 ### `@sola-air-ui/compiler`

@@ -332,6 +332,22 @@ test('export let x = $derived(...) compiles as a local derived value', () => {
   assert(!/twice\?:/.test(dts), 'a derived value is not a prop');
 });
 
+test('the script block ends at </script> in any case or spacing', () => {
+  for (const src of [
+    `<script>let n = $state(1);</script >\n<p>{n}</p>`,
+    `<SCRIPT>let n = $state(1);</SCRIPT>\n<p>{n}</p>`,
+    `<script lang="ts">let n: number = $state(1);</script>\n<p>{n}</p>`,
+  ]) {
+    const { code } = compile(src);
+    assert(code.includes('createSignal(1)'), src);
+    assert(!/<\/?script/i.test(code.split('// Reactive DOM graph')[1] || ''), 'no script tag left in the markup');
+  }
+  // Many unclosed tags: no regex backtracking, so this stays fast.
+  const t0 = Date.now();
+  try { compile('<script>' + '<script>a'.repeat(20000)); } catch {}
+  assert(Date.now() - t0 < 2000, 'unclosed <script> tags compile quickly');
+});
+
 test('three-branch chain nests correctly', () => {
   const { code } = compile(
     `<script>let s = $state('b');</script>{#if s === 'a'}<p>A</p>{:else if s === 'b'}<p>B</p>{:else if s === 'c'}<p>C</p>{:else}<p>D</p>{/if}`
