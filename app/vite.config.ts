@@ -81,8 +81,8 @@ const uiSubpathAliases = Object.entries(uiPackageExports)
 // in for node:fs, which the compiler only uses to read its own version.
 // A string as a JS literal that is also safe inside an HTML <script> block.
 function jsLiteral(value: string) {
-	const escapes: Record<string, string> = { '<': '\\u003C', '>': '\\u003E', '/': '\\u002F', ' ': '\\u2028', ' ': '\\u2029' };
-	return JSON.stringify(value).replace(/[<>/  ]/g, (c) => escapes[c]);
+	const escapes: Record<string, string> = { '<': '\\u003C', '>': '\\u003E', '/': '\\u002F', '\u2028': '\\u2028', '\u2029': '\\u2029' };
+	return JSON.stringify(value).replace(/[<>\/\u2028\u2029]/g, (c) => escapes[c]);
 }
 
 function solaGenerate() {
