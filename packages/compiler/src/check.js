@@ -62,10 +62,10 @@ function checkSetterCalls(source, add) {
 // A name the component reads but never declares compiles fine and then throws
 // "x is not defined" when it mounts. Find those in the compiled output and point
 // at the first place the source uses the name.
-function checkUndeclared(source, compiled, add) {
+function checkUndeclared(source, compiled, add, alreadyReported = new Set()) {
   let names;
   try {
-    names = findUndeclared(compiled);
+    names = findUndeclared(compiled).filter(({ name }) => !alreadyReported.has(name));
   } catch {
     return; // Output that doesn't parse is a compiler bug, not this rule's to report.
   }
@@ -138,7 +138,9 @@ export function checkSource(source, filename = 'component.sola') {
   }
 
   checkSetterCalls(source, add);
-  if (compiled) checkUndeclared(source, compiled, add);
+  // Names bound by an `{#each ... as [a, b]}` pattern. SOLA001 already reports
+  // the pattern, so SOLA003 doesn't repeat each name as undeclared.
+  const destructured = new Set();
 
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;
@@ -161,7 +163,14 @@ export function checkSource(source, filename = 'component.sola') {
       if (closeIdx !== -1) {
         const head = template.slice(at, closeIdx + 1);
         const parsed = /^\{#each\s+([\s\S]*?)\s+as\s+([\w$]+)(?:\s*,\s*([\w$]+))?(?:\s*\(([\s\S]+)\))?\}$/.exec(head);
-        if (!parsed || !parsed[1].trim()) {
+        const pattern = /^\{#each\s+([\s\S]*?)\s+as\s*(\[[^\]]*\]|\{[^}]*\})/.exec(head);
+        if (!parsed && pattern) {
+          const [, list, bound] = pattern;
+          const names = bound.match(/[A-Za-z_$][\w$]*/g) || [];
+          for (const n of names) destructured.add(n);
+          const part = bound[0] === '[' ? 'entry[0]' : `entry.${names[0] || 'id'}`;
+          add(at, 'error', 'SOLA001', `\`{#each}\` can't destructure its item (\`as ${bound.replace(/\s+/g, ' ')}\`). Name the item and read its parts: \`{#each ${list.trim()} as entry}\` ... \`{${part}}\`. It renders as literal text.`);
+        } else if (!parsed || !parsed[1].trim()) {
           add(at, 'error', 'SOLA001', '`{#each}` is missing `as <item>` (expected `{#each list as item}`). It renders as literal text.');
         }
       }
@@ -189,6 +198,8 @@ export function checkSource(source, filename = 'component.sola') {
     }
   }
   for (const open of stack) add(open.at, 'error', 'SOLA001', `\`{#${open.kind}}\` is never closed. It renders as literal text.`);
+
+  if (compiled) checkUndeclared(source, compiled, add, destructured);
 
   return diagnostics.sort((a, b) => a.line - b.line || a.column - b.column);
 }

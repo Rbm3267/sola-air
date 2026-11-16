@@ -150,3 +150,21 @@ describe('SOLA003 undeclared names', () => {
     assert.deepStrictEqual(diagnostics.filter((d) => d.code === 'SOLA003'), []);
   });
 });
+
+describe('{#each} destructuring', () => {
+  it('names the destructuring in SOLA001 and does not repeat its names as SOLA003', () => {
+    const src = `<script>let pairs = $state([['a', 1]]);</script>\n<ul>{#each pairs as [k, v] (k)}<li>{k}: {v}</li>{/each}</ul>`;
+    const diags = checkSource(src, 'T.sola');
+    assert.deepStrictEqual(diags.map((d) => d.code), ['SOLA001']);
+    assert.match(diags[0].message, /can't destructure its item \(`as \[k, v\]`\)/);
+    assert.match(diags[0].message, /`\{#each pairs as entry\}` \.\.\. `\{entry\[0\]\}`/);
+  });
+
+  it('suggests a field for an object pattern and still reports unrelated undeclared names', () => {
+    const src = `<script>let rows = $state([{ id: 1 }]);</script>\n<p>{missing}</p>\n{#each rows as { id, label } (id)}<i>{label}</i>{/each}`;
+    const diags = checkSource(src, 'T.sola');
+    assert.deepStrictEqual(diags.map((d) => d.code).sort(), ['SOLA001', 'SOLA003']);
+    assert.match(diags.find((d) => d.code === 'SOLA001').message, /`\{entry\.id\}`/);
+    assert.match(diags.find((d) => d.code === 'SOLA003').message, /`missing`/);
+  });
+});

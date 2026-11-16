@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.7.0, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.7.1, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.7.0\"}"
+  "{\"version\":\"1.7.1\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -1943,10 +1943,10 @@ function checkSetterCalls(source, add) {
     add(m.index, "error", "SOLA002", `\`${name}.${method}()\` throws at runtime: \`${name}\` is state, which is written by assignment. Use \`${fix}\`.`);
   }
 }
-function checkUndeclared(source, compiled, add) {
+function checkUndeclared(source, compiled, add, alreadyReported = /* @__PURE__ */ new Set()) {
   let names;
   try {
-    names = findUndeclared(compiled);
+    names = findUndeclared(compiled).filter(({ name }) => !alreadyReported.has(name));
   } catch {
     return;
   }
@@ -2010,7 +2010,7 @@ function checkSource(source, filename = "component.sola") {
     });
   }
   checkSetterCalls(source, add);
-  if (compiled) checkUndeclared(source, compiled, add);
+  const destructured = /* @__PURE__ */ new Set();
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;
   const stack = [];
@@ -2032,7 +2032,14 @@ function checkSource(source, filename = "component.sola") {
       if (closeIdx !== -1) {
         const head = template.slice(at, closeIdx + 1);
         const parsed = /^\{#each\s+([\s\S]*?)\s+as\s+([\w$]+)(?:\s*,\s*([\w$]+))?(?:\s*\(([\s\S]+)\))?\}$/.exec(head);
-        if (!parsed || !parsed[1].trim()) {
+        const pattern = /^\{#each\s+([\s\S]*?)\s+as\s*(\[[^\]]*\]|\{[^}]*\})/.exec(head);
+        if (!parsed && pattern) {
+          const [, list, bound] = pattern;
+          const names = bound.match(/[A-Za-z_$][\w$]*/g) || [];
+          for (const n of names) destructured.add(n);
+          const part = bound[0] === "[" ? "entry[0]" : `entry.${names[0] || "id"}`;
+          add(at, "error", "SOLA001", `\`{#each}\` can't destructure its item (\`as ${bound.replace(/\s+/g, " ")}\`). Name the item and read its parts: \`{#each ${list.trim()} as entry}\` ... \`{${part}}\`. It renders as literal text.`);
+        } else if (!parsed || !parsed[1].trim()) {
           add(at, "error", "SOLA001", "`{#each}` is missing `as <item>` (expected `{#each list as item}`). It renders as literal text.");
         }
       }
@@ -2060,6 +2067,7 @@ function checkSource(source, filename = "component.sola") {
     }
   }
   for (const open of stack) add(open.at, "error", "SOLA001", `\`{#${open.kind}}\` is never closed. It renders as literal text.`);
+  if (compiled) checkUndeclared(source, compiled, add, destructured);
   return diagnostics.sort((a, b) => a.line - b.line || a.column - b.column);
 }
 export {

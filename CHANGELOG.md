@@ -2,6 +2,15 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-16: compiler 1.7.1
+
+### `@sola-air-ui/compiler`
+
+- **Fixed**: `sola-check` gave a misleading message for a destructured `{#each}` item.
+  `{#each pairs as [k, v]}` reported "`{#each}` is missing `as <item>`", then reported `k` and `v`
+  as undeclared (`SOLA003`). It now says the item can't be destructured and shows the fix
+  (`{#each pairs as entry}` ... `{entry[0]}`), and the pattern's names aren't reported again.
+
 ## 2026-11-15: compiler 1.7.0
 
 ### `@sola-air-ui/compiler`
