@@ -2,6 +2,15 @@
 
 All notable fixes and changes to the Sola AIR packages. Dates are UTC.
 
+## 2026-11-16: compiler 1.7.3
+
+### `@sola-air-ui/compiler`
+
+- **Added**: `sola-check` rule `SOLA004` for a second `<script>` block. The compiler uses only the first
+  one; any other stays in the markup and the browser runs it as a plain script when the component mounts,
+  so `export let` in it throws. `sola-check` passed these files before. Found in the model benchmark
+  (AlertBanner put a `<script>` inside an `{#if}`).
+
 ## 2026-11-16: compiler 1.7.2
 
 ### `@sola-air-ui/compiler`

@@ -14,8 +14,29 @@ export const RULES = {
   SOLA000: 'compile error',
   SOLA001: 'unbalanced block',
   SOLA002: 'state written with .set() or .update()',
-  SOLA003: 'name used but never declared'
+  SOLA003: 'name used but never declared',
+  SOLA004: 'more than one <script> block'
 };
+
+// The compiler takes the first <script> as the component's script. Any other
+// one stays in the markup, and the browser runs it as a plain script when the
+// component mounts, so `export let` in it throws a SyntaxError.
+function checkExtraScripts(source, add) {
+  // Skip the first block whole, as the compiler does: its body may mention
+  // `<script` or `<style` in a comment or a regex.
+  const lower = source.toLowerCase();
+  const open = lower.indexOf('<script');
+  const end = open < 0 ? -1 : lower.indexOf('</script', open);
+  const close = end < 0 ? -1 : lower.indexOf('>', end);
+  const from = close < 0 ? (open < 0 ? 0 : source.length) : close + 1;
+  const rest = source.slice(from)
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, (m) => m.replace(/[^\n]/g, ' '))
+    .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '));
+  for (const m of rest.matchAll(/<script\b/gi)) {
+    m.index += from;
+    add(m.index, 'error', 'SOLA004', 'A component has one `<script>` block. This one stays in the markup and the browser runs it as a plain script when the component mounts, so `export let` or `$state` in it throws. Move its code into the first `<script>` and use `{#if}` in the markup instead.');
+  }
+}
 
 // Text of every <script> body. Plain index search, so `</script >` and odd
 // casing are handled the same way the browser would end the element.
@@ -142,6 +163,7 @@ export function checkSource(source, filename = 'component.sola') {
   }
 
   checkSetterCalls(source, add);
+  checkExtraScripts(source, add);
   // Names bound by an `{#each ... as [a, b]}` pattern. SOLA001 already reports
   // the pattern, so SOLA003 doesn't repeat each name as undeclared.
   const destructured = new Set();

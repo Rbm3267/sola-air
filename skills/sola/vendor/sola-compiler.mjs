@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.7.2, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.7.3, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.7.2\"}"
+  "{\"version\":\"1.7.3\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -1939,6 +1939,18 @@ function findUndeclared(code) {
 }
 
 // packages/compiler/src/check.js
+function checkExtraScripts(source, add) {
+  const lower = source.toLowerCase();
+  const open = lower.indexOf("<script");
+  const end = open < 0 ? -1 : lower.indexOf("</script", open);
+  const close = end < 0 ? -1 : lower.indexOf(">", end);
+  const from = close < 0 ? open < 0 ? 0 : source.length : close + 1;
+  const rest = source.slice(from).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, (m) => m.replace(/[^\n]/g, " ")).replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, " "));
+  for (const m of rest.matchAll(/<script\b/gi)) {
+    m.index += from;
+    add(m.index, "error", "SOLA004", "A component has one `<script>` block. This one stays in the markup and the browser runs it as a plain script when the component mounts, so `export let` or `$state` in it throws. Move its code into the first `<script>` and use `{#if}` in the markup instead.");
+  }
+}
 function scriptBodies(source) {
   const lower = source.toLowerCase();
   const bodies = [];
@@ -2039,6 +2051,7 @@ function checkSource(source, filename = "component.sola") {
     });
   }
   checkSetterCalls(source, add);
+  checkExtraScripts(source, add);
   const destructured = /* @__PURE__ */ new Set();
   const template = maskNonTemplate(source);
   const tag = /\{(#if|#each|\/if|\/each|:else)(?![\w])/g;
