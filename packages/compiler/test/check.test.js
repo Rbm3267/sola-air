@@ -160,6 +160,16 @@ describe('{#each} destructuring', () => {
     assert.match(diags[0].message, /`\{#each pairs as entry\}` \.\.\. `\{entry\[0\]\}`/);
   });
 
+  it('flags a second <script> block as SOLA004', () => {
+    const src = `<script>let shown = $state(true);</script>\n<p>{shown}</p>\n{#if shown}\n  <script>\n    export let onClose;\n  </script>\n{/if}`;
+    const diags = checkSource(src, 'T.sola').filter((d) => d.code === 'SOLA004');
+    assert.strictEqual(diags.length, 1);
+    assert.strictEqual(diags[0].line, 4);
+    assert.deepStrictEqual(codes(`<script>let a = $state(1);</script>\n<!-- <script>old</script> -->\n<p>{a}</p>`), []);
+    // `<script` mentioned inside the first block is not a second block.
+    assert.deepStrictEqual(codes(`<script>\n  // strips <script> tags\n  const re = /<script\\b[^>]*>/gi;\n  let a = $state(re.source);\n</script>\n<p>{a}</p>`), []);
+  });
+
   it('passes an exported $state prop', () => {
     assert.deepStrictEqual(codes(`<script>export let unread = $state(5);</script>\n<span>{unread}</span>`), []);
   });
