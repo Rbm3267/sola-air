@@ -106,7 +106,7 @@
                 <span class="inline-flex items-center text-xs font-mono uppercase tracking-wider text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-200/80 dark:border-amber-500/20 font-semibold">Model</span>
               </div>
               <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-                A 1.5B model on Hugging Face that writes <code class="font-mono text-xs">.sola</code> components and runs locally. 986 MB, about 30 seconds per component on a 2 GB GPU, and 15 of 20 benchmark components mount and render (the base model managed 2).
+                A 1.5B model on Hugging Face that writes <code class="font-mono text-xs">.sola</code> components and runs locally. 986 MB, about 13 seconds per component on a 2 GB GPU, and 17 of 20 benchmark components mount and render (the base model managed 2).
               </p>
             </div>
             <div class="flex items-center justify-between gap-2 pt-1">
