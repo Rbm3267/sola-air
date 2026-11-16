@@ -160,6 +160,10 @@ describe('{#each} destructuring', () => {
     assert.match(diags[0].message, /`\{#each pairs as entry\}` \.\.\. `\{entry\[0\]\}`/);
   });
 
+  it('passes an exported $state prop', () => {
+    assert.deepStrictEqual(codes(`<script>export let unread = $state(5);</script>\n<span>{unread}</span>`), []);
+  });
+
   it('suggests a field for an object pattern and still reports unrelated undeclared names', () => {
     const src = `<script>let rows = $state([{ id: 1 }]);</script>\n<p>{missing}</p>\n{#each rows as { id, label } (id)}<i>{label}</i>{/each}`;
     const diags = checkSource(src, 'T.sola');

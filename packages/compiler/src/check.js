@@ -62,12 +62,16 @@ function checkSetterCalls(source, add) {
 // A name the component reads but never declares compiles fine and then throws
 // "x is not defined" when it mounts. Find those in the compiled output and point
 // at the first place the source uses the name.
-function checkUndeclared(source, compiled, add, alreadyReported = new Set()) {
+function checkUndeclared(source, compiled, add, alreadyReported = new Set(), reportParseError = true) {
   let names;
   try {
     names = findUndeclared(compiled).filter(({ name }) => !alreadyReported.has(name));
-  } catch {
-    return; // Output that doesn't parse is a compiler bug, not this rule's to report.
+  } catch (err) {
+    // Output that doesn't parse is a compiler bug, but the file still won't
+    // mount, so say so instead of passing it. Skipped when another error (an
+    // unbalanced block, say) already explains the broken output.
+    if (reportParseError) add(0, 'error', 'SOLA000', `The compiled output is not valid JavaScript (${err.message}), so the component won't mount. This is a compiler bug; please report it with this file.`);
+    return;
   }
   if (!names.length) return;
   const blank = (m) => m.replace(/[^\n]/g, ' ');
@@ -199,7 +203,8 @@ export function checkSource(source, filename = 'component.sola') {
   }
   for (const open of stack) add(open.at, 'error', 'SOLA001', `\`{#${open.kind}}\` is never closed. It renders as literal text.`);
 
-  if (compiled) checkUndeclared(source, compiled, add, destructured);
+  // An unbalanced block can also break the output; SOLA001 already explains that.
+  if (compiled) checkUndeclared(source, compiled, add, destructured, diagnostics.length === 0);
 
   return diagnostics.sort((a, b) => a.line - b.line || a.column - b.column);
 }

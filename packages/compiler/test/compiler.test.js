@@ -310,6 +310,19 @@ test('a later branch is not evaluated when an earlier one matches', () => {
   assert(elseIdx !== -1 && code.indexOf('v().title') > elseIdx, 'guarded access is inside the else branch');
 });
 
+test('export let x = $state(init) is a prop that starts local state', () => {
+  // This used to emit `...ad] = createSignal(5);`, which doesn't parse.
+  const { code, dts } = compile(
+    `<script>\n  export let unread = $state(5);\n  export let open = $persist('k', false, { storage: 'local' });\n  function bump() { unread += 1; }\n</script>\n<span>{unread} {open}</span><button onclick={bump}>+</button>`
+  );
+  new Function(code.replace(/^import.*$/gm, '').replace('export default ', 'globalThis.__t = '));
+  assert(code.includes('createSignal(props.unread !== undefined ? props.unread : (5))'), code);
+  assert(code.includes(`createPersistentSignal('k', props.open !== undefined ? props.open : (false), { storage: 'local' })`), code);
+  assert(code.includes('set_unread(unread() + (1))'), 'assignment still goes through the setter');
+  assert(!/let unread = props/.test(code), 'no plain prop binding shadows the signal');
+  assert(/unread\?: number;/.test(dts) && /open\?: boolean;/.test(dts), dts);
+});
+
 test('three-branch chain nests correctly', () => {
   const { code } = compile(
     `<script>let s = $state('b');</script>{#if s === 'a'}<p>A</p>{:else if s === 'b'}<p>B</p>{:else if s === 'c'}<p>C</p>{:else}<p>D</p>{/if}`
