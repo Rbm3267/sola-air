@@ -214,13 +214,12 @@ function extractScriptAndStyle(source) {
   // Zero-based line in the original .sola file where the script body starts,
   // so generated output can be mapped back to it.
   let scriptStartLine = 0;
-  const scriptMatch = template.match(/<script(?:\s+lang=["'](ts|js)["'])?>([\s\S]*?)<\/script>/);
-  if (scriptMatch) {
-    isTypeScript = scriptMatch[1] === 'ts';
-    script = scriptMatch[2];
-    const openTagEnd = scriptMatch.index + scriptMatch[0].indexOf('>') + 1;
-    scriptStartLine = source.slice(0, openTagEnd).split('\n').length - 1;
-    template = template.replace(scriptMatch[0], '');
+  const block = findScriptBlock(template);
+  if (block) {
+    isTypeScript = block.lang === 'ts';
+    script = block.body;
+    scriptStartLine = source.slice(0, block.bodyStart).split('\n').length - 1;
+    template = template.slice(0, block.start) + template.slice(block.end);
   }
 
   const styleMatch = template.match(/<style(?:\s+scoped)?>([\s\S]*?)<\/style>/);
@@ -776,6 +775,36 @@ function collectDeclaredNames(node, out) {
 
 // Pre-pass: find every $state/$derived/$intent/$data declaration up front so
 // reads that appear earlier in the source (hoisted functions) still rewrite.
+// The component's <script>: the first `<script>` or `<script lang="ts|js">`,
+// up to the first `</script ...>` after it (any case, any attributes on the end
+// tag, as a browser reads it). Index search instead of a regex, which would
+// backtrack badly on input with many unclosed `<script>` tags.
+function findScriptBlock(text) {
+  const lower = text.toLowerCase();
+  for (let from = 0; ; ) {
+    const start = lower.indexOf('<script', from);
+    if (start < 0) return null;
+    const tagEnd = lower.indexOf('>', start);
+    if (tagEnd < 0) return null;
+    const attrs = text.slice(start + 7, tagEnd);
+    const lang = /^\s+lang=["'](ts|js)["']\s*$/i.exec(attrs);
+    if (lang || attrs.trim() === '') {
+      const close = lower.indexOf('</script', tagEnd);
+      if (close < 0) return null;
+      const closeEnd = lower.indexOf('>', close);
+      if (closeEnd < 0) return null;
+      return {
+        start,
+        end: closeEnd + 1,
+        bodyStart: tagEnd + 1,
+        body: text.slice(tagEnd + 1, close),
+        lang: lang ? lang[1].toLowerCase() : null
+      };
+    }
+    from = tagEnd + 1;
+  }
+}
+
 function collectReactiveVars(ast) {
   const vars = { state: new Set(), derived: new Set(), intent: new Set(), data: new Set() };
   (function walk(node) {

@@ -39,6 +39,15 @@ const errors = [];
 const scripts = [];          // compiled IIFEs, dependencies first
 const loaded = new Set();    // global names already defined
 
+/** Body of the first <script> block, found by index (no tag regex). */
+function scriptBody(source) {
+  const lower = source.toLowerCase();
+  const open = lower.indexOf('<script');
+  const start = open < 0 ? -1 : lower.indexOf('>', open);
+  const end = start < 0 ? -1 : lower.indexOf('</script', start);
+  return end < 0 ? '' : source.slice(start + 1, end);
+}
+
 /** Compile one .sola file to an IIFE that defines window[globalName], after its imports. */
 function addSola(file, globalName, label) {
   const source = readFileSync(file, 'utf8');
@@ -48,7 +57,7 @@ function addSola(file, globalName, label) {
   if (errors.length) return;
 
   // Imports become globals in the no-bundler build, under their local names.
-  const script = (source.match(/<script[^>]*>([\s\S]*?)<\/script>/) || [, ''])[1];
+  const script = scriptBody(source);
   for (const m of script.matchAll(/^\s*import\s+([^;'"]+?)\s+from\s+['"]([^'"]+)['"]/gm)) {
     const [, what, from] = m;
     if (/^type\b/.test(what.trim())) continue;

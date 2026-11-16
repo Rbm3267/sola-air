@@ -1,10 +1,10 @@
-// @sola-air-ui/compiler 1.7.3, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
+// @sola-air-ui/compiler 1.7.4, bundled for scripts/preview.mjs (acorn and htmlparser2 are the files next to it). Generated; do not edit.
 
 // packages/compiler/src/index.js
 import * as acorn from "./acorn.mjs";
 import * as htmlparser2 from "./htmlparser2.mjs";
 var { version: COMPILER_VERSION } = JSON.parse(
-  "{\"version\":\"1.7.3\"}"
+  "{\"version\":\"1.7.4\"}"
 );
 var CORE_PROVIDED = /* @__PURE__ */ new Set([
   "createSignal",
@@ -215,13 +215,12 @@ function extractScriptAndStyle(source) {
   let template = source;
   let isTypeScript = false;
   let scriptStartLine = 0;
-  const scriptMatch = template.match(/<script(?:\s+lang=["'](ts|js)["'])?>([\s\S]*?)<\/script>/);
-  if (scriptMatch) {
-    isTypeScript = scriptMatch[1] === "ts";
-    script = scriptMatch[2];
-    const openTagEnd = scriptMatch.index + scriptMatch[0].indexOf(">") + 1;
-    scriptStartLine = source.slice(0, openTagEnd).split("\n").length - 1;
-    template = template.replace(scriptMatch[0], "");
+  const block = findScriptBlock(template);
+  if (block) {
+    isTypeScript = block.lang === "ts";
+    script = block.body;
+    scriptStartLine = source.slice(0, block.bodyStart).split("\n").length - 1;
+    template = template.slice(0, block.start) + template.slice(block.end);
   }
   const styleMatch = template.match(/<style(?:\s+scoped)?>([\s\S]*?)<\/style>/);
   if (styleMatch) {
@@ -783,6 +782,31 @@ function collectDeclaredNames(node, out) {
     const child = node[key];
     if (Array.isArray(child)) child.forEach((c) => collectDeclaredNames(c, out));
     else if (child && typeof child === "object" && child.type) collectDeclaredNames(child, out);
+  }
+}
+function findScriptBlock(text) {
+  const lower = text.toLowerCase();
+  for (let from = 0; ; ) {
+    const start = lower.indexOf("<script", from);
+    if (start < 0) return null;
+    const tagEnd = lower.indexOf(">", start);
+    if (tagEnd < 0) return null;
+    const attrs = text.slice(start + 7, tagEnd);
+    const lang = /^\s+lang=["'](ts|js)["']\s*$/i.exec(attrs);
+    if (lang || attrs.trim() === "") {
+      const close = lower.indexOf("</script", tagEnd);
+      if (close < 0) return null;
+      const closeEnd = lower.indexOf(">", close);
+      if (closeEnd < 0) return null;
+      return {
+        start,
+        end: closeEnd + 1,
+        bodyStart: tagEnd + 1,
+        body: text.slice(tagEnd + 1, close),
+        lang: lang ? lang[1].toLowerCase() : null
+      };
+    }
+    from = tagEnd + 1;
   }
 }
 function collectReactiveVars(ast) {

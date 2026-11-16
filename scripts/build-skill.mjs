@@ -158,7 +158,12 @@ emit('vendor/ui-manifest.json', JSON.stringify(
 
 /** `export let name = default;` → { name, def }. A default spanning lines shows as its first token. */
 function parseProps(source) {
-  const script = (source.match(/<script[^>]*>([\s\S]*?)<\/script>/) || [, ''])[1];
+  // Body of the first <script> block, found by index (no tag regex).
+  const lower = source.toLowerCase();
+  const open = lower.indexOf('<script');
+  const start = open < 0 ? -1 : lower.indexOf('>', open);
+  const end = start < 0 ? -1 : lower.indexOf('</script', start);
+  const script = end < 0 ? '' : source.slice(start + 1, end);
   return script.split('\n')
     .map((line) => line.match(/^\s*export\s+let\s+(\w+)(?:\s*=\s*(.*?))?;?\s*(?:\/\/\s*(.*))?$/))
     .filter(Boolean)
