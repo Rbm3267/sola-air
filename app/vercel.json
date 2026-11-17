@@ -1,6 +1,15 @@
 {
   "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npm run build",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/(.*)\\.php", "destination": "/not-found" },
+    { "source": "/wp-(.*)", "destination": "/not-found" },
+    { "source": "/\\.env(.*)", "destination": "/not-found" },
+    { "source": "/\\.git(.*)", "destination": "/not-found" },
+    { "source": "/xmlrpc(.*)", "destination": "/not-found" },
+    { "source": "/(phpmyadmin|pma)(.*)", "destination": "/not-found" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
