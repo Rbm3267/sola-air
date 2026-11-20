@@ -1,13 +1,13 @@
-// The homepage `$data` section runs real .sola files that call `$data`, against
+// The docs `$data` section runs real .sola files that call `$data`, against
 // a stand-in endpoint on the site. These tests check what the section claims:
 // rows arrive through the real code path, the button fetches again, switching
 // source swaps the file, and the old source stops polling.
 
 import { test, expect } from './fixtures';
 
-test.describe('homepage: $data demo', () => {
+test.describe('docs: $data demo', () => {
   test('shows the source it runs and the rows it fetched', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/docs#relay-saas');
     const live = page.getByTestId('data-demo-live');
     await live.scrollIntoViewIfNeeded();
 
@@ -21,7 +21,7 @@ test.describe('homepage: $data demo', () => {
   });
 
   test('"Fetch again" sends another request to the relay', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/docs#relay-saas');
     const live = page.getByTestId('data-demo-live');
     await live.scrollIntoViewIfNeeded();
     await expect(live).toContainText('$184200');
@@ -33,7 +33,7 @@ test.describe('homepage: $data demo', () => {
   });
 
   test('switching to PostgreSQL swaps the file and the rows', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/docs#relay-saas');
     await page.getByTestId('data-demo-live').scrollIntoViewIfNeeded();
     await page.getByRole('button', { name: 'PostgreSQL' }).click();
 
@@ -51,7 +51,7 @@ test.describe('homepage: $data demo', () => {
     page.on('request', (r) => {
       if (r.url().includes('/api/demo-relay') && r.method() === 'POST') sources.push(r.postDataJSON().source);
     });
-    await page.goto('/');
+    await page.goto('/docs#relay-saas');
     const live = page.getByTestId('data-demo-live');
     await live.scrollIntoViewIfNeeded();
     await expect(live).toContainText('$184200');

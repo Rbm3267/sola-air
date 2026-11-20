@@ -1,13 +1,13 @@
-// The homepage section that shows $persist, $on and $lastEvent runs the real
+// The docs section that shows $persist, $on and $lastEvent runs the real
 // BusDemo.sola file and prints that same file as its code sample. These tests
 // drive it the way a visitor would, so the claims in the copy beside it are
 // checked rather than asserted.
 
 import { test, expect } from './fixtures';
 
-test.describe('homepage: $persist + event bus demo', () => {
+test.describe('docs: $persist + event bus demo', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/docs#event-bus');
     await page.evaluate(() => sessionStorage.clear());
     await page.reload();
     await page.getByTestId('bus-demo-live').scrollIntoViewIfNeeded();
