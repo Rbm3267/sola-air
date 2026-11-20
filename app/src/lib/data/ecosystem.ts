@@ -28,9 +28,9 @@ export const SAAS_ECOSYSTEM: SaasIntegration[] = [
       slaRemainingMin: 11,
       blastRadius: '42,000 Active Checkout Sessions',
       playbooks: [
-        { id: 'pb-1', title: 'Reroute Edge DNS to secondary region', action: 'DNS Failover', automated: true },
-        { id: 'pb-2', title: 'Scale Redis Cluster Read Replicas (x4)', action: 'Auto-Provision', automated: true },
-        { id: 'pb-3', title: 'Page Tier 3 Database SRE On-Call', action: 'On-Call Incident', automated: false }
+        { id: 'pb-1', title: 'Switch webhook queue to standby worker', action: 'Queue Failover', automated: true },
+        { id: 'pb-2', title: 'Flush stale checkout session cache', action: 'Cache Reset', automated: true },
+        { id: 'pb-3', title: 'Notify billing on-call engineer', action: 'Escalation Alert', automated: false }
       ]
     }
   },

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Navbar from '$lib/components/Navbar.svelte';
-  import { CHANGELOG, GITHUB_URL, VERSIONS } from '$lib/data/site';
+  import { CHANGELOG, VERSIONS } from '$lib/data/site';
 
   let activeFilter = $state('All');
 
@@ -50,7 +50,7 @@
         Changelog
       </h1>
       <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base mt-2 max-w-[68ch] leading-relaxed">
-        Every release and fix across the Sola AIR packages, read directly from <a href="{GITHUB_URL}/blob/main/CHANGELOG.md" target="_blank" rel="noreferrer" class="text-blue-700 dark:text-blue-400 underline font-mono text-xs">CHANGELOG.md</a> at build time.
+        Every release and fix across the Sola AIR packages, read directly from <code class="font-mono text-xs text-slate-800 dark:text-slate-200">CHANGELOG.md</code> at build time.
       </p>
 
       <!-- Package Filter Pills -->

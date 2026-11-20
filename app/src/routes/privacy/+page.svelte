@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { GITHUB_URL, GITHUB_REPO } from '$lib/data/site';
   import Navbar from '$lib/components/Navbar.svelte';
 </script>
 
@@ -127,7 +126,7 @@
       <section id="sola-ui-skill" class="space-y-3 scroll-mt-24">
         <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">5. Claude Plugin (sola-ui)</h2>
         <p>
-          The <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs text-slate-800 dark:text-slate-200">sola-ui</code> skill, published at <a href="https://github.com/Rbm3267/sola-ui-skill" class="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">Rbm3267/sola-ui-skill</a>, is instructions, reference files and a preview script. It has no server and no account.
+          The <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-xs text-slate-800 dark:text-slate-200">sola-ui</code> skill is a bundle of instructions, reference files and a preview script. It has no server and no account.
         </p>
         <ul class="list-disc list-inside pl-2 space-y-1 text-slate-600 dark:text-slate-400 text-sm">
           <li>It does not collect, store or send personal data, and it has no analytics or telemetry. We receive nothing when you use it.</li>
@@ -141,7 +140,7 @@
       <section class="space-y-3 pt-4 border-t border-slate-100 dark:border-white/5">
         <h2 class="text-xl font-bold text-slate-950 dark:text-white tracking-tight">6. Contact & Questions</h2>
         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
-          For questions regarding this privacy policy or Sola security architecture, review the open-source repository at <a href="{GITHUB_URL}" class="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">{GITHUB_REPO}</a>.
+          For questions regarding this privacy policy or Sola security architecture, see the <a href="/docs" class="text-blue-600 dark:text-blue-400 underline font-medium">documentation</a> or visit <a href="https://xdlabs.io" class="text-blue-600 dark:text-blue-400 underline font-medium" target="_blank" rel="noopener noreferrer">xdlabs.io</a>.
         </p>
       </section>
 

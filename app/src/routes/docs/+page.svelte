@@ -1,6 +1,10 @@
 <script lang="ts">
   import Navbar from '$lib/components/Navbar.svelte';
   import DataCard from '$lib/components/DataCard.svelte';
+  import CompanionShellStage from '$lib/components/CompanionShellStage.svelte';
+  import ShellBusDemo from '$lib/components/ShellBusDemo.svelte';
+  import DataDemo from '$lib/components/DataDemo.svelte';
+  import DesignEngineStudio from '$lib/components/DesignEngineStudio.svelte';
   // Every runnable sample below comes from one module that e2e/docs-snippets.spec.ts
   // compiles and mounts in a browser, so a broken sample fails the build, not the reader.
   import { onMount } from 'svelte';
@@ -64,7 +68,8 @@
       items: [
         { id: 'api-reactivity', title: 'Reactivity & Signals' },
         { id: 'api-macros', title: 'Compiler Macros' },
-        { id: 'engine', title: 'Zero-VDOM Engine' }
+        { id: 'engine', title: 'Zero-VDOM Engine' },
+        { id: 'design-system', title: 'Component Showcase' }
       ]
     },
     {
@@ -877,6 +882,12 @@ export function SolaWidget({ title, value }) {
           </div>
         </article>
 
+      <!-- ================= 5b. COMPONENT SHOWCASE ================= -->
+      {:else if activeSection === 'design-system'}
+        <article class="space-y-8">
+          <DesignEngineStudio />
+        </article>
+
       <!-- ================= 6. HOST EMBEDDING ================= -->
       {:else if activeSection === 'host-embedding'}
         <article class="space-y-8">
@@ -999,7 +1010,7 @@ export function SolaWidget({ title, value }) {
           <section class="space-y-3">
             <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">3. Ready-made shell components</h3>
             <p class="text-xs text-slate-500 dark:text-slate-400 max-w-[68ch]">
-              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/ui</code> 1.5 ships four components for this job. Each works with props and callbacks alone, takes its colors from the design tokens, and is keyboard operable. Spec: <a class="text-blue-700 dark:text-blue-400 underline" href="https://github.com/Rbm3267/sola-air/blob/main/docs/rfcs/0002-shell-primitives.md" target="_blank" rel="noreferrer">RFC 0002</a>.
+              <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/ui</code> 1.5 ships four components for this job. Each works with props and callbacks alone, takes its colors from the design tokens, and is keyboard operable (RFC 0002).
             </p>
             <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/10">
               <table class="w-full text-xs text-left">
@@ -1029,6 +1040,8 @@ export function SolaWidget({ title, value }) {
             </p>
           </section>
 
+          <CompanionShellStage />
+
           <section class="space-y-3">
             <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Before you ship</h3>
             <ul class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch] list-disc pl-5 space-y-2">
@@ -1054,6 +1067,8 @@ export function SolaWidget({ title, value }) {
               Typed events between components, pages and tabs, with explicit rules about what is allowed to cross into or out of your app.
             </p>
           </header>
+
+          <ShellBusDemo />
 
           <section class="space-y-3">
             <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">Events are not state</h3>
@@ -1153,9 +1168,11 @@ export function SolaWidget({ title, value }) {
               Sola Relay SaaS
             </h1>
             <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-[68ch]">
-              Deploying Sola Relay close to private database clusters.
+              Deploying Sola Relay close to private database clusters and reading live data with <code class="font-mono text-[0.9em]">$data</code>.
             </p>
           </header>
+
+          <DataDemo />
 
           <section class="space-y-3">
             <h3 class="text-sm font-semibold font-mono text-slate-900 dark:text-white">1. Dockerfile</h3>
@@ -1245,8 +1262,8 @@ export function SolaWidget({ title, value }) {
             </p>
             <ul class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch] list-disc pl-5 space-y-1.5">
               <li><strong class="text-slate-900 dark:text-white">Claude Code:</strong> <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">claude plugin marketplace add Rbm3267/sola-ui-skill</code>, then <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">claude plugin install sola-ui@sola-air</code>.</li>
-              <li><strong class="text-slate-900 dark:text-white">Claude.ai:</strong> zip the <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">skills/sola-ui</code> folder from <a class="underline" href="https://github.com/Rbm3267/sola-ui-skill" target="_blank" rel="noreferrer">Rbm3267/sola-ui-skill</a> and upload it under Settings → Capabilities → Skills, with code execution on (the preview script runs there).</li>
-              <li><strong class="text-slate-900 dark:text-white">Gemini CLI:</strong> not packaged as an extension. Copy <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">GEMINI.md</code> from <a class="underline" href="https://github.com/Rbm3267/sola-air/tree/main/skills/sola" target="_blank" rel="noreferrer">skills/sola</a> into your project as context, and add <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/mcp</code> as an MCP server if you want it to compile and check components.</li>
+              <li><strong class="text-slate-900 dark:text-white">Claude.ai:</strong> zip the <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">skills/sola-ui</code> folder and upload it under Settings → Capabilities → Skills, with code execution on (the preview script runs there).</li>
+              <li><strong class="text-slate-900 dark:text-white">Gemini CLI:</strong> not packaged as an extension. Copy <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">GEMINI.md</code> from <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">skills/sola</code> into your project as context, and add <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">@sola-air-ui/mcp</code> as an MCP server if you want it to compile and check components.</li>
               <li><strong class="text-slate-900 dark:text-white">Gemini web app:</strong> there is no skill format; paste <code class="font-mono bg-slate-100 dark:bg-white/10 px-1 rounded">GEMINI.md</code> into a Gem's instructions. It can write designs but cannot run the preview script.</li>
             </ul>
           </section>
@@ -1290,7 +1307,7 @@ export function SolaWidget({ title, value }) {
           <section class="space-y-4">
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Benchmark results</h2>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-[68ch]">
-              From the 20-prompt benchmark run on Nov 16, 2026, on an NVIDIA Quadro P620 (2 GB) through Ollama. The <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="underline font-semibold text-blue-600 dark:text-blue-400">model card</a> has the full table, the base model's numbers and the commands to reproduce them.
+              Measured on the 20-prompt Sola AIR component eval suite (Nov 16, 2026, on an NVIDIA Quadro P620 2 GB through Ollama). The <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="underline font-semibold text-blue-600 dark:text-blue-400">model card</a> has the full table, the base model's numbers and the commands to reproduce them.
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
@@ -1304,9 +1321,9 @@ export function SolaWidget({ title, value }) {
                 <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">About 13 s per component (median)</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
-                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Passes sola-check</div>
-                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">17 / 20</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">17 of 20 mount and render in a browser (base model: 2)</div>
+                <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">Mount &amp; Render</div>
+                <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">17 of 20 (85%)</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">17 of 20 (85%) mount and render (base model: 2)</div>
               </div>
               <div class="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/[0.06]">
                 <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">React / Vue syntax</div>

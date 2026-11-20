@@ -4,7 +4,7 @@
   import SolaLogo from './SolaLogo.svelte';
   import AiAssistantModal from './AiAssistantModal.svelte';
 
-  import { GITHUB_URL, VSCODE_URL, OPEN_VSX_URL, HUGGINGFACE_URL, VERSIONS } from '$lib/data/site';
+  import { VSCODE_URL, OPEN_VSX_URL, HUGGINGFACE_URL, VERSIONS } from '$lib/data/site';
 
   const version = VERSIONS.solaAir;
 
@@ -148,16 +148,6 @@
         {/if}
       </button>
 
-      <!-- GitHub -->
-      <a
-        href={GITHUB_URL}
-        target="_blank"
-        rel="noreferrer" 
-        class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/10 rounded-xl transition-all" 
-        aria-label="GitHub Repository">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-      </a>
-
       <!-- Mobile Menu Toggle -->
       <button 
         type="button"
@@ -199,16 +189,6 @@
             <span>{item.label}</span>
           </a>
         {/each}
-      </div>
-
-      <div class="pt-2 mt-2 border-t border-slate-900/[0.06] dark:border-white/[0.06]">
-        <a
-          href={GITHUB_URL}
-          target="_blank"
-          rel="noreferrer"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 transition-all">
-          <span>GitHub</span>
-        </a>
       </div>
     </div>
   {/if}

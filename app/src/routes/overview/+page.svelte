@@ -2,9 +2,7 @@
   import Navbar from '$lib/components/Navbar.svelte';
   import SolaMount from '$lib/components/SolaMount.svelte';
   import mount from '$lib/pages/Overview.sola';
-  import { GITHUB_URL, PUBLISHED_COUNT } from '$lib/data/site';
-
-  const SOURCE_URL = `${GITHUB_URL}/blob/main/app/src/lib/pages/Overview.sola`;
+  import { PUBLISHED_COUNT } from '$lib/data/site';
 </script>
 
 <svelte:head>
@@ -19,9 +17,7 @@
 
   <footer class="max-w-[1140px] w-full mx-auto px-6 pb-16 pt-4">
     <p class="text-sm text-slate-600 dark:text-slate-400 max-w-[68ch]">
-      This page is compiled from one <code class="font-mono text-xs bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 px-1.5 py-0.5 rounded">.sola</code> file.
-      <a href={SOURCE_URL} target="_blank" rel="noreferrer" class="font-semibold text-blue-700 dark:text-blue-400 hover:underline">Read its source</a>
-      and compare it with what the browser is running.
+      This page is compiled from one <code class="font-mono text-xs bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 px-1.5 py-0.5 rounded">Overview.sola</code> file and mounted directly into the DOM.
     </p>
   </footer>
   </main>

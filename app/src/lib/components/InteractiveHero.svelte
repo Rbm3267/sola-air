@@ -2,7 +2,7 @@
   import SentinelHeroDemo from './SentinelHeroDemo.svelte';
   import SolaLogo from './SolaLogo.svelte';
   import SolaCodeBlock from './SolaCodeBlock.svelte';
-  import { VERSIONS, PUBLISHED_COUNT, FACTS, POSTBUILD_URL, HUGGINGFACE_URL } from '$lib/data/site';
+  import { VERSIONS, PUBLISHED_COUNT, HUGGINGFACE_URL } from '$lib/data/site';
   import { overlayExample } from '$lib/data/docsSnippets';
 
   const version = VERSIONS.solaAir;
@@ -65,7 +65,7 @@
 
   <!-- Main Headline -->
   <h1 class="sola-beat-enter sola-beat-delay-1 text-4xl sm:text-6xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.06] mb-6 max-w-4xl">
-    Your UI shouldn't wait to be <span class="bg-gradient-to-r from-sky-500 via-blue-600 to-violet-600 bg-clip-text text-transparent">asked</span>.
+    Your UI shouldn't wait to be <span class="text-[#1d4ed8] dark:text-[#38bdf8]">asked</span>.
   </h1>
 
   <!-- Subheadline -->
@@ -74,7 +74,7 @@
   </p>
 
   <!-- Action Bar (CTAs) -->
-  <div class="sola-beat-enter sola-beat-delay-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6 w-full sm:w-auto justify-center">
+  <div class="sola-beat-enter sola-beat-delay-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10 w-full sm:w-auto justify-center">
     <!-- Primary CTA -->
     <a
       href="/docs"
@@ -91,9 +91,12 @@
     </a>
   </div>
 
-  <!-- Install command: add to an existing app, or start a new one -->
-  <div class="sola-beat-enter sola-beat-delay-3 flex flex-col items-center gap-2 mb-8 w-full">
-    <div class="inline-flex items-center gap-1 p-1 rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-semibold" role="group" aria-label="Install command">
+  <!-- 2. Live Sentinel Form Demo -->
+  <SentinelHeroDemo />
+
+  <!-- 3. Install command: add to an existing app, start a new one, or run the 1.5B model -->
+  <div class="sola-beat-enter sola-beat-delay-3 flex flex-col items-center gap-2 mt-12 mb-4 w-full">
+    <div class="inline-flex flex-wrap items-center justify-center gap-1 p-1 rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-semibold" role="group" aria-label="Install command">
       <button
         type="button"
         aria-pressed={mode === 'add'}
@@ -141,30 +144,14 @@
       {:else if mode === 'create'}
         Scaffolds a project with the compiler, the component library and a dev server.
       {:else}
-        Runs sola-air-1.5b, the fine-tuned model that writes <code class="font-mono text-xs">.sola</code> components, locally through Ollama. It's a 986 MB download, and a component takes about 13 seconds on a 2 GB GPU.
+        Runs sola-air-1.5b locally through Ollama (986 MB, ~13 s per component on a 2 GB GPU, 17 of 20 (85%) mount and render on the 20-prompt Sola AIR component eval suite).
         <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2">Hugging Face Hub ↗</a>
       {/if}
     </p>
   </div>
 
-  <!-- Micro Technical Attributes Line -->
-  <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs font-medium text-slate-600 dark:text-slate-400 mb-12">
-    <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> {FACTS.coreSizeKb} core runtime</span>
-    <span class="hidden sm:inline">•</span>
-    <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> Compiles to plain DOM calls</span>
-    <span class="hidden sm:inline">•</span>
-    <a href={HUGGINGFACE_URL} target="_blank" rel="noreferrer" class="inline-flex items-center gap-1.5 whitespace-nowrap text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold transition-colors"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> sola-air-1.5b on Hugging Face ↗</a>
-    <span class="hidden sm:inline">•</span>
-    <span class="inline-flex items-center gap-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Styles and DOM isolated in a closed shadow root</span>
-    <span class="hidden sm:inline">•</span>
-    <span class="inline-flex items-center gap-1.5 whitespace-nowrap">Used to build <a href={POSTBUILD_URL} rel="noopener" class="font-semibold text-blue-700 dark:text-blue-400 underline decoration-blue-300 underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300">postbuild.dev</a></span>
-  </div>
-
-  <!-- Sentinel Hero Stage -->
-  <SentinelHeroDemo />
-
   <!-- Add it to a page you already have -->
-  <div class="sola-beat-enter sola-beat-delay-3 w-full max-w-2xl text-left mt-12">
+  <div class="sola-beat-enter sola-beat-delay-3 w-full max-w-2xl text-left mt-6">
     <p class="text-xs font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Add it to a page you already have</p>
     <SolaCodeBlock code={overlayExample} language="typescript" title="companion.js" showLineNumbers={false} />
   </div>

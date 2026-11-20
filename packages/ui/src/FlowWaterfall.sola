@@ -5,7 +5,7 @@
     { name: "Gross Revenue Ingress", value: 840000, type: "positive" },
     { name: "Cloud Infrastructure & Egress", value: -140000, type: "negative" },
     { name: "Zero-VDOM Compute Efficiency", value: 24000, type: "positive" },
-    { name: "Net Realized Sovereign Margin", value: 724000, type: "total" },
+    { name: "Net Margin", value: 724000, type: "total" },
   ];
 
   let activeIndex = $state(null);
@@ -32,7 +32,7 @@
       <h3 class="wf-title">{title}</h3>
     </div>
     <div class="wf-final">
-      <span class="wf-final-label">Net Realized</span>
+      <span class="wf-final-label">Total</span>
       <span class="wf-final-value">{finalValue()}</span>
     </div>
   </div>
@@ -58,8 +58,8 @@
   </div>
 
   <div class="wf-footer">
-    <span>Zero-VDOM Financial Split Stream</span>
-    <span>Auto-Reconciled</span>
+    <span>Step Breakdown</span>
+    <span>Computed from props</span>
   </div>
 </div>
 

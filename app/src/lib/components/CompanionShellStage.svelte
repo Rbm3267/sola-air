@@ -15,28 +15,28 @@
   let shellParent = $state<HTMLDivElement | null>(null);
   let shell: ReturnType<typeof mountShell> | null = null;
   let facts = $state<{ mode: string; hostShadowRoot: string; pageQuery: string; nodes: number } | null>(null);
-  let appliedRunbook = $state(false);
-  let activeTicket = $state('INC-0049218');
+  let appliedAction = $state(false);
+  let activeOrder = $state('ORD-8421');
 
   const hostRows = [
-    { ticket: 'INC-0049218', service: 'Auth Token Gateway', status: 'Investigating', latency: '320ms' },
-    { ticket: 'INC-0049224', service: 'Postgres Read Replica', status: 'Mitigating', latency: '48ms' },
-    { ticket: 'INC-0049231', service: 'Edge TLS Router', status: 'Nominal', latency: '11ms' }
+    { order: 'ORD-8421', workflow: 'Stripe Webhook Retry', status: 'Pending retry', latency: '320ms' },
+    { order: 'ORD-8425', workflow: 'Invoice PDF Export', status: 'Queued', latency: '48ms' },
+    { order: 'ORD-8429', workflow: 'Tax Rate Lookup', status: 'Completed', latency: '11ms' }
   ];
 
   const hostColumns = [
-    { key: 'ticket', label: 'Ticket' },
-    { key: 'service', label: 'Service' },
+    { key: 'order', label: 'Order' },
+    { key: 'workflow', label: 'Workflow' },
     { key: 'status', label: 'Status' },
-    { key: 'latency', label: 'p99' }
+    { key: 'latency', label: 'Duration' }
   ];
 
   const intentPayload = $derived({
-    title: `Context • ${activeTicket}`,
-    value: appliedRunbook ? 'Pool Scaled (64)' : 'Pool Exhaustion',
-    trend: appliedRunbook
-      ? '✓ Runbook RB-402 applied across 4 regions'
-      : '94% match • 3 similar incidents resolved via RB-402'
+    title: `Order • ${activeOrder}`,
+    value: appliedAction ? 'Webhook Replayed (200)' : 'Retry Queued',
+    trend: appliedAction
+      ? '✓ Webhook delivered and order marked paid'
+      : '3 retries failed (504) • safe to replay now'
   });
 
   $effect(() => {
@@ -95,7 +95,7 @@
           <span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span>
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></span>
           <span class="ml-2 px-3 py-1 rounded-lg bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-mono text-slate-600 dark:text-slate-300 inline-flex items-center gap-2 whitespace-nowrap leading-none">
-            <span class="text-slate-500 dark:text-slate-400">https://</span>ops-portal.internal/incidents/{activeTicket}
+            <span class="text-slate-500 dark:text-slate-400">https://</span>billing.example.com/orders/{activeOrder}
           </span>
         </div>
         <div class="flex items-center gap-2">
@@ -117,7 +117,7 @@
                 </div>
                 <div>
                   <span class="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Existing Host Document</span>
-                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Operations Queue • Active Incidents</h3>
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Billing Support Queue • Recent Orders</h3>
                 </div>
               </div>
             </div>
@@ -130,27 +130,27 @@
                   columns: hostColumns,
                   rows: hostRows,
                   striped: true,
-                  onRowClick: (row: { ticket: string }) => {
-                    activeTicket = row.ticket;
-                    appliedRunbook = false;
+                  onRowClick: (row: { order: string }) => {
+                    activeOrder = row.order;
+                    appliedAction = false;
                   }
                 }}
               />
             </div>
 
-            <!-- Simulated Ticket Selection Pills -->
+            <!-- Order Selection Pills -->
             <div class="flex flex-wrap items-center gap-2 pt-1">
-              <span class="text-xs font-mono text-slate-500 dark:text-slate-400">Inspect ticket:</span>
+              <span class="text-xs font-mono text-slate-500 dark:text-slate-400">Inspect order:</span>
               {#each hostRows as row}
                 <button
                   onclick={() => {
-                    activeTicket = row.ticket;
-                    appliedRunbook = false;
+                    activeOrder = row.order;
+                    appliedAction = false;
                   }}
-                  class="inline-flex items-center justify-center px-3 py-1 rounded-lg text-xs font-mono font-medium transition-colors cursor-pointer whitespace-nowrap leading-none {activeTicket === row.ticket
+                  class="inline-flex items-center justify-center px-3 py-1 rounded-lg text-xs font-mono font-medium transition-colors cursor-pointer whitespace-nowrap leading-none {activeOrder === row.order
                     ? 'bg-blue-600 text-white'
                     : 'bg-white dark:bg-white/5 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10'}">
-                  {row.ticket}
+                  {row.order}
                 </button>
               {/each}
             </div>
@@ -190,17 +190,17 @@
             <!-- Action Bar -->
             <div class="p-4 rounded-2xl bg-white/90 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 space-y-3 shadow-2xs">
               <div class="flex items-center justify-between text-xs font-mono">
-                <span class="text-slate-600 dark:text-slate-300 font-medium">Suggested Runbook: RB-402</span>
-                <span class="text-blue-700 dark:text-blue-400">Drain &amp; scale pool</span>
+                <span class="text-slate-600 dark:text-slate-300 font-medium">Suggested Action: Replay Webhook</span>
+                <span class="text-blue-700 dark:text-blue-400">POST /webhooks/retry</span>
               </div>
               <div class="flex items-center gap-2.5">
                 <button
-                  onclick={() => (appliedRunbook = true)}
+                  onclick={() => (appliedAction = true)}
                   class="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-mono font-semibold transition-colors cursor-pointer whitespace-nowrap leading-none">
-                  <span>{appliedRunbook ? '✓ Runbook Applied' : 'Apply Runbook'}</span>
+                  <span>{appliedAction ? '✓ Webhook Replayed' : 'Replay Webhook'}</span>
                 </button>
                 <button
-                  onclick={() => (appliedRunbook = false)}
+                  onclick={() => (appliedAction = false)}
                   class="inline-flex items-center justify-center px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-mono font-medium transition-colors cursor-pointer whitespace-nowrap leading-none">
                   <span>Reset</span>
                 </button>

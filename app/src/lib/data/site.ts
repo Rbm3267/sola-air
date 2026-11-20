@@ -8,10 +8,8 @@
 import { COMPONENT_CATALOG, type CatalogComponent } from './componentCatalog';
 import type { UiManifest } from './solaExport';
 
-export const GITHUB_URL = 'https://github.com/Rbm3267/sola-air';
 export const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode';
 export const OPEN_VSX_URL = 'https://open-vsx.org/extension/SolaAIR/sola-vscode';
-export const GITHUB_REPO = 'Rbm3267/sola-air';
 /** A separate app, built with Sola AIR by the same author. */
 export const POSTBUILD_URL = 'https://postbuild.dev';
 /** Fine-tuned 1.5B edge model for single-file reactive component synthesis. */

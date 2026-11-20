@@ -134,7 +134,7 @@ npm run dev</code></pre>
       <a href="/components">Browse components</a>
       <a href="/studio">Arrange components in Studio</a>
       <a href="https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode" target="_blank" rel="noreferrer">VS Code extension</a>
-      <a href="https://github.com/Rbm3267/sola-ui-skill" target="_blank" rel="noreferrer">Claude and Gemini skill</a>
+      <a href="/docs#llm-spec">Claude and Gemini skill</a>
     </div>
   </section>
 </div>

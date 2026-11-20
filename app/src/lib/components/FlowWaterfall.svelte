@@ -76,7 +76,7 @@
         { id: 's-2', name: 'Cloud Compute Infrastructure', delta: -ce, type: 'debit' as const, formattedValue: `-$${ce.toLocaleString()}` },
         { id: 's-3', name: 'Dedicated Support Triage', delta: -se, type: 'debit' as const, formattedValue: `-$${se.toLocaleString()}` },
         { id: 's-4', name: 'Enterprise Volume Rebate', delta: -td, type: 'debit' as const, formattedValue: `-$${td.toLocaleString()}` },
-        { id: 's-5', name: 'Net Realized Profit', delta: net, type: 'total' as const, formattedValue: `$${net.toLocaleString()}` }
+        { id: 's-5', name: 'Net Total', delta: net, type: 'total' as const, formattedValue: `$${net.toLocaleString()}` }
       ];
     }
 
@@ -108,7 +108,7 @@
 
     <!-- Final Value Highlight -->
     <div class="text-right">
-      <span class="text-xs font-mono text-slate-500 dark:text-slate-400 block uppercase">Net Realized</span>
+      <span class="text-xs font-mono text-slate-500 dark:text-slate-400 block uppercase">Total</span>
       <span class="text-lg font-bold text-slate-950 dark:text-slate-50 font-mono tracking-tight text-blue-600 dark:text-blue-400">
         {steps[steps.length - 1]?.formattedValue || '$191,040'}
       </span>
@@ -149,8 +149,8 @@
   </div>
 
   <div class="flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-white/[0.04]">
-    <span>Zero-VDOM Financial Split Stream</span>
-    <span>Auto-Reconciled • 0.2ms Signal</span>
+    <span>Step Breakdown</span>
+    <span>Compiled from reactive props</span>
   </div>
 
 </div>

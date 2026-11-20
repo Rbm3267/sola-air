@@ -109,7 +109,7 @@ export const COMPONENT_CATALOG: CatalogComponent[] = [
         { name: 'Gross Revenue Ingress', value: 840000, type: 'positive' },
         { name: 'Cloud Infrastructure & Egress', value: -140000, type: 'negative' },
         { name: 'Zero-VDOM Compute Efficiency', value: 24000, type: 'positive' },
-        { name: 'Net Realized Margin', value: 724000, type: 'total' }
+        { name: 'Net Margin', value: 724000, type: 'total' }
       ]
     },
     props: [

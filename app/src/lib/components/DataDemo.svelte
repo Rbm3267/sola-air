@@ -7,10 +7,70 @@
   import sheetSource from '$lib/pages/DataSheetDemo.sola?raw';
   import nodesSource from '$lib/pages/DataNodesDemo.sola?raw';
 
+  // Fallback rows when /api/demo-relay is unavailable (e.g. static preview or
+  // slow cold start) so the demo never hangs on "Loading…".
+  const FALLBACK_REVENUE: Array<[string, number]> = [
+    ['Jun', 152300],
+    ['Jul', 161800],
+    ['Aug', 169400],
+    ['Sep', 184200]
+  ];
+  const FALLBACK_NODES = ['node-a', 'node-b', 'node-c', 'node-d'];
+
+  function fallbackResponse(bodyStr: unknown): Response {
+    let source = '';
+    try {
+      const parsed = typeof bodyStr === 'string' ? JSON.parse(bodyStr) : null;
+      source = typeof parsed?.source === 'string' ? parsed.source : '';
+    } catch {}
+    const updatedAt = new Date().toISOString().slice(11, 19);
+    if (source === 'postgres-primary:nodes') {
+      const bucket = Math.floor(Date.now() / 5000);
+      const rows = FALLBACK_NODES.map((name, i) => {
+        const cpu = 30 + ((bucket * 7 + i * 11) % 45);
+        return { name, status: cpu > 62 ? 'busy' : 'ready', cpu, updatedAt };
+      });
+      return new Response(JSON.stringify({ rows, rowCount: rows.length }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    const rows = FALLBACK_REVENUE.map(([month, mrr]) => ({ month, mrr, updatedAt }));
+    return new Response(JSON.stringify({ rows, rowCount: rows.length }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  async function demoTransport(url: string, init: RequestInit): Promise<Response> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 2500);
+    const parentSignal = init?.signal;
+    const onParentAbort = () => controller.abort();
+    if (parentSignal) {
+      if (parentSignal.aborted) {
+        clearTimeout(timer);
+        throw new DOMException('Aborted', 'AbortError');
+      }
+      parentSignal.addEventListener('abort', onParentAbort, { once: true });
+    }
+    try {
+      const res = await fetch(url, { ...init, signal: controller.signal });
+      if (res.ok) return res;
+      return fallbackResponse(init?.body);
+    } catch (err: any) {
+      if (parentSignal?.aborted) throw err;
+      return fallbackResponse(init?.body);
+    } finally {
+      clearTimeout(timer);
+      if (parentSignal) parentSignal.removeEventListener('abort', onParentAbort);
+    }
+  }
+
   // The demo files below call `$data` exactly as an app would. Here the request
-  // goes to a small endpoint on this site, not to a Sola Relay on someone's
-  // machine, so it works without a database. Nothing else on the site uses $data.
-  configureData({ relayEndpoint: '/api/demo-relay' });
+  // goes to a small endpoint on this site (with a deterministic local fallback
+  // if the endpoint is unreachable), so it always resolves without hanging.
+  configureData({ relayEndpoint: '/api/demo-relay', transport: demoTransport });
 
   let activeMode = $state<'sheet' | 'postgres'>('sheet');
   const source = $derived(activeMode === 'sheet' ? sheetSource : nodesSource);

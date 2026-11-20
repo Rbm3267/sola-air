@@ -26,7 +26,7 @@ function createMockIntent(actionId: string, recordId: string, data: any, payload
 export const MajorIncidentContract: ActionContract = {
   id: 'major_incident_bridge',
   title: 'Open Major Incident War Room',
-  description: 'Escalate to P1 Major Incident, page Tier 3 SRE via PagerDuty, and trigger Route53 traffic failover.',
+  description: 'Escalate billing webhook timeout, notify on-call engineer, and switch to standby queue worker.',
   category: 'mitigation',
   severity: 'critical',
   tier: 2,

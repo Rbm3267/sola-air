@@ -15,9 +15,9 @@
   let executedPlaybook = $state<string | null>(null);
 
   const defaultPlaybooks = [
-    { id: 'pb-1', title: 'Reroute Edge DNS to eu-west-1', action: 'Route53 Failover', automated: true },
-    { id: 'pb-2', title: 'Scale Redis Cluster Read Replicas (x4)', action: 'Auto-Provision', automated: true },
-    { id: 'pb-3', title: 'Page Tier 3 Database SRE On-Call', action: 'PagerDuty Page', automated: false }
+    { id: 'pb-1', title: 'Switch webhook queue to standby worker', action: 'Queue Failover', automated: true },
+    { id: 'pb-2', title: 'Flush stale checkout session cache', action: 'Cache Reset', automated: true },
+    { id: 'pb-3', title: 'Notify billing on-call engineer', action: 'Escalation Alert', automated: false }
   ];
 
   const playbooks = $derived(config.playbooks || defaultPlaybooks);

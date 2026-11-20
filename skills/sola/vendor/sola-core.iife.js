@@ -1137,12 +1137,13 @@ var SolaCore = (() => {
     const [read, write] = createSignal({ loading: true, data: null, error: null });
     let abortController = null;
     let refreshTimer = null;
+    const send = config.transport || ((url, init) => fetch(url, init));
     function fetchData() {
       if (abortController) abortController.abort();
       const ctrl = new AbortController();
       abortController = ctrl;
-      write({ loading: true, data: read().data, error: null });
-      fetch(config.relayEndpoint, {
+      write({ loading: true, data: __untrack(read).data, error: null });
+      Promise.resolve(send(config.relayEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1154,7 +1155,7 @@ var SolaCore = (() => {
           offset: config.offset || null
         }),
         signal: ctrl.signal
-      }).then((res) => {
+      })).then((res) => {
         if (ctrl.signal.aborted) return;
         if (!res.ok) throw new Error(`Data fetch failed: ${res.status}`);
         return res.json();

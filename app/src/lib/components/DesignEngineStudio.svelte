@@ -134,14 +134,14 @@
               <!-- Slider -->
               <div class="pt-4 border-t border-slate-100 dark:border-white/5 space-y-3">
                 <div class="flex items-center justify-between text-xs">
-                  <span class="font-semibold text-slate-700 dark:text-slate-300">Signal Resistance Slider</span>
+                  <span class="font-semibold text-slate-700 dark:text-slate-300">Capacity Threshold</span>
                   <span class="font-mono font-semibold text-blue-600 dark:text-blue-400">{sliderVal}%</span>
                 </div>
                 <input
                   type="range"
                   min="0"
                   max="100"
-                  aria-label="Signal resistance"
+                  aria-label="Capacity threshold"
                   bind:value={sliderVal}
                   class="w-full accent-blue-600 h-2 bg-slate-100 dark:bg-white/10 rounded-lg cursor-pointer"
                 />
