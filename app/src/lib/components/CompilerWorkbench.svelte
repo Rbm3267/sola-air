@@ -23,17 +23,17 @@
     .filter((l) => isReactive(l.text));
 
   let showAll = $state(false);
-  let rps = $state(1420);
+  let updates = $state(1420);
   let writes = $state(0);
   let activeFlash = $state(false);
   let flashTimer: ReturnType<typeof setTimeout> | null = null;
 
-  let util = $derived(Math.min(100, Math.round(rps / 20)));
+  let budget = $derived(Math.min(100, Math.round(updates / 20)));
 
-  function updateRps(next: number) {
-    rps = next;
+  function updateWrites(next: number) {
+    updates = next;
     writes += 1;
-    bus.emit('sola:compiler-rps', { rps: next });
+    bus.emit('sola:compiler-updates', { updates: next });
     activeFlash = true;
     if (flashTimer) clearTimeout(flashTimer);
     flashTimer = setTimeout(() => {
@@ -42,7 +42,7 @@
   }
 
   function triggerBurst() {
-    updateRps(rps >= 1900 ? 840 : Math.min(2000, rps + 160));
+    updateWrites(updates >= 1900 ? 840 : Math.min(2000, updates + 160));
   }
 </script>
 
@@ -111,26 +111,26 @@
           <div class="mt-4 pt-3 border-t border-slate-100 dark:border-white/10 flex flex-col gap-3">
             <label class="flex flex-col gap-1.5">
               <span class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-                <span>Set <code class="font-mono">rps</code></span>
-                <span class="font-mono">{rps} req/s ({util}%)</span>
+                <span>Set <code class="font-mono">updates</code></span>
+                <span class="font-mono">{updates} ops/s ({budget}%)</span>
               </span>
               <input
                 type="range"
                 min="200"
                 max="2000"
-                value={rps}
-                aria-label="Cluster throughput (rps)"
-                oninput={(e) => updateRps(Number((e.currentTarget as HTMLInputElement).value))}
+                value={updates}
+                aria-label="Reactive DOM writes (ops/s)"
+                oninput={(e) => updateWrites(Number((e.currentTarget as HTMLInputElement).value))}
                 class="w-full accent-blue-600 cursor-pointer"
               />
             </label>
             <button
               onclick={triggerBurst}
               class="w-full h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold inline-flex items-center justify-center gap-2 whitespace-nowrap leading-none shadow-sm cursor-pointer">
-              <span>Burst: rps += 160</span>
+              <span>Burst: updates += 160</span>
             </button>
             <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              The slider sends <code class="font-mono">sola:compiler-rps</code> on the event bus; the component's <code class="font-mono">$on</code> handler sets <code class="font-mono">rps</code>.
+              The slider sends <code class="font-mono">sola:compiler-updates</code> on the event bus; the component's <code class="font-mono">$on</code> handler sets <code class="font-mono">updates</code>.
             </p>
           </div>
         </div>

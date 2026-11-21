@@ -20,8 +20,8 @@ test.describe('homepage Compiler X-Ray', () => {
     await page.goto('/');
     const compiled = page.getByTestId('xray-compiled');
     await expect(compiled).toContainText('createSignal(1420)');
-    await expect(compiled).toContainText('textContent = String((rps())');
-    await expect(compiled).toContainText('textContent = String((util())');
+    await expect(compiled).toContainText('textContent = String((updates())');
+    await expect(compiled).toContainText('textContent = String((budget())');
     await page.getByRole('button', { name: 'Show all' }).click();
     await expect(compiled).toContainText("from '@sola-air-ui/core'");
   });
@@ -29,10 +29,10 @@ test.describe('homepage Compiler X-Ray', () => {
   test('pane 3 is that component, driven over the bus', async ({ page }) => {
     await page.goto('/');
     const live = page.getByTestId('xray-live');
-    await expect(live).toContainText('1420 req/s');
+    await expect(live).toContainText('1420 ops/s');
     await page.getByRole('button', { name: /Burst/ }).click();
-    await expect(live).toContainText('1580 req/s');
-    await expect(live).toContainText('79% capacity');
+    await expect(live).toContainText('1580 ops/s');
+    await expect(live).toContainText('79% frame budget');
   });
 });
 

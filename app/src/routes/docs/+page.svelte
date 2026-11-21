@@ -1455,3 +1455,18 @@ npx -p @sola-air-ui/compiler sola compile BatteryCard.sola -o BatteryCard.js</co
 
   </div>
 </div>
+
+<style>
+  :global(#main-content > section),
+  :global(#main-content > section > div),
+  :global(#main-content .grid > *) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  :global(#main-content pre) {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+</style>

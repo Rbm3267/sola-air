@@ -1,0 +1,19 @@
+# Sola AIR
+
+> Single-file UI compiler and reactive runtime designed for AI agents and web developers.
+
+- Canonical URL: https://sola-air.dev/
+- Sitemap: https://sola-air.dev/sitemap.xml
+- Author: XD Labs (https://www.xdlabs.io/)
+- License: MIT
+- AI Crawlers: GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Applebot-Extended explicitly allowed in /robots.txt
+
+## Overview
+Sola AIR compiles single-file `.sola` components into direct DOM updates with no virtual DOM overhead. It ships a small core runtime, closed Shadow DOM companion mounting via Sola Sentinel, a typed event bus (`$on`, `$lastEvent`, `$persist`), and live data signals (`$data`) through Sola Relay.
+
+## Primary Pages
+- [Homepage](https://sola-air.dev/) — Hero, live Sentinel hesitation demo, install commands, and Compiler X-Ray
+- [Documentation](https://sola-air.dev/docs) — Quickstart, `.sola` syntax, reactivity primitives, event bus, `$data` relay, and 1.5B local model guide
+- [Components](https://sola-air.dev/components) — Interactive catalog of Sola AIR UI components
+- [Studio](https://sola-air.dev/studio) — Live browser compiler and preview workbench
+- [Changelog](https://sola-air.dev/changelog) — Release history and runtime updates

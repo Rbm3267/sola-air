@@ -13,8 +13,8 @@ test.describe('docs: $data demo', () => {
 
     await expect(page.getByTestId('data-demo-source')).toContainText('$data("sheet://demo-finance"');
     await expect(live).toContainText('Aug');
-    await expect(live).toContainText('$169400');
-    await expect(live).toContainText('$184200');
+    await expect(live).toContainText('$169,400');
+    await expect(live).toContainText('$184,200');
     await expect(live).toContainText('Fetched at');
     await expect(live).not.toContainText('undefined');
     await expect(live).not.toContainText('Loading…');
@@ -24,7 +24,7 @@ test.describe('docs: $data demo', () => {
     await page.goto('/docs#relay-saas');
     const live = page.getByTestId('data-demo-live');
     await live.scrollIntoViewIfNeeded();
-    await expect(live).toContainText('$184200');
+    await expect(live).toContainText('$184,200');
 
     const next = page.waitForRequest((r) => r.url().includes('/api/demo-relay') && r.method() === 'POST');
     await page.locator('#data-refetch').click();
@@ -54,7 +54,7 @@ test.describe('docs: $data demo', () => {
     await page.goto('/docs#relay-saas');
     const live = page.getByTestId('data-demo-live');
     await live.scrollIntoViewIfNeeded();
-    await expect(live).toContainText('$184200');
+    await expect(live).toContainText('$184,200');
 
     await page.getByRole('button', { name: 'PostgreSQL' }).click();
     await expect(live).toContainText('node-a');

@@ -55,13 +55,15 @@
       class="sola-signal-path" />
   </svg>
 
-  <!-- Floating Luminous Announcement Badge with Real Sola Sun Logo -->
-  <div class="sola-beat-enter inline-flex items-center justify-center gap-2.5 px-4 py-1.5 rounded-full bg-white/90 dark:bg-blue-500/10 border border-blue-200/80 dark:border-blue-500/20 text-blue-800 dark:text-blue-300 text-xs font-mono font-medium mb-6 shadow-2xs whitespace-nowrap leading-none">
-    <SolaLogo size={16} />
-    <span>Sola AIR v{version} • Ambient Intent Runtime</span>
-    <span class="text-blue-400/80">/</span>
-    <span class="text-slate-600 dark:text-slate-300 font-normal">{PUBLISHED_COUNT} Components</span>
-  </div>
+  <!-- Eyebrow -->
+  <p class="sola-beat-enter inline-flex flex-wrap items-center justify-center gap-2 text-xs font-mono text-slate-600 dark:text-slate-400 mb-5 leading-none">
+    <SolaLogo size={14} />
+    <span class="text-slate-800 dark:text-slate-200 font-medium">Sola AIR v{version}</span>
+    <span aria-hidden="true">·</span>
+    <span>Ambient Intent Runtime</span>
+    <span aria-hidden="true">·</span>
+    <span>{PUBLISHED_COUNT} Components</span>
+  </p>
 
   <!-- Main Headline -->
   <h1 class="sola-beat-enter sola-beat-delay-1 text-4xl sm:text-6xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.06] mb-6 max-w-4xl">

@@ -1,26 +1,26 @@
 <script>
   // The homepage's Compiler X-Ray shows this file and the compiler's real output
-  // for it, generated at build time. Keep the bindings direct ({rps}, {util}) so
-  // what the X-Ray shows is a text-node update, not a child re-mount.
-  let rps = $state(1420);
-  let util = $derived(Math.min(100, Math.round(rps / 20)));
+  // for it, generated at build time. Keep the bindings direct ({updates}, {budget})
+  // so what the X-Ray shows is a text-node update, not a child re-mount.
+  let updates = $state(1420);
+  let budget = $derived(Math.min(100, Math.round(updates / 20)));
 
-  $on('sola:compiler-rps', (e) => {
-    if (e && typeof e.rps === 'number') rps = e.rps;
+  $on('sola:compiler-updates', (e) => {
+    if (e && typeof e.updates === 'number') updates = e.updates;
   });
 </script>
 
-<div class="cluster-card">
-  <span class="label">Cluster Throughput</span>
-  <span class="value">{rps} req/s</span>
-  <span class="trend">{util}% capacity</span>
+<div class="signal-card">
+  <span class="label">Reactive DOM Writes</span>
+  <span class="value">{updates} ops/s</span>
+  <span class="trend">{budget}% frame budget</span>
   <div class="track" aria-hidden="true">
-    <div class="fill" style="width: {util}%"></div>
+    <div class="fill" style="width: {budget}%"></div>
   </div>
 </div>
 
 <style>
-  .cluster-card {
+  .signal-card {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -54,7 +54,7 @@
   .fill {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #38bdf8, #2563eb, #9333ea);
+    background: var(--sola-accent, #1d4ed8);
     transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 </style>

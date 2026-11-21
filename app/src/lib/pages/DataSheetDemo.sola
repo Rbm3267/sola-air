@@ -16,7 +16,7 @@
       <thead><tr><th>Month</th><th>MRR</th></tr></thead>
       <tbody>
         {#each rows().data as row}
-          <tr><td>{row.month}</td><td>${row.mrr}</td></tr>
+          <tr><td>{row.month}</td><td>${row.mrr.toLocaleString('en-US')}</td></tr>
         {/each}
       </tbody>
     </table>
