@@ -4,7 +4,7 @@
   import SolaLogo from './SolaLogo.svelte';
   import AiAssistantModal from './AiAssistantModal.svelte';
 
-  import { VSCODE_URL, OPEN_VSX_URL, HUGGINGFACE_URL, VERSIONS } from '$lib/data/site';
+  import { VSCODE_URL, OPEN_VSX_URL, HUGGINGFACE_URL, GITLAB_URL, VERSIONS } from '$lib/data/site';
 
   const version = VERSIONS.solaAir;
 
@@ -134,6 +134,19 @@
         </div>
         <kbd class="hidden lg:inline text-xs font-mono bg-slate-200/60 dark:bg-white/10 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400 font-semibold">⌘K</kbd>
       </button>
+
+      <!-- GitLab Source -->
+      <a
+        href={GITLAB_URL}
+        target="_blank"
+        rel="noreferrer"
+        class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/10 rounded-xl transition-all"
+        aria-label="Sola AIR on GitLab"
+        title="Source on GitLab">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="m23.6 9.593-1.352-4.161a1.29 1.29 0 0 0-2.457 0l-1.354 4.161H5.563L4.209 5.432a1.29 1.29 0 0 0-2.457 0L.4 9.593a1.056 1.056 0 0 0 .385 1.182L12 19.043l11.215-8.268a1.056 1.056 0 0 0 .385-1.182" />
+        </svg>
+      </a>
 
       <!-- Theme Toggle -->
       <button 

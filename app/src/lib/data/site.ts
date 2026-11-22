@@ -10,6 +10,7 @@ import type { UiManifest } from './solaExport';
 
 export const VSCODE_URL = 'https://marketplace.visualstudio.com/items?itemName=SolaAIR.sola-vscode';
 export const OPEN_VSX_URL = 'https://open-vsx.org/extension/SolaAIR/sola-vscode';
+export const GITLAB_URL = 'https://gitlab.com/xdlabs-io/sola-air';
 /** A separate app, built with Sola AIR by the same author. */
 export const POSTBUILD_URL = 'https://postbuild.dev';
 /** Fine-tuned 1.5B edge model for single-file reactive component synthesis. */
