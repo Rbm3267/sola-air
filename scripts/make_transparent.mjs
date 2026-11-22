@@ -1,5 +1,9 @@
 import sharp from 'sharp';
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
 
 async function makeTransparent(inputPath, outputPath) {
   const image = sharp(inputPath);
@@ -43,11 +47,11 @@ async function makeTransparent(inputPath, outputPath) {
 }
 
 async function run() {
-  const source = 'C:/Users/Bennett/Projects/ambient-intent-runtime/brand/logo/sola-logo-full.jpg';
-  await makeTransparent(source, 'C:/Users/Bennett/Projects/ambient-intent-runtime/brand/logo/sola-logo-transparent.png');
-  await makeTransparent(source, 'C:/Users/Bennett/Projects/ambient-intent-runtime/brand/favicon/favicon.png');
-  await makeTransparent(source, 'C:/Users/Bennett/Projects/ambient-intent-runtime/app/static/logo.png');
-  await makeTransparent(source, 'C:/Users/Bennett/Projects/ambient-intent-runtime/app/static/favicon.png');
+  const source = path.resolve(ROOT, 'brand/logo/sola-logo-full.jpg');
+  await makeTransparent(source, path.resolve(ROOT, 'brand/logo/sola-logo-transparent.png'));
+  await makeTransparent(source, path.resolve(ROOT, 'brand/favicon/favicon.png'));
+  await makeTransparent(source, path.resolve(ROOT, 'app/static/logo.png'));
+  await makeTransparent(source, path.resolve(ROOT, 'app/static/favicon.png'));
   console.log('All transparent brand files created!');
 }
 
