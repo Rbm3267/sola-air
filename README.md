@@ -24,7 +24,7 @@
   <a href="https://open-vsx.org/extension/SolaAIR/sola-vscode"><img src="https://img.shields.io/open-vsx/v/SolaAIR/sola-vscode?label=Open%20VSX&color=6366f1&style=flat-square" alt="Open VSX Registry" /></a>
   <a href="https://chromewebstore.google.com/detail/sola-air/cahdakefpjocaapggijdbbgidcjdaehc"><img src="https://img.shields.io/chrome-web-store/v/cahdakefpjocaapggijdbbgidcjdaehc?label=Chrome&color=3b82f6&style=flat-square" alt="Chrome Web Store" /></a>
   <a href="https://huggingface.co/bennett-xdlabs/sola-air-1.5b"><img src="https://img.shields.io/badge/Hugging%20Face-sola--air--1.5b-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="Hugging Face sola-air-1.5b" /></a>
-  <a href="https://gitlab.com/xdlabs-io/sola-air/-/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-0ea5e9?style=flat-square" alt="MIT License" /></a>
+  <a href="https://github.com/Rbm3267/sola-air/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-0ea5e9?style=flat-square" alt="MIT License" /></a>
 </p>
 
 ```bash

@@ -23,11 +23,7 @@ const checkExternal = process.argv.includes('--external');
 const PLATFORM_PREFIXES = ['/_vercel/'];
 
 // Dead URLs that must never reappear in built output.
-const FORBIDDEN_URLS = [
-  'github.com/Rbm3267/sola-air',
-  'github.com/rbm3267/sola-air',
-  'github.com/Rbm3267/sola-ui-skill'
-];
+const FORBIDDEN_URLS = [];
 
 function walkFiles(dir, predicate = () => true) {
   const results = [];

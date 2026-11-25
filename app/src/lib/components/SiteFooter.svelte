@@ -6,7 +6,7 @@
   //
   // Kept short on purpose: four groups of at most three links, so no column
   // runs longer than the others and the footer stays one compact band.
-  import { VSCODE_URL, OPEN_VSX_URL, HUGGINGFACE_URL, GITLAB_URL, VERSIONS } from '$lib/data/site';
+  import { VSCODE_URL, OPEN_VSX_URL, HUGGINGFACE_URL, GITHUB_URL, VERSIONS } from '$lib/data/site';
 
   const versions = [
     ['sola-air', VERSIONS.solaAir],
@@ -44,7 +44,7 @@
     {
       heading: 'Project',
       links: [
-        { href: GITLAB_URL, label: 'GitLab', external: true },
+        { href: GITHUB_URL, label: 'GitHub', external: true },
         { href: '/changelog', label: 'Changelog' },
         { href: '/privacy', label: 'Privacy' }
       ]
